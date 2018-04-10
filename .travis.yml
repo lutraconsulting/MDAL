@@ -19,6 +19,7 @@ matrix:
       env: CTEST_TARGET_SYSTEM=Linux-gcc    CTEST_MODEL=Nightly
 
 before_install:
+     - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
      - sudo apt-get -qq update
      - sudo apt-get install -qq qtbase5-dev
 
