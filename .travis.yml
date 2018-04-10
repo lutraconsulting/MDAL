@@ -1,0 +1,30 @@
+language: cpp
+
+sudo: required
+dist: artful
+
+addons:
+  apt:
+    packages:
+
+env:
+  global:
+    - CTEST_EXT_COLOR_OUTPUT=TRUE
+    - CTEST_BUILD_FLAGS=-j4
+
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      env: CTEST_TARGET_SYSTEM=Linux-gcc    CTEST_MODEL=Nightly
+
+before_install:
+     - sudo apt-get -qq update
+     - sudo apt-get install -qq qtbase5-dev
+
+script:
+     - mkdir -p build
+     - cd build
+     - cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
+     - make
+     - ctest -VV

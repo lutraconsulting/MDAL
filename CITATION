@@ -1,0 +1,12 @@
+To cite MDAL in publications use:
+
+  MDAL contributors (2018). The MDAL Mesh Data Abstraction software Library. 
+  
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {The {MDAL} Mesh Data Abstraction software Library},
+    author = {{MDAL contributors}},
+    organization = {Lutra Consulting Ltd.},
+    year = {2018}
+  }
