@@ -20,8 +20,8 @@
 .kdev4/
 .project
 .pydevproject
-/CMakeLists.txt.user
-/CMakeLists.txt.user.*
+*CMakeLists.txt.user
+*CMakeLists.txt.user.*
 /build*
 debian/*.debhelper
 debian/*.substvars
