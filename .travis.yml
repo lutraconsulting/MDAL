@@ -14,10 +14,6 @@ matrix:
       compiler: gcc
       env: CTEST_TARGET_SYSTEM=Linux-gcc    CTEST_MODEL=Nightly
 
-before_install:
-     - sudo apt-get -qq update
-     - sudo apt-get install -qq libgtest-dev
-
 script:
      - mkdir -p build
      - cd build

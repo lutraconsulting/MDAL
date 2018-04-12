@@ -28,7 +28,6 @@ ADD_SUBDIRECTORY(mdal)
 #############################################################
 # testing
 IF (ENABLE_TESTS)
-  FIND_PACKAGE(GTest REQUIRED)
   ADD_DEFINITIONS(-DENABLE_TESTS)
   ENABLE_TESTING()
   ADD_SUBDIRECTORY(tests)
