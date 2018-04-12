@@ -1,9 +1,16 @@
 SET(MDAL_SOURCES 
   mdal.cpp
+  mdal_utils.cpp
+  mdal_loader.cpp
+  frmts/mdal_2dm.cpp
 )
 
 SET(MDAL_HEADERS
   mdal.h
+  mdal_utils.hpp
+  mdal_loader.hpp
+  mdal_defines.hpp
+  frmts/mdal_2dm.hpp
 )
 
 INCLUDE_DIRECTORIES(
@@ -16,12 +23,6 @@ ADD_LIBRARY(mdal SHARED
 	${MDAL_SOURCES}
 	${MDAL_HEADERS}
 )
-TARGET_LINK_LIBRARIES(mdal Qt5::Core)
 
-GENERATE_EXPORT_HEADER(
-  mdal
-  BASE_NAME MDAL
-  EXPORT_FILE_NAME mdal_export.h
-)
-
-SET(MDAL_HEADERS ${MDAL_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/mdal_export.h)
+INSTALL(TARGETS mdal LIBRARY DESTINATION lib)
+INSTALL(FILES mdal.h DESTINATION include)

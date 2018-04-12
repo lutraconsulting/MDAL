@@ -2,38 +2,21 @@
  MDAL - Mesh Data Abstraction Library (MIT License)
  Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
 */
-#include <QObject>
-#include <QString>
-#include <QtTest/QtTest>
+#include "gtest/gtest.h"
 
 //mdal
 #include "mdal.h"
 
-/**
- * \ingroup UnitTests
- * This is a unit test
- */
-class TestCore : public QObject
-{
-    Q_OBJECT
-  public:
-    TestCore() = default;
-
-  private slots:
-    void initTestCase() {}// will be called before the first testfunction is executed.
-    void cleanupTestCase() {}// will be called after the last testfunction was executed.
-    void init() {} // will be called before each testfunction is executed.
-    void cleanup() {} // will be called after every testfunction.
-
-    void test1();
-};
-
-void TestCore::test1()
-{
-  QVERIFY( hello() == "Hello World" );
+TEST(HelloTest, PositiveNos) {
+    ASSERT_EQ(6, 6);
 }
 
+TEST(HelloTest2, NegativeNos) {
+    ASSERT_EQ(-1.0, -1.0);
+}
 
-QTEST_MAIN( TestCore )
-#include "testmdalcore.moc"
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
 
