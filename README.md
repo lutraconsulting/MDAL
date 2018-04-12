@@ -7,10 +7,4 @@ see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposal
 
 # Tests
 
-```
-sudo apt-get install libgtest-dev cmake
-cd /usr/src/gtest
-sudo cmake .
-sudo make
-sudo make install
-```
+see .travis.yml
