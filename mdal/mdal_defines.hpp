@@ -6,7 +6,7 @@
 #ifndef MDAL_DEFINES_HPP
 #define MDAL_DEFINES_HPP
 
-#include <QVector>
+#include <vector>
 
 namespace MDAL {
 
@@ -15,12 +15,12 @@ typedef struct {
     double y;
 } Vertex;
 
-typedef QVector<int> Face;
+typedef std::vector<int> Face;
 
 
 struct Mesh {
-    QVector<Vertex> vertices;
-    QVector<Face> faces;
+    std::vector<Vertex> vertices;
+    std::vector<Face> faces;
 };
 
 } // namespace MDAL

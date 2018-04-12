@@ -6,7 +6,8 @@
 #ifndef MDAL_2DM_HPP
 #define MDAL_2DM_HPP
 
-#include <QString>
+#include <string>
+
 #include "mdal_defines.hpp"
 #include "mdal.h"
 
@@ -14,11 +15,11 @@ namespace MDAL {
 
 class Loader2dm {
 public:
-    Loader2dm(const QString& meshFile);
+    Loader2dm(const std::string& meshFile);
     Mesh* load(Status* status);
 
 private:
-    QString mMeshFile;
+    std::string mMeshFile;
 };
 
 } // namespace MDAL

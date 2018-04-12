@@ -16,7 +16,7 @@ matrix:
 
 before_install:
      - sudo apt-get -qq update
-     - sudo apt-get install -qq qtbase5-dev
+     - sudo apt-get install -qq libgtest-dev
 
 script:
      - mkdir -p build

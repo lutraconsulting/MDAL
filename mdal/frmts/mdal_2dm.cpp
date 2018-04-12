@@ -5,11 +5,21 @@
 
 #include "mdal_2dm.hpp"
 #include "mdal.h"
+#include "mdal_utils.hpp"
 
-#include <QFile>
-#include <QTextStream>
+//#include <QFile>
+//#include <QTextStream>
 
-MDAL::Loader2dm::Loader2dm(const QString &meshFile):
+#include <iosfwd>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <map>
+#include <cassert>
+
+MDAL::Loader2dm::Loader2dm(const std::string &meshFile):
     mMeshFile(meshFile)
 {
 }
@@ -20,8 +30,9 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
     if (status) *status = Status::None;
 
     //std::cerr << "CF: opening 2DM: " << twoDMFileName.toAscii().data() << std::endl;
-    QString twoDMFileName(mMeshFile);
+    //QString twoDMFileName(mMeshFile);
 
+    /*
     QFile file(twoDMFileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -29,9 +40,20 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
       if (status) *status = Status::Err_FileNotFound;
       return 0;
     }
+    */
 
-    QTextStream in(&file);
-    if (!in.readLine().startsWith("MESH2D"))
+    if (!MDAL::file_exists(mMeshFile))
+    {
+        if (status) *status = Status::Err_FileNotFound;
+        return 0;
+    }
+
+
+    //QTextStream in(&file);
+    std::ifstream in(mMeshFile, std::ifstream::in);
+    //if (!in.readLine().startsWith("MESH2D"))
+    MDAL::String line;
+    if (!std::getline(in, line) || !line.startsWith("MESH2D"))
     {
       //if (status) status->mLastError = LoadStatus::Err_UnknownFormat;
       if (status) *status = Status::Err_UnknownFormat;
@@ -42,9 +64,12 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
     int nodeCount = 0;
 
     // Find out how many nodes and elements are contained in the .2dm mesh file
-    while (!in.atEnd())
+    //while (!in.atEnd())
+    while (std::getline(in, line))
     {
-      QString line = in.readLine();
+      //QString line = in.readLine();
+      //if( line.startsWith("E4Q") ||
+      //    line.startsWith("E3T"))
       if( line.startsWith("E4Q") ||
           line.startsWith("E3T"))
       {
@@ -69,8 +94,8 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
     // Allocate memory
     //Mesh::Nodes nodes(nodeCount);
     //Mesh::Elements elements(elemCount);
-    QVector<Vertex> vertices(nodeCount);
-    QVector<Face> faces(elemCount);
+    std::vector<Vertex> vertices(nodeCount);
+    std::vector<Face> faces(elemCount);
 
     /*
     // create output for bed elevation
@@ -80,26 +105,37 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
     memset(o->getActive().data(), 1, elemCount); // All cells active
     */
 
-    in.seek(0);
-    QStringList chunks = QStringList();
+    //in.seek(0);
+    in.clear();
+    in.seekg(0, std::ios::beg);
+
+    //QStringList chunks = QStringList();
+    std::vector<MDAL::String> chunks;
 
     int elemIndex = 0;
     int nodeIndex = 0;
-    QMap<int, int> elemIDtoIndex;
-    QMap<int, int> nodeIDtoIndex;
+    //QMap<int, int> elemIDtoIndex;
+    //QMap<int, int> nodeIDtoIndex;
+    std::map<int, int> elemIDtoIndex;
+    std::map<int, int> nodeIDtoIndex;
     //int maxElemID = 0;
     //int maxNodeID = 0;
 
-    while (!in.atEnd())
+    //while (!in.atEnd())
+    while (std::getline(in, line))
     {
-      QString line = in.readLine();
+      //QString line = in.readLine();
       if( line.startsWith("E4Q") )
       {
-        chunks = line.split(" ", QString::SkipEmptyParts);
-        Q_ASSERT(elemIndex < elemCount);
+        //chunks = line.split(" ", QString::SkipEmptyParts);
+        chunks = line.split(" ");
+        assert(elemIndex < elemCount);
 
         int elemID = chunks[1].toInt();
-        if (elemIDtoIndex.contains(elemID))
+
+        std::map<int, int>::iterator search = elemIDtoIndex.find(elemID);
+        //if (elemIDtoIndex.contains(elemID))
+        if (search != elemIDtoIndex.end())
         {
           //if (status) status->mLastWarning = LoadStatus::Warn_ElementNotUnique;
           if (status) *status = Status::Warn_ElementNotUnique;
@@ -123,11 +159,15 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
       }
       else if( line.startsWith("E3T") )
       {
-        chunks = line.split(" ", QString::SkipEmptyParts);
-        Q_ASSERT(elemIndex < elemCount);
+        //chunks = line.split(" ", QString::SkipEmptyParts);
+        chunks = line.split(" ");
+        assert(elemIndex < elemCount);
 
         uint elemID = chunks[1].toInt();
-        if (elemIDtoIndex.contains(elemID))
+
+        std::map<int, int>::iterator search = elemIDtoIndex.find(elemID);
+        //if (elemIDtoIndex.contains(elemID))
+        if (search != elemIDtoIndex.end())
         {
           //if (status) status->mLastWarning = LoadStatus::Warn_ElementNotUnique;
           if (status) *status = Status::Warn_ElementNotUnique;
@@ -143,9 +183,10 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
         // elem.setEType(Element::E3T);
         face.resize(3);
         // Right now we just store node IDs here - we will convert them to node indices afterwards
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 3; ++i) {
           //elem.setP(i, chunks[i+2].toInt());
           face[i] = chunks[i+2].toInt();
+        }
 
         elemIndex++;
       }
@@ -156,11 +197,15 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
                line.startsWith("E9Q"))
       {
         // We do not yet support these elements
-        chunks = line.split(" ", QString::SkipEmptyParts);
-        Q_ASSERT(elemIndex < elemCount);
+        //chunks = line.split(" ", QString::SkipEmptyParts);
+        chunks = line.split(" ");
+        assert(elemIndex < elemCount);
 
         uint elemID = chunks[1].toInt();
-        if (elemIDtoIndex.contains(elemID))
+
+        std::map<int, int>::iterator search = elemIDtoIndex.find(elemID);
+        //if (elemIDtoIndex.contains(elemID))
+        if (search != elemIDtoIndex.end())
         {
           //if (status) status->mLastWarning = LoadStatus::Warn_ElementNotUnique;
           if (status) *status = Status::Warn_ElementNotUnique;
@@ -170,17 +215,20 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
         //if (elemID > maxElemID)
         //  maxElemID = elemID;
 
-        Q_ASSERT(false); //WHAT TO DO?
+        assert(false); //WHAT TO DO?
         //elements[elemIndex].setEType(Element::Undefined);
 
         elemIndex++;
       }
       else if( line.startsWith("ND") )
       {
-        chunks = line.split(" ", QString::SkipEmptyParts);
+        //chunks = line.split(" ", QString::SkipEmptyParts);
+        chunks = line.split(" ");
         int nodeID = chunks[1].toInt();
 
-        if (nodeIDtoIndex.contains(nodeID))
+        std::map<int, int>::iterator search = nodeIDtoIndex.find(nodeID);
+        // if (nodeIDtoIndex.contains(nodeID))
+        if (search != nodeIDtoIndex.end())
         {
           //if (status) status->mLastWarning = LoadStatus::Warn_NodeNotUnique;
           if (status) *status = Status::Warn_NodeNotUnique;
@@ -190,7 +238,7 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
         //if (nodeID > maxNodeID)
         //  maxNodeID = nodeID;
 
-        Q_ASSERT(nodeIndex < nodeCount);
+        assert(nodeIndex < nodeCount);
 
         //Node& n = nodes[nodeIndex];
         //n.setId(nodeID);
@@ -205,7 +253,8 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
 
 
     //for (Mesh::Elements::iterator it = elements.begin(); it != elements.end(); ++it)
-    for (QVector<Face>::iterator it = faces.begin(); it != faces.end(); ++it)
+    //for (QVector<Face>::iterator it = faces.begin(); it != faces.end(); ++it)
+    for (std::vector<Face>::iterator it = faces.begin(); it != faces.end(); ++it)
     {
       //if( it->isDummy() )
       //  continue;
@@ -219,16 +268,18 @@ MDAL::Mesh *MDAL::Loader2dm::load(Status* status)
       {
         //int nodeID = elem.p(nd);
         int nodeID = face[nd];
-        QMap<int, int>::const_iterator ni2i = nodeIDtoIndex.constFind(nodeID);
+
+        //QMap<int, int>::const_iterator ni2i = nodeIDtoIndex.constFind(nodeID);
+        std::map<int, int>::iterator ni2i = nodeIDtoIndex.find(nodeID);
         if (ni2i != nodeIDtoIndex.end())
         {
           //elem.setP(nd, *ni2i); // convert from ID to index
-          face[nd] = *ni2i;
+          face[nd] = ni2i->second;
         }
         else
         {
           //elem.setEType(Element::Undefined); // mark element as unusable
-          Q_ASSERT(false); //TODO what to do here?
+          assert(false); //TODO what to do here?
 
           //if (status) status->mLastWarning = LoadStatus::Warn_ElementWithInvalidNode;
           if (status) *status = Status::Warn_ElementWithInvalidNode;

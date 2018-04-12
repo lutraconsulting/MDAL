@@ -1,11 +1,13 @@
 SET(MDAL_SOURCES 
   mdal.cpp
+  mdal_utils.cpp
   mdal_loader.cpp
   frmts/mdal_2dm.cpp
 )
 
 SET(MDAL_HEADERS
   mdal.h
+  mdal_utils.hpp
   mdal_loader.hpp
   mdal_defines.hpp
   frmts/mdal_2dm.hpp
@@ -21,7 +23,6 @@ ADD_LIBRARY(mdal SHARED
 	${MDAL_SOURCES}
 	${MDAL_HEADERS}
 )
-TARGET_LINK_LIBRARIES(mdal Qt5::Core)
 
 INSTALL(TARGETS mdal LIBRARY DESTINATION lib)
 INSTALL(FILES mdal.h DESTINATION include)

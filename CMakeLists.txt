@@ -1,15 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 PROJECT(MDAL)
+SET (CMAKE_CXX_STANDARD 11)
 
 #############################################################
 # global vars
 SET (MDAL_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output CACHE PATH "Output base directory")
 SET (ENABLE_TESTS TRUE CACHE BOOL "Build tests?")
-
-#############################################################
-# deps
-INCLUDE(GenerateExportHeader)
-FIND_PACKAGE(Qt5 COMPONENTS Core Test REQUIRED)
 
 #############################################################
 # warnings https://stackoverflow.com/a/3818084/2838364
@@ -32,7 +28,7 @@ ADD_SUBDIRECTORY(mdal)
 #############################################################
 # testing
 IF (ENABLE_TESTS)
-  SET( QT_USE_QTTEST  TRUE )
+  FIND_PACKAGE(GTest REQUIRED)
   ADD_DEFINITIONS(-DENABLE_TESTS)
   ENABLE_TESTING()
   ADD_SUBDIRECTORY(tests)

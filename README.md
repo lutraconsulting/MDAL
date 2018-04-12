@@ -4,3 +4,13 @@
 Mesh Data Abstraction Library
 
 see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119#issuecomment-380018557)
+
+# Tests
+
+```
+sudo apt-get install libgtest-dev cmake
+cd /usr/src/gtest
+sudo cmake .
+sudo make
+sudo make install
+```

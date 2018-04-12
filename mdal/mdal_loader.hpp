@@ -6,6 +6,8 @@
 #ifndef MDAL_LOADER_HPP
 #define MDAL_LOADER_HPP
 
+#include <string>
+
 #include "mdal.h"
 #include "mdal_defines.hpp"
 
@@ -13,7 +15,7 @@ namespace MDAL {
 
 class Loader {
 public:
-    static Mesh* load(const QString& meshFile, Status* status);
+    static Mesh* load(const std::string &meshFile, Status* status);
 };
 
 } // namespace MDAL
