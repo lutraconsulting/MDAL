@@ -21,14 +21,14 @@ before_install:
 jobs:
   include:
     - stage: Test
-    script:
-      - mkdir -p build
-      - cd build
-      - cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
-      - make
-      - ctest -VV
+      script:
+        - mkdir -p build
+        - cd build
+        - cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
+        - make
+        - ctest -VV
     - stage: Format
-    script:
-      - cd scripts
-      - ./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.cpp* -print`
+      script:
+        - cd scripts
+        - ./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.cpp* -print`
 
