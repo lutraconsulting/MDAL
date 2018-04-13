@@ -7,7 +7,7 @@
 #define MDAL_H
 
 #if defined _WIN32 || defined __CYGWIN__
-  #ifdef MDAL_LIBRARY
+  #ifdef mdal_EXPORTS
     #ifdef __GNUC__
       #define MDAL_EXPORT __attribute__ ((dllexport))
     #else
@@ -54,6 +54,7 @@ enum Status
 /* Mesh */
 typedef void* MeshH;
 
+MDAL_EXPORT const char* MDAL_Version();
 
 MDAL_EXPORT Status MDAL_LastStatus();
 

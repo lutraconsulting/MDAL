@@ -6,6 +6,8 @@ SET (CMAKE_CXX_STANDARD 11)
 # global vars
 SET (MDAL_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output CACHE PATH "Output base directory")
 SET (ENABLE_TESTS TRUE CACHE BOOL "Build tests?")
+SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables?")
+SET (MDAL_VERSION "0.0.1" CACHE STRING "MDAL version label")
 
 #############################################################
 # warnings https://stackoverflow.com/a/3818084/2838364
@@ -24,6 +26,12 @@ ENDIF()
 #############################################################
 # library
 ADD_SUBDIRECTORY(mdal)
+
+#############################################################
+# tools
+IF(BUILD_TOOLS)
+  ADD_SUBDIRECTORY(tools)
+ENDIF(BUILD_TOOLS)
 
 #############################################################
 # testing

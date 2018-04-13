@@ -7,6 +7,12 @@
 
 static Status sLastStatus;
 
+const char* MDAL_Version() {
+#define xstr(s) str(s)
+#define str(s) #s
+      return xstr( MDAL_VERSION );
+}
+
 Status MDAL_LastStatus()
 {
     return sLastStatus;
