@@ -7,16 +7,19 @@
 //mdal
 #include "mdal.h"
 
-TEST(HelloTest, PositiveNos) {
-    ASSERT_EQ(6, 6);
+TEST( HelloTest, PositiveNos )
+{
+  ASSERT_EQ( 6, 6 );
 }
 
-TEST(HelloTest2, NegativeNos) {
-    ASSERT_EQ(-1.0, -1.0);
+TEST( HelloTest2, NegativeNos )
+{
+  ASSERT_EQ( -1.0, -1.0 );
 }
 
-int main(int argc, char **argv) {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+int main( int argc, char **argv )
+{
+  testing::InitGoogleTest( &argc, argv );
+  return RUN_ALL_TESTS();
 }
 

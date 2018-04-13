@@ -11,16 +11,18 @@
 #include "mdal_defines.hpp"
 #include "mdal.h"
 
-namespace MDAL {
+namespace MDAL
+{
 
-class Loader2dm {
-public:
-    Loader2dm(const std::string& meshFile);
-    Mesh* load(Status* status);
+  class Loader2dm
+  {
+    public:
+      Loader2dm( const std::string &meshFile );
+      Mesh *load( Status *status );
 
-private:
-    std::string mMeshFile;
-};
+    private:
+      std::string mMeshFile;
+  };
 
 } // namespace MDAL
 #endif //MDAL_2DM_HPP

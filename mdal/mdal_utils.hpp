@@ -9,20 +9,22 @@
 #include <string>
 #include <vector>
 
-namespace MDAL {
+namespace MDAL
+{
 
-bool file_exists(const std::string& filename);
+  bool file_exists( const std::string &filename );
 
-class String: public std::string {
-public:
-   String();
-   String(const std::string& str);
-   bool startsWith(const std::string& substr);
-   std::vector<String> split(const std::string& delimiter);
-   int toInt();
-   double toDouble();
+  class String: public std::string
+  {
+    public:
+      String();
+      String( const std::string &str );
+      bool startsWith( const std::string &substr );
+      std::vector<String> split( const std::string &delimiter );
+      int toInt();
+      double toDouble();
 
-};
+  };
 
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

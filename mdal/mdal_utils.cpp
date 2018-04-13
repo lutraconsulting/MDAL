@@ -6,56 +6,60 @@
 #include "mdal_utils.hpp"
 #include <fstream>
 
-bool MDAL::file_exists(const std::string& filename) {
-    std::ifstream in(filename);
-    return in.good();
+bool MDAL::file_exists( const std::string &filename )
+{
+  std::ifstream in( filename );
+  return in.good();
 }
 
 
 MDAL::String::String()
-    :std::string()
+  : std::string()
 {
 }
 
-MDAL::String::String(const std::string &str)
-:std::string(str)
+MDAL::String::String( const std::string &str )
+  : std::string( str )
 {
 }
 
-bool MDAL::String::startsWith(const std::string &substr)
+bool MDAL::String::startsWith( const std::string &substr )
 {
-    return rfind(substr, 0) == 0;
+  return rfind( substr, 0 ) == 0;
 }
 
-std::vector<MDAL::String> MDAL::String::split(const std::string &delimiter)
+std::vector<MDAL::String> MDAL::String::split( const std::string &delimiter )
 //https://stackoverflow.com/a/44495206/2838364
 {
-    std::string str(*this);
-    bool skip_empty_parts = true;
-    std::vector<String> list;
-    size_t pos = 0;
-    String token;
-    while ((pos = str.find(delimiter)) != std::string::npos) {    
-        token = String(str.substr(0, pos));
+  std::string str( *this );
+  bool skip_empty_parts = true;
+  std::vector<String> list;
+  size_t pos = 0;
+  String token;
+  while ( ( pos = str.find( delimiter ) ) != std::string::npos )
+  {
+    token = String( str.substr( 0, pos ) );
 
-        if (skip_empty_parts) {
-            if (!token.empty())
-                list.push_back(token);
-        } else
-            list.push_back(token);
-
-        str.erase(0, pos + delimiter.length());
+    if ( skip_empty_parts )
+    {
+      if ( !token.empty() )
+        list.push_back( token );
     }
-    list.push_back(str);
-    return list;
+    else
+      list.push_back( token );
+
+    str.erase( 0, pos + delimiter.length() );
+  }
+  list.push_back( str );
+  return list;
 }
 
 int MDAL::String::toInt()
 {
-    return atoi(c_str());
+  return atoi( c_str() );
 }
 
 double MDAL::String::toDouble()
 {
-    return atof( c_str() );
+  return atof( c_str() );
 }

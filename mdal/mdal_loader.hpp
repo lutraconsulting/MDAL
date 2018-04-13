@@ -11,12 +11,14 @@
 #include "mdal.h"
 #include "mdal_defines.hpp"
 
-namespace MDAL {
+namespace MDAL
+{
 
-class Loader {
-public:
-    static Mesh* load(const std::string &meshFile, Status* status);
-};
+  class Loader
+  {
+    public:
+      static Mesh *load( const std::string &meshFile, Status *status );
+  };
 
 } // namespace MDAL
 #endif //MDAL_LOADER_HPP

@@ -8,20 +8,23 @@
 
 #include <vector>
 
-namespace MDAL {
+namespace MDAL
+{
 
-typedef struct {
+  typedef struct
+  {
     double x;
     double y;
-} Vertex;
+  } Vertex;
 
-typedef std::vector<int> Face;
+  typedef std::vector<int> Face;
 
 
-struct Mesh {
+  struct Mesh
+  {
     std::vector<Vertex> vertices;
     std::vector<Face> faces;
-};
+  };
 
 } // namespace MDAL
 #endif //MDAL_DEFINES_HPP

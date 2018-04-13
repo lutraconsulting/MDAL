@@ -6,8 +6,8 @@
 #include "mdal_loader.hpp"
 #include "frmts/mdal_2dm.hpp"
 
-MDAL::Mesh *MDAL::Loader::load(const std::string &meshFile, Status* status)
+MDAL::Mesh *MDAL::Loader::load( const std::string &meshFile, Status *status )
 {
-    MDAL::Loader2dm loader(meshFile);
-    return loader.load(status);
+  MDAL::Loader2dm loader( meshFile );
+  return loader.load( status );
 }

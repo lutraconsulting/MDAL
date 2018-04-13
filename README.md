@@ -8,3 +8,17 @@ see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposal
 # Tests
 
 see .travis.yml
+
+# Development
+
+format code:
+```
+cd scripts
+./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.cpp* -print`
+```
+
+or use git pre-commit hook
+```
+cd MDAL
+ln -s ./scripts/mdal_astyle.sh .git/hooks/pre-commit
+```
