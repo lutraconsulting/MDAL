@@ -9,9 +9,7 @@ static Status sLastStatus;
 
 const char *MDAL_Version()
 {
-#define xstr(s) str(s)
-#define str(s) #s
-  return xstr( MDAL_VERSION );
+  return "0.0.1";
 }
 
 Status MDAL_LastStatus()

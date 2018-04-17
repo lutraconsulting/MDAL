@@ -6,26 +6,30 @@
 #ifndef MDAL_H
 #define MDAL_H
 
-#if defined _WIN32 || defined __CYGWIN__
-#ifdef mdal_EXPORTS
-#ifdef __GNUC__
-#define MDAL_EXPORT __attribute__ ((dllexport))
+#ifdef MDAL_STATIC
+#  define MDAL_EXPORT
 #else
-#define MDAL_EXPORT __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
-#endif
-#else
-#ifdef __GNUC__
-#define MDAL_EXPORT __attribute__ ((dllimport))
-#else
-#define MDAL_EXPORT __declspec(dllimport) // Note: actually gcc seems to also supports this syntax.
-#endif
-#endif
-#else
-#if __GNUC__ >= 4
-#define MDAL_EXPORT __attribute__ ((visibility ("default")))
-#else
-#define MDAL_EXPORT
-#endif
+#  if defined _WIN32 || defined __CYGWIN__
+#    ifdef mdal_EXPORTS
+#      ifdef __GNUC__
+#        define MDAL_EXPORT __attribute__ ((dllexport))
+#      else
+#        define MDAL_EXPORT __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
+#      endif
+#    else
+#      ifdef __GNUC__
+#        define MDAL_EXPORT __attribute__ ((dllimport))
+#      else
+#        define MDAL_EXPORT __declspec(dllimport) // Note: actually gcc seems to also supports this syntax.
+#      endif
+#    endif
+#  else
+#    if __GNUC__ >= 4
+#      define MDAL_EXPORT __attribute__ ((visibility ("default")))
+#    else
+#      define MDAL_EXPORT
+#    endif
+#  endif
 #endif
 
 #ifdef __cplusplus

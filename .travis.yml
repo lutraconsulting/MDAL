@@ -30,5 +30,5 @@ jobs:
     - stage: Format
       script:
         - cd scripts
-        - ./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.cpp* -print`
+        - ./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.c* -print`
 

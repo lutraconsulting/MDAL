@@ -6,41 +6,29 @@
 #include "mdal_utils.hpp"
 #include <fstream>
 
-bool MDAL::file_exists( const std::string &filename )
+bool MDAL::fileExists( const std::string &filename )
 {
   std::ifstream in( filename );
   return in.good();
 }
 
 
-MDAL::String::String()
-  : std::string()
+bool MDAL::startsWith( const std::string &str, const std::string &substr )
 {
+  return str.rfind( substr, 0 ) == 0;
 }
 
-MDAL::String::String( const std::string &str )
-  : std::string( str )
+std::vector<std::string> MDAL::split( const std::string &str, const std::string &delimiter, SplitBehaviour behaviour )
 {
-}
-
-bool MDAL::String::startsWith( const std::string &substr )
-{
-  return rfind( substr, 0 ) == 0;
-}
-
-std::vector<MDAL::String> MDAL::String::split( const std::string &delimiter )
-//https://stackoverflow.com/a/44495206/2838364
-{
-  std::string str( *this );
-  bool skip_empty_parts = true;
-  std::vector<String> list;
+  std::string remaining( str );
+  std::vector<std::string> list;
   size_t pos = 0;
-  String token;
-  while ( ( pos = str.find( delimiter ) ) != std::string::npos )
+  std::string token;
+  while ( ( pos = remaining.find( delimiter ) ) != std::string::npos )
   {
-    token = String( str.substr( 0, pos ) );
+    token = remaining.substr( 0, pos );
 
-    if ( skip_empty_parts )
+    if ( behaviour == SplitBehaviour::SkipEmptyParts )
     {
       if ( !token.empty() )
         list.push_back( token );
@@ -48,18 +36,18 @@ std::vector<MDAL::String> MDAL::String::split( const std::string &delimiter )
     else
       list.push_back( token );
 
-    str.erase( 0, pos + delimiter.length() );
+    remaining.erase( 0, pos + delimiter.length() );
   }
-  list.push_back( str );
+  list.push_back( remaining );
   return list;
 }
 
-int MDAL::String::toInt()
+int MDAL::toInt(const std::string &str)
 {
-  return atoi( c_str() );
+  return atoi( str.c_str() );
 }
 
-double MDAL::String::toDouble()
+double MDAL::toDouble(const std::string &str)
 {
-  return atof( c_str() );
+  return atof( str.c_str() );
 }

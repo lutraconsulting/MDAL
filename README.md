@@ -14,7 +14,7 @@ see .travis.yml
 format code:
 ```
 cd scripts
-./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.cpp* -print`
+./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.c* -print`
 ```
 
 or use git pre-commit hook

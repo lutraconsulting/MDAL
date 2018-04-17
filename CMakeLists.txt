@@ -7,7 +7,6 @@ SET (CMAKE_CXX_STANDARD 11)
 SET (MDAL_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output CACHE PATH "Output base directory")
 SET (ENABLE_TESTS TRUE CACHE BOOL "Build tests?")
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables?")
-SET (MDAL_VERSION "0.0.1" CACHE STRING "MDAL version label")
 
 #############################################################
 # warnings https://stackoverflow.com/a/3818084/2838364

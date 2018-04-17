@@ -12,19 +12,19 @@
 namespace MDAL
 {
 
-  bool file_exists( const std::string &filename );
+  // files
+  bool fileExists( const std::string &filename );
 
-  class String: public std::string
-  {
-    public:
-      String();
-      String( const std::string &str );
-      bool startsWith( const std::string &substr );
-      std::vector<String> split( const std::string &delimiter );
-      int toInt();
-      double toDouble();
+  // strings
+  bool startsWith( const std::string &str, const std::string &substr );
+  int toInt( const std::string &str );
+  double toDouble( const std::string &str );
 
+  enum SplitBehaviour {
+      SkipEmptyParts,
+      KeepEmptyParts
   };
+  std::vector<std::string> split( const std::string &str, const std::string &delimiter, SplitBehaviour behaviour );
 
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP
