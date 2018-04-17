@@ -20,9 +20,10 @@ namespace MDAL
   int toInt( const std::string &str );
   double toDouble( const std::string &str );
 
-  enum SplitBehaviour {
-      SkipEmptyParts,
-      KeepEmptyParts
+  enum SplitBehaviour
+  {
+    SkipEmptyParts,
+    KeepEmptyParts
   };
   std::vector<std::string> split( const std::string &str, const std::string &delimiter, SplitBehaviour behaviour );
 

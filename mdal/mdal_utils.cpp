@@ -42,12 +42,12 @@ std::vector<std::string> MDAL::split( const std::string &str, const std::string 
   return list;
 }
 
-int MDAL::toInt(const std::string &str)
+int MDAL::toInt( const std::string &str )
 {
   return atoi( str.c_str() );
 }
 
-double MDAL::toDouble(const std::string &str)
+double MDAL::toDouble( const std::string &str )
 {
   return atof( str.c_str() );
 }

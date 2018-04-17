@@ -131,7 +131,7 @@ MDAL::Mesh *MDAL::Loader2dm::load( Status *status )
       chunks = split( line,  " ", SplitBehaviour::SkipEmptyParts );
       assert( elemIndex < elemCount );
 
-      int elemID = toInt(chunks[1]);
+      int elemID = toInt( chunks[1] );
 
       std::map<int, int>::iterator search = elemIDtoIndex.find( elemID );
       //if (elemIDtoIndex.contains(elemID))
@@ -153,7 +153,7 @@ MDAL::Mesh *MDAL::Loader2dm::load( Status *status )
       // Right now we just store node IDs here - we will convert them to node indices afterwards
       for ( int i = 0; i < 4; ++i )
         //elem.setP(i, chunks[i+2].toInt());
-        face[i] = toInt(chunks[i + 2]);
+        face[i] = toInt( chunks[i + 2] );
 
       elemIndex++;
     }
@@ -163,7 +163,7 @@ MDAL::Mesh *MDAL::Loader2dm::load( Status *status )
       chunks = split( line,  " ", SplitBehaviour::SkipEmptyParts );
       assert( elemIndex < elemCount );
 
-      uint elemID = toInt(chunks[1]);
+      uint elemID = toInt( chunks[1] );
 
       std::map<int, int>::iterator search = elemIDtoIndex.find( elemID );
       //if (elemIDtoIndex.contains(elemID))
@@ -186,7 +186,7 @@ MDAL::Mesh *MDAL::Loader2dm::load( Status *status )
       for ( int i = 0; i < 3; ++i )
       {
         //elem.setP(i, chunks[i+2].toInt());
-        face[i] = toInt(chunks[i + 2]);
+        face[i] = toInt( chunks[i + 2] );
       }
 
       elemIndex++;
@@ -202,7 +202,7 @@ MDAL::Mesh *MDAL::Loader2dm::load( Status *status )
       chunks = split( line,  " ", SplitBehaviour::SkipEmptyParts );
       assert( elemIndex < elemCount );
 
-      uint elemID = toInt(chunks[1]);
+      uint elemID = toInt( chunks[1] );
 
       std::map<int, int>::iterator search = elemIDtoIndex.find( elemID );
       //if (elemIDtoIndex.contains(elemID))
@@ -225,7 +225,7 @@ MDAL::Mesh *MDAL::Loader2dm::load( Status *status )
     {
       //chunks = line.split(" ", QString::SkipEmptyParts);
       chunks = split( line,  " ", SplitBehaviour::SkipEmptyParts );
-      int nodeID = toInt(chunks[1]);
+      int nodeID = toInt( chunks[1] );
 
       std::map<int, int>::iterator search = nodeIDtoIndex.find( nodeID );
       // if (nodeIDtoIndex.contains(nodeID))
@@ -244,8 +244,8 @@ MDAL::Mesh *MDAL::Loader2dm::load( Status *status )
       //Node& n = nodes[nodeIndex];
       //n.setId(nodeID);
       Vertex &vertex = vertices[nodeIndex];
-      vertex.x = toDouble(chunks[2]);
-      vertex.y = toDouble(chunks[3]);
+      vertex.x = toDouble( chunks[2] );
+      vertex.y = toDouble( chunks[3] );
       //o->getValues()[nodeIndex] = chunks[4].toFloat();
 
       nodeIndex++;
