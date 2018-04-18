@@ -8,16 +8,19 @@
 
 #include <string>
 #include <vector>
+#include <stddef.h>
 
 namespace MDAL
 {
 
-  // files
+  /** Return whether file exists */
   bool fileExists( const std::string &filename );
 
   // strings
   bool startsWith( const std::string &str, const std::string &substr );
-  int toInt( const std::string &str );
+
+  /** Return 0 if not possible to convert */
+  size_t toSizeT( const std::string &str );
   double toDouble( const std::string &str );
 
   enum SplitBehaviour

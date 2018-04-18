@@ -42,9 +42,12 @@ std::vector<std::string> MDAL::split( const std::string &str, const std::string 
   return list;
 }
 
-int MDAL::toInt( const std::string &str )
+size_t MDAL::toSizeT( const std::string &str )
 {
-  return atoi( str.c_str() );
+  int i = atoi( str.c_str() );
+  if (i < 0) // consistent with atoi return
+      i = 0;
+  return i;
 }
 
 double MDAL::toDouble( const std::string &str )

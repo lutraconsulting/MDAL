@@ -38,32 +38,31 @@ INCLUDE_DIRECTORIES(
 
 #########################################################################
 #########################################################################
+ADD_DEFINITIONS(-DTESTDATA="${CMAKE_CURRENT_SOURCE_DIR}/data")
+ADD_LIBRARY(mdaltestutils OBJECT mdal_testutils.hpp mdal_testutils.cpp )
+
 #########################################################################
 #########################################################################
 
 INCLUDE_DIRECTORIES(  
-  # ${GTEST_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/mdal
   ${CMAKE_SOURCE_DIR}/mdal
 )
 
-
-
 MACRO (ADD_MDAL_TEST TESTSRC)
   SET (TESTNAME  ${TESTSRC})
-  STRING(REPLACE "test" "" TESTNAME ${TESTNAME})
-  STRING(REPLACE "mdal" "" TESTNAME ${TESTNAME})
+  STRING(REPLACE "test_" "" TESTNAME ${TESTNAME})
   STRING(REPLACE ".cpp" "" TESTNAME ${TESTNAME})
   SET (TESTNAME  "mdal_${TESTNAME}test")
-  ADD_EXECUTABLE(${TESTNAME} ${TESTSRC})
+  ADD_EXECUTABLE(${TESTNAME} ${TESTSRC} $<TARGET_OBJECTS:mdaltestutils>)
   TARGET_LINK_LIBRARIES(${TESTNAME} gtest gmock ${CMAKE_THREAD_LIBS_INIT} mdal)
   ADD_TEST(${TESTNAME} ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME})
 ENDMACRO (ADD_MDAL_TEST)
 
 SET(TESTS
-    testmdalcore.cpp
+    test_2dm.cpp
 )
 
 FOREACH(TESTSRC ${TESTS})

@@ -6,6 +6,7 @@
 #ifndef MDAL_DEFINES_HPP
 #define MDAL_DEFINES_HPP
 
+#include <stddef.h>
 #include <vector>
 
 namespace MDAL
@@ -17,8 +18,7 @@ namespace MDAL
     double y;
   } Vertex;
 
-  typedef std::vector<int> Face;
-
+  typedef std::vector<size_t> Face;
 
   struct Mesh
   {
