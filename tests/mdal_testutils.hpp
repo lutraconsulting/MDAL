@@ -7,6 +7,6 @@
 #define MDAL_TESTUTILS_HPP
 
 
-const char* data_path();
+const char *data_path();
 
 #endif // MDAL_TESTUTILS_HPP

@@ -45,8 +45,8 @@ std::vector<std::string> MDAL::split( const std::string &str, const std::string 
 size_t MDAL::toSizeT( const std::string &str )
 {
   int i = atoi( str.c_str() );
-  if (i < 0) // consistent with atoi return
-      i = 0;
+  if ( i < 0 ) // consistent with atoi return
+    i = 0;
   return i;
 }
 

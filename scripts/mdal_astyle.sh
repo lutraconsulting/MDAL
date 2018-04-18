@@ -3,7 +3,7 @@
 # files to check
 if [ $# -eq 0 ]; then
     # No arguments provided
-    FILES=`git diff --cached --name-only --diff-filter=ACMR | grep -E "\.(c|cpp|h|hpp)$"`
+    FILES=`git diff --name-only --diff-filter=ACMR | grep -E "\.(c|cpp|h|hpp)$"`
 else
     FILES="$@"
 fi

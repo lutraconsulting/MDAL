@@ -2,7 +2,8 @@
 #define str(a) #a
 
 
-const char* data_path() {
-    return TESTDATA;
+const char *data_path()
+{
+  return TESTDATA;
 }
 
