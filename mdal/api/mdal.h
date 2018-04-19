@@ -36,10 +36,8 @@
 extern "C" {
 #endif
 
-#include <stddef.h>
-
 /* Statuses */
-enum Status
+enum MDAL_Status
 {
   None,
   // Errors
@@ -57,32 +55,32 @@ enum Status
   Warn_NodeNotUnique
 };
 
-/* Mesh */
+//! Mesh
 typedef void *MeshH;
 
-/** Return MDAL version */
+//! Return MDAL version
 MDAL_EXPORT const char *MDAL_Version();
 
-/** Return last status message */
-MDAL_EXPORT Status MDAL_LastStatus();
+//! Return last status message
+MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 
-/** Load mesh file. On error see MDAL_LastStatus for error type This effectively loads whole mesh in-memory*/
+//! Load mesh file. On error see MDAL_LastStatus for error type This effectively loads whole mesh in-memory
 MDAL_EXPORT MeshH MDAL_LoadMesh( const char *meshFile );
-/** Close mesh, free the memory */
+//! Close mesh, free the memory
 MDAL_EXPORT void MDAL_CloseMesh( MeshH mesh );
 
-/** Return vertex count for the mesh */
-MDAL_EXPORT size_t MDAL_M_vertexCount( MeshH mesh );
-/** Return vertex X coord for the mesh */
-MDAL_EXPORT double MDAL_M_vertexXCoordinatesAt( MeshH mesh, size_t index );
-/** Return vertex Y coord for the mesh */
-MDAL_EXPORT double MDAL_M_vertexYCoordinatesAt( MeshH mesh, size_t index );
-/** Return face count for the mesh */
-MDAL_EXPORT size_t MDAL_M_faceCount( MeshH mesh );
-/** Return number of vertices face consist of, e.g. 3 for triangle */
-MDAL_EXPORT size_t MDAL_M_faceVerticesCountAt( MeshH mesh, size_t index );
-/** Return vertex index for face */
-MDAL_EXPORT size_t MDAL_M_faceVerticesIndexAt( MeshH mesh, size_t face_index, size_t vertex_index );
+//! Return vertex count for the mesh
+MDAL_EXPORT int MDAL_M_vertexCount( MeshH mesh );
+//! Return vertex X coord for the mesh
+MDAL_EXPORT double MDAL_M_vertexXCoordinatesAt( MeshH mesh, int index );
+//! Return vertex Y coord for the mesh
+MDAL_EXPORT double MDAL_M_vertexYCoordinatesAt( MeshH mesh, int index );
+//! Return face count for the mesh
+MDAL_EXPORT int MDAL_M_faceCount( MeshH mesh );
+//! Return number of vertices face consist of, e.g. 3 for triangle
+MDAL_EXPORT int MDAL_M_faceVerticesCountAt( MeshH mesh, int index );
+//! Return vertex index for face
+MDAL_EXPORT int MDAL_M_faceVerticesIndexAt( MeshH mesh, int face_index, int vertex_index );
 
 #ifdef __cplusplus
 }

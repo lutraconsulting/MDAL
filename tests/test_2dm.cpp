@@ -12,8 +12,8 @@ TEST( Mesh2DMTest, MissingFile )
 {
   MeshH m = MDAL_LoadMesh( "non/existent/path.2dm" );
   EXPECT_EQ( nullptr, m );
-  Status s = MDAL_LastStatus();
-  EXPECT_EQ( Status::Err_FileNotFound, s );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_FileNotFound, s );
 }
 
 TEST( Mesh2DMTest, WrongFile )
@@ -22,8 +22,8 @@ TEST( Mesh2DMTest, WrongFile )
   path += "/2dm/not_a_mesh_file.2dm";
   MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
-  Status s = MDAL_LastStatus();
-  EXPECT_EQ( Status::Err_UnknownFormat, s );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
 }
 
 TEST( Mesh2DMTest, QuadAndTriangleFile )
@@ -32,28 +32,28 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   path += "/2dm/quad_and_triangle.2dm";
   MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
-  Status s = MDAL_LastStatus();
-  ASSERT_EQ( Status::None, s );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
 
-  size_t v_count = MDAL_M_vertexCount( m );
-  EXPECT_EQ( v_count, ( size_t ) 5 );
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 5 );
   double x = MDAL_M_vertexXCoordinatesAt( m, 0 );
   double y = MDAL_M_vertexYCoordinatesAt( m, 0 );
   EXPECT_EQ( 1000.0, x );
   EXPECT_EQ( 2000.0, y );
 
-  size_t f_count = MDAL_M_faceCount( m );
-  EXPECT_EQ( ( size_t ) 2, f_count );
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 2, f_count );
 
-  size_t f_v_count = MDAL_M_faceVerticesCountAt( m, 0 );
-  EXPECT_EQ( ( size_t ) 4, f_v_count ); //quad
-  size_t f_v = MDAL_M_faceVerticesIndexAt( m, 0, 0 );
-  EXPECT_EQ( ( size_t ) 0, f_v );
+  int f_v_count = MDAL_M_faceVerticesCountAt( m, 0 );
+  EXPECT_EQ( 4, f_v_count ); //quad
+  int f_v = MDAL_M_faceVerticesIndexAt( m, 0, 0 );
+  EXPECT_EQ( 0, f_v );
 
   f_v_count = MDAL_M_faceVerticesCountAt( m, 1 );
-  EXPECT_EQ( f_v_count, ( size_t ) 3 ); //triangle
+  EXPECT_EQ( f_v_count, 3 ); //triangle
   f_v = MDAL_M_faceVerticesIndexAt( m, 1, 0 );
-  EXPECT_EQ( ( size_t ) 1, f_v );
+  EXPECT_EQ( 1, f_v );
 
   MDAL_CloseMesh( m );
 }
