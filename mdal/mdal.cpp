@@ -24,7 +24,7 @@ MeshH MDAL_LoadMesh( const char *meshFile )
     return nullptr;
 
   std::string filename( meshFile );
-  return ( MeshH ) MDAL::Loader::load( filename, &sLastStatus );
+  return static_cast< MeshH >( MDAL::Loader::load( filename, &sLastStatus ) );
 }
 
 
@@ -32,7 +32,7 @@ void MDAL_CloseMesh( MeshH mesh )
 {
   if ( mesh )
   {
-    MDAL::Mesh *m = ( MDAL::Mesh * ) mesh;
+    MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
     delete m;
   }
 }
@@ -41,7 +41,7 @@ void MDAL_CloseMesh( MeshH mesh )
 int MDAL_M_vertexCount( MeshH mesh )
 {
   assert( mesh );
-  MDAL::Mesh *m = ( MDAL::Mesh * ) mesh;
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   int len = static_cast<int>( m->vertices.size() );
   return len;
 }
@@ -49,7 +49,7 @@ int MDAL_M_vertexCount( MeshH mesh )
 double MDAL_M_vertexXCoordinatesAt( MeshH mesh, int index )
 {
   assert( mesh );
-  MDAL::Mesh *m = ( MDAL::Mesh * ) mesh;
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   assert( index > -1 );
   size_t i = static_cast<size_t>( index );
   assert( m->vertices.size() > i );
@@ -59,7 +59,7 @@ double MDAL_M_vertexXCoordinatesAt( MeshH mesh, int index )
 double MDAL_M_vertexYCoordinatesAt( MeshH mesh, int index )
 {
   assert( mesh );
-  MDAL::Mesh *m = ( MDAL::Mesh * ) mesh;
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   assert( index > -1 );
   size_t i = static_cast<size_t>( index );
   assert( m->vertices.size() > i );
@@ -69,7 +69,7 @@ double MDAL_M_vertexYCoordinatesAt( MeshH mesh, int index )
 int MDAL_M_faceCount( MeshH mesh )
 {
   assert( mesh );
-  MDAL::Mesh *m = ( MDAL::Mesh * ) mesh;
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   int len = static_cast<int>( m->faces.size() );
   return len;
 }
@@ -77,7 +77,7 @@ int MDAL_M_faceCount( MeshH mesh )
 int MDAL_M_faceVerticesCountAt( MeshH mesh, int index )
 {
   assert( mesh );
-  MDAL::Mesh *m = ( MDAL::Mesh * ) mesh;
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   assert( index > -1 );
   size_t i = static_cast<size_t>( index );
   assert( m->faces.size() > i );
@@ -88,7 +88,7 @@ int MDAL_M_faceVerticesCountAt( MeshH mesh, int index )
 int MDAL_M_faceVerticesIndexAt( MeshH mesh, int face_index, int vertex_index )
 {
   assert( mesh );
-  MDAL::Mesh *m = ( MDAL::Mesh * ) mesh;
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   assert( face_index > -1 );
   size_t fi = static_cast<size_t>( face_index );
   assert( m->faces.size() > fi );
