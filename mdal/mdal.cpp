@@ -24,7 +24,7 @@ MeshH MDAL_LoadMesh( const char *meshFile )
     return nullptr;
 
   std::string filename( meshFile );
-  return static_cast< MeshH >( MDAL::Loader::load( filename, &sLastStatus ) );
+  return static_cast< MeshH >( MDAL::Loader::load( filename, &sLastStatus ).release() );
 }
 
 

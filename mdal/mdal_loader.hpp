@@ -7,6 +7,7 @@
 #define MDAL_LOADER_HPP
 
 #include <string>
+#include <memory>
 
 #include "mdal.h"
 #include "mdal_defines.hpp"
@@ -17,7 +18,7 @@ namespace MDAL
   class Loader
   {
     public:
-      static Mesh *load( const std::string &meshFile, MDAL_Status *status );
+      static std::unique_ptr< Mesh > load( const std::string &meshFile, MDAL_Status *status );
   };
 
 } // namespace MDAL
