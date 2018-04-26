@@ -22,14 +22,14 @@ MDAL::Loader2dm::Loader2dm( const std::string &meshFile ):
 {
 }
 
-MDAL::Mesh *MDAL::Loader2dm::load( MDAL_Status *status )
+std::unique_ptr<MDAL::Mesh> MDAL::Loader2dm::load( MDAL_Status *status )
 {
   if ( status ) *status = MDAL_Status::None;
 
   if ( !MDAL::fileExists( mMeshFile ) )
   {
     if ( status ) *status = MDAL_Status::Err_FileNotFound;
-    return 0;
+    return nullptr;
   }
 
   std::ifstream in( mMeshFile, std::ifstream::in );
@@ -37,7 +37,7 @@ MDAL::Mesh *MDAL::Loader2dm::load( MDAL_Status *status )
   if ( !std::getline( in, line ) || !startsWith( line, "MESH2D" ) )
   {
     if ( status ) *status = MDAL_Status::Err_UnknownFormat;
-    return 0;
+    return nullptr;
   }
 
   size_t elemCount = 0;
@@ -196,7 +196,7 @@ MDAL::Mesh *MDAL::Loader2dm::load( MDAL_Status *status )
     //check that we have distinct nodes
   }
 
-  Mesh *mesh = new Mesh;
+  std::unique_ptr< Mesh > mesh( new Mesh );
   mesh->faces = faces;
   mesh->vertices = vertices;
 
