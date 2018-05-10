@@ -14,7 +14,7 @@ namespace MDAL
 {
 
   // debugging
-  void debug( const std::string& message );
+  void debug( const std::string &message );
 
   /** Return whether file exists */
   bool fileExists( const std::string &filename );
@@ -38,24 +38,24 @@ namespace MDAL
 
   // http://www.cplusplus.com/faq/sequences/strings/trim/
   inline std::string rtrim(
-    const std::string& s,
-    const std::string& delimiters = " \f\n\r\t\v" )
+    const std::string &s,
+    const std::string &delimiters = " \f\n\r\t\v" )
   {
     return s.substr( 0, s.find_last_not_of( delimiters ) + 1 );
   }
 
   // http://www.cplusplus.com/faq/sequences/strings/trim/
   inline std::string ltrim(
-    const std::string& s,
-    const std::string& delimiters = " \f\n\r\t\v" )
+    const std::string &s,
+    const std::string &delimiters = " \f\n\r\t\v" )
   {
     return s.substr( s.find_first_not_of( delimiters ) );
   }
 
   // http://www.cplusplus.com/faq/sequences/strings/trim/
   inline std::string trim(
-    const std::string& s,
-    const std::string& delimiters = " \f\n\r\t\v" )
+    const std::string &s,
+    const std::string &delimiters = " \f\n\r\t\v" )
   {
     return ltrim( rtrim( s, delimiters ), delimiters );
   }

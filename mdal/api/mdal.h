@@ -107,10 +107,10 @@ MDAL_EXPORT bool MDAL_D_isOnVertices( DatasetH dataset );
 MDAL_EXPORT int MDAL_D_metadataCount( DatasetH dataset );
 
 //! Return dataset metadata key
-MDAL_EXPORT const char * MDAL_D_metadataKey( DatasetH dataset, int index );
+MDAL_EXPORT const char *MDAL_D_metadataKey( DatasetH dataset, int index );
 
 //! Return dataset metadata value
-MDAL_EXPORT const char * MDAL_D_metadataValue( DatasetH dataset, int index );
+MDAL_EXPORT const char *MDAL_D_metadataValue( DatasetH dataset, int index );
 
 //! Return number of values
 MDAL_EXPORT int MDAL_D_valueCount( DatasetH dataset );

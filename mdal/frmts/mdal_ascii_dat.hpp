@@ -23,27 +23,27 @@ namespace MDAL
   {
     public:
       LoaderDat( const std::string &datFile );
-      void load( Mesh* mesh, MDAL_Status *status );
+      void load( Mesh *mesh, MDAL_Status *status );
 
     private:
       void readVertexTimestep(
-                        const Mesh* mesh,
-                        std::vector<std::shared_ptr<Dataset>>& datOutputs,
-                        double t,
-                        bool isVector,
-                        bool hasStatus,
-                        std::ifstream& stream);
+        const Mesh *mesh,
+        std::vector<std::shared_ptr<Dataset>> &datOutputs,
+        double t,
+        bool isVector,
+        bool hasStatus,
+        std::ifstream &stream );
 
       void readFaceTimestep(
-                        const Mesh* mesh,
-                        std::vector<std::shared_ptr<Dataset>>& datOutputs,
-                        double t,
-                        bool isVector,
-                        std::ifstream& stream);
+        const Mesh *mesh,
+        std::vector<std::shared_ptr<Dataset>> &datOutputs,
+        double t,
+        bool isVector,
+        std::ifstream &stream );
 
-      void addDatasets(MDAL::Mesh* mesh,
-                       const std::string& name,
-                       const std::vector<std::shared_ptr<Dataset>>& datOutputs) const;
+      void addDatasets( MDAL::Mesh *mesh,
+                        const std::string &name,
+                        const std::vector<std::shared_ptr<Dataset>> &datOutputs ) const;
 
       std::string mDatFile;
   };

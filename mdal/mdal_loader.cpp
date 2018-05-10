@@ -13,7 +13,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Loader::load( const std::string &meshFile, MDA
   return loader.load( status );
 }
 
-void MDAL::Loader::loadDatasets( Mesh* mesh, const std::string &datasetFile, MDAL_Status *status)
+void MDAL::Loader::loadDatasets( Mesh *mesh, const std::string &datasetFile, MDAL_Status *status )
 {
   MDAL::LoaderDat loader( datasetFile );
   loader.load( mesh, status );

@@ -56,40 +56,40 @@ double MDAL::toDouble( const std::string &str )
   return atof( str.c_str() );
 }
 
-std::string MDAL::baseName(const std::string &filename)
+std::string MDAL::baseName( const std::string &filename )
 {
   // https://stackoverflow.com/a/8520815/2838364
-  std::string fname(filename);
+  std::string fname( filename );
 
   // Remove directory if present.
   // Do this before extension removal incase directory has a period character.
-  const size_t last_slash_idx = fname.find_last_of("\\/");
-  if (std::string::npos != last_slash_idx)
+  const size_t last_slash_idx = fname.find_last_of( "\\/" );
+  if ( std::string::npos != last_slash_idx )
   {
-      fname.erase(0, last_slash_idx + 1);
+    fname.erase( 0, last_slash_idx + 1 );
   }
 
   // Remove extension if present.
-  const size_t period_idx = fname.rfind('.');
-  if (std::string::npos != period_idx)
+  const size_t period_idx = fname.rfind( '.' );
+  if ( std::string::npos != period_idx )
   {
-      fname.erase(period_idx);
+    fname.erase( period_idx );
   }
   return fname;
 }
 
-bool MDAL::contains(const std::string &str, const std::string &substr)
+bool MDAL::contains( const std::string &str, const std::string &substr )
 {
-   return str.find(substr) != std::string::npos;
+  return str.find( substr ) != std::string::npos;
 }
 
-void MDAL::debug(const std::string &message)
+void MDAL::debug( const std::string &message )
 {
   //TODO something smarter
   std::cout << message << std::endl;
 }
 
-bool MDAL::toBool(const std::string &str)
+bool MDAL::toBool( const std::string &str )
 {
-  return static_cast< bool >( toSizeT(str) );
+  return static_cast< bool >( toSizeT( str ) );
 }

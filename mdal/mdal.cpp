@@ -102,7 +102,7 @@ int MDAL_M_faceVerticesIndexAt( MeshH mesh, int face_index, int vertex_index )
   return len;
 }
 
-void MDAL_M_LoadDatasets(MeshH mesh, const char *datasetFile)
+void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile )
 {
   if ( !datasetFile )
     return;
@@ -111,10 +111,10 @@ void MDAL_M_LoadDatasets(MeshH mesh, const char *datasetFile)
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
 
   std::string filename( datasetFile );
-  MDAL::Loader::loadDatasets(m, datasetFile, &sLastStatus );
+  MDAL::Loader::loadDatasets( m, datasetFile, &sLastStatus );
 }
 
-void MDAL_M_CloseDataset(DatasetH dataset)
+void MDAL_M_CloseDataset( DatasetH dataset )
 {
   assert( dataset );
 
@@ -122,7 +122,7 @@ void MDAL_M_CloseDataset(DatasetH dataset)
   d->free();
 }
 
-int MDAL_M_datasetCount(MeshH mesh)
+int MDAL_M_datasetCount( MeshH mesh )
 {
   assert( mesh );
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -130,31 +130,31 @@ int MDAL_M_datasetCount(MeshH mesh)
   return len;
 }
 
-DatasetH MDAL_M_dataset(MeshH mesh, int index)
+DatasetH MDAL_M_dataset( MeshH mesh, int index )
 {
   assert( mesh );
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   int len = static_cast<int>( m->datasets.size() );
-  assert(len > index);
+  assert( len > index );
   size_t i = static_cast<size_t>( index );
-  return static_cast< DatasetH >(m->datasets[i].get());
+  return static_cast< DatasetH >( m->datasets[i].get() );
 }
 
-bool MDAL_D_hasScalarData(DatasetH dataset)
+bool MDAL_D_hasScalarData( DatasetH dataset )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   return d->isScalar;
 }
 
-bool MDAL_D_isOnVertices(DatasetH dataset)
+bool MDAL_D_isOnVertices( DatasetH dataset )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   return d->isOnVertices;
 }
 
-int MDAL_D_metadataCount(DatasetH dataset)
+int MDAL_D_metadataCount( DatasetH dataset )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
@@ -162,27 +162,27 @@ int MDAL_D_metadataCount(DatasetH dataset)
   return len;
 }
 
-const char *MDAL_D_metadataKey(DatasetH dataset, int index)
+const char *MDAL_D_metadataKey( DatasetH dataset, int index )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   int len = static_cast<int>( d->metadata.size() );
-  assert(len > index);
+  assert( len > index );
   size_t i = static_cast<size_t>( index );
   return d->metadata[i].first.c_str();
 }
 
-const char *MDAL_D_metadataValue(DatasetH dataset, int index)
+const char *MDAL_D_metadataValue( DatasetH dataset, int index )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   int len = static_cast<int>( d->metadata.size() );
-  assert(len > index);
+  assert( len > index );
   size_t i = static_cast<size_t>( index );
   return d->metadata[i].second.c_str();
 }
 
-int MDAL_D_valueCount(DatasetH dataset)
+int MDAL_D_valueCount( DatasetH dataset )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
@@ -190,48 +190,52 @@ int MDAL_D_valueCount(DatasetH dataset)
   return len;
 }
 
-double MDAL_D_value(DatasetH dataset, int valueIndex)
+double MDAL_D_value( DatasetH dataset, int valueIndex )
 {
-  return MDAL_D_valueX(dataset, valueIndex);
+  return MDAL_D_valueX( dataset, valueIndex );
 }
 
-double MDAL_D_valueX(DatasetH dataset, int valueIndex)
+double MDAL_D_valueX( DatasetH dataset, int valueIndex )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   int len = static_cast<int>( d->values.size() );
-  assert(len > valueIndex);
+  assert( len > valueIndex );
   size_t i = static_cast<size_t>( valueIndex );
-  if (d->values[i].noData) {
+  if ( d->values[i].noData )
+  {
     return NODATA;
-  } else
+  }
+  else
     return d->values[i].x;
 }
 
-double MDAL_D_valueY(DatasetH dataset, int valueIndex)
+double MDAL_D_valueY( DatasetH dataset, int valueIndex )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   int len = static_cast<int>( d->values.size() );
-  assert(len > valueIndex);
+  assert( len > valueIndex );
   size_t i = static_cast<size_t>( valueIndex );
-  if (d->values[i].noData) {
+  if ( d->values[i].noData )
+  {
     return NODATA;
-  } else
+  }
+  else
     return d->values[i].y;
 }
 
-bool MDAL_D_isValid(DatasetH dataset)
+bool MDAL_D_isValid( DatasetH dataset )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   return d->isValid;
 }
 
-bool MDAL_D_active(DatasetH dataset, int faceIndex)
+bool MDAL_D_active( DatasetH dataset, int faceIndex )
 {
   assert( dataset );
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   size_t i = static_cast<size_t>( faceIndex );
-  return d->isActive(i);
+  return d->isActive( i );
 }
