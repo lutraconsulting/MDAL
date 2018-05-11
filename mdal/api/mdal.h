@@ -94,7 +94,7 @@ MDAL_EXPORT void MDAL_M_CloseDataset( DatasetH dataset );
 //! Return dataset count
 MDAL_EXPORT int MDAL_M_datasetCount( MeshH mesh );
 
-//! Return dataset count
+//! Return dataset handle
 MDAL_EXPORT DatasetH MDAL_M_dataset( MeshH mesh, int index );
 
 //! Whether dataset has scalar data associated
