@@ -22,7 +22,7 @@
 
 #define EXIT_WITH_ERROR(error)       {  if (status) *status = (error); return; }
 
-MDAL::LoaderDat::LoaderDat( const std::string &datFile ):
+MDAL::LoaderAsciiDat::LoaderAsciiDat( const std::string &datFile ):
   mDatFile( datFile )
 {
 }
@@ -34,7 +34,7 @@ MDAL::LoaderDat::LoaderDat( const std::string &datFile ):
  * In MDAL we convert one output to one MDAL dataset;
  *
  */
-void MDAL::LoaderDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
+void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
 {
   if ( status ) *status = MDAL_Status::None;
 
@@ -153,7 +153,7 @@ void MDAL::LoaderDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
       }
       else
       {
-        bool hasStatus = ( oldFormat ? false : toSizeT( items[1] ) );
+        bool hasStatus = ( oldFormat ? false : toBool( items[1] ) );
         readVertexTimestep( mesh, datOutputs, t, isVector, hasStatus, in );
       }
 
@@ -175,9 +175,9 @@ void MDAL::LoaderDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
   }
 }
 
-void MDAL::LoaderDat::addDatasets( MDAL::Mesh *mesh,
-                                   const std::string &name,
-                                   const std::vector<std::shared_ptr<Dataset>> &datOutputs ) const
+void MDAL::LoaderAsciiDat::addDatasets( MDAL::Mesh *mesh,
+                                        const std::string &name,
+                                        const std::vector<std::shared_ptr<Dataset>> &datOutputs ) const
 {
   for ( const std::shared_ptr<Dataset> &ds : datOutputs )
   {
@@ -194,7 +194,7 @@ void MDAL::LoaderDat::addDatasets( MDAL::Mesh *mesh,
   );
 }
 
-void MDAL::LoaderDat::readVertexTimestep( const MDAL::Mesh *mesh, std::vector<std::shared_ptr<MDAL::Dataset> > &datOutputs, double t, bool isVector, bool hasStatus, std::ifstream &stream )
+void MDAL::LoaderAsciiDat::readVertexTimestep( const MDAL::Mesh *mesh, std::vector<std::shared_ptr<MDAL::Dataset> > &datOutputs, double t, bool isVector, bool hasStatus, std::ifstream &stream )
 {
   size_t vertexCount = mesh->vertices.size();
   size_t faceCount = mesh->faces.size();
@@ -225,7 +225,7 @@ void MDAL::LoaderDat::readVertexTimestep( const MDAL::Mesh *mesh, std::vector<st
     std::getline( stream, line );
     std::vector<std::string> tsItems = split( line,  " ", SplitBehaviour::SkipEmptyParts );
 
-    auto idx = mesh->vertexIDtoIndex.find( i );
+    auto idx = mesh->vertexIDtoIndex.find( i + 1 ); // ID in 2dm are numbered from 1
     if ( idx == mesh->vertexIDtoIndex.end() )
       continue; // node ID that does not exist in the mesh
 
@@ -259,7 +259,7 @@ void MDAL::LoaderDat::readVertexTimestep( const MDAL::Mesh *mesh, std::vector<st
   datOutputs.push_back( std::move( dataset ) );
 }
 
-void MDAL::LoaderDat::readFaceTimestep( const MDAL::Mesh *mesh, std::vector<std::shared_ptr<MDAL::Dataset> > &datOutputs, double t, bool isVector, std::ifstream &stream )
+void MDAL::LoaderAsciiDat::readFaceTimestep( const MDAL::Mesh *mesh, std::vector<std::shared_ptr<MDAL::Dataset> > &datOutputs, double t, bool isVector, std::ifstream &stream )
 {
   size_t faceCount = mesh->faces.size();
 

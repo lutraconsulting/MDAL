@@ -91,5 +91,6 @@ void MDAL::debug( const std::string &message )
 
 bool MDAL::toBool( const std::string &str )
 {
-  return static_cast< bool >( toSizeT( str ) );
+  int i = atoi( str.c_str() );
+  return i != 0;
 }

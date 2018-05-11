@@ -3,8 +3,8 @@
  Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
 */
 
-#ifndef MDAL_ASCII_DAT_HPP
-#define MDAL_ASCII_DAT_HPP
+#ifndef MDAL_BINARY_DAT_HPP
+#define MDAL_BINARY_DAT_HPP
 
 #include <string>
 #include <vector>
@@ -19,27 +19,21 @@
 namespace MDAL
 {
 
-  class LoaderAsciiDat
+  class LoaderBinaryDat
   {
     public:
-      LoaderAsciiDat( const std::string &datFile );
+      LoaderBinaryDat( const std::string &datFile );
       void load( Mesh *mesh, MDAL_Status *status );
 
     private:
-      void readVertexTimestep(
+      bool readVertexTimestep(
         const Mesh *mesh,
         std::vector<std::shared_ptr<Dataset>> &datOutputs,
-        double t,
+        float time,
         bool isVector,
         bool hasStatus,
-        std::ifstream &stream );
-
-      void readFaceTimestep(
-        const Mesh *mesh,
-        std::vector<std::shared_ptr<Dataset>> &datOutputs,
-        double t,
-        bool isVector,
-        std::ifstream &stream );
+        int sflg,
+        std::ifstream &in );
 
       void addDatasets( MDAL::Mesh *mesh,
                         const std::string &name,
@@ -49,4 +43,4 @@ namespace MDAL
   };
 
 } // namespace MDAL
-#endif //MDAL_ASCII_DAT_HPP
+#endif //MDAL_BINARY_DAT_HPP

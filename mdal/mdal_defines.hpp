@@ -36,11 +36,39 @@ namespace MDAL
   class Dataset
   {
     public:
+
+      std::string getMetadata( const std::string &key )
+      {
+        for ( auto pair : metadata )
+        {
+          if ( pair.first == key )
+          {
+            return pair.second;
+          }
+        }
+        return std::string();
+      }
+
       void setMetadata( const std::string &key, const std::string &val )
       {
-        // TODO check if there is no such pair already
-        metadata.push_back( std::make_pair( key, val ) );
+        bool found = false;
+        for ( auto pair : metadata )
+        {
+          if ( pair.first == key )
+          {
+            found = true;
+            pair.second = val;
+          }
+        }
+        if ( !found )
+          metadata.push_back( std::make_pair( key, val ) );
       }
+
+      std::string name()
+      {
+        return getMetadata( "name" );
+      }
+
       void setName( const std::string &name )
       {
         setMetadata( "name", name );

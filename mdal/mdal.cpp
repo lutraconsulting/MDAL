@@ -105,9 +105,17 @@ int MDAL_M_faceVerticesIndexAt( MeshH mesh, int face_index, int vertex_index )
 void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile )
 {
   if ( !datasetFile )
+  {
+    sLastStatus = MDAL_Status::Err_FileNotFound;
     return;
+  }
 
-  assert( mesh );
+  if ( !mesh )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return;
+  }
+
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
 
   std::string filename( datasetFile );
