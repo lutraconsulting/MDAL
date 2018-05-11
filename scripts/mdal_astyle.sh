@@ -3,7 +3,7 @@
 # files to check
 if [ $# -eq 0 ]; then
     # No arguments provided
-    FILES=`git diff --name-only --diff-filter=ACMR | grep -E "\.(c|cpp|h|hpp)$"`
+    FILES=`git diff --name-only --diff-filter=ACMR`
 else
     FILES="$@"
 fi
@@ -43,16 +43,20 @@ if [ $? -ne 0 ]; then
 fi
 
 for FILE in $FILES; do
-	$ASTYLE $OPTIONS < $FILE > $FILE.astyle 
-	cmp -s $FILE $FILE.astyle
-	if [ $? -ne 0 ]; then
-		echo "Changed $FILE" >&2
-		mv $FILE.astyle $FILE  
-		RETURN=1
+    if [[ $FILE =~ \.(c|cpp|h|hpp)$ ]]; then
+        $ASTYLE $OPTIONS < $FILE > $FILE.astyle 
+        cmp -s $FILE $FILE.astyle
+        if [ $? -ne 0 ]; then
+            echo "Changed $FILE" >&2
+            mv $FILE.astyle $FILE  
+            RETURN=1
+        else
+            rm $FILE.astyle
+            echo "Unchanged $FILE" >&2
+        fi
     else
-        rm $FILE.astyle
-        echo "Unchanged $FILE" >&2
-	fi
+       echo "Skipping $FILE" >&2
+    fi
 done
 
 exit $RETURN

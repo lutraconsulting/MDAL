@@ -3,6 +3,8 @@ SET(MDAL_SOURCES
   mdal_utils.cpp
   mdal_loader.cpp
   frmts/mdal_2dm.cpp
+  frmts/mdal_ascii_dat.cpp
+  frmts/mdal_binary_dat.cpp
 )
 
 SET(MDAL_HEADERS
@@ -11,6 +13,8 @@ SET(MDAL_HEADERS
   mdal_loader.hpp
   mdal_defines.hpp
   frmts/mdal_2dm.hpp
+  frmts/mdal_ascii_dat.hpp
+  frmts/mdal_binary_dat.hpp
 )
 
 ADD_LIBRARY(mdal SHARED

@@ -18,8 +18,7 @@ TEST( Mesh2DMTest, MissingFile )
 
 TEST( Mesh2DMTest, WrongFile )
 {
-  std::string path( data_path() );
-  path += "/2dm/not_a_mesh_file.2dm";
+  std::string path = test_file( "/2dm/not_a_mesh_file.2dm" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -28,8 +27,7 @@ TEST( Mesh2DMTest, WrongFile )
 
 TEST( Mesh2DMTest, QuadAndTriangleFile )
 {
-  std::string path( data_path() );
-  path += "/2dm/quad_and_triangle.2dm";
+  std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -39,8 +37,8 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   EXPECT_EQ( v_count, 5 );
   double x = MDAL_M_vertexXCoordinatesAt( m, 0 );
   double y = MDAL_M_vertexYCoordinatesAt( m, 0 );
-  EXPECT_EQ( 1000.0, x );
-  EXPECT_EQ( 2000.0, y );
+  EXPECT_DOUBLE_EQ( 1000.0, x );
+  EXPECT_DOUBLE_EQ( 2000.0, y );
 
   int f_count = MDAL_M_faceCount( m );
   EXPECT_EQ( 2, f_count );
@@ -54,6 +52,32 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   EXPECT_EQ( f_v_count, 3 ); //triangle
   f_v = MDAL_M_faceVerticesIndexAt( m, 1, 0 );
   EXPECT_EQ( 1, f_v );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( Mesh2DMTest, RegularGridFile )
+{
+  std::string path = test_file( "/2dm/regular_grid.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 1976 );
+  double x = MDAL_M_vertexXCoordinatesAt( m, 1000 );
+  double y = MDAL_M_vertexYCoordinatesAt( m, 1000 );
+  EXPECT_DOUBLE_EQ( 381473.785, x );
+  EXPECT_DOUBLE_EQ( 168726.985, y );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 1875, f_count );
+
+  int f_v_count = MDAL_M_faceVerticesCountAt( m, 0 );
+  EXPECT_EQ( 4, f_v_count ); //quad
+  int f_v = MDAL_M_faceVerticesIndexAt( m, 0, 0 );
+  EXPECT_EQ( 0, f_v );
 
   MDAL_CloseMesh( m );
 }

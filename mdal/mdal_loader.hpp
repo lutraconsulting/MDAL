@@ -8,6 +8,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 #include "mdal.h"
 #include "mdal_defines.hpp"
@@ -19,6 +20,7 @@ namespace MDAL
   {
     public:
       static std::unique_ptr< Mesh > load( const std::string &meshFile, MDAL_Status *status );
+      static void loadDatasets( Mesh *mesh, const std::string &datasetFile, MDAL_Status *status );
   };
 
 } // namespace MDAL

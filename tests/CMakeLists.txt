@@ -63,6 +63,8 @@ ENDMACRO (ADD_MDAL_TEST)
 
 SET(TESTS
     test_2dm.cpp
+    test_ascii_dat.cpp
+    test_binary_dat.cpp
 )
 
 FOREACH(TESTSRC ${TESTS})
