@@ -52,6 +52,7 @@ enum MDAL_Status
   Err_UnknownFormat,
   Err_IncompatibleMesh,
   Err_InvalidData,
+  Err_IncompatibleDataset,
   Err_MissingDriver,
   // Warnings
   Warn_UnsupportedElement,
