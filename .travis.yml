@@ -7,7 +7,8 @@ env:
   global:
     - CTEST_EXT_COLOR_OUTPUT=TRUE
     - CTEST_BUILD_FLAGS=-j4
-
+    - TRAVIS=1
+ 
 matrix:
   include:
     - os: linux
