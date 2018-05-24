@@ -42,6 +42,8 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+$ASTYLE --version
+
 for FILE in $FILES; do
     if [[ $FILE =~ \.(c|cpp|h|hpp)$ ]]; then
         $ASTYLE $OPTIONS < $FILE > $FILE.astyle 
@@ -49,7 +51,7 @@ for FILE in $FILES; do
         if [ $? -ne 0 ]; then
             echo "Changed $FILE" >&2
 	    if [ $TRAVIS -eq 1 ]; then
-		diff $FILE.astyle $FILE >&2
+		diff $FILE $FILE.astyle >&2
             fi
 	    mv $FILE.astyle $FILE  
             RETURN=1
