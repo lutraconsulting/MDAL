@@ -16,7 +16,7 @@ matrix:
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y astyle
+  - sudo apt-get install -y astyle libhdf5-dev
 
 jobs:
   include:

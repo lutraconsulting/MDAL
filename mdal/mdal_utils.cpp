@@ -6,6 +6,7 @@
 #include "mdal_utils.hpp"
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 bool MDAL::fileExists( const std::string &filename )
 {
@@ -85,12 +86,20 @@ bool MDAL::contains( const std::string &str, const std::string &substr )
 
 void MDAL::debug( const std::string &message )
 {
-  //TODO something smarter
+#ifdef NDEBUG
+  MDAL_UNUSED( message );
+#else
   std::cout << message << std::endl;
+#endif
 }
 
 bool MDAL::toBool( const std::string &str )
 {
   int i = atoi( str.c_str() );
   return i != 0;
+}
+
+bool MDAL::contains( const std::vector<std::string> &list, const std::string &str )
+{
+  return std::find( list.begin(), list.end(), str ) != list.end();
 }

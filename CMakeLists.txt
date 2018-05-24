@@ -7,6 +7,7 @@ SET (CMAKE_CXX_STANDARD 11)
 SET (MDAL_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output CACHE PATH "Output base directory")
 SET (ENABLE_TESTS TRUE CACHE BOOL "Build tests?")
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables?")
+SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that requires HDF5")
 
 #############################################################
 # warnings https://stackoverflow.com/a/3818084/2838364
@@ -21,6 +22,21 @@ ELSEIF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   # Update if necessary
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 ENDIF()
+
+#############################################################
+# optional libraries
+IF (WITH_HDF5)
+  FIND_PACKAGE(HDF5 REQUIRED)
+  IF (HDF5_FOUND)
+    # following variable is used in mdal_config.h
+    SET (HAVE_HDF5 TRUE)
+  ENDIF (HDF5_FOUND)
+ENDIF()
+
+#############################################################
+# create mdal_config.h
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake_templates/mdal_config.hpp.in ${CMAKE_BINARY_DIR}/mdal_config.hpp)
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
 #############################################################
 # library

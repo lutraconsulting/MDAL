@@ -109,6 +109,8 @@ namespace MDAL
       }
   };
 
+  typedef std::vector<std::shared_ptr<Dataset>> Datasets;
+
   struct Mesh
   {
     std::string uri; // file/uri from where it came
@@ -119,7 +121,7 @@ namespace MDAL
     std::vector<Face> faces;
     std::map<size_t, size_t> faceIDtoIndex; // only for 2DM and DAT files
 
-    std::vector<std::shared_ptr<Dataset>> datasets;
+    Datasets datasets;
   };
 } // namespace MDAL
 #endif //MDAL_DEFINES_HPP

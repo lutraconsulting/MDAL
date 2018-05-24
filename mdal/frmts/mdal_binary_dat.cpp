@@ -33,8 +33,8 @@ static const int CT_NUMCELLS  = 180;
 static const int CT_NAME      = 190;
 static const int CT_TS        = 200;
 static const int CT_ENDDS     = 210;
-static const int CT_RT_JULIAN = 240;
-static const int CT_TIMEUNITS = 250;
+//static const int CT_RT_JULIAN = 240;
+//static const int CT_TIMEUNITS = 250;
 
 static const int CT_2D_MESHES = 3;
 static const int CT_FLOAT_SIZE = 4;
@@ -128,7 +128,7 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
   bool isVector = false;
   std::string baseDatasetName;
-  std::vector<std::shared_ptr<Dataset>> datOutputs; // DAT outputs data
+  Datasets datOutputs; // DAT outputs data
 
   while ( card != CT_ENDDS )
   {
@@ -229,7 +229,7 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
 void MDAL::LoaderBinaryDat::addDatasets( MDAL::Mesh *mesh,
     const std::string &name,
-    const std::vector<std::shared_ptr<Dataset>> &datOutputs ) const
+    const Datasets &datOutputs ) const
 {
   for ( const std::shared_ptr<Dataset> &ds : datOutputs )
   {
@@ -247,7 +247,7 @@ void MDAL::LoaderBinaryDat::addDatasets( MDAL::Mesh *mesh,
   );
 }
 
-bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh, std::vector<std::shared_ptr<MDAL::Dataset> > &datOutputs, float time,
+bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh, MDAL::Datasets &datOutputs, float time,
     bool isVector, bool hasStatus, int sflg, std::ifstream &in )
 {
   size_t vertexCount = mesh->vertices.size();

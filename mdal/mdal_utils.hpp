@@ -10,6 +10,9 @@
 #include <vector>
 #include <stddef.h>
 
+// avoid unused variable warnings
+#define MDAL_UNUSED(x) (void)x;
+
 namespace MDAL
 {
 
@@ -23,6 +26,7 @@ namespace MDAL
   // strings
   bool startsWith( const std::string &str, const std::string &substr );
   bool contains( const std::string &str, const std::string &substr );
+  bool contains( const std::vector<std::string> &list, const std::string &str );
 
   /** Return 0 if not possible to convert */
   size_t toSizeT( const std::string &str );
