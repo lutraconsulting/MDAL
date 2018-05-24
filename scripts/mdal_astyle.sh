@@ -48,7 +48,10 @@ for FILE in $FILES; do
         cmp -s $FILE $FILE.astyle
         if [ $? -ne 0 ]; then
             echo "Changed $FILE" >&2
-            mv $FILE.astyle $FILE  
+	    if [ $TRAVIS -eq 1 ]; then
+		diff $FILE.astyle $FILE >&2
+            fi
+	    mv $FILE.astyle $FILE  
             RETURN=1
         else
             rm $FILE.astyle
