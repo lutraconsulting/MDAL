@@ -55,7 +55,7 @@ MACRO (ADD_MDAL_TEST TESTSRC)
   SET (TESTNAME  ${TESTSRC})
   STRING(REPLACE "test_" "" TESTNAME ${TESTNAME})
   STRING(REPLACE ".cpp" "" TESTNAME ${TESTNAME})
-  SET (TESTNAME  "mdal_${TESTNAME}test")
+  SET (TESTNAME  "mdal_${TESTNAME}_test")
   ADD_EXECUTABLE(${TESTNAME} ${TESTSRC} $<TARGET_OBJECTS:mdaltestutils>)
   TARGET_LINK_LIBRARIES(${TESTNAME} gtest gmock ${CMAKE_THREAD_LIBS_INIT} mdal)
   ADD_TEST(${TESTNAME} ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME})
@@ -65,6 +65,7 @@ SET(TESTS
     test_2dm.cpp
     test_ascii_dat.cpp
     test_binary_dat.cpp
+    test_xmdf.cpp
 )
 
 FOREACH(TESTSRC ${TESTS})
