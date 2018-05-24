@@ -33,8 +33,6 @@ static const int CT_NUMCELLS  = 180;
 static const int CT_NAME      = 190;
 static const int CT_TS        = 200;
 static const int CT_ENDDS     = 210;
-static const int CT_RT_JULIAN = 240;
-static const int CT_TIMEUNITS = 250;
 
 static const int CT_2D_MESHES = 3;
 static const int CT_FLOAT_SIZE = 4;
