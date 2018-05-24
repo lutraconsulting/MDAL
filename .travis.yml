@@ -16,6 +16,7 @@ matrix:
       env: CTEST_TARGET_SYSTEM=Linux-gcc    CTEST_MODEL=Nightly
 
 before_install:
+  - sudo add-apt-repository ppa:cs50/ppa # for astyle 3.x
   - sudo apt-get -qq update
   - sudo apt-get install -y astyle libhdf5-dev
 
