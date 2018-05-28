@@ -6,7 +6,7 @@
 #ifndef MDAL_HDF5_HPP
 #define MDAL_HDF5_HPP
 
-/** A simple C++/Qt wrapper around HDF5 library API */
+/** A simple C++ wrapper around HDF5 library API */
 
 // for compatibility (older hdf5 version in Travis)
 #define H5Gopen_vers 1
@@ -225,7 +225,7 @@ class HdfDataset
       return data;
     }
 
-    float readFloat()
+    float readFloat() const
     {
       if ( elementCount() != 1 )
       {

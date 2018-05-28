@@ -69,7 +69,7 @@ void MDAL::LoaderXmdf::load( MDAL::Mesh *mesh, MDAL_Status *status )
       if ( ds.size() != 1 )
         MDAL::debug( "Maximum dataset should have just one timestep!" );
       else
-        datasets.push_back( ds.at( 0 ) );
+        datasets.emplace_back( ds.at( 0 ) );
     }
   }
 
