@@ -35,7 +35,6 @@ static const int CT_TS        = 200;
 static const int CT_ENDDS     = 210;
 //static const int CT_RT_JULIAN = 240;
 //static const int CT_TIMEUNITS = 250;
-
 static const int CT_2D_MESHES = 3;
 static const int CT_FLOAT_SIZE = 4;
 static const int CF_FLAG_SIZE = 1;
@@ -63,7 +62,7 @@ static bool readIStat( std::ifstream &in, int sflg, char *flag )
   else
   {
     int istat;
-    in.read( ( char * )&istat, sflg );
+    in.read( reinterpret_cast< char * >( &istat ), sflg );
     if ( !in )
       return true; // error
     else
@@ -120,7 +119,7 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
   char istat;
   float time;
 
-  if ( read( in, ( char * )&version, 4 ) )
+  if ( read( in, reinterpret_cast< char * >( &version ), 4 ) )
     EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
   if ( version != CT_VERSION ) // Version should be 3000
@@ -132,7 +131,7 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
   while ( card != CT_ENDDS )
   {
-    if ( read( in, ( char * )&card, 4 ) )
+    if ( read( in, reinterpret_cast< char * >( &card ), 4 ) )
     {
       // We've reached the end of the file and there was no ends card
       break;
@@ -143,19 +142,19 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
       case CT_OBJTYPE:
         // Object type
-        if ( read( in, ( char * )&objecttype, 4 ) || objecttype != CT_2D_MESHES )
+        if ( read( in, reinterpret_cast< char * >( &objecttype ), 4 ) || objecttype != CT_2D_MESHES )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
         break;
 
       case CT_SFLT:
         // Float size
-        if ( read( in, ( char * )&sflt, 4 ) || sflt != CT_FLOAT_SIZE )
+        if ( read( in, reinterpret_cast< char * >( &sflt ), 4 ) || sflt != CT_FLOAT_SIZE )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
         break;
 
       case CT_SFLG:
         // Flag size
-        if ( read( in, ( char * )&sflg, 4 ) )
+        if ( read( in, reinterpret_cast< char * >( &sflg ), 4 ) )
           if ( sflg != CF_FLAG_SIZE && sflg != CF_FLAG_INT_SIZE )
             EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
         break;
@@ -170,35 +169,35 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
       case CT_VECTYPE:
         // Vector type
-        if ( read( in, ( char * )&vectype, 4 ) || vectype != 0 )
+        if ( read( in, reinterpret_cast< char * >( &vectype ), 4 ) || vectype != 0 )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
         break;
 
       case CT_OBJID:
         // Object id
-        if ( read( in, ( char * )&objid, 4 ) )
+        if ( read( in, reinterpret_cast< char * >( &objid ), 4 ) )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
         break;
 
       case CT_NUMDATA:
         // Num data
-        if ( read( in, ( char * )&numdata, 4 ) )
+        if ( read( in, reinterpret_cast< char * >( &numdata ), 4 ) )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        if ( numdata != ( int ) vertexCount )
+        if ( numdata != static_cast< int >( vertexCount ) )
           EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh );
         break;
 
       case CT_NUMCELLS:
         // Num data
-        if ( read( in, ( char * )&numcells, 4 ) )
+        if ( read( in, reinterpret_cast< char * >( &numcells ), 4 ) )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        if ( numcells != ( int ) elemCount )
+        if ( numcells != static_cast< int >( elemCount ) )
           EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh );
         break;
 
       case CT_NAME:
         // Name
-        if ( read( in, ( char * )&name, 40 ) )
+        if ( read( in, reinterpret_cast< char * >( &name ), 40 ) )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
         if ( name[39] != 0 )
           name[39] = 0;
@@ -210,7 +209,7 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
         if ( readIStat( in, sflg, &istat ) )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
-        if ( read( in, ( char * )&time, 4 ) )
+        if ( read( in, reinterpret_cast< char * >( &time ), 4 ) )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
         if ( readVertexTimestep( mesh, datOutputs, time, isVector, istat, sflg, in ) )
@@ -269,7 +268,7 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh, MDAL::Da
   {
     if ( hasStatus )
     {
-      if ( readIStat( in, sflg, ( char * )&active ) )
+      if ( readIStat( in, sflg, reinterpret_cast< char * >( &active ) ) )
         return true; //error
 
     }
@@ -282,22 +281,22 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh, MDAL::Da
     {
       float x, y;
 
-      if ( read( in, ( char * )&x, 4 ) )
+      if ( read( in, reinterpret_cast< char * >( &x ), 4 ) )
         return true; //error
-      if ( read( in, ( char * )&y, 4 ) )
+      if ( read( in, reinterpret_cast< char * >( &y ), 4 ) )
         return true; //error
 
-      dataset->values[i].x = x;
-      dataset->values[i].y = y;
+      dataset->values[i].x = static_cast< double >( x );
+      dataset->values[i].y = static_cast< double >( y );
     }
     else
     {
       float scalar;
 
-      if ( read( in, ( char * )&scalar, 4 ) )
+      if ( read( in, reinterpret_cast< char * >( &scalar ), 4 ) )
         return true; //error
 
-      dataset->values[i].x = scalar;
+      dataset->values[i].x = static_cast< double >( scalar );
     }
   }
 

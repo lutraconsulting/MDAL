@@ -39,7 +39,7 @@ namespace MDAL
 
       std::string getMetadata( const std::string &key )
       {
-        for ( auto pair : metadata )
+        for ( auto &pair : metadata )
         {
           if ( pair.first == key )
           {
@@ -52,7 +52,7 @@ namespace MDAL
       void setMetadata( const std::string &key, const std::string &val )
       {
         bool found = false;
-        for ( auto pair : metadata )
+        for ( auto &pair : metadata )
         {
           if ( pair.first == key )
           {
