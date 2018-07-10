@@ -5,6 +5,8 @@
 
 #cmakedefine HAVE_HDF5
 
+#cmakedefine HAVE_GDAL
+
 #endif // MDAL_CONFIG_HPP
 
  

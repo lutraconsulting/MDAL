@@ -65,8 +65,19 @@ SET(TESTS
     test_2dm.cpp
     test_ascii_dat.cpp
     test_binary_dat.cpp
-    test_xmdf.cpp
 )
+
+IF(HDF5_FOUND)
+  SET(TESTS ${TESTS}
+    test_xmdf.cpp
+  )
+ENDIF(HDF5_FOUND)
+
+IF(GDAL_FOUND)
+  SET(TESTS ${TESTS}
+    test_grib.cpp
+  )
+ENDIF(GDAL_FOUND)
 
 FOREACH(TESTSRC ${TESTS})
     ADD_MDAL_TEST(${TESTSRC})

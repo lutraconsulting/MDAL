@@ -7,7 +7,8 @@ SET (CMAKE_CXX_STANDARD 11)
 SET (MDAL_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output CACHE PATH "Output base directory")
 SET (ENABLE_TESTS TRUE CACHE BOOL "Build tests?")
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables?")
-SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that requires HDF5")
+SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that require HDF5")
+SET (WITH_GDAL TRUE CACHE BOOL "Build providers that require GDAL (e.g. GRIB)")
 
 #############################################################
 # warnings https://stackoverflow.com/a/3818084/2838364
@@ -31,6 +32,14 @@ IF (WITH_HDF5)
     # following variable is used in mdal_config.h
     SET (HAVE_HDF5 TRUE)
   ENDIF (HDF5_FOUND)
+ENDIF()
+
+IF (WITH_GDAL)
+  FIND_PACKAGE(GDAL REQUIRED)
+  IF (GDAL_FOUND)
+    # following variable is used in mdal_config.h
+    SET (HAVE_GDAL TRUE)
+  ENDIF (GDAL_FOUND)
 ENDIF()
 
 #############################################################
