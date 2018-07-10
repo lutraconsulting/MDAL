@@ -1,0 +1,1016 @@
+<PAMDataset>
+  <PAMRasterBand band="1">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Histograms>
+      <HistItem>
+        <HistMin>0.1276</HistMin>
+        <HistMax>4.932399999999999</HistMax>
+        <BucketCount>1000</BucketCount>
+        <IncludeOutOfRange>0</IncludeOutOfRange>
+        <Approximate>0</Approximate>
+        <HistCounts>1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|2|0|0|0|1|0|1|0|1|0|0|0|1|0|2|0|1|0|3|0|0|0|0|1|0|3|0|1|0|1|0|1|0|2|0|1|0|0|0|4|0|2|0|1|0|1|0|0|1|0|1|0|1|0|0|0|1|0|1|0|2|0|1|0|2|0|4|0|1|0|5|0|0|2|0|2|0|4|0|4|0|2|0|8|0|2|0|4|0|6|0|4|0|7|0|7|0|0|5|0|6|0|6|0|12|0|8|0|4|0|5|0|14|0|5|0|11|0|13|0|4|0|11|0|0|3|0|12|0|6|0|9|0|5|0|10|0|5|0|10|0|4|0|9|0|11|0|6|0|0|9|0|7|0|6|0|6|0|7|0|8|0|8|0|7|0|10|0|6|0|8|0|4|0|0|2|0|3|0|7|0|3|0|2|0|1|0|3|0|0|0|2|0|6|0|1|0|2|0|0|2|0|2|0|2|0|2|0|3|0|3|0|3|0|3|0|0|0|5|0|0|0|0|0|3|0|0|2|0|2|0|1|0|1|0|2|0|1|0|1|0|2|0|0|0|3|0|2|0|0|0|0|2|0|3|0|3|0|2|0|2|0|3|0|2|0|2|0|1|0|2|0|2|0|0|0|0|3|0|2|0|7|0|0|0|2|0|3|0|2|0|2|0|1|0|1|0|2|0|4|0|4|0|0|0|0|1|0|2|0|3|0|1|0|1|0|0|0|4|0|3|0|1|0|2|0|2|0|0|2|0|3|0|1|0|3|0|3|0|1|0|2|0|0|0|2|0|2|0|2|0|1|0|0|4|0|2|0|3|0|3|0|2|0|5|0|1|0|1|0|4|0|1|0|4|0|3|0|1|0|0|4|0|1|0|1|0|0|0|2|0|1|0|3|0|2|0|5|0|2|0|1|0|0|0|0|2|0|2|0|2|0|3|0|0|0|0|0|2|0|2|0|4|0|2|0|4|0|0|0|0|0|0|0|0|1|0|1|0|1|0|1|0|1|0|1|0|4|0|2|0|0|0|6|0|0|1|0|2|0|3|0|0|0|1|0|1|0|1|0|1|0|2|0|0|0|3|0|0|0|2|0|0|1|0|2|0|1|0|1|0|4|0|2|0|3|0|2|0|3|0|1|0|1|0|0|0|0|1|0|2|0|1|0|2|0|0|0|4|0|3|0|6|0|2|0|6|0|4|0|4|0|0|4|0|4|0|5|0|2|0|3|0|1|0|4|0|3|0|5|0|5|0|1|0|3|0|5|0|0|2|0|2|0|0|0|6|0|8|0|4|0|4|0|2|0|7|0|3|0|4|0|4|0|0|3|0|6|0|3|0|2|0|2|0|2|0|4|0|2|0|4|0|8|0|4|0|0|0|0|3|0|1|0|3|0|3|0|2|0|5|0|2|0|0|0|3|0|4|0|2|0|1|0|1|0|0|6|0|1|0|3|0|1|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|1|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|1|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|1|0|0|0|1|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1</HistCounts>
+      </HistItem>
+    </Histograms>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">21600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456833600 sec UTC</MDI>
+      <MDI key="STATISTICS_MAXIMUM">4.93</MDI>
+      <MDI key="STATISTICS_MEAN">1.8066738660907</MDI>
+      <MDI key="STATISTICS_MINIMUM">0.13</MDI>
+      <MDI key="STATISTICS_STDDEV">0.97657153378097</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="2">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Histograms>
+      <HistItem>
+        <HistMin>3.332135</HistMin>
+        <HistMax>19.077865</HistMax>
+        <BucketCount>1000</BucketCount>
+        <IncludeOutOfRange>0</IncludeOutOfRange>
+        <Approximate>0</Approximate>
+        <HistCounts>1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|1|0|0|1|0|0|0|0|1|0|0|0|1|0|0|1|0|1|0|0|0|0|0|0|0|0|0|0|0|0|1|0|2|0|1|0|1|0|0|0|0|0|0|2|0|1|1|1|1|0|0|2|2|2|0|2|1|1|0|1|1|0|3|0|2|4|0|2|2|3|0|6|3|2|6|3|1|0|4|2|3|2|2|1|2|0|2|1|2|1|3|1|0|1|3|3|0|1|2|1|1|2|1|1|2|5|2|3|1|2|0|12|3|1|2|0|2|1|3|5|0|0|3|4|3|3|6|2|5|2|5|3|0|2|0|1|0|0|1|1|1|0|2|0|0|1|0|3|0|3|2|3|5|0|0|0|0|0|1|2|0|0|0|0|0|2|3|1|4|1|0|1|3|1|1|0|1|0|2|0|0|0|0|0|0|1|2|2|1|0|0|0|0|0|0|0|0|1|1|0|1|1|0|0|2|3|1|0|3|0|1|1|1|1|0|4|0|2|1|2|0|1|1|1|1|1|1|0|0|2|1|0|0|1|3|0|0|2|1|0|2|2|2|3|2|5|3|1|3|2|3|3|0|7|2|3|1|4|2|2|2|1|0|1|0|1|1|1|1|0|0|1|1|0|0|0|0|0|1|0|0|0|1|0|0|0|1|0|0|0|0|0|1|0|1|0|0|0|0|0|0|0|0|1|0|0|1|1|0|0|0|0|0|0|0|0|1|0|1|1|0|0|0|0|0|0|1|0|0|0|0|0|1|1|0|1|0|0|0|0|0|0|0|1|0|0|0|2|0|0|0|0|0|1|1|1|0|0|1|2|0|1|0|1|0|2|1|0|0|0|1|0|0|0|0|1|1|1|1|2|1|0|0|1|2|1|1|2|1|0|0|0|0|1|0|1|2|2|1|0|0|0|0|1|0|0|1|1|0|0|0|0|0|0|0|0|0|0|0|0|1|2|1|0|1|1|0|2|0|2|0|1|1|4|1|5|3|1|3|1|4|2|1|2|2|3|0|0|2|0|0|1|6|2|1|1|1|1|0|2|2|0|0|1|2|1|3|4|0|2|1|2|0|0|1|1|2|1|3|1|1|2|0|2|2|2|1|3|5|0|0|1|4|0|4|4|2|5|1|5|1|1|6|2|4|2|3|3|2|1|1|3|0|2|1|2|5|0|0|1|1|0|1|1|0|0|0|1|1|0|1|1|0|1|0|0|1|1|1|1|1|1|1|0|0|2|2|0|0|0|1|2|1|0|3|0|0|1|3|1|2|3|2|2|1|2|2|2|2|0|3|3|1|0|0|0|1|0|0|1|0|0|2|1|2|1|0|2|0|0|2|0|1|1|1|1|0|0|0|1|0|0|1|1|1|4|0|3|0|1|1|2|2|0|2|2|1|2|2|4|3|6|4|1|5|2|4|0|3|2|0|1|2|1|1|2|1|1|1|0|0|2|0|1|1|1|1|0|0|2|1|1|1|0|1|2|1|1|0|0|1|3|1|0|1|0|1|0|0|0|2|1|0|1|2|2|7|7|5|3|4|2|2|4|1|2|0|3|4|1|1|1|0|0|1|4|1|4|0|2|1|1|0|1|0|0|0|1|1|0|0|1|0|0|0|0|4|0|6|0|0|1|0|0|0|0|0|1|1|0|2|0|0|0|0|0|0|1|3|5|1|1|1|1|0|0|7|3|1|2|4|5|1|1|0|1|3|2|1|2|0|0|1|1|0|0|0|0|2|0|0|0|0|0|0|0|0|1|0|1|2|0|3|0|0|1|0|0|0|0|0|1|0|0|0|0|0|0|0|1|0|1|0|1|0|0|0|1|0|1|2|2|0|1|0|0|0|0|0|1|1|1|1|0|0|2|1|0|1|0|0|1|0|0|0|0|0|0|1|0|0|1|0|0|1|0|0|1|0|1|1|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|1|0|0|0|0|0|0|0|1|0|1|0|0|1|0|0|1|0|0|0|1|0|0|1|0|0|0|0|1|0|0|0|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1</HistCounts>
+      </HistItem>
+    </Histograms>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">21600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456833600 sec UTC</MDI>
+      <MDI key="STATISTICS_MAXIMUM">19.07</MDI>
+      <MDI key="STATISTICS_MEAN">11.079589632829</MDI>
+      <MDI key="STATISTICS_MINIMUM">3.34</MDI>
+      <MDI key="STATISTICS_STDDEV">3.8303498766002</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="3">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Histograms>
+      <HistItem>
+        <HistMin>14.615975</HistMin>
+        <HistMax>302.954025</HistMax>
+        <BucketCount>1000</BucketCount>
+        <IncludeOutOfRange>0</IncludeOutOfRange>
+        <Approximate>0</Approximate>
+        <HistCounts>1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|2|0|0|0|0|1|2|1|0|0|1|1|2|3|3|2|2|3|2|1|2|1|2|2|2|2|0|2|1|0|3|1|2|2|1|2|0|0|1|2|1|1|0|0|3|3|1|0|1|2|2|0|2|1|1|2|1|1|0|1|2|1|0|0|0|0|0|0|1|4|3|0|0|4|0|3|1|0|1|0|0|0|0|0|0|0|0|1|0|0|0|4|1|1|1|0|2|2|1|0|0|1|1|1|0|1|1|1|0|1|0|1|2|1|1|2|1|2|2|1|2|1|1|1|0|2|0|0|1|1|3|1|0|1|1|0|0|0|1|1|0|0|0|0|1|0|0|0|0|1|0|2|0|1|0|1|1|0|0|0|0|0|0|0|0|2|0|2|0|0|0|0|1|0|1|0|0|0|0|0|0|1|1|0|1|0|1|0|1|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|1|1|0|0|0|1|0|1|1|0|0|0|1|0|1|0|0|1|2|0|0|0|1|2|1|0|1|1|0|1|0|2|0|0|1|0|2|1|0|1|0|1|0|0|1|1|1|0|0|0|0|1|2|1|0|1|1|1|0|1|1|0|0|0|0|0|1|1|1|2|1|0|0|0|0|1|0|3|2|1|0|0|1|1|0|0|0|1|0|0|0|0|1|0|1|0|0|0|0|2|0|2|0|1|0|1|1|0|0|0|0|0|0|0|1|2|0|1|0|1|0|2|0|1|0|1|2|0|1|0|0|1|0|2|1|0|1|1|0|1|0|2|2|1|1|0|1|1|1|4|1|2|1|0|0|1|1|3|1|2|2|1|0|0|2|0|3|1|0|2|1|0|3|1|3|2|4|5|1|2|0|1|4|3|0|2|3|2|1|0|1|3|3|3|0|1|1|1|1|1|1|0|0|0|0|0|1|0|1|0|1|0|0|0|1|0|1|2|0|0|1|0|1|1|0|1|0|0|0|0|1|1|2|2|1|1|1|0|0|0|0|0|1|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|1|0|0|0|0|0|1|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|1|1|0|0|0|0|0|0|0|0|0|0|1|0|1|0|0|0|0|0|2|0|1|1|0|1|0|0|0|0|0|0|0|0|0|0|0|1|1|0|1|0|0|0|1|1|0|0|0|1|1|0|1|0|2|0|2|0|1|1|0|1|1|0|1|2|2|0|1|1|0|0|2|1|3|0|1|2|1|2|1|2|1|6|1|0|1|0|4|0|4|4|2|3|0|0|4|4|2|1|4|0|4|4|5|1|2|8|4|1|7|2|6|5|5|5|6|1|3|4|4|2|8|7|4|4|6|3|2|9|6|4|4|9|2|8|9|9|6|8|8|7|7|9|6|9|15|4|8|13|10|11|8|6|8|8|5|8|7|6|4|8|7|9|8|2|6|5|6|1|4|5|3|2|2|5|1|0|3|2|2|1|1|2|2|1|0|1|1|3|0|1|0|0|1|2|1|0|1|0|1|1|1|1|0|1|3|0|0|1|1|1|0|0|1|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1</HistCounts>
+      </HistItem>
+    </Histograms>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">21600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456833600 sec UTC</MDI>
+      <MDI key="STATISTICS_MAXIMUM">302.81</MDI>
+      <MDI key="STATISTICS_MEAN">173.65870410367</MDI>
+      <MDI key="STATISTICS_MINIMUM">14.76</MDI>
+      <MDI key="STATISTICS_STDDEV">68.443843329268</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="4">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">43200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456855200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="5">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">43200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456855200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="6">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">43200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456855200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="7">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">64800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456876800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="8">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">64800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456876800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="9">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">64800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456876800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="10">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">86400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456898400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="11">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">86400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456898400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="12">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">86400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456898400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="13">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">108000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456920000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="14">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">108000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456920000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="15">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">108000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456920000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="16">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">129600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456941600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="17">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">129600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456941600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="18">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">129600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456941600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="19">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">151200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456963200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="20">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">151200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456963200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="21">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">151200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456963200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="22">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">172800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456984800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="23">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">172800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456984800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="24">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">172800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1456984800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="25">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">194400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457006400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="26">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">194400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457006400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="27">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">194400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457006400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="28">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">216000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457028000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="29">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">216000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457028000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="30">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">216000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457028000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="31">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">237600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457049600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="32">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">237600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457049600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="33">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">237600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457049600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="34">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">259200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457071200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="35">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">259200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457071200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="36">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">259200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457071200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="37">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">280800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457092800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="38">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">280800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457092800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="39">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">280800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457092800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="40">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">302400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457114400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="41">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">302400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457114400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="42">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">302400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457114400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="43">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">324000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457136000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="44">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">324000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457136000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="45">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">324000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457136000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="46">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">345600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457157600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="47">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">345600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457157600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="48">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">345600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457157600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="49">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">367200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457179200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="50">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">367200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457179200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="51">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">367200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457179200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="52">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">388800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457200800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="53">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">388800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457200800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="54">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">388800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457200800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="55">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">410400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457222400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="56">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">410400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457222400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="57">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">410400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457222400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="58">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">432000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457244000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="59">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">432000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457244000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="60">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">432000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457244000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="61">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">453600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457265600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="62">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">453600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457265600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="63">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">453600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457265600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="64">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">475200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457287200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="65">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">475200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457287200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="66">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">475200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457287200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="67">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">496800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457308800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="68">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">496800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457308800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="69">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">496800 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457308800 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="70">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">518400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457330400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="71">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">518400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457330400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="72">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">518400 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457330400 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="73">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">540000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457352000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="74">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">540000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457352000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="75">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">540000 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457352000 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="76">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">561600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457373600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="77">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">561600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457373600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="78">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">561600 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457373600 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="79">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Significant height of combined wind waves and swell [m]</MDI>
+      <MDI key="GRIB_ELEMENT">HTSGW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">583200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[m]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457395200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="80">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave mean period [s]</MDI>
+      <MDI key="GRIB_ELEMENT">PERPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">583200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[s]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457395200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="81">
+    <Description>1[-] SFC (Ground or water surface)</Description>
+    <Metadata>
+      <MDI key="GRIB_COMMENT">Primary wave direction [deg]</MDI>
+      <MDI key="GRIB_ELEMENT">DIRPW</MDI>
+      <MDI key="GRIB_FORECAST_SECONDS">583200 sec</MDI>
+      <MDI key="GRIB_REF_TIME">1456812000 sec UTC</MDI>
+      <MDI key="GRIB_SHORT_NAME">1-SFC</MDI>
+      <MDI key="GRIB_UNIT">[deg]</MDI>
+      <MDI key="GRIB_VALID_TIME">1457395200 sec UTC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>
