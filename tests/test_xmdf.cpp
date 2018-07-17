@@ -27,8 +27,18 @@ TEST( MeshXmdfTest, QuadAndTriangleFile )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  ASSERT_EQ( 186, MDAL_M_datasetCount( m ) );
-  DatasetH ds = MDAL_M_dataset( m, 0 );
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Depth" ), std::string( name ) );
+
+  ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool scalar = MDAL_D_hasScalarData( ds );
@@ -42,15 +52,6 @@ TEST( MeshXmdfTest, QuadAndTriangleFile )
 
   bool onVertices = MDAL_D_isOnVertices( ds );
   EXPECT_EQ( true, onVertices );
-
-  int meta_count = MDAL_D_metadataCount( ds );
-  ASSERT_EQ( 2, meta_count );
-
-  const char *key = MDAL_D_metadataKey( ds, 0 );
-  EXPECT_EQ( std::string( "name" ), std::string( key ) );
-
-  const char *val = MDAL_D_metadataValue( ds, 0 );
-  EXPECT_EQ( std::string( "Depth" ), std::string( val ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1976, count );

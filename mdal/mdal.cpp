@@ -1,3 +1,8 @@
+/*
+ MDAL - Mesh Data Abstraction Library (MIT License)
+ Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
+*/
+
 #include <string>
 #include <stddef.h>
 #include <limits>
@@ -20,6 +25,19 @@ MDAL_Status MDAL_LastStatus()
 {
   return sLastStatus;
 }
+
+// helper to return string data - without having to deal with memory too much.
+// returned pointer is valid only next call. also not thread-safe.
+const char *_return_str( const std::string &str )
+{
+  static std::string lastStr;
+  lastStr = str;
+  return lastStr.c_str();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// MESH
+///////////////////////////////////////////////////////////////////////////////////////
 
 MeshH MDAL_LoadMesh( const char *meshFile )
 {
@@ -201,7 +219,7 @@ void MDAL_M_CloseDataset( DatasetH dataset )
   d->free();
 }
 
-int MDAL_M_datasetCount( MeshH mesh )
+int MDAL_M_datasetGroupCount( MeshH mesh )
 {
   if ( !mesh )
   {
@@ -209,11 +227,11 @@ int MDAL_M_datasetCount( MeshH mesh )
     return 0;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  int len = static_cast<int>( m->datasets.size() );
+  int len = static_cast<int>( m->datasetGroups.size() );
   return len;
 }
 
-DatasetH MDAL_M_dataset( MeshH mesh, int index )
+DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
 {
   if ( !mesh )
   {
@@ -221,15 +239,146 @@ DatasetH MDAL_M_dataset( MeshH mesh, int index )
     return nullptr;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  int len = static_cast<int>( m->datasets.size() );
+  int len = static_cast<int>( m->datasetGroups.size() );
   if ( len <= index )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleMesh;
     return nullptr;
   }
   size_t i = static_cast<size_t>( index );
-  return static_cast< DatasetH >( m->datasets[i].get() );
+  return static_cast< DatasetH >( m->datasetGroups[i].get() );
 }
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// DATASET GROUPS
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+int MDAL_G_datasetCount( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    return 0;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  int len = static_cast<int>( g->datasets.size() );
+  return len;
+}
+
+DatasetH MDAL_G_dataset( DatasetGroupH group, int index )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    return nullptr;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  int len = static_cast<int>( g->datasets.size() );
+  if ( len <= index )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    return nullptr;
+  }
+  size_t i = static_cast<size_t>( index );
+  return static_cast< DatasetH >( g->datasets[i].get() );
+}
+
+DatasetH MDAL_G_maxiumumsDataset( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    return nullptr;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  return static_cast< DatasetH >( g->maximumDataset.get() );
+}
+
+int MDAL_G_metadataCount( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return 0;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  int len = static_cast<int>( g->metadata.size() );
+  return len;
+}
+
+const char *MDAL_G_metadataKey( DatasetGroupH group, int index )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return EMPTY_STR;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  int len = static_cast<int>( g->metadata.size() );
+  if ( len <= index )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return EMPTY_STR;
+  }
+  size_t i = static_cast<size_t>( index );
+  return _return_str( g->metadata[i].first );
+}
+
+const char *MDAL_G_metadataValue( DatasetGroupH group, int index )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return EMPTY_STR;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  int len = static_cast<int>( g->metadata.size() );
+  if ( len <= index )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return EMPTY_STR;
+  }
+  size_t i = static_cast<size_t>( index );
+  return _return_str( g->metadata[i].second );
+}
+
+const char *MDAL_G_name( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return EMPTY_STR;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  return _return_str( g->name() );
+}
+
+bool MDAL_G_hasScalarData( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return true;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  return g->isScalar;
+}
+
+bool MDAL_G_isOnVertices( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return true;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  return g->isOnVertices;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// DATASETS
+///////////////////////////////////////////////////////////////////////////////////////
 
 bool MDAL_D_hasScalarData( DatasetH dataset )
 {
@@ -239,7 +388,7 @@ bool MDAL_D_hasScalarData( DatasetH dataset )
     return true;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  return d->isScalar;
+  return d->parent->isScalar;
 }
 
 bool MDAL_D_isOnVertices( DatasetH dataset )
@@ -250,56 +399,30 @@ bool MDAL_D_isOnVertices( DatasetH dataset )
     return true;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  return d->isOnVertices;
+  return d->parent->isOnVertices;
 }
 
-int MDAL_D_metadataCount( DatasetH dataset )
+DatasetGroupH MDAL_D_group( DatasetH dataset )
 {
   if ( !dataset )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return 0;
-  }
-  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  int len = static_cast<int>( d->metadata.size() );
-  return len;
-}
-
-const char *MDAL_D_metadataKey( DatasetH dataset, int index )
-{
-  if ( !dataset )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return EMPTY_STR;
-  }
-
-  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  int len = static_cast<int>( d->metadata.size() );
-  if ( len <= index )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleDataset;
     return nullptr;
   }
-  size_t i = static_cast<size_t>( index );
-  return d->metadata[i].first.c_str();
+  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
+  return static_cast< MDAL::DatasetGroup * >( d->parent );
 }
 
-const char *MDAL_D_metadataValue( DatasetH dataset, int index )
+double MDAL_D_time( DatasetH dataset )
 {
   if ( !dataset )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return EMPTY_STR;
+    return NODATA;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  int len = static_cast<int>( d->metadata.size() );
-  if ( len <= index )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return nullptr;
-  }
-  size_t i = static_cast<size_t>( index );
-  return d->metadata[i].second.c_str();
+  return d->time;
+
 }
 
 int MDAL_D_valueCount( DatasetH dataset )

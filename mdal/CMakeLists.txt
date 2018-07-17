@@ -2,6 +2,7 @@ SET(MDAL_SOURCES
   mdal.cpp
   mdal_utils.cpp
   mdal_loader.cpp
+  mdal_defines.cpp
   frmts/mdal_2dm.cpp
   frmts/mdal_ascii_dat.cpp
   frmts/mdal_binary_dat.cpp

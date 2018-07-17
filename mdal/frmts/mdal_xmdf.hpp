@@ -28,14 +28,14 @@ namespace MDAL
 
     private:
       std::string mDatFile;
-      Datasets readXmdfGroupAsDataSet(
+      std::shared_ptr<MDAL::DatasetGroup> readXmdfGroupAsDatasetGroup(
         const HdfGroup &rootGroup,
         const std::string &name,
         size_t vertexCount,
         size_t faceCount );
 
-      void addDataSetsFromGroup(
-        Datasets &datasets,
+      void addDatasetGroupsFromXmdfGroup(
+        DatasetGroups &groups,
         const HdfGroup &rootGroup,
         size_t vertexCount,
         size_t faceCount );

@@ -27,8 +27,20 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  ASSERT_EQ( 1, MDAL_M_datasetCount( m ) );
-  DatasetH ds = MDAL_M_dataset( m, 0 );
+
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Water Depth (m)" ), std::string( name ) );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool scalar = MDAL_D_hasScalarData( ds );
@@ -43,14 +55,8 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
   bool onVertices = MDAL_D_isOnVertices( ds );
   EXPECT_EQ( true, onVertices );
 
-  int meta_count = MDAL_D_metadataCount( ds );
-  ASSERT_EQ( 2, meta_count );
-
-  const char *key = MDAL_D_metadataKey( ds, 1 );
-  EXPECT_EQ( std::string( "name" ), std::string( key ) );
-
-  const char *val = MDAL_D_metadataValue( ds, 1 );
-  EXPECT_EQ( std::string( "Water Depth (m)" ), std::string( val ) );
+  double time = MDAL_D_time( ds );
+  EXPECT_DOUBLE_EQ( 0, time );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
@@ -74,8 +80,19 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  ASSERT_EQ( 62, MDAL_M_datasetCount( m ) );
-  DatasetH ds = MDAL_M_dataset( m, 50 );
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Vel  dat_format" ), std::string( name ) );
+
+  ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 50 );
   ASSERT_NE( ds, nullptr );
 
   bool scalar = MDAL_D_hasScalarData( ds );
@@ -89,15 +106,6 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
 
   bool onVertices = MDAL_D_isOnVertices( ds );
   EXPECT_EQ( true, onVertices );
-
-  int meta_count = MDAL_D_metadataCount( ds );
-  ASSERT_EQ( 2, meta_count );
-
-  const char *key = MDAL_D_metadataKey( ds, 1 );
-  EXPECT_EQ( std::string( "name" ), std::string( key ) );
-
-  const char *val = MDAL_D_metadataValue( ds, 1 );
-  EXPECT_EQ( std::string( "Vel  dat_format" ), std::string( val ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1976, count );
@@ -118,8 +126,19 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  ASSERT_EQ( 62, MDAL_M_datasetCount( m ) );
-  DatasetH ds = MDAL_M_dataset( m, 0 );
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Dep  dat_format" ), std::string( name ) );
+
+  ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool scalar = MDAL_D_hasScalarData( ds );
@@ -133,15 +152,6 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
 
   bool onVertices = MDAL_D_isOnVertices( ds );
   EXPECT_EQ( true, onVertices );
-
-  int meta_count = MDAL_D_metadataCount( ds );
-  ASSERT_EQ( 2, meta_count );
-
-  const char *key = MDAL_D_metadataKey( ds, 1 );
-  EXPECT_EQ( std::string( "name" ), std::string( key ) );
-
-  const char *val = MDAL_D_metadataValue( ds, 1 );
-  EXPECT_EQ( std::string( "Dep  dat_format" ), std::string( val ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1976, count );

@@ -85,7 +85,7 @@ namespace MDAL
       void addDataToOutput( GDALRasterBandH raster_band, std::shared_ptr<Dataset> tos, bool is_vector, bool is_x );
       bool addSrcProj();
       void activateFaces( std::shared_ptr<Dataset> tos );
-      void addDatasets();
+      void addDatasetGroups();
       void createMesh();
       void parseRasterBands( const GdalDataset *cfGDALDataset );
 

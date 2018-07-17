@@ -11,8 +11,13 @@
 #include <memory>
 #include <map>
 
+// avoid unused variable warnings
+#define MDAL_UNUSED(x) (void)x;
+
 namespace MDAL
 {
+  class DatasetGroup;
+
   struct BBox
   {
     BBox() {}
@@ -36,8 +41,6 @@ namespace MDAL
   typedef std::vector<Vertex> Vertices;
   typedef std::vector<Face> Faces;
 
-
-
   typedef struct
   {
     double x;
@@ -46,83 +49,52 @@ namespace MDAL
     bool noData = false;
   } Value; //Dataset Value
 
+  typedef std::vector< std::pair< std::string, std::string > > Metadata;
+
   class Dataset
   {
     public:
+      double time;
 
-      std::string getMetadata( const std::string &key )
-      {
-        for ( auto &pair : metadata )
-        {
-          if ( pair.first == key )
-          {
-            return pair.second;
-          }
-        }
-        return std::string();
-      }
-
-      void setMetadata( const std::string &key, const std::string &val )
-      {
-        bool found = false;
-        for ( auto &pair : metadata )
-        {
-          if ( pair.first == key )
-          {
-            found = true;
-            pair.second = val;
-          }
-        }
-        if ( !found )
-          metadata.push_back( std::make_pair( key, val ) );
-      }
-
-      std::string name()
-      {
-        return getMetadata( "name" );
-      }
-
-      void setName( const std::string &name )
-      {
-        setMetadata( "name", name );
-      }
-
-      std::vector< std::pair< std::string, std::string > > metadata;
-      std::vector<Value> values; // size - vertex count if isOnVertices
-      // size - face count if !isOnVertices
+      /**
+       * size - face count if !isOnVertices
+       * size - vertex count if isOnVertices
+       */
+      std::vector<Value> values;
       std::vector<bool> active; // size - face count. Whether the output for this is active...
 
-      bool isScalar = true;
-      bool isOnVertices = true;
       bool isValid = true;
+      DatasetGroup *parent = nullptr;
 
-      std::string uri; // file/uri from where it came
-
-
-      void free()
-      {
-        values.clear();
-        metadata.clear();
-        isValid = false;
-      }
-
-      bool isActive( size_t faceIndex )
-      {
-        if ( isOnVertices )
-        {
-          if ( active.size() > faceIndex )
-            return active[faceIndex];
-          else
-            return false;
-        }
-        else
-        {
-          return true;
-        }
-      }
+      void free();
+      bool isActive( size_t faceIndex );
   };
 
   typedef std::vector<std::shared_ptr<Dataset>> Datasets;
+
+  class DatasetGroup
+  {
+    public:
+      std::string getMetadata( const std::string &key );
+
+      void setMetadata( const std::string &key, const std::string &val );
+
+      std::string name();
+      void setName( const std::string &name );
+
+      Metadata metadata;
+
+      bool isScalar = true;
+      bool isOnVertices = true;
+      Datasets datasets;
+      std::shared_ptr<Dataset> maximumDataset;
+
+      std::string uri; // file/uri from where it came
+
+      void free();
+  };
+
+  typedef std::vector<std::shared_ptr<DatasetGroup>> DatasetGroups;
 
   struct Mesh
   {
@@ -135,7 +107,7 @@ namespace MDAL
     Faces faces;
     std::map<size_t, size_t> faceIDtoIndex; // only for 2DM and DAT files
 
-    Datasets datasets;
+    DatasetGroups datasetGroups;
 
     void setSourceCrs( const std::string &str ) {crs = str;} //TODO
     void setSourceCrsFromWKT( const std::string &str ) {crs = str;} //TODO
