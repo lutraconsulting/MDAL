@@ -37,12 +37,15 @@ TEST( MeshXmdfTest, QuadAndTriangleFile )
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Depth" ), std::string( name ) );
 
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
-
-  bool scalar = MDAL_D_hasScalarData( ds );
-  EXPECT_EQ( true, scalar );
 
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
@@ -50,16 +53,12 @@ TEST( MeshXmdfTest, QuadAndTriangleFile )
   bool active = MDAL_D_active( ds, 0 );
   EXPECT_EQ( false, active );
 
-  bool onVertices = MDAL_D_isOnVertices( ds );
-  EXPECT_EQ( true, onVertices );
-
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1976, count );
 
   double value = MDAL_D_value( ds, 0 );
   EXPECT_DOUBLE_EQ( 0, value );
 
-  MDAL_M_CloseDataset( ds );
   MDAL_CloseMesh( m );
 }
 

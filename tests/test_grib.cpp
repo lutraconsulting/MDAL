@@ -27,23 +27,21 @@ TEST( MeshGribTest, ScalarFile )
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Primary wave mean period [s]" ), std::string( name ) );
 
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
   ASSERT_EQ( 27, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
-
-  ASSERT_NE( ds, nullptr );
-
-  bool scalar = MDAL_D_hasScalarData( ds );
-  EXPECT_EQ( true, scalar );
 
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
   bool active = MDAL_D_active( ds, 0 );
   EXPECT_EQ( false, active );
-
-  bool onVertices = MDAL_D_isOnVertices( ds );
-  EXPECT_EQ( true, onVertices );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1683, count );
@@ -72,21 +70,21 @@ TEST( MeshGribTest, VectorFile )
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "wind [m/s]" ), std::string( name ) );
 
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
   ASSERT_EQ( 27, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 15 );
   ASSERT_NE( ds, nullptr );
-
-  bool scalar = MDAL_D_hasScalarData( ds );
-  EXPECT_EQ( false, scalar );
 
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
   bool active = MDAL_D_active( ds, 0 );
   EXPECT_EQ( false, active );
-
-  bool onVertices = MDAL_D_isOnVertices( ds );
-  EXPECT_EQ( true, onVertices );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1683, count );
@@ -97,7 +95,6 @@ TEST( MeshGribTest, VectorFile )
   double valueY = MDAL_D_valueY( ds, 1600 );
   EXPECT_DOUBLE_EQ( 2.8200097656250001, valueY );
 
-  MDAL_M_CloseDataset( ds );
   MDAL_CloseMesh( m );
 }
 

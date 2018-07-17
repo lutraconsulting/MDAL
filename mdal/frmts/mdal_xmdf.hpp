@@ -13,7 +13,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "mdal_defines.hpp"
+#include "mdal_data_model.hpp"
 #include "mdal.h"
 #include "mdal_hdf5.hpp"
 

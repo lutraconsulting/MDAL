@@ -11,7 +11,7 @@
 #include <stddef.h>
 #include <limits>
 
-#include "mdal_defines.hpp"
+#include "mdal_data_model.hpp"
 
 namespace MDAL
 {

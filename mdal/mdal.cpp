@@ -9,7 +9,7 @@
 
 #include "mdal.h"
 #include "mdal_loader.hpp"
-#include "mdal_defines.hpp"
+#include "mdal_data_model.hpp"
 
 #define NODATA std::numeric_limits<double>::quiet_NaN()
 static const char *EMPTY_STR = "";
@@ -208,17 +208,6 @@ void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile )
   MDAL::Loader::loadDatasets( m, datasetFile, &sLastStatus );
 }
 
-void MDAL_M_CloseDataset( DatasetH dataset )
-{
-  if ( !dataset )
-  {
-    return;
-  }
-
-  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  d->free();
-}
-
 int MDAL_M_datasetGroupCount( MeshH mesh )
 {
   if ( !mesh )
@@ -379,28 +368,6 @@ bool MDAL_G_isOnVertices( DatasetGroupH group )
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS
 ///////////////////////////////////////////////////////////////////////////////////////
-
-bool MDAL_D_hasScalarData( DatasetH dataset )
-{
-  if ( !dataset )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return true;
-  }
-  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  return d->parent->isScalar;
-}
-
-bool MDAL_D_isOnVertices( DatasetH dataset )
-{
-  if ( !dataset )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return true;
-  }
-  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  return d->parent->isOnVertices;
-}
 
 DatasetGroupH MDAL_D_group( DatasetH dataset )
 {

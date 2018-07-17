@@ -6,7 +6,7 @@
 #include "mdal_xmdf.hpp"
 
 #include "mdal_utils.hpp"
-#include "mdal_defines.hpp"
+#include "mdal_data_model.hpp"
 #include "mdal_hdf5.hpp"
 
 #include <string>

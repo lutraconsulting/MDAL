@@ -2,7 +2,7 @@ SET(MDAL_SOURCES
   mdal.cpp
   mdal_utils.cpp
   mdal_loader.cpp
-  mdal_defines.cpp
+  mdal_data_model.cpp
   frmts/mdal_2dm.cpp
   frmts/mdal_ascii_dat.cpp
   frmts/mdal_binary_dat.cpp
@@ -12,7 +12,7 @@ SET(MDAL_HEADERS
   api/mdal.h
   mdal_utils.hpp
   mdal_loader.hpp
-  mdal_defines.hpp
+  mdal_data_model.hpp
   frmts/mdal_2dm.hpp
   frmts/mdal_ascii_dat.hpp
   frmts/mdal_binary_dat.hpp

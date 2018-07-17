@@ -66,7 +66,6 @@ namespace MDAL
       bool isValid = true;
       DatasetGroup *parent = nullptr;
 
-      void free();
       bool isActive( size_t faceIndex );
   };
 
@@ -90,8 +89,6 @@ namespace MDAL
       std::shared_ptr<Dataset> maximumDataset;
 
       std::string uri; // file/uri from where it came
-
-      void free();
   };
 
   typedef std::vector<std::shared_ptr<DatasetGroup>> DatasetGroups;

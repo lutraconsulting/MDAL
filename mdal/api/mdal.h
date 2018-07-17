@@ -80,8 +80,9 @@ MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 
 //! Loads mesh file. On error see MDAL_LastStatus for error type This effectively loads whole mesh in-memory
 MDAL_EXPORT MeshH MDAL_LoadMesh( const char *meshFile );
-//! Closes mesh, free the memory
+//! Closes mesh, frees the memory
 MDAL_EXPORT void MDAL_CloseMesh( MeshH mesh );
+
 //! Returns vertex count for the mesh
 MDAL_EXPORT int MDAL_M_vertexCount( MeshH mesh );
 //! Returns vertex X coord for the mesh
@@ -100,9 +101,6 @@ MDAL_EXPORT int MDAL_M_faceVerticesIndexAt( MeshH mesh, int face_index, int vert
 //! Datasets will be closed automatically on mesh destruction or memory
 //! can be freed manually with MDAL_CloseDataset if needed
 MDAL_EXPORT void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile );
-
-//! Frees the memory used to get dataset values
-MDAL_EXPORT void MDAL_M_CloseDataset( DatasetH dataset );
 
 //! Returns dataset groups count
 MDAL_EXPORT int MDAL_M_datasetGroupCount( MeshH mesh );
@@ -147,12 +145,6 @@ MDAL_EXPORT bool MDAL_G_isOnVertices( DatasetGroupH group );
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS
 ///////////////////////////////////////////////////////////////////////////////////////
-
-//! Whether dataset has scalar data associated
-MDAL_EXPORT bool MDAL_D_hasScalarData( DatasetH dataset );
-
-//! Whether dataset is on vertices
-MDAL_EXPORT bool MDAL_D_isOnVertices( DatasetH dataset );
 
 //! Returns dataset parent group
 MDAL_EXPORT DatasetGroupH MDAL_D_group( DatasetH dataset );

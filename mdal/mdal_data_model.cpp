@@ -3,15 +3,8 @@
  Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
 */
 
-#include <mdal_defines.hpp>
+#include "mdal_data_model.hpp"
 #include <assert.h>
-
-void MDAL::Dataset::free()
-{
-  values.clear();
-  isValid = false;
-  parent = nullptr;
-}
 
 bool MDAL::Dataset::isActive( size_t faceIndex )
 {
@@ -64,10 +57,4 @@ std::string MDAL::DatasetGroup::name()
 void MDAL::DatasetGroup::setName( const std::string &name )
 {
   setMetadata( "name", name );
-}
-
-void MDAL::DatasetGroup::free()
-{
-  datasets.clear();
-  metadata.clear();
 }

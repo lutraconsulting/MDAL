@@ -39,21 +39,21 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water Depth (m)" ), std::string( name ) );
 
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
-
-  bool scalar = MDAL_D_hasScalarData( ds );
-  EXPECT_EQ( true, scalar );
 
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
   bool active = MDAL_D_active( ds, 0 );
   EXPECT_EQ( true, active );
-
-  bool onVertices = MDAL_D_isOnVertices( ds );
-  EXPECT_EQ( true, onVertices );
 
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 0, time );
@@ -67,7 +67,6 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
   value = MDAL_D_value( ds, 1 );
   EXPECT_DOUBLE_EQ( 2, value );
 
-  MDAL_M_CloseDataset( ds );
   MDAL_CloseMesh( m );
 }
 
@@ -91,12 +90,15 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Vel  dat_format" ), std::string( name ) );
 
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 50 );
   ASSERT_NE( ds, nullptr );
-
-  bool scalar = MDAL_D_hasScalarData( ds );
-  EXPECT_EQ( false, scalar );
 
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
@@ -104,16 +106,12 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   bool active = MDAL_D_active( ds, 600 );
   EXPECT_EQ( false, active );
 
-  bool onVertices = MDAL_D_isOnVertices( ds );
-  EXPECT_EQ( true, onVertices );
-
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1976, count );
 
   double value = MDAL_D_value( ds, 1000 );
   EXPECT_DOUBLE_EQ( 0, value );
 
-  MDAL_M_CloseDataset( ds );
   MDAL_CloseMesh( m );
 }
 
@@ -137,12 +135,15 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Dep  dat_format" ), std::string( name ) );
 
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
-
-  bool scalar = MDAL_D_hasScalarData( ds );
-  EXPECT_EQ( true, scalar );
 
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
@@ -150,16 +151,12 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
   bool active = MDAL_D_active( ds, 0 );
   EXPECT_EQ( false, active );
 
-  bool onVertices = MDAL_D_isOnVertices( ds );
-  EXPECT_EQ( true, onVertices );
-
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1976, count );
 
   double value = MDAL_D_value( ds, 0 );
   EXPECT_DOUBLE_EQ( 0, value );
 
-  MDAL_M_CloseDataset( ds );
   MDAL_CloseMesh( m );
 }
 
