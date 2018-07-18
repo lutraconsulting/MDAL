@@ -36,7 +36,7 @@ jobs:
       script:
         - mkdir -p build_mingw
         - cd build_mingw
-        - cmake .. -DCMAKE_TOOLCHAIN_FILE=/home/peter/mesh/MDAL/Toolchain-mingw32.cmake -DWITH_GDAL=OFF -DENABLE_TESTS=OFF -DWITH_HDF5=OFF ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel
+        - cmake .. -DCMAKE_TOOLCHAIN_FILE=../Toolchain-mingw32.cmake -DWITH_GDAL=OFF -DENABLE_TESTS=OFF -DWITH_HDF5=OFF ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel
         - make
     - stage: Format
       script:
