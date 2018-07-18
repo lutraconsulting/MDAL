@@ -198,7 +198,7 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
   size_t faceCount = mesh->faces.size();
 
   std::shared_ptr<MDAL::Dataset> dataset( new MDAL::Dataset );
-  dataset->time = t / 3600.;
+  dataset->time = t / 3600.; // TODO read TIMEUNITS
   dataset->values.resize( vertexCount );
   dataset->active.resize( faceCount );
   dataset->parent = group.get();
