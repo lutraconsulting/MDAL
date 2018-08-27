@@ -286,7 +286,7 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep(
   }
   else
   {
-    dataset->time = time / 3600.0; // TODO read TIMEUNITS
+    dataset->time = time; // TODO read TIMEUNITS
     group->datasets.push_back( dataset );
   }
   return false; //OK

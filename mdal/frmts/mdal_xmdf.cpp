@@ -168,7 +168,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
     dataset->values.resize( vertexCount );
     dataset->active.resize( faceCount );
     dataset->parent = group.get();
-    dataset->time = double( times[i] ) / 3600.0;
+    dataset->time = double( times[i] );
 
     if ( isVector )
     {
