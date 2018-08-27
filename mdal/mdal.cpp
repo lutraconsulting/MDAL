@@ -119,6 +119,28 @@ double MDAL_M_vertexYCoordinatesAt( MeshH mesh, int index )
   return m->vertices[i].y;
 }
 
+double MDAL_M_vertexZCoordinatesAt( MeshH mesh, int index )
+{
+  if ( !mesh )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return NODATA;
+  }
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  if ( index < 0 )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return NODATA;
+  }
+  size_t i = static_cast<size_t>( index );
+  if ( m->vertices.size() <= i )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return NODATA;
+  }
+  return m->vertices[i].z;
+}
+
 int MDAL_M_faceCount( MeshH mesh )
 {
   if ( !mesh )

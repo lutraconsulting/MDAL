@@ -89,6 +89,8 @@ MDAL_EXPORT int MDAL_M_vertexCount( MeshH mesh );
 MDAL_EXPORT double MDAL_M_vertexXCoordinatesAt( MeshH mesh, int index );
 //! Returns vertex Y coord for the mesh
 MDAL_EXPORT double MDAL_M_vertexYCoordinatesAt( MeshH mesh, int index );
+//! Returns vertex Z coord for the mesh
+MDAL_EXPORT double MDAL_M_vertexZCoordinatesAt( MeshH mesh, int index );
 //! Returns face count for the mesh
 MDAL_EXPORT int MDAL_M_faceCount( MeshH mesh );
 //! Returns number of vertices face consist of, e.g. 3 for triangle

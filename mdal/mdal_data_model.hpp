@@ -31,6 +31,7 @@ namespace MDAL
   {
     double x;
     double y;
+    double z; // Bed elevation
   } Vertex;
 
   typedef std::vector<size_t> Face;
@@ -105,6 +106,8 @@ namespace MDAL
 
     void setSourceCrs( const std::string &str ) {crs = str;} //TODO
     void setSourceCrsFromWKT( const std::string &str ) {crs = str;} //TODO
+
+    void addBedElevationDataset();
   };
 
 } // namespace MDAL
