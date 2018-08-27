@@ -27,8 +27,8 @@ TEST( MeshXmdfTest, QuadAndTriangleFile )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
