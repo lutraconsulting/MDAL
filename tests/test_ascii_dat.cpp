@@ -33,7 +33,7 @@ TEST( MeshAsciiDatTest, MissingFile )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_FileNotFound, s );
-  EXPECT_EQ( 0, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 }
 
 TEST( MeshAsciiDatTest, WrongFile )
@@ -43,7 +43,7 @@ TEST( MeshAsciiDatTest, WrongFile )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
-  EXPECT_EQ( 0, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 }
 
 TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
