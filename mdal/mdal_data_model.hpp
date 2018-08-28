@@ -84,8 +84,6 @@ namespace MDAL
       bool isScalar = true;
       bool isOnVertices = true;
       Datasets datasets;
-      std::shared_ptr<Dataset> maximumDataset;
-
       std::string uri; // file/uri from where it came
   };
 

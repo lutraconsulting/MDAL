@@ -120,9 +120,6 @@ MDAL_EXPORT int MDAL_G_datasetCount( DatasetGroupH group );
 //! Returns dataset handle
 MDAL_EXPORT DatasetH MDAL_G_dataset( DatasetGroupH group, int index );
 
-//! Returns dataset handle for Maximums. Could be null for some formats
-MDAL_EXPORT DatasetH MDAL_G_maxiumumsDataset( DatasetGroupH group );
-
 //! Returns number of metadata values
 MDAL_EXPORT int MDAL_G_metadataCount( DatasetGroupH group );
 

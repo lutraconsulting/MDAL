@@ -295,17 +295,6 @@ DatasetH MDAL_G_dataset( DatasetGroupH group, int index )
   return static_cast< DatasetH >( g->datasets[i].get() );
 }
 
-DatasetH MDAL_G_maxiumumsDataset( DatasetGroupH group )
-{
-  if ( !group )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
-    return nullptr;
-  }
-  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  return static_cast< DatasetH >( g->maximumDataset.get() );
-}
-
 int MDAL_G_metadataCount( DatasetGroupH group )
 {
   if ( !group )
