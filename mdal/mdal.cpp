@@ -249,6 +249,13 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
     sLastStatus = MDAL_Status::Err_IncompatibleMesh;
     return nullptr;
   }
+
+  if ( index < 0 )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return nullptr;
+  }
+
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   int len = static_cast<int>( m->datasetGroups.size() );
   if ( len <= index )
@@ -284,6 +291,13 @@ DatasetH MDAL_G_dataset( DatasetGroupH group, int index )
     sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
     return nullptr;
   }
+
+  if ( index < 0 )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    return nullptr;
+  }
+
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
   int len = static_cast<int>( g->datasets.size() );
   if ( len <= index )
