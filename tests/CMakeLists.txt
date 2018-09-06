@@ -1,3 +1,6 @@
+# MDAL - Mesh Data Abstraction Library (MIT License)
+# Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
+
 FIND_PACKAGE(Threads REQUIRED)
 
 #########################################################################
@@ -78,6 +81,12 @@ IF(GDAL_FOUND)
     test_grib.cpp
   )
 ENDIF(GDAL_FOUND)
+
+IF(NETCDF_FOUND)
+SET(TESTS ${TESTS}
+  test_3di.cpp
+)
+ENDIF(NETCDF_FOUND)
 
 FOREACH(TESTSRC ${TESTS})
     ADD_MDAL_TEST(${TESTSRC})

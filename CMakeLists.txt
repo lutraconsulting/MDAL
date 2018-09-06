@@ -1,6 +1,11 @@
+# MDAL - Mesh Data Abstraction Library (MIT License)
+# Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
+
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 PROJECT(MDAL)
 SET (CMAKE_CXX_STANDARD 11)
+# set path to additional CMake modules
+SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 #############################################################
 # global vars
@@ -9,6 +14,7 @@ SET (ENABLE_TESTS TRUE CACHE BOOL "Build tests?")
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables?")
 SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that require HDF5")
 SET (WITH_GDAL TRUE CACHE BOOL "Build providers that require GDAL (e.g. GRIB)")
+SET (WITH_NETCDF TRUE CACHE BOOL "Build providers that require NETCDF (e.g. 3Di)")
 
 #############################################################
 # warnings https://stackoverflow.com/a/3818084/2838364
@@ -40,6 +46,14 @@ IF (WITH_GDAL)
     # following variable is used in mdal_config.h
     SET (HAVE_GDAL TRUE)
   ENDIF (GDAL_FOUND)
+ENDIF()
+
+IF (WITH_NETCDF)
+  FIND_PACKAGE(NetCDF REQUIRED)
+  IF (NETCDF_FOUND)
+    # following variable is used in mdal_config.h
+    SET (HAVE_NETCDF TRUE)
+  ENDIF (NETCDF_FOUND)
 ENDIF()
 
 #############################################################

@@ -102,8 +102,9 @@ namespace MDAL
 
     DatasetGroups datasetGroups;
 
-    void setSourceCrs( const std::string &str ) {crs = str;} //TODO
-    void setSourceCrsFromWKT( const std::string &str ) {crs = str;} //TODO
+    void setSourceCrs( const std::string &str );
+    void setSourceCrsFromWKT( const std::string &wkt );
+    void setSourceCrsFromEPSG( int code );
 
     void addBedElevationDataset();
   };
