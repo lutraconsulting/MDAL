@@ -10,9 +10,9 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 
-TEST( Mesh3DiTest, NoAgg2D )
+TEST( Mesh3DiTest, Mesh2D4cells301steps )
 {
-  std::string path = test_file( "/3di/2d_no_agg/results_3di.nc" );
+  std::string path = test_file( "/3di/2d_4cells301steps/results_3di.nc" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -178,6 +178,30 @@ TEST( Mesh3DiTest, NoAgg2D )
   value = MDAL_D_value( ds, 0 );
   EXPECT_DOUBLE_EQ( 0, value );
 
+  MDAL_CloseMesh( m );
+}
+
+TEST( Mesh3DiTest, Mesh2D16cells7steps )
+{
+  std::string path = test_file( "/3di/2d_16cells7steps/results_3di.nc" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 25 );
+  double z = MDAL_M_vertexZCoordinatesAt( m, 0 );
+  EXPECT_DOUBLE_EQ( 0.0, z );
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 16, f_count );
+
+  ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+  ASSERT_NE( g, nullptr );
+  ASSERT_EQ( 7, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
   MDAL_CloseMesh( m );
 }
 
