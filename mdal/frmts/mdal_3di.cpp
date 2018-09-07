@@ -54,7 +54,8 @@ void MDAL::Loader3Di::populateFacesAndVertices( MDAL::Mesh *mesh )
   std::vector<double> faceVerticesY( arrsize );
   if ( nc_get_var_double( mNcFile.handle(), ncidY, faceVerticesY.data() ) ) throw MDAL_Status::Err_UnknownFormat;
 
-  // now populate map and
+  // now populate create faces and backtrack which vertices
+  // are used in multiple faces
   for ( size_t faceId = 0; faceId < faceCount; ++faceId )
   {
     Face face;
@@ -69,27 +70,27 @@ void MDAL::Loader3Di::populateFacesAndVertices( MDAL::Mesh *mesh )
 
       if ( MDAL::equals( vertex.x, fillX ) || MDAL::equals( vertex.y, fillY ) )
         break;
+
+
+      size_t vertexId;
+
+      std::string key = std::to_string( vertex.x ) + "," + std::to_string( vertex.y );
+      const auto it = xyToVertex2DId.find( key );
+      if ( it == xyToVertex2DId.end() )
+      {
+        // new vertex
+        vertexId = mesh->vertices.size();
+        xyToVertex2DId[key] = vertexId;
+        mesh->vertices.push_back( vertex );
+      }
       else
       {
-        size_t vertexId;
-
-        std::string key = std::to_string( vertex.x ) + "," + std::to_string( vertex.y );
-        const auto it = xyToVertex2DId.find( key );
-        if ( it == xyToVertex2DId.end() )
-        {
-          // new vertex
-          vertexId = mesh->vertices.size();
-          xyToVertex2DId[key] = vertexId;
-          mesh->vertices.push_back( vertex );
-        }
-        else
-        {
-          // existing vertex
-          vertexId = it->second;
-        }
-
-        face.push_back( vertexId );
+        // existing vertex
+        vertexId = it->second;
       }
+
+      face.push_back( vertexId );
+
     }
 
     mesh->faces[faceId] = face;

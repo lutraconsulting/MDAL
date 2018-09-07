@@ -55,7 +55,7 @@ MDAL::cfdataset_info_map MDAL::LoaderCF::parseDatasetGroupInfo()
       int ndims;
       if ( nc_inq_varndims( mNcFile.handle(), varid, &ndims ) ) continue;
 
-      // we parse either timedependent or time-indepenended (e.g. Bed/Maximums)
+      // we parse either time-dependent or time-independent (e.g. Bed/Maximums)
       if ( ( ndims < 1 ) || ( ndims > 2 ) ) continue;
       int dimids[2];
       if ( nc_inq_vardimid( mNcFile.handle(), varid, dimids ) ) continue;
