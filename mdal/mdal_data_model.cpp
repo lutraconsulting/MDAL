@@ -6,6 +6,7 @@
 #include "mdal_data_model.hpp"
 #include <assert.h>
 #include <algorithm>
+#include "mdal_utils.hpp"
 
 bool MDAL::Dataset::isActive( size_t faceIndex )
 {
@@ -58,6 +59,21 @@ std::string MDAL::DatasetGroup::name()
 void MDAL::DatasetGroup::setName( const std::string &name )
 {
   setMetadata( "name", name );
+}
+
+void MDAL::Mesh::setSourceCrs( const std::string &str )
+{
+  crs = MDAL::trim( str );
+}
+
+void MDAL::Mesh::setSourceCrsFromWKT( const std::string &wkt )
+{
+  setSourceCrs( wkt );
+}
+
+void MDAL::Mesh::setSourceCrsFromEPSG( int code )
+{
+  setSourceCrs( std::string( "EPSG:" ) + std::to_string( code ) );
 }
 
 void MDAL::Mesh::addBedElevationDataset()

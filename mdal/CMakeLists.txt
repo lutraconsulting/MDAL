@@ -1,3 +1,6 @@
+# MDAL - Mesh Data Abstraction Library (MIT License)
+# Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
+
 SET(MDAL_SOURCES 
   mdal.cpp
   mdal_utils.cpp
@@ -38,6 +41,18 @@ IF(GDAL_FOUND)
     frmts/mdal_grib.hpp
   )
 ENDIF(GDAL_FOUND)
+
+IF(NETCDF_FOUND)
+  SET(MDAL_SOURCES ${MDAL_SOURCES}
+    frmts/mdal_cf.cpp
+    frmts/mdal_3di.cpp
+  )
+  SET(MDAL_HEADERS ${MDAL_HEADERS}
+    frmts/mdal_cf.hpp
+    frmts/mdal_3di.hpp
+    frmts/mdal_netcdf.hpp
+  )
+ENDIF(NETCDF_FOUND)
 
 ADD_LIBRARY(mdal SHARED
   ${MDAL_SOURCES}

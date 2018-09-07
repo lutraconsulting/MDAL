@@ -82,7 +82,9 @@ MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 MDAL_EXPORT MeshH MDAL_LoadMesh( const char *meshFile );
 //! Closes mesh, frees the memory
 MDAL_EXPORT void MDAL_CloseMesh( MeshH mesh );
-
+//! Returns mesh projection
+//! not thread-safe and valid only till next call
+MDAL_EXPORT const char *MDAL_M_projection( MeshH mesh );
 //! Returns vertex count for the mesh
 MDAL_EXPORT int MDAL_M_vertexCount( MeshH mesh );
 //! Returns vertex X coord for the mesh
