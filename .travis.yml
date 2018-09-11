@@ -1,5 +1,3 @@
-language: cpp
-
 env:
   global:
     - CTEST_EXT_COLOR_OUTPUT=TRUE
@@ -14,6 +12,7 @@ matrix:
        - CTEST_TARGET_SYSTEM=Linux-gcc
        - CTEST_MODEL=Nightly
       dist: trusty
+      language: cpp
       sudo: required
     - os: osx
       osx_image: xcode9.4
