@@ -19,8 +19,7 @@ install:
 before_script:
 
 script:
-  - ./scripts/travis/"$TRAVIS_OS_NAME"/build.sh
+  - ./scripts/travis/"$TRAVIS_OS_NAME"/build.bash
 
 after_script:
-  - cd scripts; ./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.c* -print`
 

@@ -15,3 +15,5 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=../Toolchain-mingw32.cmake \
          -DWITH_NETCDF=OFF ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel
 make
 
+echo "Check code syntax"
+cd scripts; ./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.c* -print`
