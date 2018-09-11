@@ -25,7 +25,8 @@ SET(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 # the following targets: gtest, gtest_main, gmock
 # and gmock_main
 ADD_SUBDIRECTORY("${CMAKE_BINARY_DIR}/googletest-src"
-                 "${CMAKE_BINARY_DIR}/googletest-build")
+                 "${CMAKE_BINARY_DIR}/googletest-build"
+                 EXCLUDE_FROM_ALL)
 
 # The gtest/gmock targets carry header search path
 # dependencies automatically when using CMake 2.8.11 or
@@ -34,14 +35,15 @@ ADD_SUBDIRECTORY("${CMAKE_BINARY_DIR}/googletest-src"
 #    include_directories("${gtest_SOURCE_DIR}/include"
 #                        "${gmock_SOURCE_DIR}/include")
 # endif()
-INCLUDE_DIRECTORIES(
-    "${gtest_SOURCE_DIR}/include"
-    "${gmock_SOURCE_DIR}/include"
-)
+# INCLUDE_DIRECTORIES(
+#    "${gtest_SOURCE_DIR}/include"
+#    "${gmock_SOURCE_DIR}/include"
+#)
 
 #########################################################################
 #########################################################################
-ADD_DEFINITIONS(-DTESTDATA="${CMAKE_CURRENT_SOURCE_DIR}/data")
+SET(TESTDATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/data")
+ADD_DEFINITIONS(-DTESTDATA="${TESTDATA_DIR}")
 ADD_LIBRARY(mdaltestutils OBJECT mdal_testutils.hpp mdal_testutils.cpp )
 
 #########################################################################
@@ -91,3 +93,6 @@ ENDIF(NETCDF_FOUND)
 FOREACH(TESTSRC ${TESTS})
     ADD_MDAL_TEST(${TESTSRC})
 ENDFOREACH(TESTSRC)
+
+# mdalinfo utility test
+ADD_TEST(NAME mdalinfo_test COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/regular_grid.2dm" "${TESTDATA_DIR}/xmdf/regular_grid.xmdf" )
