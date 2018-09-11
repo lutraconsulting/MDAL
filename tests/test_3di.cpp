@@ -189,6 +189,9 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
 
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "EPSG:28992" ), std::string( projection ) );
+
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 25 );
   double z = MDAL_M_vertexZCoordinatesAt( m, 0 );
