@@ -3,34 +3,24 @@ sudo: required
 os:
   - linux
   - osx
-  
+
 env:
   global:
     - CTEST_EXT_COLOR_OUTPUT=TRUE
     - CTEST_BUILD_FLAGS=-j4
     - TRAVIS=1
- 
-matrix:
-  include:
-    - os: linux
-      compiler: gcc
-      env:
-       - CTEST_TARGET_SYSTEM=Linux-gcc
-       - CTEST_MODEL=Nightly
-      dist: trusty
-    - os: osx
-      osx_image: xcode9.4
+    - CTEST_MODEL=Nightly
 
 before_install:
   - ./scripts/travis/"$TRAVIS_OS_NAME"/install.bash
 
-jobs:
-  include:
-    - stage: Build and test
-      script:
-        - ./scripts/travis/"$TRAVIS_OS_NAME"/build.sh
-    - stage: Format
-      script:
-        - cd scripts
-        - ./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.c* -print`
+install:
+
+before_script:
+
+script:
+  - ./scripts/travis/"$TRAVIS_OS_NAME"/build.sh
+
+after_script:
+  - cd scripts; ./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.c* -print`
 

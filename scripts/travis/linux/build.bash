@@ -5,7 +5,7 @@ mkdir -p build_lnx
 cd build_lnx
 cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
 make
-ctest -VV
+CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
 
 echo "MinGW Cross-compile Windows build"
 mkdir -p build_mingw
