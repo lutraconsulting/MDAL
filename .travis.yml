@@ -1,6 +1,9 @@
 language: cpp
 sudo: required
-
+os:
+  - linux
+  - osx
+  
 env:
   global:
     - CTEST_EXT_COLOR_OUTPUT=TRUE
@@ -25,7 +28,7 @@ jobs:
   include:
     - stage: Build and test
       script:
-        - ./scripts/travis/"$TRAVIS_OS_NAME"/script.sh
+        - ./scripts/travis/"$TRAVIS_OS_NAME"/build.sh
     - stage: Format
       script:
         - cd scripts
