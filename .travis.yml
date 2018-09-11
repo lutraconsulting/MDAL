@@ -1,8 +1,5 @@
 language: cpp
 
-sudo: required
-dist: trusty
-
 env:
   global:
     - CTEST_EXT_COLOR_OUTPUT=TRUE
@@ -13,31 +10,22 @@ matrix:
   include:
     - os: linux
       compiler: gcc
-      env: CTEST_TARGET_SYSTEM=Linux-gcc    CTEST_MODEL=Nightly
+      env:
+       - CTEST_TARGET_SYSTEM=Linux-gcc
+       - CTEST_MODEL=Nightly
+      dist: trusty
+      sudo: required
+    - os: osx
+      osx_image: xcode9.4
 
 before_install:
-  - sudo add-apt-repository ppa:cs50/ppa -y # for astyle 3.x
-  - sudo add-apt-repository ppa:ubuntugis/ppa -y # for gdal 2.x
-  - sudo apt-get -qq update
-  - sudo apt-get install -y --allow-unauthenticated libgdal-dev astyle 
-  - sudo apt-get install -y libhdf5-dev
-  - sudo apt-get install mingw-w64
+  - ./scripts/travis/"$TRAVIS_OS_NAME"/install.bash
 
 jobs:
   include:
-    - stage: Linux build and test
+    - stage: Build and test
       script:
-        - mkdir -p build_lnx
-        - cd build_lnx
-        - cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
-        - make
-        - ctest -VV
-    - stage: MinGW Cross-compile Windows build
-      script:
-        - mkdir -p build_mingw
-        - cd build_mingw
-        - cmake .. -DCMAKE_TOOLCHAIN_FILE=../Toolchain-mingw32.cmake -DWITH_GDAL=OFF -DENABLE_TESTS=OFF -DWITH_HDF5=OFF -DWITH_NETCDF=OFF ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel
-        - make
+        - ./scripts/travis/"$TRAVIS_OS_NAME"/script.sh
     - stage: Format
       script:
         - cd scripts
