@@ -5,11 +5,26 @@ Mesh Data Abstraction Library
 
 see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119#issuecomment-380018557)
 
+## Supported Formats
+
+You can use MDAL to load the following file formats:
+
+- [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in meteorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
+- [XMDF](https://en.wikipedia.org/wiki/XMDF): As an example, hydraulic outputs from TUFLOW modelling package
+- [DAT](http://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat): Outputs of various hydrodynamic modelling packages (e.g. BASEMENT, HYDRO_AS-2D, TUFLOW)
+- [3Di](http://www.3di.nu): 3Di modelling package formate based on [CF Conventions](http://cfconventions.org)
+
 # Build 
 
 ## Windows 
 
-TODO
+For 64-bit version:
+
+* Install Microsoft Visual Studio 2010
+* Install OSGeo4W (64bit) to C:\OSGeo4W64
+* Call `c:\osgeo4w64\osgeo4w.bat`
+* Add osge4w64 to your include directories
+* create build system with cmake and compile
 
 ## Linux
 
