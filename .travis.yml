@@ -12,7 +12,7 @@ env:
     - CTEST_MODEL=Nightly
 
 before_install:
-  - travis_wait ./scripts/travis/"$TRAVIS_OS_NAME"/install.bash
+  - travis_wait 40 ./scripts/travis/"$TRAVIS_OS_NAME"/install.bash
 
 install:
 
