@@ -34,11 +34,11 @@ ENDIF(HDF5_FOUND)
 IF(GDAL_FOUND)
   SET(MDAL_SOURCES ${MDAL_SOURCES}
     frmts/mdal_gdal.cpp
-    frmts/mdal_grib.cpp
+    frmts/mdal_gdal_grib.cpp
   )
   SET(MDAL_HEADERS ${MDAL_HEADERS}
     frmts/mdal_gdal.hpp
-    frmts/mdal_grib.hpp
+    frmts/mdal_gdal_grib.hpp
   )
 ENDIF(GDAL_FOUND)
 
@@ -53,6 +53,15 @@ IF(NETCDF_FOUND)
     frmts/mdal_netcdf.hpp
   )
 ENDIF(NETCDF_FOUND)
+
+IF(GDAL_FOUND AND NETCDF_FOUND)
+  SET(MDAL_SOURCES ${MDAL_SOURCES}
+    frmts/mdal_gdal_netcdf.cpp
+  )
+  SET(MDAL_HEADERS ${MDAL_HEADERS}
+    frmts/mdal_gdal_netcdf.hpp
+  )
+ENDIF(GDAL_FOUND AND NETCDF_FOUND)
 
 ADD_LIBRARY(mdal SHARED
   ${MDAL_SOURCES}

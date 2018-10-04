@@ -9,7 +9,7 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 
-TEST( MeshGribTest, ScalarFile )
+TEST( MeshGdalGribTest, ScalarFile )
 {
   std::string path = test_file( "/grib/Madagascar.wave.7days.grb" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
@@ -52,7 +52,7 @@ TEST( MeshGribTest, ScalarFile )
   MDAL_CloseMesh( m );
 }
 
-TEST( MeshGribTest, VectorFile )
+TEST( MeshGdalGribTest, VectorFile )
 {
   std::string path = test_file( "/grib/Madagascar.wind.7days.grb" );
   MeshH m = MDAL_LoadMesh( path.c_str() );

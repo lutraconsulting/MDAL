@@ -80,7 +80,7 @@ ENDIF(HDF5_FOUND)
 
 IF(GDAL_FOUND)
   SET(TESTS ${TESTS}
-    test_grib.cpp
+    test_gdal_grib.cpp
   )
 ENDIF(GDAL_FOUND)
 
@@ -89,6 +89,12 @@ SET(TESTS ${TESTS}
   test_3di.cpp
 )
 ENDIF(NETCDF_FOUND)
+
+IF(GDAL_FOUND AND NETCDF_FOUND)
+  SET(TESTS ${TESTS}
+    test_gdal_netcdf.cpp
+  )
+ENDIF(GDAL_FOUND AND NETCDF_FOUND)
 
 FOREACH(TESTSRC ${TESTS})
     ADD_MDAL_TEST(${TESTSRC})

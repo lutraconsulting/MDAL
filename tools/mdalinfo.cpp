@@ -31,10 +31,10 @@ int main( int argc, char *argv[] )
   std::string mesh_file = argv[1];
 
   std::vector<std::string> extraDatasets;
-  if (argc > 2) // additional dataset arguments
+  if ( argc > 2 ) // additional dataset arguments
   {
-    for (int i=2; i<argc; ++i)
-      extraDatasets.push_back(argv[i]);
+    for ( int i = 2; i < argc; ++i )
+      extraDatasets.push_back( argv[i] );
   }
 
 
@@ -56,10 +56,12 @@ int main( int argc, char *argv[] )
   }
 
   // EXTRA DATASETS
-  for (const std::string& dataset: extraDatasets) {
+  for ( const std::string &dataset : extraDatasets )
+  {
     std::cout << "Dataset File: " << dataset << std::endl;
-    MDAL_M_LoadDatasets(m, dataset.c_str());
-    if (MDAL_LastStatus() != MDAL_Status::None) {
+    MDAL_M_LoadDatasets( m, dataset.c_str() );
+    if ( MDAL_LastStatus() != MDAL_Status::None )
+    {
       std::cout << "Dataset loaded: ERR" << std::endl;
       std::cout << "Status:" << MDAL_LastStatus() <<  std::endl;
       return EXIT_FAILURE;
@@ -68,11 +70,12 @@ int main( int argc, char *argv[] )
 
   std::cout << "Datasets loaded: OK" << std::endl;
   std::cout << "  Groups count: " << MDAL_M_datasetGroupCount( m ) <<  std::endl;
-  for (int i=0; i<MDAL_M_datasetGroupCount( m ); ++i) {
+  for ( int i = 0; i < MDAL_M_datasetGroupCount( m ); ++i )
+  {
     auto group = MDAL_M_datasetGroup( m, i );
     std::cout << "  " << MDAL_G_name( group )
               << " " << MDAL_G_datasetCount( group );
-    if ( !MDAL_G_hasScalarData( group ))
+    if ( !MDAL_G_hasScalarData( group ) )
       std::cout << " ( Vector ) ";
     std::cout << std::endl;
   }
