@@ -18,7 +18,7 @@ echo "Remove old version"
 rm -rf $QGIS_MDAL_DIR/*
 
 echo "Copy new version"
-cp -RV ./cmake $QGIS_MDAL_DIR/
+cp -Rv ./cmake $QGIS_MDAL_DIR/
 cp -Rv ./cmake_templates $QGIS_MDAL_DIR/
 cp -Rv ./mdal/* $QGIS_MDAL_DIR
 find $QGIS_MDAL_DIR -name "*CMakeLists.txt" -type f -delete
