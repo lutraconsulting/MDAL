@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 echo "Windows native build"
 mkdir -p build_win
