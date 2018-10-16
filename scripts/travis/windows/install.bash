@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 
-choco install qgis
+choco install qgis --yes
 
