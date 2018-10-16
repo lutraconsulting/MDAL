@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+ls C:
+
+
 echo "Windows native build"
 mkdir -p build_win
 cd build_win
