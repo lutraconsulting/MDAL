@@ -1,10 +1,9 @@
-language: cpp
+# language: cpp
 sudo: required
 os:
   - linux
   - osx
-# https://travis-ci.community/t/c-support-on-windows/282
-#  - windows 
+  - windows 
 
 env:
   global:
