@@ -3,7 +3,8 @@ sudo: required
 os:
   - linux
   - osx
-  - windows 
+# https://travis-ci.community/t/c-support-on-windows/282
+#  - windows 
 
 env:
   global:
