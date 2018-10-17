@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-QGIS_VER=3.2
-QGIS_DIR="C:/Program Files/QGIS ${QGIS_VER}"
-echo "Using libraries from QGIS ${QGIS_VER}"
-ls -la "${QGIS_DIR}/lib"
+
+OSGEO4W_DIR="C:/OSGeo4W64"
+echo "Using libraries from ${OSGEO4W_DIR}"
+ls -la "${OSGEO4W_DIR}/lib"
 
 
 echo "Windows native build"
@@ -13,11 +13,11 @@ cd build_win
 C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15" ${CMAKE_OPTIONS} \
    -DCMAKE_BUILD_TYPE=Rel \
    -DENABLE_TESTS=ON \
-   -DNETCDF_PREFIX="${QGIS_DIR}" \
-   -DHDF5_ROOT="${QGIS_DIR}" \
-   -DGDAL_DIR="${QGIS_DIR}" \
-   -DGDAL_LIBRARY="${QGIS_DIR}/lib/gdal_i.lib" \
-   -DGDAL_INCLUDE_DIR="${QGIS_DIR}/include" \
+   -DNETCDF_PREFIX="${OSGEO4W_DIR}" \
+   -DHDF5_ROOT="${OSGEO4W_DIR}" \
+   -DGDAL_DIR="${OSGEO4W_DIR}" \
+   -DGDAL_LIBRARY="${OSGEO4W_DIR}/lib/gdal_i.lib" \
+   -DGDAL_INCLUDE_DIR="${OSGEO4W_DIR}/include" \
    ..
 
 C:/Program\ Files/CMake/bin/cmake --build .
