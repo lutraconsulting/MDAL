@@ -12,7 +12,7 @@ C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15" ${CMAKE_OPTIONS} \
    -DENABLE_TESTS=ON \
    -DNETCDF_PREFIX=C:\Program\ Files\QGIS\ ${QGIS_VER} \
    -DHDF5_ROOT=C:\Program\ Files\QGIS\ ${QGIS_VER} \
-   -GDAL_ROOT=C:\Program\ Files\QGIS\ ${QGIS_VER} \
+   -DGDAL_ROOT=C:\Program\ Files\QGIS\ ${QGIS_VER} \
    ..
 
 C:/Program\ Files/CMake/bin/cmake --build .
