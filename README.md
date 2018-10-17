@@ -21,11 +21,9 @@ You can use MDAL to load the following file formats:
 
 For 64-bit version:
 
-* Install Microsoft Visual Studio 2010
+* Install Microsoft Visual Studio 2017
 * Install OSGeo4W (64bit) to C:\OSGeo4W64
-* Call `c:\osgeo4w64\osgeo4w.bat`
-* Add osge4w64 to your include directories
-* create build system with cmake and compile
+* see [win build script](scripts/travis/windows/build.bash)
 
 ## Linux
 

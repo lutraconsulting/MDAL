@@ -1,8 +1,9 @@
-language: cpp
+language: shell
 sudo: required
 os:
   - linux
   - osx
+  - windows 
 
 env:
   global:
