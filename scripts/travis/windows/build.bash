@@ -2,7 +2,7 @@
 set -e
 
 
-OSGEO4W_DIR="C:/Program Files/QGIS 3.2"
+OSGEO4W_DIR="C:/OSGeo4W64"
 echo "Using libraries from ${OSGEO4W_DIR}"
 ls -la "${OSGEO4W_DIR}/lib"
 
@@ -10,7 +10,7 @@ ls -la "${OSGEO4W_DIR}/lib"
 echo "Windows native build"
 mkdir -p build_win
 cd build_win
-C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15" ${CMAKE_OPTIONS} \
+C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15 Win64" ${CMAKE_OPTIONS} \
    -DCMAKE_BUILD_TYPE=Rel \
    -DENABLE_TESTS=ON \
    -DNETCDF_PREFIX="${OSGEO4W_DIR}" \
