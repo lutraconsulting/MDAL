@@ -2,8 +2,9 @@
 set -e
 
 QGIS_VER=3.2
+QGIS_DIR=C:/Program\ Files/QGIS\ ${QGIS_VER}
 echo "Using libraries from QGIS ${QGIS_VER}"
-ls -la C:/Program\ Files/QGIS/ ${QGIS_VER}/lib
+ls -la ${QGIS_DIR}/lib
 
 
 echo "Windows native build"
@@ -12,9 +13,9 @@ cd build_win
 C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15" ${CMAKE_OPTIONS} \
    -DCMAKE_BUILD_TYPE=Rel \
    -DENABLE_TESTS=ON \
-   -DNETCDF_PREFIX=C:/Program\ Files/QGIS\ ${QGIS_VER} \
-   -DHDF5_ROOT=C:/Program\ Files/QGIS\ ${QGIS_VER} \
-   -DGDAL_ROOT=C:/Program\ Files/QGIS\ ${QGIS_VER} \
+   -DNETCDF_PREFIX=${QGIS_DIR} \
+   -DHDF5_ROOT=${QGIS_DIR} \
+   -DGDAL_ROOT=${QGIS_DIR} \
    ..
 
 C:/Program\ Files/CMake/bin/cmake --build .
