@@ -4,8 +4,6 @@ set -e
 
 OSGEO4W_DIR="C:/OSGeo4W64"
 echo "Using libraries from ${OSGEO4W_DIR}"
-ls -la "${OSGEO4W_DIR}/lib"
-ls -la "${OSGEO4W_DIR}/bin"
 
 echo "Windows native build"
 mkdir -p build_win
@@ -22,13 +20,9 @@ C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15 Win64" ${CMAKE_OPTIONS} \
 
 C:/Program\ Files/CMake/bin/cmake --build .
 
-ls -la "C:/Users/travis/build/lutraconsulting/MDAL/build_win/tests/Debug/"
-ls -la "C:/Users/travis/build/lutraconsulting/MDAL/build_win/mdal/Debug/"
-ls -la "C:/Users/travis/build/lutraconsulting/MDAL/build_win/"
-
 export PATH="$PATH:/c/OSGeo4W64/bin:/c/Users/travis/build/lutraconsulting/MDAL/build_win/mdal/Debug"
 echo "PATH used: $PATH"
 
-C:/Program\ Files/CMake/bin/ctest -VV
+C:/Program\ Files/CMake/bin/ctest -VV --exclude-regex "mdalinfo_test"
 
 cd ..
