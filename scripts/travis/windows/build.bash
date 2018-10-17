@@ -22,6 +22,12 @@ C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15 Win64" ${CMAKE_OPTIONS} \
 
 C:/Program\ Files/CMake/bin/cmake --build .
 
+ls -la "C:/Users/travis/build/lutraconsulting/MDAL/build_win/tests/Debug/"
+ls -la "C:/Users/travis/build/lutraconsulting/MDAL/build_win/mdal/Debug/"
+ls -la "C:/Users/travis/build/lutraconsulting/MDAL/build_win/"
+
+export PATH="$PATH:/c/OSGeo4W64/bin:/c/Users/travis/build/lutraconsulting/MDAL/build_win/mdal/Debug"
+
 export PATH="$PATH:/c/OSGeo4W64/bin"
 echo "PATH used: $PATH"
 
