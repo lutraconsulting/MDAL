@@ -22,7 +22,7 @@ C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15 Win64" ${CMAKE_OPTIONS} \
 
 C:/Program\ Files/CMake/bin/cmake --build .
 
-export PATH="$PATH;${OSGEO4W_DIR}/bin"
+export PATH="$PATH:/c/OSGeo4W64/bin"
 echo "PATH used: $PATH"
 
 C:/Program\ Files/CMake/bin/ctest -VV
