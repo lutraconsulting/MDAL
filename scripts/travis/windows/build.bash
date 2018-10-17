@@ -5,7 +5,7 @@ set -e
 OSGEO4W_DIR="C:/OSGeo4W64"
 echo "Using libraries from ${OSGEO4W_DIR}"
 ls -la "${OSGEO4W_DIR}/lib"
-
+ls -la "${OSGEO4W_DIR}/bin"
 
 echo "Windows native build"
 mkdir -p build_win
@@ -24,6 +24,8 @@ C:/Program\ Files/CMake/bin/cmake --build .
 
 export PATH="$PATH:/c/OSGeo4W64/bin"
 echo "PATH used: $PATH"
+
+dumpbin C:\Users\travis\build\lutraconsulting\MDAL\build_win\tests\Debug\mdal_gdal_netcdf_test.exe
 
 C:/Program\ Files/CMake/bin/ctest -VV
 
