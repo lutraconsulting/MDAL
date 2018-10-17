@@ -18,6 +18,8 @@ C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15" ${CMAKE_OPTIONS} \
    -DGDAL_INCLUDE_DIR="${QGIS_DIR}/include" \
    -DHDF5_LIBRARY="${QGIS_DIR}/lib/hdf5.lib" \
    -DGDAL_LIBRARY="${QGIS_DIR}/lib/gdal_i.lib" \
+   -DHDF5_FIND_COMPONENTS=FALSE \
+   -HDF5_FIND_DEBUG=TRUE \
    ..
 
 C:/Program\ Files/CMake/bin/cmake --build .
