@@ -2,7 +2,7 @@
 set -e
 
 QGIS_VER=3.2
-QGIS_DIR="C:/Program Files/QGIS ${QGIS_VER}"
+QGIS_DIR="C:/Program\ Files/QGIS\ ${QGIS_VER}"
 echo "Using libraries from QGIS ${QGIS_VER}"
 ls -la ${QGIS_DIR}/lib
 
