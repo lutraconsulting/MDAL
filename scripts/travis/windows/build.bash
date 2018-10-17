@@ -2,7 +2,7 @@
 set -e
 
 
-OSGEO4W_DIR="C:/OSGeo4W64"
+OSGEO4W_DIR="C:/Program Files/QGIS 3.2s"
 echo "Using libraries from ${OSGEO4W_DIR}"
 ls -la "${OSGEO4W_DIR}/lib"
 
