@@ -4,11 +4,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 PROJECT(MDAL)
 
-IF(MSVC)
-  # FindHDF5 and FindGDAL are incompatible with the new policy
-  CMAKE_POLICY(SET CMP0074 OLD)
-ENDIF()
-
 SET (CMAKE_CXX_STANDARD 11)
 # set path to additional CMake modules
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})

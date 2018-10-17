@@ -14,8 +14,12 @@ C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15" ${CMAKE_OPTIONS} \
    -DCMAKE_BUILD_TYPE=Rel \
    -DENABLE_TESTS=ON \
    -DNETCDF_PREFIX="${QGIS_DIR}" \
-   -DHDF5_ROOT="${QGIS_DIR}" \
-   -DGDAL_ROOT="${QGIS_DIR}" \
+   -DGDAL_INCLUDE_DIR=$STAGE_PATH/include \
+   -DGDAL_LIBRARY=$STAGE_PATH/lib/libgdal.so \
+   -DHDF5_LIBRARIES="${QGIS_DIR}/lib/hdf5.lib" \
+   -DHDF5_INCLUDE_DIRS="${QGIS_DIR}/include" \
+   -DGDAL_INCLUDE_DIR="${QGIS_DIR}/include" \
+   -DGDAL_LIBRARY="${QGIS_DIR}/lib/gdal_i.lib" \
    ..
 
 C:/Program\ Files/CMake/bin/cmake --build .
