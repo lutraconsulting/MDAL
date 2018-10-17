@@ -27,8 +27,6 @@ ls -la "C:/Users/travis/build/lutraconsulting/MDAL/build_win/mdal/Debug/"
 ls -la "C:/Users/travis/build/lutraconsulting/MDAL/build_win/"
 
 export PATH="$PATH:/c/OSGeo4W64/bin:/c/Users/travis/build/lutraconsulting/MDAL/build_win/mdal/Debug"
-
-export PATH="$PATH:/c/OSGeo4W64/bin"
 echo "PATH used: $PATH"
 
 dumpbin C:\Users\travis\build\lutraconsulting\MDAL\build_win\tests\Debug\mdal_gdal_netcdf_test.exe
