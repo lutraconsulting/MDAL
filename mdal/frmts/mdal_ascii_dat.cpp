@@ -87,6 +87,10 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
   while ( std::getline( in, line ) )
   {
+    // Replace tabs by spaces,
+    // since basement v.2.8 uses tabs instead of spaces (e.g. 'TS 0\t0.0')
+    line = replace( line, "\t", " " );
+
     std::vector<std::string> items = split( line,  " ", SplitBehaviour::SkipEmptyParts );
     if ( items.size() < 1 )
       continue; // empty line?? let's skip it
