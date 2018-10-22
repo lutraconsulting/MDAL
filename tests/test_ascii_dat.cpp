@@ -202,6 +202,55 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFile )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFileWithTabs )
+{
+  MeshH m = mesh();
+  std::string path = test_file( "/ascii_dat/quad_and_triangle_vertex_scalar_tabs.dat" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *key = MDAL_G_metadataKey( g, 0 );
+  EXPECT_EQ( std::string( "name" ), std::string( key ) );
+
+  const char *val = MDAL_G_metadataValue( g, 0 );
+  EXPECT_EQ( std::string( "VertexScalarDataset" ), std::string( val ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  bool active = MDAL_D_active( ds, 0 );
+  EXPECT_EQ( true, active );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 5, count );
+
+  double value = MDAL_D_value( ds, 0 );
+  EXPECT_DOUBLE_EQ( 1, value );
+
+  value = MDAL_D_value( ds, 1 );
+  EXPECT_DOUBLE_EQ( 2, value );
+
+  MDAL_CloseMesh( m );
+}
+
 TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
 {
   MeshH m = mesh();
