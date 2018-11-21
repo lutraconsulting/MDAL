@@ -13,6 +13,78 @@
 #include <vector>
 #include <memory>
 
+MDAL::XmdfDataset::~XmdfDataset() = default;
+
+MDAL::XmdfDataset::XmdfDataset( const HdfDataset &valuesDs, const HdfDataset &activeDs, hsize_t timeIndex )
+  : mHdf5DatasetValues( valuesDs )
+  , mHdf5DatasetActive( activeDs )
+  , mTimeIndex( timeIndex )
+{
+}
+
+const HdfDataset &MDAL::XmdfDataset::dsValues() const
+{
+  return mHdf5DatasetValues;
+}
+
+const HdfDataset &MDAL::XmdfDataset::dsActive() const
+{
+  return mHdf5DatasetActive;
+}
+
+hsize_t MDAL::XmdfDataset::timeIndex() const
+{
+  return mTimeIndex;
+}
+
+
+size_t MDAL::XmdfDataset::scalarData( size_t indexStart, size_t count, double *buffer )
+{
+  assert( parent ); //checked in C API interface
+  assert( parent->isScalar() ); //checked in C API interface
+  std::vector<hsize_t> offsets = {timeIndex(), indexStart};
+  std::vector<hsize_t> counts = {1, count};
+  std::vector<float> values = dsValues().readArray( offsets, counts );
+  const float *input = values.data();
+  for ( size_t j = 0; j < count; ++j )
+  {
+    buffer[j] = double( input[j] );
+  }
+  return count;
+}
+
+size_t MDAL::XmdfDataset::vectorData( size_t indexStart, size_t count, double *buffer )
+{
+  assert( parent ); //checked in C API interface
+  assert( !parent->isScalar() ); //checked in C API interface
+  std::vector<hsize_t> offsets = {timeIndex(), indexStart, 0};
+  std::vector<hsize_t> counts = {1, count, 2};
+  std::vector<float> values = dsValues().readArray( offsets, counts );
+  const float *input = values.data();
+  for ( size_t j = 0; j < count; ++j )
+  {
+    buffer[2 * j] = double( input[2 * j] );
+    buffer[2 * j + 1] = double( input[2 * j + 1] );
+  }
+
+  return count;
+}
+
+size_t MDAL::XmdfDataset::activeData( size_t indexStart, size_t count, char *buffer )
+{
+  assert( parent ); //checked in C API interface
+  std::vector<hsize_t> offsets = {timeIndex(), indexStart};
+  std::vector<hsize_t> counts = {1, count};
+  std::vector<uchar> active = dsActive().readArrayUint8( offsets, counts );
+  const uchar *input = active.data();
+  for ( size_t j = 0; j < count; ++j )
+  {
+    buffer[j] = static_cast<char>( input[ j ] );
+  }
+  return count;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
 
 MDAL::LoaderXmdf::LoaderXmdf( const std::string &datFile )
   : mDatFile( datFile )
@@ -20,6 +92,7 @@ MDAL::LoaderXmdf::LoaderXmdf( const std::string &datFile )
 
 void MDAL::LoaderXmdf::load( MDAL::Mesh *mesh, MDAL_Status *status )
 {
+  mMesh = mesh;
   if ( status ) *status = MDAL_Status::None;
 
   HdfFile file( mDatFile );
@@ -53,31 +126,40 @@ void MDAL::LoaderXmdf::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
   DatasetGroups groups; // DAT outputs data
 
-  HdfGroup gTemporal = gMesh.group( "Temporal" );
-  if ( gTemporal.isValid() )
+  if ( gMesh.pathExists( "Temporal" ) )
   {
-    addDatasetGroupsFromXmdfGroup( groups, gTemporal, vertexCount, faceCount );
+    HdfGroup gTemporal = gMesh.group( "Temporal" );
+    if ( gTemporal.isValid() )
+    {
+      addDatasetGroupsFromXmdfGroup( groups, gTemporal, vertexCount, faceCount );
+    }
   }
 
-  HdfGroup gMaximums = gMesh.group( "Maximums" );
-  if ( gMaximums.isValid() )
+  if ( gMesh.pathExists( "Temporal" ) )
   {
-    for ( const std::string &name : gMaximums.groups() )
+    HdfGroup gMaximums = gMesh.group( "Maximums" );
+    if ( gMaximums.isValid() )
     {
-      HdfGroup g = gMaximums.group( name );
-      std::shared_ptr<MDAL::DatasetGroup> maxGroup = readXmdfGroupAsDatasetGroup( g, name + "/Maximums", vertexCount, faceCount );
-      if ( maxGroup->datasets.size() != 1 )
-        MDAL::debug( "Maximum dataset should have just one timestep!" );
-      else
-        groups.push_back( maxGroup );
+      for ( const std::string &name : gMaximums.groups() )
+      {
+        HdfGroup g = gMaximums.group( name );
+        std::shared_ptr<MDAL::DatasetGroup> maxGroup = readXmdfGroupAsDatasetGroup( g, name + "/Maximums", vertexCount, faceCount );
+        if ( maxGroup->datasets.size() != 1 )
+          MDAL::debug( "Maximum dataset should have just one timestep!" );
+        else
+          groups.push_back( maxGroup );
+      }
     }
   }
 
   // res_to_res.exe (TUFLOW utiity tool)
-  HdfGroup gDifference = gMesh.group( "Difference" );
-  if ( gDifference.isValid() )
+  if ( gMesh.pathExists( "Difference" ) )
   {
-    addDatasetGroupsFromXmdfGroup( groups, gDifference, vertexCount, faceCount );
+    HdfGroup gDifference = gMesh.group( "Difference" );
+    if ( gDifference.isValid() )
+    {
+      addDatasetGroupsFromXmdfGroup( groups, gDifference, vertexCount, faceCount );
+    }
   }
 
   mesh->datasetGroups.insert(
@@ -139,44 +221,18 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
   bool isVector = dimValues.size() == 3;
 
   std::vector<float> times = dsTimes.readArray();
-  std::vector<float> values = dsValues.readArray();
-  std::vector<uchar> active = dsActive.readArrayUint8();
 
   group->setName( name );
-  group->isScalar = !isVector;
-  group->isOnVertices = true;
-  group->uri = mDatFile;
+  group->setIsScalar( !isVector );
+  group->setIsOnVertices( true );
+  group->setUri( mDatFile );
+  group->parent = mMesh;
+
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {
-    std::shared_ptr<Dataset> dataset( new Dataset() );
-    dataset->values.resize( vertexCount );
-    dataset->active.resize( faceCount );
+    std::shared_ptr<XmdfDataset> dataset( new XmdfDataset( dsValues, dsActive, i ) );
     dataset->parent = group.get();
     dataset->time = double( times[i] );
-
-    if ( isVector )
-    {
-      const float *input = values.data() + 2 * i * vertexCount;
-      for ( size_t j = 0; j < vertexCount; ++j )
-      {
-        dataset->values[j].x = double( input[2 * j] );
-        dataset->values[j].y = double( input[2 * j + 1] );
-      }
-    }
-    else
-    {
-      const float *input = values.data() + i * vertexCount;
-      for ( size_t j = 0; j < vertexCount; ++j )
-      {
-        dataset->values[j].x = double( input[j] );
-      }
-    }
-
-    const uchar *input = active.data() + i * faceCount;
-    for ( size_t j = 0; j < faceCount; ++j )
-    {
-      dataset->active[j] = input[j];
-    }
     group->datasets.push_back( dataset );
   }
 

@@ -163,7 +163,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::LoaderCF::createFace2DDataset( size_t ts, c
   size_t nFaces2D = mDimensions.size( CFDimensions::Face2D );
   size_t nLine1D = mDimensions.size( CFDimensions::Line1D );
 
-  std::shared_ptr<MDAL::Dataset> dataset = std::make_shared<MDAL::Dataset>();
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared<MDAL::MemoryDataset>();
   dataset->values.resize( mDimensions.faceCount() );
 
   populate_nodata( dataset->values,
@@ -195,9 +195,10 @@ void MDAL::LoaderCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
     const CFDatasetGroupInfo dsi = it.second;
     // Create a dataset group
     std::shared_ptr<MDAL::DatasetGroup> group = std::make_shared<MDAL::DatasetGroup>();
-    group->uri = mFileName;
+    group->setUri( mFileName );
     group->setName( dsi.name );
-    group->isScalar = !dsi.is_vector;
+    group->setIsScalar( !dsi.is_vector );
+    group->parent = mesh;
 
     // read X data
     double fill_val_x = mNcFile.getFillValue( dsi.ncid_x );
@@ -221,7 +222,7 @@ void MDAL::LoaderCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
 
       if ( dsi.outputType == CFDimensions::Face2D )
       {
-        group->isOnVertices = false;
+        group->setIsOnVertices( false );
         dataset = createFace2DDataset( ts, dsi, vals_x, vals_y, fill_val_x, fill_val_y );
       }
 
@@ -300,7 +301,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::LoaderCF::load( MDAL_Status *status )
   if ( status ) *status = MDAL_Status::None;
 
   std::unique_ptr< MDAL::Mesh > mesh( new MDAL::Mesh );
-  mesh->uri = mFileName;
+  mesh->setUri( mFileName );
 
   //Dimensions dims;
   std::vector<double> times;

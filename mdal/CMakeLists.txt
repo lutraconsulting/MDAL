@@ -24,6 +24,7 @@ SET(MDAL_HEADERS
 IF(HDF5_FOUND)
   SET(MDAL_SOURCES ${MDAL_SOURCES}
     frmts/mdal_xmdf.cpp
+    frmts/mdal_hdf5.cpp
   )
   SET(MDAL_HEADERS ${MDAL_HEADERS}
     frmts/mdal_hdf5.hpp

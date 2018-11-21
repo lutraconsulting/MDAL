@@ -46,13 +46,13 @@ TEST( MeshGdalNetCDFTest, Indonesia )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = MDAL_D_active( ds, 50 );
+    bool active = getActive( ds, 50 );
     EXPECT_EQ( true, active );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 234, count );
 
-    double value = MDAL_D_value( ds, 50 );
+    double value = getValue( ds, 50 );
     EXPECT_DOUBLE_EQ( 32759, value );
 
     MDAL_CloseMesh( m );
