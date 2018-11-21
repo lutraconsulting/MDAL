@@ -27,6 +27,7 @@ namespace MDAL
       void load( Mesh *mesh, MDAL_Status *status );
 
     private:
+      MDAL::Mesh* mMesh = nullptr;
       std::string mDatFile;
       std::shared_ptr<MDAL::DatasetGroup> readXmdfGroupAsDatasetGroup(
         const HdfGroup &rootGroup,

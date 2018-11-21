@@ -70,7 +70,7 @@ const char *MDAL_M_projection( MeshH mesh )
   }
 
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  return _return_str( m->crs );
+  return _return_str( m->crs() );
 }
 
 
@@ -388,7 +388,7 @@ bool MDAL_G_hasScalarData( DatasetGroupH group )
     return true;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  return g->isScalar;
+  return g->isScalar();
 }
 
 bool MDAL_G_isOnVertices( DatasetGroupH group )
@@ -399,7 +399,7 @@ bool MDAL_G_isOnVertices( DatasetGroupH group )
     return true;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  return g->isOnVertices;
+  return g->isOnVertices();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -437,7 +437,7 @@ int MDAL_D_valueCount( DatasetH dataset )
     return 0;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  int len = static_cast<int>( d->values.size() );
+  int len = static_cast<int>( d->valuesCount() );
   return len;
 }
 
@@ -454,19 +454,20 @@ double MDAL_D_valueX( DatasetH dataset, int valueIndex )
     return NODATA;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  int len = static_cast<int>( d->values.size() );
+  int len = static_cast<int>( d->valuesCount() );
   if ( len <= valueIndex )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleDataset;
     return NODATA;
   }
   size_t i = static_cast<size_t>( valueIndex );
-  if ( d->values[i].noData )
+  const MDAL::Value value = d->value(i);
+  if ( value.noData )
   {
     return NODATA;
   }
   else
-    return d->values[i].x;
+    return value.x;
 }
 
 double MDAL_D_valueY( DatasetH dataset, int valueIndex )
@@ -477,19 +478,20 @@ double MDAL_D_valueY( DatasetH dataset, int valueIndex )
     return NODATA;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  int len = static_cast<int>( d->values.size() );
+  int len = static_cast<int>( d->valuesCount() );
   if ( len <= valueIndex )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleDataset;
     return NODATA;
   }
   size_t i = static_cast<size_t>( valueIndex );
-  if ( d->values[i].noData )
+  const MDAL::Value value = d->value(i);
+  if ( value.noData )
   {
     return NODATA;
   }
   else
-    return d->values[i].y;
+    return value.y;
 }
 
 bool MDAL_D_isValid( DatasetH dataset )

@@ -20,6 +20,7 @@ MDAL::LoaderXmdf::LoaderXmdf( const std::string &datFile )
 
 void MDAL::LoaderXmdf::load( MDAL::Mesh *mesh, MDAL_Status *status )
 {
+  mMesh = mesh;
   if ( status ) *status = MDAL_Status::None;
 
   HdfFile file( mDatFile );
@@ -143,12 +144,14 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
   std::vector<uchar> active = dsActive.readArrayUint8();
 
   group->setName( name );
-  group->isScalar = !isVector;
-  group->isOnVertices = true;
-  group->uri = mDatFile;
+  group->setIsScalar(!isVector);
+  group->setIsOnVertices(true);
+  group->setUri(mDatFile);
+  group->parent = mMesh;
+
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {
-    std::shared_ptr<Dataset> dataset( new Dataset() );
+    std::shared_ptr<MemoryDataset> dataset( new MemoryDataset() );
     dataset->values.resize( vertexCount );
     dataset->active.resize( faceCount );
     dataset->parent = group.get();

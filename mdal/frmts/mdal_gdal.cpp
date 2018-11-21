@@ -258,7 +258,7 @@ void MDAL::LoaderGdal::parseRasterBands( const MDAL::GdalDataset *cfGDALDataset 
   }
 }
 
-void MDAL::LoaderGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared_ptr<Dataset> tos, bool is_vector, bool is_x )
+void MDAL::LoaderGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared_ptr<MemoryDataset> tos, bool is_vector, bool is_x )
 {
   assert( raster_band );
 
@@ -322,7 +322,7 @@ void MDAL::LoaderGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared
   }
 }
 
-void MDAL::LoaderGdal::activateFaces( std::shared_ptr<Dataset> tos )
+void MDAL::LoaderGdal::activateFaces(std::shared_ptr<MemoryDataset> tos )
 {
   // Activate only Faces that do all Vertex's outputs with some data
   for ( unsigned int idx = 0; idx < meshGDALDataset()->mNVolumes; ++idx )
@@ -349,17 +349,18 @@ void MDAL::LoaderGdal::addDatasetGroups()
   for ( data_hash::const_iterator band = mBands.begin(); band != mBands.end(); band++ )
   {
     std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >();
-    group->uri = mFileName;
+    group->setUri(mFileName);
     group->setName( band->first );
-    group->isOnVertices = true;
+    group->setIsOnVertices(true);
+    group->parent = mMesh.get();
 
     for ( timestep_map::const_iterator time_step = band->second.begin(); time_step != band->second.end(); time_step++ )
     {
       std::vector<GDALRasterBandH> raster_bands = time_step->second;
       bool is_vector = ( raster_bands.size() > 1 );
 
-      std::shared_ptr<MDAL::Dataset> dataset = std::make_shared< MDAL::Dataset >();
-      group->isScalar = !is_vector;
+      std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
+      group->setIsScalar(!is_vector);
 
       dataset->time = time_step->first;
       dataset->values.resize( meshGDALDataset()->mNPoints );
