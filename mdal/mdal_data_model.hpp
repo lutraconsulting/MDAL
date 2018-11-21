@@ -11,10 +11,12 @@
 #include <memory>
 #include <map>
 #include <string>
+#include "mdal.h"
 
 namespace MDAL
 {
   class DatasetGroup;
+  class Mesh;
 
   struct BBox
   {
@@ -53,19 +55,36 @@ namespace MDAL
   class Dataset
   {
     public:
+      virtual ~Dataset();
       double time;
+
+      size_t valuesCount() const;
+      virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) = 0;
+      virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) = 0;
+      virtual size_t activeData( size_t indexStart, size_t count, char *buffer ) = 0;
+
+      bool isValid = true;
+      DatasetGroup *parent = nullptr;
+  };
+
+  /**
+   * The MemoryDataset stores all the data in the memory
+   */
+  class MemoryDataset: public Dataset
+  {
+    public:
+      ~MemoryDataset() override;
+
+      size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
+      size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
+      size_t activeData( size_t indexStart, size_t count, char *buffer ) override;
 
       /**
        * size - face count if !isOnVertices
        * size - vertex count if isOnVertices
        */
       std::vector<Value> values;
-      std::vector<bool> active; // size - face count. Whether the output for this is active...
-
-      bool isValid = true;
-      DatasetGroup *parent = nullptr;
-
-      bool isActive( size_t faceIndex );
+      std::vector<char> active; // size - face count. Whether the output for this is active...
   };
 
   typedef std::vector<std::shared_ptr<Dataset>> Datasets;
@@ -81,33 +100,52 @@ namespace MDAL
       void setName( const std::string &name );
 
       Metadata metadata;
-
-      bool isScalar = true;
-      bool isOnVertices = true;
       Datasets datasets;
-      std::string uri; // file/uri from where it came
+      Mesh *parent = nullptr;
+
+      bool isScalar() const;
+      void setIsScalar( bool isScalar );
+
+      bool isOnVertices() const;
+      void setIsOnVertices( bool isOnVertices );
+
+      std::string uri() const;
+      void setUri( const std::string &uri );
+
+    private:
+      bool mIsScalar = true;
+      bool mIsOnVertices = true;
+      std::string mUri; // file/uri from where it came
   };
 
   typedef std::vector<std::shared_ptr<DatasetGroup>> DatasetGroups;
 
-  struct Mesh
+  class Mesh
   {
-    std::string uri; // file/uri from where it came
-    std::string crs;
+    public:
+      std::string crs() const;
+      void setSourceCrs( const std::string &str );
+      void setSourceCrsFromWKT( const std::string &wkt );
+      void setSourceCrsFromEPSG( int code );
+      void addBedElevationDataset();
 
-    Vertices vertices;
-    std::map<size_t, size_t> vertexIDtoIndex; // only for 2DM and DAT files
+      DatasetGroups datasetGroups;
 
-    Faces faces;
-    std::map<size_t, size_t> faceIDtoIndex; // only for 2DM and DAT files
+      Vertices vertices;
+      std::map<size_t, size_t> vertexIDtoIndex; // only for 2DM and DAT files
 
-    DatasetGroups datasetGroups;
+      Faces faces;
+      std::map<size_t, size_t> faceIDtoIndex; // only for 2DM and DAT files
 
-    void setSourceCrs( const std::string &str );
-    void setSourceCrsFromWKT( const std::string &wkt );
-    void setSourceCrsFromEPSG( int code );
+      size_t verticesCount() const;
+      size_t facesCount() const;
 
-    void addBedElevationDataset();
+      std::string uri() const;
+      void setUri( const std::string &uri );
+
+    private:
+      std::string mUri; // file/uri from where it came
+      std::string mCrs;
   };
 
 } // namespace MDAL

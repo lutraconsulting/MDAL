@@ -126,14 +126,16 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
     EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
   std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(); // DAT datasets
-  group->uri = mDatFile;
-  group->isOnVertices = true;
+  group->setUri( mDatFile );
+  group->setIsOnVertices( true );
+  group->parent = mesh;
 
   // in TUFLOW results there could be also a special timestep (99999) with maximums
   // we will put it into a separate dataset
   std::shared_ptr<DatasetGroup> groupMax = std::make_shared< DatasetGroup >();
-  groupMax->uri = mDatFile;
-  groupMax->isOnVertices = true;
+  groupMax->setUri( mDatFile );
+  groupMax->setIsOnVertices( true );
+  group->parent = mesh;
 
   while ( card != CT_ENDDS )
   {
@@ -166,13 +168,13 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
         break;
 
       case CT_BEGSCL:
-        group->isScalar = true;
-        groupMax->isScalar = true;
+        group->setIsScalar( true );
+        groupMax->setIsScalar( true );
         break;
 
       case CT_BEGVEC:
-        group->isScalar = false;
-        groupMax->isScalar = false;
+        group->setIsScalar( false );
+        groupMax->setIsScalar( false );
         break;
 
       case CT_VECTYPE:
@@ -243,13 +245,13 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
     int sflg,
     std::ifstream &in )
 {
-  assert( group && groupMax && ( group->isScalar == groupMax->isScalar ) );
-  bool isScalar = group->isScalar;
+  assert( group && groupMax && ( group->isScalar() == groupMax->isScalar() ) );
+  bool isScalar = group->isScalar();
 
   size_t vertexCount = mesh->vertices.size();
   size_t faceCount = mesh->faces.size();
 
-  std::shared_ptr<MDAL::Dataset> dataset = std::make_shared< MDAL::Dataset >();
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
   dataset->values.resize( vertexCount );
   dataset->active.resize( faceCount );
   dataset->parent = group.get();

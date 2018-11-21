@@ -70,9 +70,10 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
     isVector = ( line == "VECTOR" );
 
     group = std::make_shared< DatasetGroup >();
-    group->uri = mDatFile;
+    group->setUri( mDatFile );
     group->setName( name );
-    group->isScalar = !isVector;
+    group->setIsScalar( !isVector );
+    group->parent = mesh;
   }
   else
     EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
@@ -83,7 +84,7 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
     faceCentered = true;
 
   if ( group )
-    group->isOnVertices = !faceCentered;
+    group->setIsOnVertices( !faceCentered );
 
   while ( std::getline( in, line ) )
   {
@@ -123,10 +124,11 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
       isVector = cardType == "BEGVEC";
 
       group = std::make_shared< DatasetGroup >();
-      group->uri = mDatFile;
+      group->setUri( mDatFile );
       group->setName( name );
-      group->isScalar = !isVector;
-      group->isOnVertices = !faceCentered;
+      group->setIsScalar( !isVector );
+      group->setIsOnVertices( !faceCentered );
+      group->parent = mesh;
     }
     else if ( !oldFormat && cardType == "ENDDS" )
     {
@@ -201,7 +203,7 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
   size_t vertexCount = mesh->vertices.size();
   size_t faceCount = mesh->faces.size();
 
-  std::shared_ptr<MDAL::Dataset> dataset = std::make_shared< MDAL::Dataset >();
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
   dataset->time = t / 3600.; // TODO read TIMEUNITS
   dataset->values.resize( vertexCount );
   dataset->active.resize( faceCount );
@@ -271,7 +273,7 @@ void MDAL::LoaderAsciiDat::readFaceTimestep(
 
   size_t faceCount = mesh->faces.size();
 
-  std::shared_ptr<MDAL::Dataset> dataset = std::make_shared< MDAL::Dataset >();
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
   dataset->time = t / 3600.;
   dataset->values.resize( faceCount );
   dataset->parent = group.get();

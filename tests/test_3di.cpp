@@ -95,19 +95,19 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
+  bool active = getActive( ds, 0 );
   EXPECT_EQ( true, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 4, count );
 
-  double value = MDAL_D_value( ds, 0 );
+  double value = getValue( ds, 0 );
   EXPECT_DOUBLE_EQ( 0, value );
-  value = MDAL_D_value( ds, 1 );
+  value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 0, value );
-  value = MDAL_D_value( ds, 2 );
+  value = getValue( ds, 2 );
   EXPECT_DOUBLE_EQ( 0, value );
-  value = MDAL_D_value( ds, 3 );
+  value = getValue( ds, 3 );
   EXPECT_DOUBLE_EQ( 0, value );
 
   // ///////////
@@ -135,13 +135,13 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = MDAL_D_active( ds, 0 );
+  active = getActive( ds, 0 );
   EXPECT_EQ( true, active );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 4, count );
 
-  value = MDAL_D_value( ds, 0 );
+  value = getValue( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );
 
   // ///////////
@@ -169,13 +169,13 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = MDAL_D_active( ds, 0 );
+  active = getActive( ds, 0 );
   EXPECT_EQ( true, active );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 4, count );
 
-  value = MDAL_D_value( ds, 0 );
+  value = getValueX( ds, 0 );
   EXPECT_DOUBLE_EQ( 0, value );
 
   MDAL_CloseMesh( m );

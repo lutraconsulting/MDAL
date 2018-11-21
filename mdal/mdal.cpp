@@ -6,19 +6,21 @@
 #include <string>
 #include <stddef.h>
 #include <limits>
+#include <assert.h>
 
 #include "mdal.h"
 #include "mdal_loader.hpp"
 #include "mdal_data_model.hpp"
 
 #define NODATA std::numeric_limits<double>::quiet_NaN()
+
 static const char *EMPTY_STR = "";
 
 static MDAL_Status sLastStatus;
 
 const char *MDAL_Version()
 {
-  return "0.0.10";
+  return "0.1.0";
 }
 
 MDAL_Status MDAL_LastStatus()
@@ -70,7 +72,7 @@ const char *MDAL_M_projection( MeshH mesh )
   }
 
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  return _return_str( m->crs );
+  return _return_str( m->crs() );
 }
 
 
@@ -283,6 +285,18 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
 /// DATASET GROUPS
 ///////////////////////////////////////////////////////////////////////////////////////
 
+MeshH MDAL_G_mesh( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    return nullptr;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  assert( g->parent );
+  MDAL::Mesh *m = g->parent;
+  return static_cast< MeshH >( m );
+}
 
 int MDAL_G_datasetCount( DatasetGroupH group )
 {
@@ -388,7 +402,7 @@ bool MDAL_G_hasScalarData( DatasetGroupH group )
     return true;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  return g->isScalar;
+  return g->isScalar();
 }
 
 bool MDAL_G_isOnVertices( DatasetGroupH group )
@@ -399,7 +413,7 @@ bool MDAL_G_isOnVertices( DatasetGroupH group )
     return true;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  return g->isOnVertices;
+  return g->isOnVertices();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -437,59 +451,8 @@ int MDAL_D_valueCount( DatasetH dataset )
     return 0;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  int len = static_cast<int>( d->values.size() );
+  int len = static_cast<int>( d->valuesCount() );
   return len;
-}
-
-double MDAL_D_value( DatasetH dataset, int valueIndex )
-{
-  return MDAL_D_valueX( dataset, valueIndex );
-}
-
-double MDAL_D_valueX( DatasetH dataset, int valueIndex )
-{
-  if ( !dataset )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return NODATA;
-  }
-  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  int len = static_cast<int>( d->values.size() );
-  if ( len <= valueIndex )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return NODATA;
-  }
-  size_t i = static_cast<size_t>( valueIndex );
-  if ( d->values[i].noData )
-  {
-    return NODATA;
-  }
-  else
-    return d->values[i].x;
-}
-
-double MDAL_D_valueY( DatasetH dataset, int valueIndex )
-{
-  if ( !dataset )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return NODATA;
-  }
-  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  int len = static_cast<int>( d->values.size() );
-  if ( len <= valueIndex )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return NODATA;
-  }
-  size_t i = static_cast<size_t>( valueIndex );
-  if ( d->values[i].noData )
-  {
-    return NODATA;
-  }
-  else
-    return d->values[i].y;
 }
 
 bool MDAL_D_isValid( DatasetH dataset )
@@ -503,14 +466,75 @@ bool MDAL_D_isValid( DatasetH dataset )
   return d->isValid;
 }
 
-bool MDAL_D_active( DatasetH dataset, int faceIndex )
+int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer )
 {
   if ( !dataset )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-    return false;
+    return 0;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  size_t i = static_cast<size_t>( faceIndex );
-  return d->isActive( i );
+  size_t indexStartSizeT = static_cast<size_t>( indexStart );
+  size_t countSizeT = static_cast<size_t>( count );
+  MDAL::DatasetGroup *g = d->parent;
+  assert( g );
+
+  MDAL::Mesh *m = g->parent;
+  assert( m );
+
+  size_t valuesCount;
+
+  // Check that we are requesting correct 1D/2D for given dataset
+  switch ( dataType )
+  {
+    case MDAL_DataType::SCALAR_DOUBLE:
+      if ( !g->isScalar() )
+      {
+        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        return 0;
+      }
+      valuesCount = d->valuesCount();
+      break;
+    case MDAL_DataType::VECTOR_2D_DOUBLE:
+      if ( g->isScalar() )
+      {
+        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        return 0;
+      }
+      valuesCount = d->valuesCount();
+      break;
+    case MDAL_DataType::ACTIVE_BOOL:
+      valuesCount = m->facesCount();
+      break;
+  }
+
+  // Check that we are not reaching out of values limit
+  if ( valuesCount <= indexStartSizeT )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return 0;
+  }
+
+  if ( valuesCount < indexStartSizeT + countSizeT )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return 0;
+  }
+
+  // Request data
+  size_t writtenValuesCount;
+  switch ( dataType )
+  {
+    case MDAL_DataType::SCALAR_DOUBLE:
+      writtenValuesCount = d->scalarData( indexStartSizeT, countSizeT, static_cast<double *>( buffer ) );
+      break;
+    case MDAL_DataType::VECTOR_2D_DOUBLE:
+      writtenValuesCount = d->vectorData( indexStartSizeT, countSizeT, static_cast<double *>( buffer ) );
+      break;
+    case MDAL_DataType::ACTIVE_BOOL:
+      writtenValuesCount = d->activeData( indexStartSizeT, countSizeT, static_cast<char *>( buffer ) );
+      break;
+  }
+
+  return static_cast<size_t>( writtenValuesCount );
 }

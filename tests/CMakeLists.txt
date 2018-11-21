@@ -41,6 +41,7 @@ endif()
 SET(TESTDATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/data")
 ADD_DEFINITIONS(-DTESTDATA="${TESTDATA_DIR}")
 ADD_LIBRARY(mdaltestutils OBJECT mdal_testutils.hpp mdal_testutils.cpp )
+TARGET_LINK_LIBRARIES(mdaltestutils mdal)
 
 #########################################################################
 #########################################################################
