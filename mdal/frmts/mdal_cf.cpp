@@ -195,9 +195,9 @@ void MDAL::LoaderCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
     const CFDatasetGroupInfo dsi = it.second;
     // Create a dataset group
     std::shared_ptr<MDAL::DatasetGroup> group = std::make_shared<MDAL::DatasetGroup>();
-    group->setUri(mFileName);
+    group->setUri( mFileName );
     group->setName( dsi.name );
-    group->setIsScalar(!dsi.is_vector);
+    group->setIsScalar( !dsi.is_vector );
     group->parent = mesh;
 
     // read X data
@@ -222,7 +222,7 @@ void MDAL::LoaderCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
 
       if ( dsi.outputType == CFDimensions::Face2D )
       {
-        group->setIsOnVertices(false);
+        group->setIsOnVertices( false );
         dataset = createFace2DDataset( ts, dsi, vals_x, vals_y, fill_val_x, fill_val_y );
       }
 
@@ -301,7 +301,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::LoaderCF::load( MDAL_Status *status )
   if ( status ) *status = MDAL_Status::None;
 
   std::unique_ptr< MDAL::Mesh > mesh( new MDAL::Mesh );
-  mesh->setUri(mFileName);
+  mesh->setUri( mFileName );
 
   //Dimensions dims;
   std::vector<double> times;

@@ -28,33 +28,34 @@ size_t MDAL::Dataset::valuesCount() const
 
 MDAL::MemoryDataset::~MemoryDataset() = default;
 
-size_t MDAL::MemoryDataset::activeData(size_t indexStart, size_t count, char* buffer)
+size_t MDAL::MemoryDataset::activeData( size_t indexStart, size_t count, char *buffer )
 {
   assert( parent );
   if ( parent->isOnVertices() )
   {
-    assert( active.size() > indexStart); //checked in C API interface
+    assert( active.size() > indexStart ); //checked in C API interface
     assert( active.size() >= indexStart + count ); //checked in C API interface
-    char* src = active.data() + indexStart;
+    char *src = active.data() + indexStart;
     memcpy( buffer, src, count );
   }
   else
   {
-    memset(buffer, true, count);
+    memset( buffer, true, count );
     return true;
   }
 
   return count;
 }
 
-size_t MDAL::MemoryDataset::scalarData(size_t indexStart, size_t count, double* buffer)
+size_t MDAL::MemoryDataset::scalarData( size_t indexStart, size_t count, double *buffer )
 {
-  assert( parent); //checked in C API interface
-  assert( parent->isScalar()); //checked in C API interface
-  assert( values.size() > indexStart); //checked in C API interface
+  assert( parent ); //checked in C API interface
+  assert( parent->isScalar() ); //checked in C API interface
+  assert( values.size() > indexStart ); //checked in C API interface
   assert( values.size() >= indexStart + count ); //checked in C API interface
 
-  for (size_t i=0; i<count; ++i) {
+  for ( size_t i = 0; i < count; ++i )
+  {
     const MDAL::Value value = values[ indexStart + i ];
     if ( value.noData )
     {
@@ -69,24 +70,25 @@ size_t MDAL::MemoryDataset::scalarData(size_t indexStart, size_t count, double* 
   return count;
 }
 
-size_t MDAL::MemoryDataset::vectorData(size_t indexStart, size_t count, double* buffer)
+size_t MDAL::MemoryDataset::vectorData( size_t indexStart, size_t count, double *buffer )
 {
-  assert( parent); //checked in C API interface
-  assert( !parent->isScalar()); //checked in C API interface
-  assert( values.size() > indexStart); //checked in C API interface
+  assert( parent ); //checked in C API interface
+  assert( !parent->isScalar() ); //checked in C API interface
+  assert( values.size() > indexStart ); //checked in C API interface
   assert( values.size() >= indexStart + count ); //checked in C API interface
 
-  for (size_t i=0; i<count; ++i) {
+  for ( size_t i = 0; i < count; ++i )
+  {
     const MDAL::Value value = values[ indexStart + i ];
     if ( value.noData )
     {
-        buffer[2*i] = NODATA;
-        buffer[2*i+1] = NODATA;
+      buffer[2 * i] = NODATA;
+      buffer[2 * i + 1] = NODATA;
     }
     else
     {
-        buffer[2*i] = value.x;
-        buffer[2*i+1] = value.y;
+      buffer[2 * i] = value.x;
+      buffer[2 * i + 1] = value.y;
     }
   }
 
@@ -135,7 +137,7 @@ std::string MDAL::DatasetGroup::uri() const
   return mUri;
 }
 
-void MDAL::DatasetGroup::setUri(const std::string& uri)
+void MDAL::DatasetGroup::setUri( const std::string &uri )
 {
   mUri = uri;
 }
@@ -145,7 +147,7 @@ bool MDAL::DatasetGroup::isOnVertices() const
   return mIsOnVertices;
 }
 
-void MDAL::DatasetGroup::setIsOnVertices(bool isOnVertices)
+void MDAL::DatasetGroup::setIsOnVertices( bool isOnVertices )
 {
   mIsOnVertices = isOnVertices;
 }
@@ -155,7 +157,7 @@ bool MDAL::DatasetGroup::isScalar() const
   return mIsScalar;
 }
 
-void MDAL::DatasetGroup::setIsScalar(bool isScalar)
+void MDAL::DatasetGroup::setIsScalar( bool isScalar )
 {
   mIsScalar = isScalar;
 }
@@ -181,10 +183,10 @@ void MDAL::Mesh::addBedElevationDataset()
     return;
 
   std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >();
-  group->setIsOnVertices(true);
-  group->setIsScalar(true);
+  group->setIsOnVertices( true );
+  group->setIsScalar( true );
   group->setName( "Bed Elevation" );
-  group->setUri(uri());
+  group->setUri( uri() );
   group->parent = this;
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >();
@@ -216,7 +218,7 @@ std::string MDAL::Mesh::uri() const
   return mUri;
 }
 
-void MDAL::Mesh::setUri(const std::string& uri)
+void MDAL::Mesh::setUri( const std::string &uri )
 {
   mUri = uri;
 }

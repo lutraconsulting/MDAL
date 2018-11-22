@@ -15,30 +15,33 @@
 
 MDAL::XmdfDataset::~XmdfDataset() = default;
 
-MDAL::XmdfDataset::XmdfDataset(const HdfDataset& valuesDs, const HdfDataset& activeDs, hsize_t timeIndex)
-  : mHdf5DatasetValues(valuesDs)
-  , mHdf5DatasetActive(activeDs)
-  , mTimeIndex(timeIndex)
+MDAL::XmdfDataset::XmdfDataset( const HdfDataset &valuesDs, const HdfDataset &activeDs, hsize_t timeIndex )
+  : mHdf5DatasetValues( valuesDs )
+  , mHdf5DatasetActive( activeDs )
+  , mTimeIndex( timeIndex )
 {
 }
 
-const HdfDataset& MDAL::XmdfDataset::dsValues() const {
+const HdfDataset &MDAL::XmdfDataset::dsValues() const
+{
   return mHdf5DatasetValues;
 }
 
-const HdfDataset& MDAL::XmdfDataset::dsActive() const {
+const HdfDataset &MDAL::XmdfDataset::dsActive() const
+{
   return mHdf5DatasetActive;
 }
 
-hsize_t MDAL::XmdfDataset::timeIndex() const {
+hsize_t MDAL::XmdfDataset::timeIndex() const
+{
   return mTimeIndex;
 }
 
 
-size_t MDAL::XmdfDataset::scalarData(size_t indexStart, size_t count, double* buffer)
+size_t MDAL::XmdfDataset::scalarData( size_t indexStart, size_t count, double *buffer )
 {
-  assert( parent); //checked in C API interface
-  assert( parent->isScalar()); //checked in C API interface
+  assert( parent ); //checked in C API interface
+  assert( parent->isScalar() ); //checked in C API interface
   assert( parent->parent );
   size_t verticesCount = parent->parent->verticesCount();
 
@@ -54,10 +57,10 @@ size_t MDAL::XmdfDataset::scalarData(size_t indexStart, size_t count, double* bu
   return count;
 }
 
-size_t MDAL::XmdfDataset::vectorData(size_t indexStart, size_t count, double* buffer)
+size_t MDAL::XmdfDataset::vectorData( size_t indexStart, size_t count, double *buffer )
 {
-  assert( parent); //checked in C API interface
-  assert( !parent->isScalar()); //checked in C API interface
+  assert( parent ); //checked in C API interface
+  assert( !parent->isScalar() ); //checked in C API interface
   assert( parent->parent );
   size_t verticesCount = parent->parent->verticesCount();
 
@@ -67,16 +70,16 @@ size_t MDAL::XmdfDataset::vectorData(size_t indexStart, size_t count, double* bu
   const float *input = values.data() + 2 * timeIndex() * verticesCount;
   for ( size_t j = 0; j < count; ++j )
   {
-    buffer[2*j] = double( input[2 * (indexStart + j) ] );
-    buffer[2*j+1] = double( input[2 * (indexStart + j ) + 1] );
+    buffer[2 * j] = double( input[2 * ( indexStart + j ) ] );
+    buffer[2 * j + 1] = double( input[2 * ( indexStart + j ) + 1] );
   }
 
   return count;
 }
 
-size_t MDAL::XmdfDataset::activeData(size_t indexStart, size_t count, char* buffer)
+size_t MDAL::XmdfDataset::activeData( size_t indexStart, size_t count, char *buffer )
 {
-  assert( parent); //checked in C API interface
+  assert( parent ); //checked in C API interface
   assert( parent->parent );
   size_t facesCount = parent->parent->facesCount();
 
@@ -223,14 +226,14 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
   std::vector<float> times = dsTimes.readArray();
 
   group->setName( name );
-  group->setIsScalar(!isVector);
-  group->setIsOnVertices(true);
-  group->setUri(mDatFile);
+  group->setIsScalar( !isVector );
+  group->setIsOnVertices( true );
+  group->setUri( mDatFile );
   group->parent = mMesh;
 
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {
-    std::shared_ptr<XmdfDataset> dataset( new XmdfDataset(dsValues, dsActive, i) );
+    std::shared_ptr<XmdfDataset> dataset( new XmdfDataset( dsValues, dsActive, i ) );
     dataset->parent = group.get();
     dataset->time = double( times[i] );
     group->datasets.push_back( dataset );

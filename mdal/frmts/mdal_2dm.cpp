@@ -191,7 +191,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Loader2dm::load( MDAL_Status *status )
   }
 
   std::unique_ptr< Mesh > mesh( new Mesh );
-  mesh->setUri(mMeshFile);
+  mesh->setUri( mMeshFile );
   mesh->faces = faces;
   mesh->vertices = vertices;
   mesh->faceIDtoIndex = faceIDtoIndex;

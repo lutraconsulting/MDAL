@@ -126,15 +126,15 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
     EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
   std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(); // DAT datasets
-  group->setUri(mDatFile);
-  group->setIsOnVertices(true);
+  group->setUri( mDatFile );
+  group->setIsOnVertices( true );
   group->parent = mesh;
 
   // in TUFLOW results there could be also a special timestep (99999) with maximums
   // we will put it into a separate dataset
   std::shared_ptr<DatasetGroup> groupMax = std::make_shared< DatasetGroup >();
-  groupMax->setUri(mDatFile);
-  groupMax->setIsOnVertices(true);
+  groupMax->setUri( mDatFile );
+  groupMax->setIsOnVertices( true );
   group->parent = mesh;
 
   while ( card != CT_ENDDS )
@@ -168,13 +168,13 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
         break;
 
       case CT_BEGSCL:
-        group->setIsScalar(true);
-        groupMax->setIsScalar(true);
+        group->setIsScalar( true );
+        groupMax->setIsScalar( true );
         break;
 
       case CT_BEGVEC:
-        group->setIsScalar(false);
-        groupMax->setIsScalar(false);
+        group->setIsScalar( false );
+        groupMax->setIsScalar( false );
         break;
 
       case CT_VECTYPE:

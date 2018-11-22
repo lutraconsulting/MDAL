@@ -163,7 +163,8 @@ MDAL_EXPORT int MDAL_D_valueCount( DatasetH dataset );
 MDAL_EXPORT bool MDAL_D_isValid( DatasetH dataset );
 
 //! Data type to be returned by MDAL_D_data
-enum MDAL_DataType {
+enum MDAL_DataType
+{
   SCALAR_DOUBLE, //!< double value for scalar datasets
   VECTOR_2D_DOUBLE, //!< double, double value for vector datasets
   ACTIVE_BOOL //!< active flag for datasets. Some formats support switching off the element for particular timestep.
@@ -182,7 +183,7 @@ enum MDAL_DataType {
 //!                                     Values are returned as x1, y1, x2, y2, ..., xN, yN
 //!               For ACTIVE_BOOL, the minimum size must be valuesCount * size_of(boolean)
 //! \returns number of values written to buffer. If return value != count requested, see MDAL_LastStatus() for error type
-MDAL_EXPORT int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void* buffer);
+MDAL_EXPORT int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer );
 
 #ifdef __cplusplus
 }

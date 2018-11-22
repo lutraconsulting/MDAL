@@ -70,9 +70,9 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
     isVector = ( line == "VECTOR" );
 
     group = std::make_shared< DatasetGroup >();
-    group->setUri(mDatFile);
+    group->setUri( mDatFile );
     group->setName( name );
-    group->setIsScalar(!isVector);
+    group->setIsScalar( !isVector );
     group->parent = mesh;
   }
   else
@@ -84,7 +84,7 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
     faceCentered = true;
 
   if ( group )
-    group->setIsOnVertices(!faceCentered);
+    group->setIsOnVertices( !faceCentered );
 
   while ( std::getline( in, line ) )
   {
@@ -124,10 +124,10 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
       isVector = cardType == "BEGVEC";
 
       group = std::make_shared< DatasetGroup >();
-      group->setUri(mDatFile);
+      group->setUri( mDatFile );
       group->setName( name );
-      group->setIsScalar(!isVector);
-      group->setIsOnVertices(!faceCentered);
+      group->setIsScalar( !isVector );
+      group->setIsOnVertices( !faceCentered );
       group->parent = mesh;
     }
     else if ( !oldFormat && cardType == "ENDDS" )

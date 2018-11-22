@@ -285,7 +285,7 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
 /// DATASET GROUPS
 ///////////////////////////////////////////////////////////////////////////////////////
 
-MeshH MDAL_G_mesh(DatasetGroupH group)
+MeshH MDAL_G_mesh( DatasetGroupH group )
 {
   if ( !group )
   {
@@ -293,8 +293,8 @@ MeshH MDAL_G_mesh(DatasetGroupH group)
     return nullptr;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  assert(g->parent);
-  MDAL::Mesh* m = g->parent;
+  assert( g->parent );
+  MDAL::Mesh *m = g->parent;
   return static_cast< MeshH >( m );
 }
 
@@ -466,7 +466,7 @@ bool MDAL_D_isValid( DatasetH dataset )
   return d->isValid;
 }
 
-int MDAL_D_data(DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void* buffer)
+int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer )
 {
   if ( !dataset )
   {
@@ -477,24 +477,27 @@ int MDAL_D_data(DatasetH dataset, int indexStart, int count, MDAL_DataType dataT
   size_t indexStartSizeT = static_cast<size_t>( indexStart );
   size_t countSizeT = static_cast<size_t>( count );
   MDAL::DatasetGroup *g = d->parent;
-  assert(g);
+  assert( g );
 
   MDAL::Mesh *m = g->parent;
-  assert(m);
+  assert( m );
 
   size_t valuesCount;
 
   // Check that we are requesting correct 1D/2D for given dataset
-  switch(dataType) {
+  switch ( dataType )
+  {
     case MDAL_DataType::SCALAR_DOUBLE:
-      if (!g->isScalar()) {
+      if ( !g->isScalar() )
+      {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
       }
       valuesCount = d->valuesCount();
       break;
     case MDAL_DataType::VECTOR_2D_DOUBLE:
-      if (g->isScalar()) {
+      if ( g->isScalar() )
+      {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
       }
@@ -520,15 +523,16 @@ int MDAL_D_data(DatasetH dataset, int indexStart, int count, MDAL_DataType dataT
 
   // Request data
   size_t writtenValuesCount;
-  switch(dataType) {
+  switch ( dataType )
+  {
     case MDAL_DataType::SCALAR_DOUBLE:
-      writtenValuesCount = d->scalarData(indexStartSizeT, countSizeT, static_cast<double*>(buffer));
+      writtenValuesCount = d->scalarData( indexStartSizeT, countSizeT, static_cast<double *>( buffer ) );
       break;
     case MDAL_DataType::VECTOR_2D_DOUBLE:
-      writtenValuesCount = d->vectorData(indexStartSizeT, countSizeT, static_cast<double*>(buffer));
+      writtenValuesCount = d->vectorData( indexStartSizeT, countSizeT, static_cast<double *>( buffer ) );
       break;
     case MDAL_DataType::ACTIVE_BOOL:
-      writtenValuesCount = d->activeData(indexStartSizeT, countSizeT, static_cast<char*>(buffer));
+      writtenValuesCount = d->activeData( indexStartSizeT, countSizeT, static_cast<char *>( buffer ) );
       break;
   }
 

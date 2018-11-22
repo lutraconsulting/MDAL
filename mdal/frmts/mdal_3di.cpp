@@ -118,10 +118,10 @@ void MDAL::Loader3Di::addBedElevation( MDAL::Mesh *mesh )
 
 
   std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >();
-  group->setIsOnVertices(false);
-  group->setIsScalar(true);
+  group->setIsOnVertices( false );
+  group->setIsScalar( true );
   group->setName( "Bed Elevation" );
-  group->setUri(mesh->uri());
+  group->setUri( mesh->uri() );
   group->parent = mesh;
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >();

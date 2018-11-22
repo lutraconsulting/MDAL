@@ -35,7 +35,7 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
    */
   DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
   ASSERT_NE( g, nullptr );
-  ASSERT_EQ( MDAL_G_mesh(g), m);
+  ASSERT_EQ( MDAL_G_mesh( g ), m );
 
   int meta_count = MDAL_G_metadataCount( g );
   ASSERT_EQ( 1, meta_count );
@@ -61,26 +61,27 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   ASSERT_EQ( 1976, count );
 
   {
-    std::vector<char> active(5);
+    std::vector<char> active( 5 );
     std::vector<char> expectedActive = {0, 0, 0, 0, 0};
-    int nValuesRead = MDAL_D_data(ds, 0, 5, MDAL_DataType::ACTIVE_BOOL, active.data());
-    ASSERT_EQ( 5 ,  nValuesRead);
+    int nValuesRead = MDAL_D_data( ds, 0, 5, MDAL_DataType::ACTIVE_BOOL, active.data() );
+    ASSERT_EQ( 5,  nValuesRead );
     EXPECT_EQ( active, expectedActive );
   }
 
   {
-    std::vector<char> active(5);
+    std::vector<char> active( 5 );
     std::vector<char> expectedActive = {1, 1, 1, 1, 1};
-    int nValuesRead = MDAL_D_data(ds, 60, 5, MDAL_DataType::ACTIVE_BOOL, active.data());
-    ASSERT_EQ( 5 ,  nValuesRead);
+    int nValuesRead = MDAL_D_data( ds, 60, 5, MDAL_DataType::ACTIVE_BOOL, active.data() );
+    ASSERT_EQ( 5,  nValuesRead );
     EXPECT_EQ( active, expectedActive );
 
-    std::vector<double> values(5);
+    std::vector<double> values( 5 );
     std::vector<double> expectedValue = { 0.173723, 0.572754, 0.285215, 0.661351, 0.369279 };
-    nValuesRead = MDAL_D_data(ds, 60, 5, MDAL_DataType::SCALAR_DOUBLE, values.data());
-    ASSERT_EQ( 5 ,  nValuesRead);
-    if (!compareVectors( values, expectedValue )) {
-      EXPECT_EQ(values, expectedValue);
+    nValuesRead = MDAL_D_data( ds, 60, 5, MDAL_DataType::SCALAR_DOUBLE, values.data() );
+    ASSERT_EQ( 5,  nValuesRead );
+    if ( !compareVectors( values, expectedValue ) )
+    {
+      EXPECT_EQ( values, expectedValue );
     }
 
     double value = getValue( ds, 60 );
@@ -111,7 +112,7 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   int meta_count = MDAL_G_metadataCount( g );
   ASSERT_EQ( 1, meta_count );
 
-  const char* name = MDAL_G_name( g );
+  const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Vector Velocity/Maximums" ), std::string( name ) );
 
   bool scalar = MDAL_G_hasScalarData( g );
@@ -131,21 +132,23 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   ASSERT_EQ( 1976, count );
 
   {
-    std::vector<char> active(3);
+    std::vector<char> active( 3 );
     std::vector<char> expectedActive = {1, 1, 1};
-    int nValuesRead = MDAL_D_data(ds, 66, 3, MDAL_DataType::ACTIVE_BOOL, active.data());
-    ASSERT_EQ( 3 ,  nValuesRead);
+    int nValuesRead = MDAL_D_data( ds, 66, 3, MDAL_DataType::ACTIVE_BOOL, active.data() );
+    ASSERT_EQ( 3,  nValuesRead );
     EXPECT_EQ( active, expectedActive );
 
-    std::vector<double> values(3 * 2); // it is x1, y1, x2, y2, ...
+    std::vector<double> values( 3 * 2 ); // it is x1, y1, x2, y2, ...
     std::vector<double> expectedValue = { -0.00459212, 0.000718806,
                                           -0.0700743, 0,
-                                          -0.00374553, -0.00105742 };
+                                          -0.00374553, -0.00105742
+                                        };
 
-    nValuesRead = MDAL_D_data(ds, 66, 3, MDAL_DataType::VECTOR_2D_DOUBLE, values.data());
-    ASSERT_EQ( 3 ,  nValuesRead);
-    if (!compareVectors( values, expectedValue )) {
-      EXPECT_EQ(values, expectedValue);
+    nValuesRead = MDAL_D_data( ds, 66, 3, MDAL_DataType::VECTOR_2D_DOUBLE, values.data() );
+    ASSERT_EQ( 3,  nValuesRead );
+    if ( !compareVectors( values, expectedValue ) )
+    {
+      EXPECT_EQ( values, expectedValue );
     }
 
     double value = getValueX( ds, 66 );

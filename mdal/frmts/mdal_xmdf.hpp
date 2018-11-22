@@ -42,17 +42,17 @@ namespace MDAL
   class XmdfDataset: public Dataset
   {
     public:
-      XmdfDataset(const HdfDataset& valuesDs,
-                  const HdfDataset& activeDs,
-                  hsize_t timeIndex);
+      XmdfDataset( const HdfDataset &valuesDs,
+                   const HdfDataset &activeDs,
+                   hsize_t timeIndex );
       ~XmdfDataset() override;
 
-      size_t scalarData(size_t indexStart, size_t count, double* buffer) override;
-      size_t vectorData(size_t indexStart, size_t count, double* buffer) override;
-      size_t activeData(size_t indexStart, size_t count, char* buffer) override;
+      size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
+      size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
+      size_t activeData( size_t indexStart, size_t count, char *buffer ) override;
 
-      const HdfDataset& dsValues() const;
-      const HdfDataset& dsActive() const;
+      const HdfDataset &dsValues() const;
+      const HdfDataset &dsActive() const;
       hsize_t timeIndex() const;
 
     private:
@@ -69,7 +69,7 @@ namespace MDAL
       void load( Mesh *mesh, MDAL_Status *status );
 
     private:
-      MDAL::Mesh* mMesh = nullptr;
+      MDAL::Mesh *mMesh = nullptr;
       std::string mDatFile;
       std::shared_ptr<MDAL::DatasetGroup> readXmdfGroupAsDatasetGroup(
         const HdfGroup &rootGroup,

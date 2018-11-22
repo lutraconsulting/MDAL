@@ -59,9 +59,9 @@ namespace MDAL
       double time;
 
       size_t valuesCount() const;
-      virtual size_t scalarData(size_t indexStart, size_t count, double* buffer) = 0;
-      virtual size_t vectorData(size_t indexStart, size_t count, double* buffer) = 0;
-      virtual size_t activeData(size_t indexStart, size_t count, char* buffer) = 0;
+      virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) = 0;
+      virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) = 0;
+      virtual size_t activeData( size_t indexStart, size_t count, char *buffer ) = 0;
 
       bool isValid = true;
       DatasetGroup *parent = nullptr;
@@ -75,9 +75,9 @@ namespace MDAL
     public:
       ~MemoryDataset() override;
 
-      size_t scalarData(size_t indexStart, size_t count, double* buffer) override;
-      size_t vectorData(size_t indexStart, size_t count, double* buffer) override;
-      size_t activeData(size_t indexStart, size_t count, char* buffer) override;
+      size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
+      size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
+      size_t activeData( size_t indexStart, size_t count, char *buffer ) override;
 
       /**
        * size - face count if !isOnVertices
@@ -104,13 +104,13 @@ namespace MDAL
       Mesh *parent = nullptr;
 
       bool isScalar() const;
-      void setIsScalar(bool isScalar);
+      void setIsScalar( bool isScalar );
 
       bool isOnVertices() const;
-      void setIsOnVertices(bool isOnVertices);
+      void setIsOnVertices( bool isOnVertices );
 
       std::string uri() const;
-      void setUri(const std::string& uri);
+      void setUri( const std::string &uri );
 
     private:
       bool mIsScalar = true;
@@ -122,30 +122,30 @@ namespace MDAL
 
   class Mesh
   {
-  public:
-    std::string crs() const;
-    void setSourceCrs( const std::string &str );
-    void setSourceCrsFromWKT( const std::string &wkt );
-    void setSourceCrsFromEPSG( int code );
-    void addBedElevationDataset();
+    public:
+      std::string crs() const;
+      void setSourceCrs( const std::string &str );
+      void setSourceCrsFromWKT( const std::string &wkt );
+      void setSourceCrsFromEPSG( int code );
+      void addBedElevationDataset();
 
-    DatasetGroups datasetGroups;
+      DatasetGroups datasetGroups;
 
-    Vertices vertices;
-    std::map<size_t, size_t> vertexIDtoIndex; // only for 2DM and DAT files
+      Vertices vertices;
+      std::map<size_t, size_t> vertexIDtoIndex; // only for 2DM and DAT files
 
-    Faces faces;
-    std::map<size_t, size_t> faceIDtoIndex; // only for 2DM and DAT files
+      Faces faces;
+      std::map<size_t, size_t> faceIDtoIndex; // only for 2DM and DAT files
 
-    size_t verticesCount() const;
-    size_t facesCount() const;
+      size_t verticesCount() const;
+      size_t facesCount() const;
 
-    std::string uri() const;
-    void setUri(const std::string& uri);
+      std::string uri() const;
+      void setUri( const std::string &uri );
 
     private:
-    std::string mUri; // file/uri from where it came
-    std::string mCrs;
+      std::string mUri; // file/uri from where it came
+      std::string mCrs;
   };
 
 } // namespace MDAL
