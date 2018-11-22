@@ -6,6 +6,7 @@
 #include <string>
 #include <stddef.h>
 #include <limits>
+#include <assert.h>
 
 #include "mdal.h"
 #include "mdal_loader.hpp"
@@ -284,6 +285,18 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
 /// DATASET GROUPS
 ///////////////////////////////////////////////////////////////////////////////////////
 
+MeshH MDAL_G_mesh(DatasetGroupH group)
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    return nullptr;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  assert(g->parent);
+  MDAL::Mesh* m = g->parent;
+  return static_cast< MeshH >( m );
+}
 
 int MDAL_G_datasetCount( DatasetGroupH group )
 {

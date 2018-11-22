@@ -116,6 +116,9 @@ MDAL_EXPORT DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index );
 /// DATASET GROUPS
 ///////////////////////////////////////////////////////////////////////////////////////
 
+//! Returns dataset parent mesh
+MDAL_EXPORT MeshH MDAL_G_mesh( DatasetGroupH group );
+
 //! Returns dataset count in group
 MDAL_EXPORT int MDAL_G_datasetCount( DatasetGroupH group );
 

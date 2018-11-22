@@ -22,4 +22,7 @@ double getValueX(DatasetH dataset, int index);
 //! Convinient function to get one data Y value
 double getValueY(DatasetH dataset, int index);
 
+//! Compare two vectors
+bool compareVectors(const std::vector<double>& a, const std::vector<double>& b);
+
 #endif // MDAL_TESTUTILS_HPP
