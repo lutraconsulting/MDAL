@@ -8,6 +8,10 @@
 #include <algorithm>
 #include "mdal_utils.hpp"
 
+#define NODATA std::numeric_limits<double>::quiet_NaN()
+
+MDAL::Dataset::~Dataset() = default;
+
 size_t MDAL::Dataset::valuesCount() const
 {
   assert( parent );
@@ -22,25 +26,60 @@ size_t MDAL::Dataset::valuesCount() const
   }
 }
 
-bool MDAL::MemoryDataset::isActive( size_t faceIndex )
+size_t MDAL::MemoryDataset::activeData(size_t indexStart, size_t count, char* buffer)
 {
   assert( parent );
   if ( parent->isOnVertices() )
   {
-    if ( active.size() > faceIndex )
-      return active[faceIndex];
-    else
-      return false;
+    assert( active.size() > indexStart); //checked in C API interface
+    assert( active.size() >= indexStart + count ); //checked in C API interface
+    char* src = active.data() + indexStart;
+    memcpy( buffer, src, count );
   }
   else
   {
+    memset(buffer, true, count);
     return true;
   }
+
+  return count;
 }
 
-MDAL::Value MDAL::MemoryDataset::value(size_t index)
+
+MDAL::MemoryDataset::~MemoryDataset() = default;
+
+size_t MDAL::MemoryDataset::valueData(size_t indexStart, size_t count, double* buffer)
 {
-  return values[index];
+  assert(parent);
+  bool isScalar = parent->isScalar();
+  assert( values.size() > indexStart); //checked in C API interface
+  assert( values.size() >= indexStart + count ); //checked in C API interface
+
+  for (size_t i=0; i<count; ++i) {
+    const MDAL::Value value = values[ indexStart + i ];
+    if ( value.noData )
+    {
+      if (isScalar)
+      {
+        buffer[i] = NODATA;
+      } else {
+        buffer[2*i] = NODATA;
+        buffer[2*i+1] = NODATA;
+      }
+    }
+    else
+    {
+      if (isScalar)
+      {
+        buffer[i] = value.x;
+      } else {
+        buffer[2*i] = value.x;
+        buffer[2*i+1] = value.y;
+      }
+    }
+  }
+
+  return count;
 }
 
 std::string MDAL::DatasetGroup::getMetadata( const std::string &key )

@@ -40,13 +40,13 @@ TEST( MeshGdalGribTest, ScalarFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
+  bool active = getActive( ds, 0 );
   EXPECT_EQ( false, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1683, count );
 
-  double value = MDAL_D_value( ds, 1600 );
+  double value = getValue( ds, 1600 );
   EXPECT_DOUBLE_EQ( 15.34, value );
 
   MDAL_CloseMesh( m );
@@ -83,16 +83,16 @@ TEST( MeshGdalGribTest, VectorFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
+  bool active = getActive( ds, 0 );
   EXPECT_EQ( false, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1683, count );
 
-  double valueX = MDAL_D_valueX( ds, 1600 );
+  double valueX = getValueX( ds, 1600 );
   EXPECT_DOUBLE_EQ( -5.9000000000000004, valueX );
 
-  double valueY = MDAL_D_valueY( ds, 1600 );
+  double valueY = getValueY( ds, 1600 );
   EXPECT_DOUBLE_EQ( 2.8200097656250001, valueY );
 
   MDAL_CloseMesh( m );

@@ -50,13 +50,19 @@ TEST( MeshXmdfTest, QuadAndTriangleFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
-  EXPECT_EQ( false, active );
+  //bool active = MDAL_D_active( ds, 0 );
+  //EXPECT_EQ( false, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1976, count );
 
-  double value = MDAL_D_value( ds, 0 );
+  std::vector<char> active(5);
+  std::vector<char> expectedActive = {0, 0, 0, 0, 0};
+  int nValuesRead = MDAL_D_data(ds, 0, 5, MDAL_DataType::ACTIVE_BOOL, active.data());
+  ASSERT_EQ( 5 ,  nValuesRead);
+  EXPECT_EQ( active, expectedActive );
+
+  double value = getValue( ds, 0 );
   EXPECT_DOUBLE_EQ( 0, value );
 
   MDAL_CloseMesh( m );

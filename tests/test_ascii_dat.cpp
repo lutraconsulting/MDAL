@@ -79,16 +79,16 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
+  bool active = getActive( ds, 0 );
   EXPECT_EQ( true, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 2, count );
 
-  double value = MDAL_D_value( ds, 0 );
+  double value = getValue( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );
 
-  value = MDAL_D_value( ds, 1 );
+  value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 2, value );
 
   MDAL_CloseMesh( m );
@@ -129,25 +129,22 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
+  bool active = getActive( ds, 0 );
   EXPECT_EQ( true, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 2, count );
 
-  double value = MDAL_D_value( ds, 0 );
+  double value = getValueX( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );
 
-  value = MDAL_D_valueX( ds, 0 );
+  value = getValueY( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );
 
-  value = MDAL_D_valueY( ds, 0 );
-  EXPECT_DOUBLE_EQ( 1, value );
-
-  value = MDAL_D_valueX( ds, 1 );
+  value = getValueX( ds, 1 );
   EXPECT_DOUBLE_EQ( 2, value );
 
-  value = MDAL_D_valueY( ds, 1 );
+  value = getValueY( ds, 1 );
   EXPECT_DOUBLE_EQ( 2, value );
 
   MDAL_CloseMesh( m );
@@ -187,16 +184,16 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
+  bool active = getActive( ds, 0 );
   EXPECT_EQ( true, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
 
-  double value = MDAL_D_value( ds, 0 );
+  double value = getValue( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );
 
-  value = MDAL_D_value( ds, 1 );
+  value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 2, value );
 
   MDAL_CloseMesh( m );
@@ -236,16 +233,16 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFileWithTabs )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
+  bool active = getActive( ds, 0 );
   EXPECT_EQ( true, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
 
-  double value = MDAL_D_value( ds, 0 );
+  double value = getValue( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );
 
-  value = MDAL_D_value( ds, 1 );
+  value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 2, value );
 
   MDAL_CloseMesh( m );
@@ -285,7 +282,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
+  bool active = getActive( ds, 0 );
   EXPECT_EQ( true, active );
 
   int count = MDAL_D_valueCount( ds );
@@ -294,19 +291,16 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 0, time );
 
-  double value = MDAL_D_value( ds, 0 );
+  double value = getValueX( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );
 
-  value = MDAL_D_valueX( ds, 0 );
+  value = getValueY( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );
 
-  value = MDAL_D_valueY( ds, 0 );
-  EXPECT_DOUBLE_EQ( 1, value );
-
-  value = MDAL_D_valueX( ds, 1 );
+  value = getValueX( ds, 1 );
   EXPECT_DOUBLE_EQ( 2, value );
 
-  value = MDAL_D_valueY( ds, 1 );
+  value = getValueY( ds, 1 );
   EXPECT_DOUBLE_EQ( 1, value );
 
   MDAL_CloseMesh( m );

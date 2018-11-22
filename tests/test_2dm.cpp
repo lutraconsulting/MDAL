@@ -80,13 +80,13 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = MDAL_D_active( ds, 0 );
+  bool active = getActive( ds, 0 );
   EXPECT_EQ( true, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
 
-  double value = MDAL_D_value( ds, 1 );
+  double value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 30, value );
 
   MDAL_CloseMesh( m );

@@ -156,24 +156,30 @@ MDAL_EXPORT double MDAL_D_time( DatasetH dataset );
 //! Returns number of values
 MDAL_EXPORT int MDAL_D_valueCount( DatasetH dataset );
 
-//! Returns scalar value associated with the index from the dataset
-//! for nodata return numeric_limits<double>:quiet_NaN
-MDAL_EXPORT double MDAL_D_value( DatasetH dataset, int valueIndex );
-
-//! Returns X value associated with the index from the vector dataset
-//! for nodata return numeric_limits<double>:quiet_NaN
-MDAL_EXPORT double MDAL_D_valueX( DatasetH dataset, int valueIndex );
-
-//! Returns Y value associated with the index from the vector dataset
-//! for nodata return numeric_limits<double>:quiet_NaN
-MDAL_EXPORT double MDAL_D_valueY( DatasetH dataset, int valueIndex );
-
-//! Whether element is active - should be taken into account
-//! Some formats support switching off the element for particular timestep
-MDAL_EXPORT bool MDAL_D_active( DatasetH dataset, int faceIndex );
-
 //! Returns whether dataset is valid
 MDAL_EXPORT bool MDAL_D_isValid( DatasetH dataset );
+
+//! Data type to be returned by MDAL_D_data
+enum MDAL_DataType {
+  SCALAR_DOUBLE, //!< double value for scalar datasets
+  VECTOR_2D_DOUBLE, //!< double, double value for vector datasets
+  ACTIVE_BOOL //!< active flag for datasets. Some formats support switching off the element for particular timestep.
+};
+
+//! Populates buffer with values from the dataset
+//! for nodata, returned is numeric_limits<double>:quiet_NaN
+//!
+//! \param dataset handle to dataset
+//! \param indexStart index of face/vertex to start reading of values to the buffer
+//! \param count number of values to be written to the buffer
+//! \param dataType type of values to be written to the buffer
+//! \param buffer output array to be populated with the values. must be already allocated
+//!               For SCALAR_DOUBLE, the minimum size must be valuesCount * size_of(double)
+//!               For VECTOR_2D_DOUBLE, the minimum size must be valuesCount * 2 * size_of(double).
+//!                                     Values are returned as x1, y1, x2, y2, ..., xN, yN
+//!               For ACTIVE_BOOL, the minimum size must be valuesCount * size_of(boolean)
+//! \returns number of values written to buffer. If return value != count requested, see MDAL_LastStatus() for error type
+MDAL_EXPORT int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void* buffer);
 
 #ifdef __cplusplus
 }

@@ -11,6 +11,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include "mdal.h"
 
 namespace MDAL
 {
@@ -55,12 +56,12 @@ namespace MDAL
   class Dataset
   {
     public:
-      virtual ~Dataset() = 0;
+      virtual ~Dataset();
       double time;
 
       size_t valuesCount() const;
-      virtual Value value(size_t index) = 0;
-      virtual bool isActive( size_t faceIndex ) = 0;
+      virtual size_t valueData(size_t indexStart, size_t count, double* buffer) = 0;
+      virtual size_t activeData(size_t indexStart, size_t count, char* buffer) = 0;
 
       bool isValid = true;
       DatasetGroup *parent = nullptr;
@@ -69,17 +70,17 @@ namespace MDAL
   class MemoryDataset: public Dataset
   {
     public:
-      ~MemoryDataset() = default;
+      ~MemoryDataset() override;
 
-      Value value(size_t index);
-      bool isActive( size_t faceIndex );
+      size_t valueData(size_t indexStart, size_t count, double* buffer) override;
+      size_t activeData(size_t indexStart, size_t count, char* buffer) override;
 
       /**
        * size - face count if !isOnVertices
        * size - vertex count if isOnVertices
        */
       std::vector<Value> values;
-      std::vector<bool> active; // size - face count. Whether the output for this is active...
+      std::vector<char> active; // size - face count. Whether the output for this is active...
   };
 
   typedef std::vector<std::shared_ptr<Dataset>> Datasets;
