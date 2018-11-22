@@ -52,7 +52,6 @@ namespace MDAL
 
   typedef std::vector< std::pair< std::string, std::string > > Metadata;
 
-
   class Dataset
   {
     public:
@@ -60,19 +59,24 @@ namespace MDAL
       double time;
 
       size_t valuesCount() const;
-      virtual size_t valueData(size_t indexStart, size_t count, double* buffer) = 0;
+      virtual size_t scalarData(size_t indexStart, size_t count, double* buffer) = 0;
+      virtual size_t vectorData(size_t indexStart, size_t count, double* buffer) = 0;
       virtual size_t activeData(size_t indexStart, size_t count, char* buffer) = 0;
 
       bool isValid = true;
       DatasetGroup *parent = nullptr;
   };
 
+  /**
+   * The MemoryDataset stores all the data in the memory
+   */
   class MemoryDataset: public Dataset
   {
     public:
       ~MemoryDataset() override;
 
-      size_t valueData(size_t indexStart, size_t count, double* buffer) override;
+      size_t scalarData(size_t indexStart, size_t count, double* buffer) override;
+      size_t vectorData(size_t indexStart, size_t count, double* buffer) override;
       size_t activeData(size_t indexStart, size_t count, char* buffer) override;
 
       /**

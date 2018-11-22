@@ -522,8 +522,10 @@ int MDAL_D_data(DatasetH dataset, int indexStart, int count, MDAL_DataType dataT
   size_t writtenValuesCount;
   switch(dataType) {
     case MDAL_DataType::SCALAR_DOUBLE:
+      writtenValuesCount = d->scalarData(indexStartSizeT, countSizeT, static_cast<double*>(buffer));
+      break;
     case MDAL_DataType::VECTOR_2D_DOUBLE:
-      writtenValuesCount = d->valueData(indexStartSizeT, countSizeT, static_cast<double*>(buffer));
+      writtenValuesCount = d->vectorData(indexStartSizeT, countSizeT, static_cast<double*>(buffer));
       break;
     case MDAL_DataType::ACTIVE_BOOL:
       writtenValuesCount = d->activeData(indexStartSizeT, countSizeT, static_cast<char*>(buffer));

@@ -13,6 +13,87 @@
 #include <vector>
 #include <memory>
 
+MDAL::XmdfDataset::~XmdfDataset() = default;
+
+MDAL::XmdfDataset::XmdfDataset(const HdfDataset& valuesDs, const HdfDataset& activeDs, hsize_t timeIndex)
+  : mHdf5DatasetValues(valuesDs)
+  , mHdf5DatasetActive(activeDs)
+  , mTimeIndex(timeIndex)
+{
+}
+
+const HdfDataset& MDAL::XmdfDataset::dsValues() const {
+  return mHdf5DatasetValues;
+}
+
+const HdfDataset& MDAL::XmdfDataset::dsActive() const {
+  return mHdf5DatasetActive;
+}
+
+hsize_t MDAL::XmdfDataset::timeIndex() const {
+  return mTimeIndex;
+}
+
+
+size_t MDAL::XmdfDataset::scalarData(size_t indexStart, size_t count, double* buffer)
+{
+  assert( parent); //checked in C API interface
+  assert( parent->isScalar()); //checked in C API interface
+  assert( parent->parent );
+  size_t verticesCount = parent->parent->verticesCount();
+
+  // TODO use hyperslab! do not fetch all data :(
+  std::vector<float> values = dsValues().readArray();
+
+  const float *input = values.data() + timeIndex() * verticesCount;
+  for ( size_t j = 0; j < count; ++j )
+  {
+    buffer[j] = double( input[ indexStart + j ] );
+  }
+
+  return count;
+}
+
+size_t MDAL::XmdfDataset::vectorData(size_t indexStart, size_t count, double* buffer)
+{
+  assert( parent); //checked in C API interface
+  assert( !parent->isScalar()); //checked in C API interface
+  assert( parent->parent );
+  size_t verticesCount = parent->parent->verticesCount();
+
+  // TODO use hyperslab! do not fetch all data :(
+  std::vector<float> values = dsValues().readArray();
+
+  const float *input = values.data() + 2 * timeIndex() * verticesCount;
+  for ( size_t j = 0; j < count; ++j )
+  {
+    buffer[2*j] = double( input[2 * (indexStart + j) ] );
+    buffer[2*j+1] = double( input[2 * (indexStart + j ) + 1] );
+  }
+
+  return count;
+}
+
+size_t MDAL::XmdfDataset::activeData(size_t indexStart, size_t count, char* buffer)
+{
+  assert( parent); //checked in C API interface
+  assert( parent->parent );
+  size_t facesCount = parent->parent->facesCount();
+
+  // TODO use hyperslab! do not fetch all data :(
+  std::vector<uchar> active = dsActive().readArrayUint8();
+
+  const uchar *input = active.data() + timeIndex() * facesCount;
+  for ( size_t j = 0; j < count; ++j )
+  {
+    //todo memcpy( buffer, src, count );?
+    buffer[j] = input[ indexStart + j ];
+  }
+
+  return count;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
 
 MDAL::LoaderXmdf::LoaderXmdf( const std::string &datFile )
   : mDatFile( datFile )
@@ -140,8 +221,6 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
   bool isVector = dimValues.size() == 3;
 
   std::vector<float> times = dsTimes.readArray();
-  std::vector<float> values = dsValues.readArray();
-  std::vector<uchar> active = dsActive.readArrayUint8();
 
   group->setName( name );
   group->setIsScalar(!isVector);
@@ -151,35 +230,9 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
 
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {
-    std::shared_ptr<MemoryDataset> dataset( new MemoryDataset() );
-    dataset->values.resize( vertexCount );
-    dataset->active.resize( faceCount );
+    std::shared_ptr<XmdfDataset> dataset( new XmdfDataset(dsValues, dsActive, i) );
     dataset->parent = group.get();
     dataset->time = double( times[i] );
-
-    if ( isVector )
-    {
-      const float *input = values.data() + 2 * i * vertexCount;
-      for ( size_t j = 0; j < vertexCount; ++j )
-      {
-        dataset->values[j].x = double( input[2 * j] );
-        dataset->values[j].y = double( input[2 * j + 1] );
-      }
-    }
-    else
-    {
-      const float *input = values.data() + i * vertexCount;
-      for ( size_t j = 0; j < vertexCount; ++j )
-      {
-        dataset->values[j].x = double( input[j] );
-      }
-    }
-
-    const uchar *input = active.data() + i * faceCount;
-    for ( size_t j = 0; j < faceCount; ++j )
-    {
-      dataset->active[j] = input[j];
-    }
     group->datasets.push_back( dataset );
   }
 

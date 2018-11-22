@@ -20,6 +20,48 @@
 namespace MDAL
 {
 
+  /**
+   * The XmdfDataset reads the data directly from HDF5 file
+   * by usage of hyperslabs retrieval
+   *
+   * basically all (timesteps) data for one particular dataset groups
+   * are stored in single 2D array with structure
+   *
+   * timestep1 x1 y1 x2 y2 ...... xN yN
+   * timestep2 x1 y1 x2 y2 ...... xN yN
+   * ...
+   * timestepN x1 y1 x2 y2 ...... xN yN
+   *
+   * or for scalar datasets
+   *
+   * timestep1 x1 x2 ...... xN
+   * timestep2 x1 x2 ...... xN
+   * ...
+   * timestepN x1 x2 ...... xN
+   */
+  class XmdfDataset: public Dataset
+  {
+    public:
+      XmdfDataset(const HdfDataset& valuesDs,
+                  const HdfDataset& activeDs,
+                  hsize_t timeIndex);
+      ~XmdfDataset() override;
+
+      size_t scalarData(size_t indexStart, size_t count, double* buffer) override;
+      size_t vectorData(size_t indexStart, size_t count, double* buffer) override;
+      size_t activeData(size_t indexStart, size_t count, char* buffer) override;
+
+      const HdfDataset& dsValues() const;
+      const HdfDataset& dsActive() const;
+      hsize_t timeIndex() const;
+
+    private:
+      HdfDataset mHdf5DatasetValues;
+      HdfDataset mHdf5DatasetActive;
+      // index or row where the data for this timestep begins
+      hsize_t mTimeIndex;
+  };
+
   class LoaderXmdf
   {
     public:

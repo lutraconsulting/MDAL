@@ -26,6 +26,8 @@ size_t MDAL::Dataset::valuesCount() const
   }
 }
 
+MDAL::MemoryDataset::~MemoryDataset() = default;
+
 size_t MDAL::MemoryDataset::activeData(size_t indexStart, size_t count, char* buffer)
 {
   assert( parent );
@@ -45,13 +47,10 @@ size_t MDAL::MemoryDataset::activeData(size_t indexStart, size_t count, char* bu
   return count;
 }
 
-
-MDAL::MemoryDataset::~MemoryDataset() = default;
-
-size_t MDAL::MemoryDataset::valueData(size_t indexStart, size_t count, double* buffer)
+size_t MDAL::MemoryDataset::scalarData(size_t indexStart, size_t count, double* buffer)
 {
-  assert(parent);
-  bool isScalar = parent->isScalar();
+  assert( parent); //checked in C API interface
+  assert( parent->isScalar()); //checked in C API interface
   assert( values.size() > indexStart); //checked in C API interface
   assert( values.size() >= indexStart + count ); //checked in C API interface
 
@@ -59,23 +58,35 @@ size_t MDAL::MemoryDataset::valueData(size_t indexStart, size_t count, double* b
     const MDAL::Value value = values[ indexStart + i ];
     if ( value.noData )
     {
-      if (isScalar)
-      {
-        buffer[i] = NODATA;
-      } else {
-        buffer[2*i] = NODATA;
-        buffer[2*i+1] = NODATA;
-      }
+      buffer[i] = NODATA;
     }
     else
     {
-      if (isScalar)
-      {
-        buffer[i] = value.x;
-      } else {
+      buffer[i] = value.x;
+    }
+  }
+
+  return count;
+}
+
+size_t MDAL::MemoryDataset::vectorData(size_t indexStart, size_t count, double* buffer)
+{
+  assert( parent); //checked in C API interface
+  assert( !parent->isScalar()); //checked in C API interface
+  assert( values.size() > indexStart); //checked in C API interface
+  assert( values.size() >= indexStart + count ); //checked in C API interface
+
+  for (size_t i=0; i<count; ++i) {
+    const MDAL::Value value = values[ indexStart + i ];
+    if ( value.noData )
+    {
+        buffer[2*i] = NODATA;
+        buffer[2*i+1] = NODATA;
+    }
+    else
+    {
         buffer[2*i] = value.x;
         buffer[2*i+1] = value.y;
-      }
     }
   }
 

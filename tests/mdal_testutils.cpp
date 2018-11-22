@@ -4,6 +4,7 @@
 #include "mdal_testutils.hpp"
 #include <vector>
 #include <math.h>
+#include <assert.h>
 
 const char *data_path()
 {
