@@ -7,6 +7,7 @@
 #define MDAL_TESTUTILS_HPP
 
 #include <string>
+#include <vector>
 #include "mdal.h"
 
 const char *data_path();
