@@ -181,7 +181,7 @@ enum MDAL_DataType
 //!               For SCALAR_DOUBLE, the minimum size must be valuesCount * size_of(double)
 //!               For VECTOR_2D_DOUBLE, the minimum size must be valuesCount * 2 * size_of(double).
 //!                                     Values are returned as x1, y1, x2, y2, ..., xN, yN
-//!               For ACTIVE_BOOL, the minimum size must be valuesCount * size_of(boolean)
+//!               For ACTIVE_BOOL, the minimum size must be valuesCount * size_of(char)
 //! \returns number of values written to buffer. If return value != count requested, see MDAL_LastStatus() for error type
 MDAL_EXPORT int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer );
 
