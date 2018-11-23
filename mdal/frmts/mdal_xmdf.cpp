@@ -42,18 +42,14 @@ size_t MDAL::XmdfDataset::scalarData( size_t indexStart, size_t count, double *b
 {
   assert( parent ); //checked in C API interface
   assert( parent->isScalar() ); //checked in C API interface
-  assert( parent->parent );
-  size_t verticesCount = parent->parent->verticesCount();
-
-  // TODO use hyperslab! do not fetch all data :(
-  std::vector<float> values = dsValues().readArray();
-
-  const float *input = values.data() + timeIndex() * verticesCount;
+  std::vector<hsize_t> offsets = {timeIndex(), indexStart};
+  std::vector<hsize_t> counts = {1, count};
+  std::vector<float> values = dsValues().readArray( offsets, counts );
+  const float *input = values.data();
   for ( size_t j = 0; j < count; ++j )
   {
-    buffer[j] = double( input[ indexStart + j ] );
+    buffer[j] = double( input[j] );
   }
-
   return count;
 }
 
@@ -61,17 +57,14 @@ size_t MDAL::XmdfDataset::vectorData( size_t indexStart, size_t count, double *b
 {
   assert( parent ); //checked in C API interface
   assert( !parent->isScalar() ); //checked in C API interface
-  assert( parent->parent );
-  size_t verticesCount = parent->parent->verticesCount();
-
-  // TODO use hyperslab! do not fetch all data :(
-  std::vector<float> values = dsValues().readArray();
-
-  const float *input = values.data() + 2 * timeIndex() * verticesCount;
+  std::vector<hsize_t> offsets = {timeIndex(), indexStart, 0};
+  std::vector<hsize_t> counts = {1, count, 2};
+  std::vector<float> values = dsValues().readArray( offsets, counts );
+  const float *input = values.data();
   for ( size_t j = 0; j < count; ++j )
   {
-    buffer[2 * j] = double( input[2 * ( indexStart + j ) ] );
-    buffer[2 * j + 1] = double( input[2 * ( indexStart + j ) + 1] );
+    buffer[2 * j] = double( input[2 * j] );
+    buffer[2 * j + 1] = double( input[2 * j + 1] );
   }
 
   return count;
@@ -80,19 +73,14 @@ size_t MDAL::XmdfDataset::vectorData( size_t indexStart, size_t count, double *b
 size_t MDAL::XmdfDataset::activeData( size_t indexStart, size_t count, char *buffer )
 {
   assert( parent ); //checked in C API interface
-  assert( parent->parent );
-  size_t facesCount = parent->parent->facesCount();
-
-  // TODO use hyperslab! do not fetch all data :(
-  std::vector<uchar> active = dsActive().readArrayUint8();
-
-  const uchar *input = active.data() + timeIndex() * facesCount;
+  std::vector<hsize_t> offsets = {timeIndex(), indexStart};
+  std::vector<hsize_t> counts = {1, count};
+  std::vector<uchar> active = dsActive().readArrayUint8( offsets, counts );
+  const uchar *input = active.data();
   for ( size_t j = 0; j < count; ++j )
   {
-    //todo memcpy( buffer, src, count );?
-    buffer[j] = input[ indexStart + j ];
+    buffer[j] = static_cast<char>( input[ j ] );
   }
-
   return count;
 }
 
@@ -138,31 +126,40 @@ void MDAL::LoaderXmdf::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
   DatasetGroups groups; // DAT outputs data
 
-  HdfGroup gTemporal = gMesh.group( "Temporal" );
-  if ( gTemporal.isValid() )
+  if ( gMesh.pathExists( "Temporal" ) )
   {
-    addDatasetGroupsFromXmdfGroup( groups, gTemporal, vertexCount, faceCount );
+    HdfGroup gTemporal = gMesh.group( "Temporal" );
+    if ( gTemporal.isValid() )
+    {
+      addDatasetGroupsFromXmdfGroup( groups, gTemporal, vertexCount, faceCount );
+    }
   }
 
-  HdfGroup gMaximums = gMesh.group( "Maximums" );
-  if ( gMaximums.isValid() )
+  if ( gMesh.pathExists( "Temporal" ) )
   {
-    for ( const std::string &name : gMaximums.groups() )
+    HdfGroup gMaximums = gMesh.group( "Maximums" );
+    if ( gMaximums.isValid() )
     {
-      HdfGroup g = gMaximums.group( name );
-      std::shared_ptr<MDAL::DatasetGroup> maxGroup = readXmdfGroupAsDatasetGroup( g, name + "/Maximums", vertexCount, faceCount );
-      if ( maxGroup->datasets.size() != 1 )
-        MDAL::debug( "Maximum dataset should have just one timestep!" );
-      else
-        groups.push_back( maxGroup );
+      for ( const std::string &name : gMaximums.groups() )
+      {
+        HdfGroup g = gMaximums.group( name );
+        std::shared_ptr<MDAL::DatasetGroup> maxGroup = readXmdfGroupAsDatasetGroup( g, name + "/Maximums", vertexCount, faceCount );
+        if ( maxGroup->datasets.size() != 1 )
+          MDAL::debug( "Maximum dataset should have just one timestep!" );
+        else
+          groups.push_back( maxGroup );
+      }
     }
   }
 
   // res_to_res.exe (TUFLOW utiity tool)
-  HdfGroup gDifference = gMesh.group( "Difference" );
-  if ( gDifference.isValid() )
+  if ( gMesh.pathExists( "Difference" ) )
   {
-    addDatasetGroupsFromXmdfGroup( groups, gDifference, vertexCount, faceCount );
+    HdfGroup gDifference = gMesh.group( "Difference" );
+    if ( gDifference.isValid() )
+    {
+      addDatasetGroupsFromXmdfGroup( groups, gDifference, vertexCount, faceCount );
+    }
   }
 
   mesh->datasetGroups.insert(

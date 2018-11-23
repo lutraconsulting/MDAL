@@ -25,19 +25,10 @@ namespace MDAL
    * by usage of hyperslabs retrieval
    *
    * basically all (timesteps) data for one particular dataset groups
-   * are stored in single 2D array with structure
-   *
-   * timestep1 x1 y1 x2 y2 ...... xN yN
-   * timestep2 x1 y1 x2 y2 ...... xN yN
-   * ...
-   * timestepN x1 y1 x2 y2 ...... xN yN
-   *
-   * or for scalar datasets
-   *
-   * timestep1 x1 x2 ...... xN
-   * timestep2 x1 x2 ...... xN
-   * ...
-   * timestepN x1 x2 ...... xN
+   * are stored in single
+   *   3D arrays (time, x, y) for vector datasets
+   *   2D arrays (time, x) for scalar datasets
+   *   2D arrays (time, active) for active flags
    */
   class XmdfDataset: public Dataset
   {
