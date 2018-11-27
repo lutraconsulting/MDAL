@@ -92,7 +92,7 @@ namespace MDAL
       const std::string mFileName;
       const std::string mDriverName; /* GDAL driver name */
       double *mPafScanline; /* temporary buffer for reading one raster line */
-      std::unique_ptr< Mesh > mMesh;
+      std::unique_ptr< MemoryMesh > mMesh;
       gdal_datasets_vector gdal_datasets;
       data_hash mBands; /* raster bands GDAL handle */
   };

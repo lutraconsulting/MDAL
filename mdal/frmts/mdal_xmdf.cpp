@@ -70,7 +70,7 @@ size_t MDAL::XmdfDataset::vectorData( size_t indexStart, size_t count, double *b
   return count;
 }
 
-size_t MDAL::XmdfDataset::activeData( size_t indexStart, size_t count, char *buffer )
+size_t MDAL::XmdfDataset::activeData( size_t indexStart, size_t count, int *buffer )
 {
   assert( parent ); //checked in C API interface
   std::vector<hsize_t> offsets = {timeIndex(), indexStart};
@@ -79,7 +79,7 @@ size_t MDAL::XmdfDataset::activeData( size_t indexStart, size_t count, char *buf
   const uchar *input = active.data();
   for ( size_t j = 0; j < count; ++j )
   {
-    buffer[j] = static_cast<char>( input[ j ] );
+    buffer[j] = bool( input[ j ] );
   }
   return count;
 }
@@ -111,8 +111,8 @@ void MDAL::LoaderXmdf::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
   // TODO: check version?
 
-  size_t vertexCount = mesh->vertices.size();
-  size_t faceCount = mesh->faces.size();
+  size_t vertexCount = mesh->verticesCount();
+  size_t faceCount = mesh->facesCount();
   std::vector<std::string> rootGroups = file.groups();
   if ( rootGroups.size() != 1 )
   {

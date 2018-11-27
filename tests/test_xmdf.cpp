@@ -61,16 +61,16 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   ASSERT_EQ( 1976, count );
 
   {
-    std::vector<char> active( 5 );
-    std::vector<char> expectedActive = {0, 0, 0, 0, 0};
+    std::vector<int> active( 5 );
+    std::vector<int> expectedActive = {0, 0, 0, 0, 0};
     int nValuesRead = MDAL_D_data( ds, 0, 5, MDAL_DataType::ACTIVE_BOOL, active.data() );
     ASSERT_EQ( 5,  nValuesRead );
     EXPECT_EQ( active, expectedActive );
   }
 
   {
-    std::vector<char> active( 5 );
-    std::vector<char> expectedActive = {1, 1, 1, 1, 1};
+    std::vector<int> active( 5 );
+    std::vector<int> expectedActive = {1, 1, 1, 1, 1};
     int nValuesRead = MDAL_D_data( ds, 60, 5, MDAL_DataType::ACTIVE_BOOL, active.data() );
     ASSERT_EQ( 5,  nValuesRead );
     EXPECT_EQ( active, expectedActive );
@@ -132,8 +132,8 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   ASSERT_EQ( 1976, count );
 
   {
-    std::vector<char> active( 3 );
-    std::vector<char> expectedActive = {1, 1, 1};
+    std::vector<int> active( 3 );
+    std::vector<int> expectedActive = {1, 1, 1};
     int nValuesRead = MDAL_D_data( ds, 66, 3, MDAL_DataType::ACTIVE_BOOL, active.data() );
     ASSERT_EQ( 3,  nValuesRead );
     EXPECT_EQ( active, expectedActive );

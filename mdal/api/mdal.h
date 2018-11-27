@@ -63,8 +63,9 @@ enum MDAL_Status
   Warn_NodeNotUnique
 };
 
-//! Mesh
 typedef void *MeshH;
+typedef void *MeshVertexIteratorH;
+typedef void *MeshFaceIteratorH;
 typedef void *DatasetGroupH;
 typedef void *DatasetH;
 
@@ -78,39 +79,80 @@ MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
 
-//! Loads mesh file. On error see MDAL_LastStatus for error type This effectively loads whole mesh in-memory
+//! Loads mesh file. On error see MDAL_LastStatus for error type
+//! This may effectively load whole mesh in-memory for some providers
 MDAL_EXPORT MeshH MDAL_LoadMesh( const char *meshFile );
 //! Closes mesh, frees the memory
 MDAL_EXPORT void MDAL_CloseMesh( MeshH mesh );
 //! Returns mesh projection
 //! not thread-safe and valid only till next call
 MDAL_EXPORT const char *MDAL_M_projection( MeshH mesh );
+//! Returns mesh extent in native projection
+//! Returns NaN on error
+MDAL_EXPORT void MDAL_M_extent( MeshH mesh, double *minX, double *maxX, double *minY, double *maxY );
 //! Returns vertex count for the mesh
 MDAL_EXPORT int MDAL_M_vertexCount( MeshH mesh );
-//! Returns vertex X coord for the mesh
-MDAL_EXPORT double MDAL_M_vertexXCoordinatesAt( MeshH mesh, int index );
-//! Returns vertex Y coord for the mesh
-MDAL_EXPORT double MDAL_M_vertexYCoordinatesAt( MeshH mesh, int index );
-//! Returns vertex Z coord for the mesh
-MDAL_EXPORT double MDAL_M_vertexZCoordinatesAt( MeshH mesh, int index );
 //! Returns face count for the mesh
 MDAL_EXPORT int MDAL_M_faceCount( MeshH mesh );
-//! Returns number of vertices face consist of, e.g. 3 for triangle
-MDAL_EXPORT int MDAL_M_faceVerticesCountAt( MeshH mesh, int index );
-//! Returns vertex index for face
-MDAL_EXPORT int MDAL_M_faceVerticesIndexAt( MeshH mesh, int face_index, int vertex_index );
-
+//! Returns maximum number of vertices face can consist of, e.g. 4 for regular quad mesh
+MDAL_EXPORT int MDAL_M_faceVerticesMaximumCount( MeshH mesh );
 //! Loads dataset file. On error see MDAL_LastStatus for error type.
 //! This may effectively load whole dataset in-memory for some providers
 //! Datasets will be closed automatically on mesh destruction or memory
 //! can be freed manually with MDAL_CloseDataset if needed
 MDAL_EXPORT void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile );
-
 //! Returns dataset groups count
 MDAL_EXPORT int MDAL_M_datasetGroupCount( MeshH mesh );
-
 //! Returns dataset group handle
 MDAL_EXPORT DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index );
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// MESH VERTICES
+///////////////////////////////////////////////////////////////////////////////////////
+
+//! Returns iterator to the mesh vertices
+//! For some formats this may effectively load all vertices in-memory until iterator is closed
+MDAL_EXPORT MeshVertexIteratorH MDAL_M_vertexIterator( MeshH mesh );
+
+//! Returns vertices from iterator for the mesh
+//! \param iterator mesh data iterator
+//! \param verticesCount maximum number or vertices to be written to buffer
+//! \param coordinates must be allocated to 3* verticesCount items to store x1, y1, z1, ..., xN, yN, zN coordinates
+//! \returns number of vertices written in the buffer
+MDAL_EXPORT int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coordinates );
+
+//! Closes mesh data iterator, frees the memory
+MDAL_EXPORT void MDAL_VI_close( MeshVertexIteratorH iterator );
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// MESH FACES
+///////////////////////////////////////////////////////////////////////////////////////
+
+//! Returns iterator to the mesh faces
+//! For some formats this may effectively load all faces in-memory until iterator is closed
+MDAL_EXPORT MeshFaceIteratorH MDAL_M_faceIterator( MeshH mesh );
+
+//! Returns next faces from iterator for the mesh
+//!
+//! Reading stops when vertexIndicesBuffer capacity is full / faceOffsetsBuffer
+//! capacity is full / end of faces is reached, whatever comes first
+//!
+//! \param iterator mesh data iterator
+//! \param faceOffsetsBufferLen size of faceOffsetsBuffer, minimum 1
+//! \param faceOffsetsBuffer allocated array to store face offset in vertexIndicesBuffer for given face.
+//!                          To find number of vertices of face i, calculate faceOffsetsBuffer[i] - faceOffsetsBuffer[i-1]
+//! \param vertexIndicesBufferLen size of vertexIndicesBuffer, minimum is MDAL_M_faceVerticesMaximumCount()
+//! \param vertexIndicesBuffer writes vertex indexes for faces
+//!                            faceOffsetsBuffer[i-1] is index where the vertices for face i begins,
+//! \returns number of faces written in the buffer
+MDAL_EXPORT int MDAL_FI_next( MeshFaceIteratorH iterator,
+                              int faceOffsetsBufferLen,
+                              int *faceOffsetsBuffer,
+                              int vertexIndicesBufferLen,
+                              int *vertexIndicesBuffer );
+
+//! Closes mesh data iterator, frees the memory
+MDAL_EXPORT void MDAL_FI_close( MeshFaceIteratorH iterator );
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASET GROUPS

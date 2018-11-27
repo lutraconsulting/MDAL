@@ -5,10 +5,9 @@
 
 #include "mdal_data_model.hpp"
 #include <assert.h>
+#include <math.h>
 #include <algorithm>
 #include "mdal_utils.hpp"
-
-#define NODATA std::numeric_limits<double>::quiet_NaN()
 
 MDAL::Dataset::~Dataset() = default;
 
@@ -24,75 +23,6 @@ size_t MDAL::Dataset::valuesCount() const
   {
     return parent->parent->facesCount();
   }
-}
-
-MDAL::MemoryDataset::~MemoryDataset() = default;
-
-size_t MDAL::MemoryDataset::activeData( size_t indexStart, size_t count, char *buffer )
-{
-  assert( parent );
-  if ( parent->isOnVertices() )
-  {
-    assert( active.size() > indexStart ); //checked in C API interface
-    assert( active.size() >= indexStart + count ); //checked in C API interface
-    char *src = active.data() + indexStart;
-    memcpy( buffer, src, count );
-  }
-  else
-  {
-    memset( buffer, true, count );
-    return true;
-  }
-
-  return count;
-}
-
-size_t MDAL::MemoryDataset::scalarData( size_t indexStart, size_t count, double *buffer )
-{
-  assert( parent ); //checked in C API interface
-  assert( parent->isScalar() ); //checked in C API interface
-  assert( values.size() > indexStart ); //checked in C API interface
-  assert( values.size() >= indexStart + count ); //checked in C API interface
-
-  for ( size_t i = 0; i < count; ++i )
-  {
-    const MDAL::Value value = values[ indexStart + i ];
-    if ( value.noData )
-    {
-      buffer[i] = NODATA;
-    }
-    else
-    {
-      buffer[i] = value.x;
-    }
-  }
-
-  return count;
-}
-
-size_t MDAL::MemoryDataset::vectorData( size_t indexStart, size_t count, double *buffer )
-{
-  assert( parent ); //checked in C API interface
-  assert( !parent->isScalar() ); //checked in C API interface
-  assert( values.size() > indexStart ); //checked in C API interface
-  assert( values.size() >= indexStart + count ); //checked in C API interface
-
-  for ( size_t i = 0; i < count; ++i )
-  {
-    const MDAL::Value value = values[ indexStart + i ];
-    if ( value.noData )
-    {
-      buffer[2 * i] = NODATA;
-      buffer[2 * i + 1] = NODATA;
-    }
-    else
-    {
-      buffer[2 * i] = value.x;
-      buffer[2 * i + 1] = value.y;
-    }
-  }
-
-  return count;
 }
 
 std::string MDAL::DatasetGroup::getMetadata( const std::string &key )
@@ -162,6 +92,17 @@ void MDAL::DatasetGroup::setIsScalar( bool isScalar )
   mIsScalar = isScalar;
 }
 
+MDAL::Mesh::Mesh( size_t verticesCount, size_t facesCount, size_t faceVerticesMaximumCount, MDAL::BBox extent, const std::string &uri )
+  : mVerticesCount( verticesCount )
+  , mFacesCount( facesCount )
+  , mFaceVerticesMaximumCount( faceVerticesMaximumCount )
+  , mExtent( extent )
+  , mUri( uri )
+{
+}
+
+MDAL::Mesh::~Mesh() = default;
+
 void MDAL::Mesh::setSourceCrs( const std::string &str )
 {
   mCrs = MDAL::trim( str );
@@ -177,40 +118,34 @@ void MDAL::Mesh::setSourceCrsFromEPSG( int code )
   setSourceCrs( std::string( "EPSG:" ) + std::to_string( code ) );
 }
 
-void MDAL::Mesh::addBedElevationDataset()
+void MDAL::Mesh::setExtent( const BBox &extent )
 {
-  if ( faces.empty() )
-    return;
+  mExtent = extent;
+}
 
-  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >();
-  group->setIsOnVertices( true );
-  group->setIsScalar( true );
-  group->setName( "Bed Elevation" );
-  group->setUri( uri() );
-  group->parent = this;
+void MDAL::Mesh::setFaceVerticesMaximumCount( const size_t &faceVerticesMaximumCount )
+{
+  mFaceVerticesMaximumCount = faceVerticesMaximumCount;
+}
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >();
-  dataset->time = 0.0;
-  dataset->values.resize( vertices.size() );
-  dataset->active.resize( faces.size() );
-  dataset->parent = group.get();
-  std::fill( dataset->active.begin(), dataset->active.end(), 1 );
-  for ( size_t i = 0; i < vertices.size(); ++i )
-  {
-    dataset->values[i].x = vertices[i].z;
-  }
-  group->datasets.push_back( dataset );
-  datasetGroups.push_back( group );
+void MDAL::Mesh::setFacesCount( const size_t &facesCount )
+{
+  mFacesCount = facesCount;
+}
+
+void MDAL::Mesh::setVerticesCount( const size_t &verticesCount )
+{
+  mVerticesCount = verticesCount;
 }
 
 size_t MDAL::Mesh::verticesCount() const
 {
-  return vertices.size();
+  return mVerticesCount;
 }
 
 size_t MDAL::Mesh::facesCount() const
 {
-  return faces.size();
+  return mFacesCount;
 }
 
 std::string MDAL::Mesh::uri() const
@@ -218,12 +153,21 @@ std::string MDAL::Mesh::uri() const
   return mUri;
 }
 
-void MDAL::Mesh::setUri( const std::string &uri )
+MDAL::BBox MDAL::Mesh::extent() const
 {
-  mUri = uri;
+  return mExtent;
 }
 
 std::string MDAL::Mesh::crs() const
 {
   return mCrs;
 }
+
+size_t MDAL::Mesh::faceVerticesMaximumCount() const
+{
+  return mFaceVerticesMaximumCount;
+}
+
+MDAL::MeshVertexIterator::~MeshVertexIterator() = default;
+
+MDAL::MeshFaceIterator::~MeshFaceIterator() = default;

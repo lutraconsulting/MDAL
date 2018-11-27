@@ -14,7 +14,6 @@
 
 namespace MDAL
 {
-
   class Loader2dm
   {
     public:

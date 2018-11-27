@@ -103,8 +103,8 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
   if ( !in )
     EXIT_WITH_ERROR( MDAL_Status::Err_FileNotFound ); // Couldn't open the file
 
-  size_t vertexCount = mesh->vertices.size();
-  size_t elemCount = mesh->faces.size();
+  size_t vertexCount = mesh->verticesCount();
+  size_t elemCount = mesh->facesCount();
 
   int card = 0;
   int version;
@@ -248,8 +248,8 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
   assert( group && groupMax && ( group->isScalar() == groupMax->isScalar() ) );
   bool isScalar = group->isScalar();
 
-  size_t vertexCount = mesh->vertices.size();
-  size_t faceCount = mesh->faces.size();
+  size_t vertexCount = mesh->verticesCount();
+  size_t faceCount = mesh->facesCount();
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
   dataset->values.resize( vertexCount );

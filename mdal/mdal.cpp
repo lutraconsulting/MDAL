@@ -75,6 +75,26 @@ const char *MDAL_M_projection( MeshH mesh )
   return _return_str( m->crs() );
 }
 
+void MDAL_M_extent( MeshH mesh, double *minX, double *maxX, double *minY, double *maxY )
+{
+  if ( !mesh )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    *minX = std::numeric_limits<double>::quiet_NaN();
+    *maxX = std::numeric_limits<double>::quiet_NaN();
+    *minY = std::numeric_limits<double>::quiet_NaN();
+    *maxY = std::numeric_limits<double>::quiet_NaN();
+  }
+  else
+  {
+    MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+    const MDAL::BBox extent = m->extent();
+    *minX = extent.minX;
+    *maxX = extent.maxX;
+    *minY = extent.minY;
+    *maxY = extent.maxY;
+  }
+}
 
 int MDAL_M_vertexCount( MeshH mesh )
 {
@@ -85,74 +105,8 @@ int MDAL_M_vertexCount( MeshH mesh )
   }
 
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  int len = static_cast<int>( m->vertices.size() );
+  int len = static_cast<int>( m->verticesCount() );
   return len;
-}
-
-double MDAL_M_vertexXCoordinatesAt( MeshH mesh, int index )
-{
-  if ( !mesh )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return NODATA;
-  }
-  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  if ( index < 0 )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return NODATA;
-  }
-  size_t i = static_cast<size_t>( index );
-  if ( m->vertices.size() <= i )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return NODATA;
-  }
-  return m->vertices[i].x;
-}
-
-double MDAL_M_vertexYCoordinatesAt( MeshH mesh, int index )
-{
-  if ( !mesh )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return NODATA;
-  }
-  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  if ( index < 0 )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return NODATA;
-  }
-  size_t i = static_cast<size_t>( index );
-  if ( m->vertices.size() <= i )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return NODATA;
-  }
-  return m->vertices[i].y;
-}
-
-double MDAL_M_vertexZCoordinatesAt( MeshH mesh, int index )
-{
-  if ( !mesh )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return NODATA;
-  }
-  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  if ( index < 0 )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return NODATA;
-  }
-  size_t i = static_cast<size_t>( index );
-  if ( m->vertices.size() <= i )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return NODATA;
-  }
-  return m->vertices[i].z;
 }
 
 int MDAL_M_faceCount( MeshH mesh )
@@ -163,11 +117,11 @@ int MDAL_M_faceCount( MeshH mesh )
     return 0;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  int len = static_cast<int>( m->faces.size() );
+  int len = static_cast<int>( m->facesCount() );
   return len;
 }
 
-int MDAL_M_faceVerticesCountAt( MeshH mesh, int index )
+int MDAL_M_faceVerticesMaximumCount( MeshH mesh )
 {
   if ( !mesh )
   {
@@ -175,52 +129,7 @@ int MDAL_M_faceVerticesCountAt( MeshH mesh, int index )
     return 0;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  if ( index < 0 )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return 0;
-  }
-  size_t i = static_cast<size_t>( index );
-  if ( m->faces.size() <= i )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return 0;
-  }
-  int len = static_cast<int>( m->faces[i].size() );
-  return len;
-}
-
-int MDAL_M_faceVerticesIndexAt( MeshH mesh, int face_index, int vertex_index )
-{
-  if ( !mesh )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return 0;
-  }
-  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  if ( face_index < 0 )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return 0;
-  }
-  size_t fi = static_cast<size_t>( face_index );
-  if ( m->faces.size() <= fi )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return 0;
-  }
-  if ( vertex_index < 0 )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return 0;
-  }
-  size_t vi = static_cast<size_t>( vertex_index );
-  if ( m->faces[fi].size() <= vi )
-  {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
-    return 0;
-  }
-  int len = static_cast<int>( m->faces[fi][vi] );
+  int len = static_cast<int>( m->faceVerticesMaximumCount() );
   return len;
 }
 
@@ -280,6 +189,94 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
   size_t i = static_cast<size_t>( index );
   return static_cast< DatasetH >( m->datasetGroups[i].get() );
 }
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// MESH VERTICES
+///////////////////////////////////////////////////////////////////////////////////////
+
+MeshVertexIteratorH MDAL_M_vertexIterator( MeshH mesh )
+{
+  if ( !mesh )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return nullptr;
+  }
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  std::unique_ptr<MDAL::MeshVertexIterator> it = m->readVertices();
+  return static_cast< MeshVertexIteratorH >( it.release() );
+}
+
+int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coordinates )
+{
+  if ( !iterator )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return 0;
+  }
+  MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
+  size_t size = static_cast<size_t>( verticesCount );
+  if ( size == 0 )
+  {
+    return 0;
+  }
+  size_t ret = it->next( size, coordinates );
+  return static_cast<int>( ret );
+}
+
+void MDAL_VI_close( MeshVertexIteratorH iterator )
+{
+  if ( iterator )
+  {
+    MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
+    delete it;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// MESH FACES
+///////////////////////////////////////////////////////////////////////////////////////
+
+MeshFaceIteratorH MDAL_M_faceIterator( MeshH mesh )
+{
+  if ( !mesh )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return nullptr;
+  }
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  std::unique_ptr<MDAL::MeshFaceIterator > it = m->readFaces();
+  return static_cast< MeshFaceIteratorH >( it.release() );
+}
+
+int MDAL_FI_next( MeshFaceIteratorH iterator,
+                  int faceOffsetsBufferLen,
+                  int *faceOffsetsBuffer,
+                  int vertexIndicesBufferLen,
+                  int *vertexIndicesBuffer )
+{
+  if ( !iterator )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return 0;
+  }
+  MDAL::MeshFaceIterator *it = static_cast< MDAL::MeshFaceIterator * >( iterator );
+  size_t ret = it->next( static_cast<size_t>( faceOffsetsBufferLen ),
+                         faceOffsetsBuffer,
+                         static_cast<size_t>( vertexIndicesBufferLen ),
+                         vertexIndicesBuffer );
+  return static_cast<int>( ret );
+}
+
+
+void MDAL_FI_close( MeshFaceIteratorH iterator )
+{
+  if ( iterator )
+  {
+    MDAL::MeshFaceIterator *it = static_cast< MDAL::MeshFaceIterator * >( iterator );
+    delete it;
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASET GROUPS
@@ -532,7 +529,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       writtenValuesCount = d->vectorData( indexStartSizeT, countSizeT, static_cast<double *>( buffer ) );
       break;
     case MDAL_DataType::ACTIVE_BOOL:
-      writtenValuesCount = d->activeData( indexStartSizeT, countSizeT, static_cast<char *>( buffer ) );
+      writtenValuesCount = d->activeData( indexStartSizeT, countSizeT, static_cast<int *>( buffer ) );
       break;
   }
 
