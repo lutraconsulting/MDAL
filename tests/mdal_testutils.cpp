@@ -63,3 +63,83 @@ bool compareVectors( const std::vector<double> &a, const std::vector<double> &b 
 
   return true;
 }
+
+std::vector<double> getCoordinates( MeshH mesh, int verticesCount )
+{
+  MeshVertexIteratorH iterator = MDAL_M_vertexIterator( mesh );
+  std::vector<double> coordinates( static_cast<size_t>( 3 * verticesCount ) );
+  MDAL_VI_next( iterator, verticesCount, coordinates.data() );
+  MDAL_VI_close( iterator );
+  return coordinates;
+}
+
+double _getVertexCoordinatesAt( MeshH mesh, int index, int coordIndex )
+{
+  // coordIndex = 0 x
+  // coordIndex = 1 y
+  // coordIndex = 2 z
+  std::vector<double> coordinates = getCoordinates( mesh, index + 1 );
+  double val = coordinates[static_cast<size_t>( index * 3 + coordIndex )];
+  return val;
+}
+
+double getVertexXCoordinatesAt( MeshH mesh, int index )
+{
+  return _getVertexCoordinatesAt( mesh, index, 0 );
+}
+
+double getVertexYCoordinatesAt( MeshH mesh, int index )
+{
+  return _getVertexCoordinatesAt( mesh, index, 1 );
+}
+
+double getVertexZCoordinatesAt( MeshH mesh, int index )
+{
+  return _getVertexCoordinatesAt( mesh, index, 2 );
+}
+
+int getFaceVerticesCountAt( MeshH mesh, int faceIndex )
+{
+  MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
+  int faceOffsetsBufferLen = faceIndex + 1;
+  int vertexIndicesBufferLen = faceOffsetsBufferLen * MDAL_M_faceVerticesMaximumCount( mesh );
+  std::vector<int> faceOffsetsBuffer( static_cast<size_t>( faceOffsetsBufferLen ) );
+  std::vector<int> vertexIndicesBuffer( static_cast<size_t>( vertexIndicesBufferLen ) );
+  MDAL_FI_next( iterator, faceOffsetsBufferLen, faceOffsetsBuffer.data(),
+                vertexIndicesBufferLen, vertexIndicesBuffer.data() );
+  MDAL_FI_close( iterator );
+  int count;
+  if ( faceIndex == 0 )
+  {
+    count = faceOffsetsBuffer[static_cast<size_t>( faceIndex )];
+  }
+  else
+  {
+    count = faceOffsetsBuffer[static_cast<size_t>( faceIndex )] - faceOffsetsBuffer[static_cast<size_t>( faceIndex - 1 )];
+  }
+  return count;
+}
+
+int getFaceVerticesIndexAt( MeshH mesh, int faceIndex, int index )
+{
+  MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
+  int faceOffsetsBufferLen = faceIndex + 1;
+  int vertexIndicesBufferLen = faceOffsetsBufferLen * MDAL_M_faceVerticesMaximumCount( mesh );
+  std::vector<int> faceOffsetsBuffer( static_cast<size_t>( faceOffsetsBufferLen ) );
+  std::vector<int> vertexIndicesBuffer( static_cast<size_t>( vertexIndicesBufferLen ) );
+  MDAL_FI_next( iterator, faceOffsetsBufferLen, faceOffsetsBuffer.data(),
+                vertexIndicesBufferLen, vertexIndicesBuffer.data() );
+  MDAL_FI_close( iterator );
+  int id;
+  if ( faceIndex == 0 )
+  {
+    id = index;
+  }
+  else
+  {
+    id = faceOffsetsBuffer[static_cast<size_t>( faceIndex - 1 )] + index;
+  }
+
+  int faceVertexIndex = vertexIndicesBuffer[static_cast<size_t>( id )];
+  return faceVertexIndex;
+}

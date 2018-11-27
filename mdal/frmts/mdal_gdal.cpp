@@ -387,7 +387,14 @@ void MDAL::LoaderGdal::createMesh()
   Faces faces( meshGDALDataset()->mNVolumes );
   initFaces( vertices, faces, is_longitude_shifted );
 
-  mMesh.reset( new Mesh() );
+  mMesh.reset( new MemoryMesh(
+                 vertices.size(),
+                 faces.size(),
+                 4, //maximum quads
+                 computeExtent( vertices ),
+                 mFileName
+               )
+             );
   mMesh->vertices = vertices;
   mMesh->faces = faces;
   bool proj_added = addSrcProj();

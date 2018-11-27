@@ -33,11 +33,11 @@ MDAL::CFDimensions MDAL::Loader3Di::populateDimensions()
   return dims;
 }
 
-void MDAL::Loader3Di::populateFacesAndVertices( MDAL::Mesh *mesh )
+void MDAL::Loader3Di::populateFacesAndVertices( Vertices &vertices, Faces &faces )
 {
-  assert( mesh );
+  assert( vertices.empty() );
   size_t faceCount = mDimensions.size( CFDimensions::Face2D );
-  mesh->faces.resize( faceCount );
+  faces.resize( faceCount );
   size_t verticesInFace = mDimensions.size( CFDimensions::MaxVerticesInFace );
   size_t arrsize = faceCount * verticesInFace;
   std::map<std::string, size_t> xyToVertex2DId;
@@ -79,9 +79,9 @@ void MDAL::Loader3Di::populateFacesAndVertices( MDAL::Mesh *mesh )
       if ( it == xyToVertex2DId.end() )
       {
         // new vertex
-        vertexId = mesh->vertices.size();
+        vertexId = vertices.size();
         xyToVertex2DId[key] = vertexId;
-        mesh->vertices.push_back( vertex );
+        vertices.push_back( vertex );
       }
       else
       {
@@ -93,21 +93,21 @@ void MDAL::Loader3Di::populateFacesAndVertices( MDAL::Mesh *mesh )
 
     }
 
-    mesh->faces[faceId] = face;
+    faces[faceId] = face;
   }
 
   // Only now we have number of vertices, since we identified vertices that
   // are used in multiple faces
-  mDimensions.setDimension( CFDimensions::Vertex2D, mesh->vertices.size() );
+  mDimensions.setDimension( CFDimensions::Vertex2D, vertices.size() );
 }
 
 void MDAL::Loader3Di::addBedElevation( MDAL::Mesh *mesh )
 {
   assert( mesh );
-  if ( mesh->faces.empty() )
+  if ( 0 == mesh->facesCount() )
     return;
 
-  size_t faceCount = mesh->faces.size();
+  size_t faceCount = mesh->facesCount();
 
   // read Z coordinate of 3di computation nodes centers
   int ncidZ = mNcFile.getVarId( "Mesh2DFace_zcc" );

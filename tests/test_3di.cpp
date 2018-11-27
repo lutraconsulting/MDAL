@@ -26,29 +26,26 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   // ///////////
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 9 );
-  double z = MDAL_M_vertexZCoordinatesAt( m, 0 );
+  double z = getVertexZCoordinatesAt( m, 0 );
   EXPECT_DOUBLE_EQ( 0.0, z );
 
-  std::vector<std::pair<double, double>> expectedCoords;
-  expectedCoords.push_back( std::make_pair( 0, 0 ) );
-  expectedCoords.push_back( std::make_pair( 12, 0 ) );
-  expectedCoords.push_back( std::make_pair( 12, 12 ) );
-  expectedCoords.push_back( std::make_pair( 0, 12 ) );
-  expectedCoords.push_back( std::make_pair( 12, 24 ) );
-  expectedCoords.push_back( std::make_pair( 0, 24 ) );
-  expectedCoords.push_back( std::make_pair( 24, 0 ) );
-  expectedCoords.push_back( std::make_pair( 24, 12 ) );
-  expectedCoords.push_back( std::make_pair( 24, 24 ) );
-
-  int i = 0;
-  for ( auto coors : expectedCoords )
+  std::vector<double> expectedCoords =
   {
-    double x = MDAL_M_vertexXCoordinatesAt( m, i );
-    double y = MDAL_M_vertexYCoordinatesAt( m, i );
-    EXPECT_DOUBLE_EQ( coors.first, x );
-    EXPECT_DOUBLE_EQ( coors.second, y );
-    ++i;
-  }
+    0.0, 0.0, 0.0,
+    12, 0, 0.0,
+    12, 12, 0.0,
+    0, 12, 0.0,
+    12, 24, 0.0,
+    0, 24, 0.0,
+    24, 0, 0.0,
+    24, 12, 0.0,
+    24, 24, 0.0
+  };
+  EXPECT_EQ( expectedCoords.size(), 9 * 3 );
+
+  std::vector<double> coordinates = getCoordinates( m, 9 );
+
+  compareVectors( expectedCoords, coordinates );
 
   // ///////////
   // Faces
@@ -57,15 +54,15 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   EXPECT_EQ( 4, f_count );
 
   // test face 1
-  int f_v_count = MDAL_M_faceVerticesCountAt( m, 1 );
+  int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( 4, f_v_count ); //quad
-  int f_v = MDAL_M_faceVerticesIndexAt( m, 1, 0 );
+  int f_v = getFaceVerticesIndexAt( m, 1, 0 );
   EXPECT_EQ( 3, f_v );
-  f_v = MDAL_M_faceVerticesIndexAt( m, 1, 1 );
+  f_v = getFaceVerticesIndexAt( m, 1, 1 );
   EXPECT_EQ( 2, f_v );
-  f_v = MDAL_M_faceVerticesIndexAt( m, 1, 2 );
+  f_v = getFaceVerticesIndexAt( m, 1, 2 );
   EXPECT_EQ( 4, f_v );
-  f_v = MDAL_M_faceVerticesIndexAt( m, 1, 3 );
+  f_v = getFaceVerticesIndexAt( m, 1, 3 );
   EXPECT_EQ( 5, f_v );
 
   // ///////////
@@ -194,7 +191,7 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
 
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 25 );
-  double z = MDAL_M_vertexZCoordinatesAt( m, 0 );
+  double z = getVertexZCoordinatesAt( m, 0 );
   EXPECT_DOUBLE_EQ( 0.0, z );
   int f_count = MDAL_M_faceCount( m );
   EXPECT_EQ( 16, f_count );

@@ -300,9 +300,6 @@ std::unique_ptr< MDAL::Mesh > MDAL::LoaderCF::load( MDAL_Status *status )
 {
   if ( status ) *status = MDAL_Status::None;
 
-  std::unique_ptr< MDAL::Mesh > mesh( new MDAL::Mesh );
-  mesh->setUri( mFileName );
-
   //Dimensions dims;
   std::vector<double> times;
 
@@ -315,7 +312,21 @@ std::unique_ptr< MDAL::Mesh > MDAL::LoaderCF::load( MDAL_Status *status )
     mDimensions = populateDimensions();
 
     // Create mMesh
-    populateFacesAndVertices( mesh.get() );
+    Faces faces;
+    Vertices vertices;
+    populateFacesAndVertices( vertices, faces );
+    std::unique_ptr< MemoryMesh > mesh(
+      new MemoryMesh(
+        vertices.size(),
+        faces.size(),
+        mDimensions.MaxVerticesInFace,
+        computeExtent( vertices ),
+        mFileName
+      )
+    );
+    mesh->faces = faces;
+    mesh->vertices = vertices;
+
     addBedElevation( mesh.get() );
     setProjection( mesh.get() );
 
@@ -327,14 +338,14 @@ std::unique_ptr< MDAL::Mesh > MDAL::LoaderCF::load( MDAL_Status *status )
 
     // Create datasets
     addDatasetGroups( mesh.get(), times, dsinfo_map );
+
+    return mesh;
   }
   catch ( MDAL_Status error )
   {
     if ( status ) *status = ( error );
-    if ( mesh ) mesh.reset();
+    return std::unique_ptr<Mesh>();
   }
-
-  return mesh;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

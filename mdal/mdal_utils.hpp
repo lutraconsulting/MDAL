@@ -12,9 +12,11 @@
 #include <limits>
 
 #include "mdal_data_model.hpp"
+#include "mdal_memory_data_model.hpp"
 
 // avoid unused variable warnings
 #define MDAL_UNUSED(x) (void)x;
+#define MDAL_NAN std::numeric_limits<double>::quiet_NaN()
 
 namespace MDAL
 {

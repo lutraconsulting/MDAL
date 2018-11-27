@@ -40,7 +40,7 @@ namespace MDAL
 
       size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
       size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
-      size_t activeData( size_t indexStart, size_t count, char *buffer ) override;
+      size_t activeData( size_t indexStart, size_t count, int *buffer ) override;
 
       const HdfDataset &dsValues() const;
       const HdfDataset &dsActive() const;

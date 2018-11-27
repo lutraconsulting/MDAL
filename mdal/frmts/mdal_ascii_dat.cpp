@@ -100,13 +100,13 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
     if ( cardType == "ND" && items.size() >= 2 )
     {
       size_t fileNodeCount = toSizeT( items[1] );
-      if ( mesh->vertexIDtoIndex.size() != fileNodeCount )
+      if ( mesh->verticesCount() != fileNodeCount )
         EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh );
     }
     else if ( !oldFormat && cardType == "NC" && items.size() >= 2 )
     {
       size_t fileElemCount = toSizeT( items[1] );
-      if ( mesh->faceIDtoIndex.size() != fileElemCount )
+      if ( mesh->facesCount() != fileElemCount )
         EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh );
     }
     else if ( !oldFormat && cardType == "OBJTYPE" )
@@ -200,8 +200,8 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
 {
   assert( group );
 
-  size_t vertexCount = mesh->vertices.size();
-  size_t faceCount = mesh->faces.size();
+  size_t vertexCount = mesh->verticesCount();
+  size_t faceCount = mesh->facesCount();
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
   dataset->time = t / 3600.; // TODO read TIMEUNITS
@@ -222,17 +222,11 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
       dataset->active[i] = true;
   }
 
-  for ( size_t i = 0; i < mesh->vertexIDtoIndex.size(); ++i )
+  for ( size_t index = 0; index < mesh->verticesCount(); ++index )
   {
     std::string line;
     std::getline( stream, line );
     std::vector<std::string> tsItems = split( line,  " ", SplitBehaviour::SkipEmptyParts );
-
-    auto idx = mesh->vertexIDtoIndex.find( i + 1 ); // ID in 2dm are numbered from 1
-    if ( idx == mesh->vertexIDtoIndex.end() )
-      continue; // node ID that does not exist in the mesh
-
-    size_t index = idx->second;
 
     if ( isVector )
     {
@@ -271,7 +265,7 @@ void MDAL::LoaderAsciiDat::readFaceTimestep(
 {
   assert( group );
 
-  size_t faceCount = mesh->faces.size();
+  size_t faceCount = mesh->facesCount();
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
   dataset->time = t / 3600.;

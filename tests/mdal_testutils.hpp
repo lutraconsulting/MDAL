@@ -14,13 +14,18 @@ const char *data_path();
 
 std::string test_file( std::string basename );
 
-//! Convinient function to get one value for active flag
+// Mesh
+std::vector<double> getCoordinates( MeshH mesh, int verticesCount );
+double getVertexXCoordinatesAt( MeshH mesh, int index );
+double getVertexYCoordinatesAt( MeshH mesh, int index );
+double getVertexZCoordinatesAt( MeshH mesh, int index );
+int getFaceVerticesCountAt( MeshH mesh, int faceIndex );
+int getFaceVerticesIndexAt( MeshH mesh, int faceIndex, int index );
+
+// Datasets
 bool getActive( DatasetH dataset, int index );
-//! Convinient function to get one scalar
 double getValue( DatasetH dataset, int index );
-//! Convinient function to get one data X value
 double getValueX( DatasetH dataset, int index );
-//! Convinient function to get one data Y value
 double getValueY( DatasetH dataset, int index );
 
 //! Compare two vectors

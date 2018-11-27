@@ -76,7 +76,7 @@ namespace MDAL
 
     protected:
       virtual CFDimensions populateDimensions() = 0;
-      virtual void populateFacesAndVertices( MDAL::Mesh *mesh ) = 0;
+      virtual void populateFacesAndVertices( Vertices &vertices, Faces &faces ) = 0;
       virtual void addBedElevation( MDAL::Mesh *mesh ) = 0;
       virtual std::string getCoordinateSystemVariableName() = 0;
       virtual std::set<std::string> ignoreNetCDFVariables() = 0;

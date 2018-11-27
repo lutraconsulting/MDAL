@@ -190,13 +190,18 @@ std::unique_ptr<MDAL::Mesh> MDAL::Loader2dm::load( MDAL_Status *status )
     //check that we have distinct nodes
   }
 
-  std::unique_ptr< Mesh > mesh( new Mesh );
-  mesh->setUri( mMeshFile );
+  std::unique_ptr< MemoryMesh > mesh(
+    new MemoryMesh(
+      vertices.size(),
+      faces.size(),
+      4, //maximum quads
+      computeExtent( vertices ),
+      mMeshFile
+    )
+  );
   mesh->faces = faces;
   mesh->vertices = vertices;
-  mesh->faceIDtoIndex = faceIDtoIndex;
-  mesh->vertexIDtoIndex = vertexIDtoIndex;
-  mesh->addBedElevationDataset();
+  mesh->addBedElevationDataset( vertices, faces );
 
   return mesh;
 }
