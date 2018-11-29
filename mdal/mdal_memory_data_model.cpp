@@ -34,11 +34,16 @@ size_t MDAL::MemoryDataset::scalarData( size_t indexStart, size_t count, double 
 {
   assert( parent ); //checked in C API interface
   assert( parent->isScalar() ); //checked in C API interface
-  assert( values.size() > indexStart ); //checked in C API interface
-  assert( values.size() >= indexStart + count ); //checked in C API interface
 
-  for ( size_t i = 0; i < count; ++i )
+  size_t i = 0;
+  while ( true )
   {
+    if ( indexStart + i >= values.size() )
+      break;
+
+    if ( i >= count )
+      break;
+
     const MDAL::Value value = values[ indexStart + i ];
     if ( value.noData )
     {
@@ -48,20 +53,27 @@ size_t MDAL::MemoryDataset::scalarData( size_t indexStart, size_t count, double 
     {
       buffer[i] = value.x;
     }
+
+    ++i;
   }
 
-  return count;
+  return i;
 }
 
 size_t MDAL::MemoryDataset::vectorData( size_t indexStart, size_t count, double *buffer )
 {
   assert( parent ); //checked in C API interface
   assert( !parent->isScalar() ); //checked in C API interface
-  assert( values.size() > indexStart ); //checked in C API interface
-  assert( values.size() >= indexStart + count ); //checked in C API interface
 
-  for ( size_t i = 0; i < count; ++i )
+  size_t i = 0;
+  while ( true )
   {
+    if ( indexStart + i >= values.size() )
+      break;
+
+    if ( i >= count )
+      break;
+
     const MDAL::Value value = values[ indexStart + i ];
     if ( value.noData )
     {
@@ -73,9 +85,11 @@ size_t MDAL::MemoryDataset::vectorData( size_t indexStart, size_t count, double 
       buffer[2 * i] = value.x;
       buffer[2 * i + 1] = value.y;
     }
+
+    ++i;
   }
 
-  return count;
+  return i;
 }
 
 MDAL::MemoryMesh::MemoryMesh( size_t verticesCount, size_t facesCount, size_t faceVerticesMaximumCount, MDAL::BBox extent, const std::string &uri )
@@ -107,6 +121,7 @@ void MDAL::MemoryMesh::addBedElevationDataset( const Vertices &vertices, const F
     dataset->values[i].x = vertices[i].z;
   }
   group->datasets.push_back( dataset );
+  group->setStatistics( MDAL::calculateStatistics( group ) );
   datasetGroups.push_back( group );
 }
 

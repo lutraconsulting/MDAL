@@ -133,6 +133,8 @@ void MDAL::Loader3Di::addBedElevation( MDAL::Mesh *mesh )
   {
     dataset->values[i].x = MDAL::safeValue( coordZ[i], fillZ );
   }
+
+  group->setStatistics( MDAL::calculateStatistics( group ) );
   group->datasets.push_back( dataset );
   mesh->datasetGroups.push_back( group );
 }

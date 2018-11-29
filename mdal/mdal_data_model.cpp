@@ -72,6 +72,16 @@ void MDAL::DatasetGroup::setUri( const std::string &uri )
   mUri = uri;
 }
 
+MDAL::Statistics MDAL::DatasetGroup::statistics() const
+{
+  return mStatistics;
+}
+
+void MDAL::DatasetGroup::setStatistics( const Statistics &statistics )
+{
+  mStatistics = statistics;
+}
+
 bool MDAL::DatasetGroup::isOnVertices() const
 {
   return mIsOnVertices;

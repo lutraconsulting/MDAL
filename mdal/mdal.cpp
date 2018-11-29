@@ -413,6 +413,27 @@ bool MDAL_G_isOnVertices( DatasetGroupH group )
   return g->isOnVertices();
 }
 
+void MDAL_G_statistics( DatasetGroupH group, double *min, double *max )
+{
+  if ( !min || !max )
+  {
+    sLastStatus = MDAL_Status::Err_InvalidData;
+    return;
+  }
+
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    *min = NODATA;
+    *max = NODATA;
+    return;
+  }
+
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  MDAL::Statistics stats = g->statistics();
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS
 ///////////////////////////////////////////////////////////////////////////////////////

@@ -137,6 +137,7 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
         debug( "ENDDS card for no active dataset!" );
         EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
       }
+      group->setStatistics( MDAL::calculateStatistics( group ) );
       mesh->datasetGroups.push_back( group );
       group.reset();
     }
@@ -185,6 +186,7 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
     if ( !group || group->datasets.size() == 0 )
       EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
+    group->setStatistics( MDAL::calculateStatistics( group ) );
     mesh->datasetGroups.push_back( group );
     group.reset();
   }

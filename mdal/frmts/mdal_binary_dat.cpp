@@ -135,7 +135,7 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
   std::shared_ptr<DatasetGroup> groupMax = std::make_shared< DatasetGroup >();
   groupMax->setUri( mDatFile );
   groupMax->setIsOnVertices( true );
-  group->parent = mesh;
+  groupMax->parent = mesh;
 
   while ( card != CT_ENDDS )
   {
@@ -233,8 +233,14 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
 
   if ( !group || group->datasets.size() == 0 )
     EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-
+  group->setStatistics( MDAL::calculateStatistics( group ) );
   mesh->datasetGroups.push_back( group );
+
+  if ( groupMax && groupMax->datasets.size() > 0 )
+  {
+    groupMax->setStatistics( MDAL::calculateStatistics( groupMax ) );
+    mesh->datasetGroups.push_back( groupMax );
+  }
 }
 
 bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,

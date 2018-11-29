@@ -90,9 +90,14 @@ namespace MDAL
   BBox computeExtent( const Vertices &vertices );
 
   // time
-
   //! Returns a delimiter to get time in hours
   double parseTimeUnits( const std::string &units );
+
+  // statistics
+  void combineStatistics( Statistics &main, const Statistics &other );
+
+  //! Calculates statistics for dataset group
+  Statistics calculateStatistics( std::shared_ptr<DatasetGroup> grp );
 
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP
