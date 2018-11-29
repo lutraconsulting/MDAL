@@ -30,5 +30,6 @@ double getValueY( DatasetH dataset, int index );
 
 //! Compare two vectors
 bool compareVectors( const std::vector<double> &a, const std::vector<double> &b );
+bool compareVectors( const std::vector<int> &a, const std::vector<int> &b );
 
 #endif // MDAL_TESTUTILS_HPP
