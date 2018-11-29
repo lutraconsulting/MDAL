@@ -25,6 +25,16 @@ size_t MDAL::Dataset::valuesCount() const
   }
 }
 
+MDAL::Statistics MDAL::Dataset::statistics() const
+{
+  return mStatistics;
+}
+
+void MDAL::Dataset::setStatistics( const MDAL::Statistics &statistics )
+{
+  mStatistics = statistics;
+}
+
 std::string MDAL::DatasetGroup::getMetadata( const std::string &key )
 {
   for ( auto &pair : metadata )

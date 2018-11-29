@@ -190,7 +190,7 @@ MDAL_EXPORT bool MDAL_G_isOnVertices( DatasetGroupH group );
 
 //! Returns the min and max values of the group
 //! Returns NaN on error
-MDAL_EXPORT void MDAL_G_statistics( DatasetGroupH group, double *min, double *max );
+MDAL_EXPORT void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max );
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS
@@ -230,6 +230,10 @@ enum MDAL_DataType
 //!               For ACTIVE_BOOL, the minimum size must be valuesCount * size_of(char)
 //! \returns number of values written to buffer. If return value != count requested, see MDAL_LastStatus() for error type
 MDAL_EXPORT int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer );
+
+//! Returns the min and max values of the dataset
+//! Returns NaN on error
+MDAL_EXPORT void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max );
 
 #ifdef __cplusplus
 }

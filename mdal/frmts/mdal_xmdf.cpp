@@ -219,7 +219,10 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
   }
   hsize_t nTimeSteps = dimTimes[0];
 
-  if ( dimValues[0] != nTimeSteps || dimActive[0] != nTimeSteps )
+  if ( dimValues[0] != nTimeSteps ||
+       dimActive[0] != nTimeSteps ||
+       dimMins[0] != nTimeSteps ||
+       dimMaxs[0] != nTimeSteps )
   {
     MDAL::debug( "ignoring dataset " + name + " - arrays not having correct dimension sizes" );
     return group;
@@ -255,6 +258,10 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
     std::shared_ptr<XmdfDataset> dataset( new XmdfDataset( dsValues, dsActive, i ) );
     dataset->parent = group.get();
     dataset->time = double( times[i] );
+    Statistics stats;
+    stats.minimum = static_cast<double>( mins[i] );
+    stats.maximum = static_cast<double>( maxs[i] );
+    dataset->setStatistics( stats );
     group->datasets.push_back( dataset );
   }
 

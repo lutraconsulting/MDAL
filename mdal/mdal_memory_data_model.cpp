@@ -120,6 +120,7 @@ void MDAL::MemoryMesh::addBedElevationDataset( const Vertices &vertices, const F
   {
     dataset->values[i].x = vertices[i].z;
   }
+  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );
   group->setStatistics( MDAL::calculateStatistics( group ) );
   datasetGroups.push_back( group );

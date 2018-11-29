@@ -312,28 +312,41 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<DatasetGroup> grp )
   if ( !grp )
     return ret;
 
-  bool isVector = !grp->isScalar();
+  for ( std::shared_ptr<Dataset> ds : grp->datasets )
+  {
+    MDAL::Statistics dsStats = ds->statistics();
+    combineStatistics( ret, dsStats );
+  }
+  return ret;
+}
+
+MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
+{
+  assert( dataset->parent );
+
+  Statistics ret;
+  if ( !dataset )
+    return ret;
+
+  bool isVector = !dataset->parent->isScalar();
   size_t bufLen = 2000;
   std::vector<double> buffer( isVector ? bufLen * 2 : bufLen );
 
-  for ( const std::shared_ptr<Dataset> &ds : grp->datasets )
+  size_t i = 0;
+  while ( i < dataset->valuesCount() )
   {
-    size_t i = 0;
-    while ( i < ds->valuesCount() )
+    size_t valsRead;
+    if ( isVector )
     {
-      size_t valsRead;
-      if ( isVector )
-      {
-        valsRead = ds->vectorData( i, bufLen, buffer.data() );
-      }
-      else
-      {
-        valsRead = ds->scalarData( i, bufLen, buffer.data() );
-      }
-      MDAL::Statistics dsStats = _calculateStatistics( buffer, valsRead, isVector );
-      combineStatistics( ret, dsStats );
-      i += valsRead;
+      valsRead = dataset->vectorData( i, bufLen, buffer.data() );
     }
+    else
+    {
+      valsRead = dataset->scalarData( i, bufLen, buffer.data() );
+    }
+    MDAL::Statistics dsStats = _calculateStatistics( buffer, valsRead, isVector );
+    combineStatistics( ret, dsStats );
+    i += valsRead;
   }
 
   return ret;

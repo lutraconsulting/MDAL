@@ -99,5 +99,8 @@ namespace MDAL
   //! Calculates statistics for dataset group
   Statistics calculateStatistics( std::shared_ptr<DatasetGroup> grp );
 
+  //! Calculates statistics for dataset
+  Statistics calculateStatistics( std::shared_ptr<Dataset> dataset );
+
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP
