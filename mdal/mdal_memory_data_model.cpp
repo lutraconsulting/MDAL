@@ -201,18 +201,16 @@ size_t MDAL::MemoryMeshFaceIterator::next(
     const Face f = mMemoryMesh->faces[mLastFaceIndex + faceIndex];
     for ( size_t faceVertexIndex = 0; faceVertexIndex < f.size(); ++faceVertexIndex )
     {
+      assert( vertexIndex < vertexIndicesBufferLen );
       vertexIndicesBuffer[vertexIndex] = static_cast<int>( f[faceVertexIndex] );
       ++vertexIndex;
     }
+
+    assert( faceIndex < faceOffsetsBufferLen );
     faceOffsetsBuffer[faceIndex] = static_cast<int>( vertexIndex );
     ++faceIndex;
   }
 
-  if ( faceIndex > 0 )
-  {
-    // we actually got something read
-    mLastFaceIndex += faceOffsetsBufferLen;
-    faceOffsetsBuffer[mLastFaceIndex] = static_cast<int>( --vertexIndex );
-  }
+  mLastFaceIndex += faceIndex;
   return faceIndex;
 }
