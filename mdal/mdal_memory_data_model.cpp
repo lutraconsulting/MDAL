@@ -6,6 +6,7 @@
 #include "mdal_memory_data_model.hpp"
 #include <assert.h>
 #include <math.h>
+#include <cstring>
 #include <algorithm>
 #include "mdal_utils.hpp"
 
