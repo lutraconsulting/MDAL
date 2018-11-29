@@ -136,25 +136,39 @@ size_t MDAL::MemoryMeshVertexIterator::next( size_t vertexCount, double *coordin
   assert( mMemoryMesh );
   assert( coordinates );
 
-  if ( vertexCount > mMemoryMesh->verticesCount() )
+  size_t maxVertices = mMemoryMesh->verticesCount();
+
+  if ( vertexCount > maxVertices )
     return 0;
 
-  for ( size_t i = 0; i < vertexCount; ++i )
+  if ( mLastVertexIndex >= maxVertices )
+    return 0;
+
+  size_t i = 0;
+
+  while ( true )
   {
+    if ( mLastVertexIndex + i >= maxVertices )
+      break;
+
+    if ( i >= vertexCount )
+      break;
+
     const Vertex v = mMemoryMesh->vertices[mLastVertexIndex + i];
     coordinates[3 * i] = v.x;
     coordinates[3 * i + 1] = v.y;
     coordinates[3 * i + 2] = v.z;
+
+    ++i;
   }
 
-  mLastVertexIndex += vertexCount;
-  return vertexCount;
+  mLastVertexIndex += i;
+  return i;
 }
 
 MDAL::MemoryMeshFaceIterator::MemoryMeshFaceIterator( const MDAL::MemoryMesh *mesh )
   : mMemoryMesh( mesh )
 {
-
 }
 
 MDAL::MemoryMeshFaceIterator::~MemoryMeshFaceIterator() = default;
@@ -167,17 +181,22 @@ size_t MDAL::MemoryMeshFaceIterator::next(
   assert( faceOffsetsBuffer );
   assert( vertexIndicesBuffer );
 
-  size_t bufferSpaceLeft = vertexIndicesBufferLen;
-
+  size_t maxFaces = mMemoryMesh->facesCount();
+  size_t faceVerticesMaximumCount = mMemoryMesh->faceVerticesMaximumCount();
   size_t vertexIndex = 0;
   size_t faceIndex = 0;
 
   while ( true )
   {
-    if ( bufferSpaceLeft < mMemoryMesh->faceVerticesMaximumCount() )
+    if ( vertexIndex + faceVerticesMaximumCount > vertexIndicesBufferLen )
       break;
+
     if ( faceIndex >= faceOffsetsBufferLen )
       break;
+
+    if ( mLastFaceIndex + faceIndex >= maxFaces )
+      break;
+
     const Face f = mMemoryMesh->faces[mLastFaceIndex + faceIndex];
     for ( size_t faceVertexIndex = 0; faceVertexIndex < f.size(); ++faceVertexIndex )
     {
@@ -187,7 +206,12 @@ size_t MDAL::MemoryMeshFaceIterator::next(
     faceOffsetsBuffer[faceIndex] = static_cast<int>( vertexIndex );
     ++faceIndex;
   }
-  mLastFaceIndex += faceOffsetsBufferLen;
-  faceOffsetsBuffer[mLastFaceIndex] = static_cast<int>( --vertexIndex );
+
+  if ( faceIndex > 0 )
+  {
+    // we actually got something read
+    mLastFaceIndex += faceOffsetsBufferLen;
+    faceOffsetsBuffer[mLastFaceIndex] = static_cast<int>( --vertexIndex );
+  }
   return faceIndex;
 }
