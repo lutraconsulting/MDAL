@@ -372,7 +372,7 @@ void MDAL::LoaderGdal::addDatasetGroups()
         addDataToOutput( raster_bands[i], dataset, is_vector, i == 0 );
       }
       activateFaces( dataset );
-
+      dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
       group->datasets.push_back( dataset );
     }
 

@@ -413,7 +413,7 @@ bool MDAL_G_isOnVertices( DatasetGroupH group )
   return g->isOnVertices();
 }
 
-void MDAL_G_statistics( DatasetGroupH group, double *min, double *max )
+void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max )
 {
   if ( !min || !max )
   {
@@ -431,6 +431,8 @@ void MDAL_G_statistics( DatasetGroupH group, double *min, double *max )
 
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
   MDAL::Statistics stats = g->statistics();
+  *min = stats.minimum;
+  *max = stats.maximum;
 }
 
 
@@ -554,5 +556,27 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       break;
   }
 
-  return static_cast<size_t>( writtenValuesCount );
+  return static_cast<int>( writtenValuesCount );
+}
+
+void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max )
+{
+  if ( !min || !max )
+  {
+    sLastStatus = MDAL_Status::Err_InvalidData;
+    return;
+  }
+
+  if ( !dataset )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    *min = NODATA;
+    *max = NODATA;
+    return;
+  }
+
+  MDAL::Dataset *ds = static_cast< MDAL::Dataset * >( dataset );
+  MDAL::Statistics stats = ds->statistics();
+  *min = stats.minimum;
+  *max = stats.maximum;
 }

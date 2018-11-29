@@ -302,11 +302,13 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
   if ( MDAL::equals( time, 99999.0 ) ) // Special TUFLOW dataset with maximus
   {
     dataset->time = time;
+    dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
     groupMax->datasets.push_back( dataset );
   }
   else
   {
     dataset->time = time; // TODO read TIMEUNITS
+    dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
     group->datasets.push_back( dataset );
   }
   return false; //OK

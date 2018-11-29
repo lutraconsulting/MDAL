@@ -58,6 +58,11 @@ namespace MDAL
 
       bool isValid = true;
       DatasetGroup *parent = nullptr;
+
+      Statistics statistics() const;
+      void setStatistics( const Statistics &statistics );
+    private:
+      Statistics mStatistics;
   };
 
   typedef std::vector<std::shared_ptr<Dataset>> Datasets;

@@ -255,6 +255,7 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
     }
   }
 
+  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );
 }
 
@@ -306,5 +307,6 @@ void MDAL::LoaderAsciiDat::readFaceTimestep(
     }
   }
 
+  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );
 }
