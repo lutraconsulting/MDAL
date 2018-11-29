@@ -144,7 +144,7 @@ void MDAL::LoaderXmdf::load( MDAL::Mesh *mesh, MDAL_Status *status )
       {
         HdfGroup g = gMaximums.group( name );
         std::shared_ptr<MDAL::DatasetGroup> maxGroup = readXmdfGroupAsDatasetGroup( g, name + "/Maximums", vertexCount, faceCount );
-        if ( maxGroup->datasets.size() != 1 )
+        if ( !maxGroup || maxGroup->datasets.size() != 1 )
           MDAL::debug( "Maximum dataset should have just one timestep!" );
         else
           groups.push_back( maxGroup );
@@ -175,18 +175,21 @@ void MDAL::LoaderXmdf::addDatasetGroupsFromXmdfGroup( DatasetGroups &groups, con
   {
     HdfGroup g = rootGroup.group( name );
     std::shared_ptr<DatasetGroup> ds = readXmdfGroupAsDatasetGroup( g, name, vertexCount, faceCount );
-    groups.push_back( ds );
+    if ( ds && ds->datasets.size() > 0 )
+      groups.push_back( ds );
   }
 }
 
 std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGroup(
   const HdfGroup &rootGroup, const std::string &name, size_t vertexCount, size_t faceCount )
 {
-  std::shared_ptr<DatasetGroup> group( new DatasetGroup() );
+  std::shared_ptr<DatasetGroup> group;
   std::vector<std::string> gDataNames = rootGroup.datasets();
   if ( !MDAL::contains( gDataNames, "Times" ) ||
        !MDAL::contains( gDataNames, "Values" ) ||
-       !MDAL::contains( gDataNames, "Active" ) )
+       !MDAL::contains( gDataNames, "Active" ) ||
+       !MDAL::contains( gDataNames, "Mins" ) ||
+       !MDAL::contains( gDataNames, "Maxs" ) )
   {
     MDAL::debug( "ignoring dataset " + name + " - not having required arrays" );
     return group;
@@ -195,12 +198,21 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
   HdfDataset dsTimes = rootGroup.dataset( "Times" );
   HdfDataset dsValues = rootGroup.dataset( "Values" );
   HdfDataset dsActive = rootGroup.dataset( "Active" );
+  HdfDataset dsMins = rootGroup.dataset( "Mins" );
+  HdfDataset dsMaxs = rootGroup.dataset( "Maxs" );
 
   std::vector<hsize_t> dimTimes = dsTimes.dims();
   std::vector<hsize_t> dimValues = dsValues.dims();
   std::vector<hsize_t> dimActive = dsActive.dims();
+  std::vector<hsize_t> dimMins = dsMins.dims();
+  std::vector<hsize_t> dimMaxs = dsMaxs.dims();
 
-  if ( dimTimes.size() != 1 || ( dimValues.size() != 2 && dimValues.size() != 3 ) || dimActive.size() != 2 )
+  if ( dimTimes.size() != 1 ||
+       ( dimValues.size() != 2 && dimValues.size() != 3 ) ||
+       dimActive.size() != 2 ||
+       dimMins.size() != 1 ||
+       dimMaxs.size() != 1
+     )
   {
     MDAL::debug( "ignoring dataset " + name + " - arrays not having correct dimension counts" );
     return group;
@@ -222,11 +234,21 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
 
   std::vector<float> times = dsTimes.readArray();
 
+  // all fine, set group and return
+  group.reset( new DatasetGroup() );
   group->setName( name );
   group->setIsScalar( !isVector );
   group->setIsOnVertices( true );
   group->setUri( mDatFile );
   group->parent = mMesh;
+
+  // lazy loading of min and max of the dataset group
+  std::vector<float> mins = dsMins.readArray();
+  std::vector<float> maxs = dsMaxs.readArray();
+  Statistics stats;
+  stats.minimum = static_cast<double>( *std::min_element( mins.begin(), mins.end() ) );
+  stats.maximum = static_cast<double>( *std::max_element( maxs.begin(), maxs.end() ) );
+  group->setStatistics( stats );
 
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {

@@ -254,3 +254,102 @@ double MDAL::parseTimeUnits( const std::string &units )
 
   return divBy;
 }
+
+MDAL::Statistics _calculateStatistics( const std::vector<double> &values, size_t count, bool isVector )
+{
+  MDAL::Statistics ret;
+
+  double min = std::numeric_limits<double>::quiet_NaN();
+  double max = std::numeric_limits<double>::quiet_NaN();
+  bool firstIteration = true;
+
+  for ( size_t i = 0; i < count; ++i )
+  {
+    double magnitude;
+    if ( isVector )
+    {
+      double x = values[2 * i];
+      double y = values[2 * i + 1];
+      if ( isnan( x ) || isnan( y ) )
+        continue;
+      magnitude = sqrt( x * x + y * y );
+    }
+    else
+    {
+      double x = values[i];
+      if ( isnan( x ) )
+        continue;
+      magnitude = x;
+    }
+
+    if ( firstIteration )
+    {
+      firstIteration = false;
+      min = magnitude;
+      max = magnitude;
+    }
+    else
+    {
+      if ( magnitude < min )
+      {
+        min = magnitude;
+      }
+      if ( magnitude > max )
+      {
+        max = magnitude;
+      }
+    }
+  }
+
+  ret.minimum = min;
+  ret.maximum = max;
+  return ret;
+}
+
+MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<DatasetGroup> grp )
+{
+  Statistics ret;
+  if ( !grp )
+    return ret;
+
+  bool isVector = !grp->isScalar();
+  size_t bufLen = 2000;
+  std::vector<double> buffer( isVector ? bufLen * 2 : bufLen );
+
+  for ( const std::shared_ptr<Dataset> &ds : grp->datasets )
+  {
+    size_t i = 0;
+    while ( i < ds->valuesCount() )
+    {
+      size_t valsRead;
+      if ( isVector )
+      {
+        valsRead = ds->vectorData( i, bufLen, buffer.data() );
+      }
+      else
+      {
+        valsRead = ds->scalarData( i, bufLen, buffer.data() );
+      }
+      MDAL::Statistics dsStats = _calculateStatistics( buffer, valsRead, isVector );
+      combineStatistics( ret, dsStats );
+      i += valsRead;
+    }
+  }
+
+  return ret;
+}
+
+void MDAL::combineStatistics( MDAL::Statistics &main, const MDAL::Statistics &other )
+{
+  if ( isnan( main.minimum ) ||
+       ( !isnan( other.minimum ) && ( main.minimum > other.minimum ) ) )
+  {
+    main.minimum = other.minimum;
+  }
+
+  if ( isnan( main.maximum ) ||
+       ( !isnan( other.maximum ) && ( main.maximum < other.maximum ) ) )
+  {
+    main.maximum = other.maximum;
+  }
+}

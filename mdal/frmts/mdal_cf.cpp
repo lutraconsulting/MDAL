@@ -233,7 +233,8 @@ void MDAL::LoaderCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
 
     // Add to mesh
     if ( !group->datasets.empty() )
-      mesh->datasetGroups.push_back( group );
+      group->setStatistics( MDAL::calculateStatistics( group ) );
+    mesh->datasetGroups.push_back( group );
   }
 }
 

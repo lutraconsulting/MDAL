@@ -375,6 +375,9 @@ void MDAL::LoaderGdal::addDatasetGroups()
 
       group->datasets.push_back( dataset );
     }
+
+    // TODO use GDALComputeRasterMinMax
+    group->setStatistics( MDAL::calculateStatistics( group ) );
     mMesh->datasetGroups.push_back( group );
   }
 }

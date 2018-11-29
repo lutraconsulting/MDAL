@@ -37,6 +37,12 @@ namespace MDAL
     bool noData = false;
   } Value; //Dataset Value
 
+  typedef struct
+  {
+    double minimum = std::numeric_limits<double>::quiet_NaN();
+    double maximum = std::numeric_limits<double>::quiet_NaN();
+  } Statistics;
+
   typedef std::vector< std::pair< std::string, std::string > > Metadata;
 
   class Dataset
@@ -60,7 +66,6 @@ namespace MDAL
   {
     public:
       std::string getMetadata( const std::string &key );
-
       void setMetadata( const std::string &key, const std::string &val );
 
       std::string name();
@@ -79,10 +84,14 @@ namespace MDAL
       std::string uri() const;
       void setUri( const std::string &uri );
 
+      Statistics statistics() const;
+      void setStatistics( const Statistics &statistics );
+
     private:
       bool mIsScalar = true;
       bool mIsOnVertices = true;
       std::string mUri; // file/uri from where it came
+      Statistics mStatistics;
   };
 
   typedef std::vector<std::shared_ptr<DatasetGroup>> DatasetGroups;

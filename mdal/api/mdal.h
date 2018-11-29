@@ -188,6 +188,10 @@ MDAL_EXPORT bool MDAL_G_hasScalarData( DatasetGroupH group );
 //! Whether dataset is on vertices
 MDAL_EXPORT bool MDAL_G_isOnVertices( DatasetGroupH group );
 
+//! Returns the min and max values of the group
+//! Returns NaN on error
+MDAL_EXPORT void MDAL_G_statistics( DatasetGroupH group, double *min, double *max );
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS
 ///////////////////////////////////////////////////////////////////////////////////////
