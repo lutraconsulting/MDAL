@@ -28,6 +28,13 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
 
+  double minX, maxX, minY, maxY;
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+  EXPECT_DOUBLE_EQ( 381449.78499999997, minX );
+  EXPECT_DOUBLE_EQ( 381599.78499999997, maxX );
+  EXPECT_DOUBLE_EQ( 168700.98499999999, minY );
+  EXPECT_DOUBLE_EQ( 168750.98499999999, maxY );
+
   ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
   /*
@@ -87,6 +94,15 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
     double value = getValue( ds, 60 );
     EXPECT_DOUBLE_EQ( 0.17372334003448486, value );
   }
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 0, min );
+  EXPECT_DOUBLE_EQ( 0.90217632055282593, max );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 0, min );
+  EXPECT_DOUBLE_EQ( 1.0765361785888672, max );
 
   MDAL_CloseMesh( m );
 }
@@ -158,6 +174,14 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
     EXPECT_DOUBLE_EQ( 0.00071880628820508718, value );
   }
 
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 0, min );
+  EXPECT_DOUBLE_EQ( 0.38855308294296265, max );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 0, min );
+  EXPECT_DOUBLE_EQ( 0.38855308294296265, max );
   MDAL_CloseMesh( m );
 }
 

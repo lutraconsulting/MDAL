@@ -67,6 +67,13 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   int f_v = getFaceVerticesIndexAt( m, 0, 0 );
   EXPECT_EQ( 0, f_v );
 
+  double minX, maxX, minY, maxY;
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+  EXPECT_DOUBLE_EQ( 1000, minX );
+  EXPECT_DOUBLE_EQ( 3000, maxX );
+  EXPECT_DOUBLE_EQ( 2000, minY );
+  EXPECT_DOUBLE_EQ( 3000, maxY );
+
   f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( f_v_count, 3 ); //triangle
   f_v = getFaceVerticesIndexAt( m, 1, 0 );

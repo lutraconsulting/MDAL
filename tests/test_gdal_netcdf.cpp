@@ -22,6 +22,14 @@ TEST( MeshGdalNetCDFTest, Indonesia )
     ASSERT_NE( m, nullptr );
     MDAL_Status s = MDAL_LastStatus();
     EXPECT_EQ( MDAL_Status::None, s );
+
+    double minX, maxX, minY, maxY;
+    MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+    EXPECT_DOUBLE_EQ( 100, minX );
+    EXPECT_DOUBLE_EQ( 150, maxX );
+    EXPECT_DOUBLE_EQ( -10, minY );
+    EXPECT_DOUBLE_EQ( 6, maxY );
+
     ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
     DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
