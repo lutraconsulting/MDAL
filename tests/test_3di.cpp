@@ -141,6 +141,15 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   value = getValue( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );
 
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 1, min );
+  EXPECT_DOUBLE_EQ( 1, max );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 0.32025772825098286, min );
+  EXPECT_DOUBLE_EQ( 1, max );
+
   // ///////////
   // Vector Dataset
   // ///////////
@@ -160,7 +169,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   EXPECT_EQ( false, onVertices );
 
   ASSERT_EQ( 301, MDAL_G_datasetCount( g ) );
-  ds = MDAL_G_dataset( g, 0 );
+  ds = MDAL_G_dataset( g, 80 );
   ASSERT_NE( ds, nullptr );
 
   valid = MDAL_D_isValid( ds );
@@ -174,6 +183,10 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
 
   value = getValueX( ds, 0 );
   EXPECT_DOUBLE_EQ( 0, value );
+
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 0, min );
+  EXPECT_DOUBLE_EQ( 8.4487915942199819e-14, max );
 
   MDAL_CloseMesh( m );
 }

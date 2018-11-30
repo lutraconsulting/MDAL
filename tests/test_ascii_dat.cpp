@@ -91,6 +91,15 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 2, value );
 
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 1, min );
+  EXPECT_DOUBLE_EQ( 2, max );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 1, min );
+  EXPECT_DOUBLE_EQ( 2, max );
+
   MDAL_CloseMesh( m );
 }
 
@@ -146,6 +155,15 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
 
   value = getValueY( ds, 1 );
   EXPECT_DOUBLE_EQ( 2, value );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 1.4142135623730951, min );
+  EXPECT_DOUBLE_EQ( 2.8284271247461903, max );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 1.4142135623730951, min );
+  EXPECT_DOUBLE_EQ( 2.8284271247461903, max );
 
   MDAL_CloseMesh( m );
 }
