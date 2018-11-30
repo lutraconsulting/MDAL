@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <sstream>
 #include <math.h>
+#include <assert.h>
 
 bool MDAL::fileExists( const std::string &filename )
 {

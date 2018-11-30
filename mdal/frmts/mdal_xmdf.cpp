@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 MDAL::XmdfDataset::~XmdfDataset() = default;
 
