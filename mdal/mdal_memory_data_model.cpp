@@ -98,34 +98,6 @@ MDAL::MemoryMesh::MemoryMesh( size_t verticesCount, size_t facesCount, size_t fa
 
 }
 
-void MDAL::MemoryMesh::addBedElevationDataset( const Vertices &vertices, const Faces &faces )
-{
-  if ( 0 == facesCount() )
-    return;
-
-  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >();
-  group->setIsOnVertices( true );
-  group->setIsScalar( true );
-  group->setName( "Bed Elevation" );
-  group->setUri( uri() );
-  group->parent = this;
-
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >();
-  dataset->time = 0.0;
-  dataset->values.resize( vertices.size() );
-  dataset->active.resize( faces.size() );
-  dataset->parent = group.get();
-  std::fill( dataset->active.begin(), dataset->active.end(), 1 );
-  for ( size_t i = 0; i < vertices.size(); ++i )
-  {
-    dataset->values[i].x = vertices[i].z;
-  }
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
-  group->datasets.push_back( dataset );
-  group->setStatistics( MDAL::calculateStatistics( group ) );
-  datasetGroups.push_back( group );
-}
-
 std::unique_ptr<MDAL::MeshVertexIterator> MDAL::MemoryMesh::readVertices()
 {
   std::unique_ptr<MDAL::MemoryMeshVertexIterator> it( new MemoryMeshVertexIterator( this ) );
@@ -136,6 +108,11 @@ std::unique_ptr<MDAL::MeshFaceIterator> MDAL::MemoryMesh::readFaces()
 {
   std::unique_ptr<MDAL::MemoryMeshFaceIterator> it( new MemoryMeshFaceIterator( this ) );
   return it;
+}
+
+void MDAL::MemoryMesh::addBedElevationDataset( const MDAL::Vertices &vertices, const MDAL::Faces &faces )
+{
+  MDAL::addBedElevationDatasetGroup( this, vertices, faces );
 }
 
 MDAL::MemoryMesh::~MemoryMesh() = default;
