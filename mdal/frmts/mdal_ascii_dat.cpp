@@ -17,6 +17,7 @@
 #include "mdal_ascii_dat.hpp"
 #include "mdal.h"
 #include "mdal_utils.hpp"
+#include "mdal_2dm.hpp"
 
 #include <math.h>
 
@@ -224,11 +225,19 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
       dataset->active[i] = true;
   }
 
-  for ( size_t index = 0; index < mesh->verticesCount(); ++index )
+  const Mesh2dm *m2dm = dynamic_cast<const Mesh2dm *>( mesh );
+
+  for ( size_t i = 0; i < mesh->verticesCount(); ++i )
   {
     std::string line;
     std::getline( stream, line );
     std::vector<std::string> tsItems = split( line,  " ", SplitBehaviour::SkipEmptyParts );
+
+    size_t index;
+    if ( m2dm )
+      index = m2dm->vertexIndex( i );
+    else
+      index = i;
 
     if ( isVector )
     {

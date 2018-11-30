@@ -102,5 +102,9 @@ namespace MDAL
   //! Calculates statistics for dataset
   Statistics calculateStatistics( std::shared_ptr<Dataset> dataset );
 
+  // mesh & datasets
+  //! Add bed elevatiom dataset group to mesh
+  void addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertices, const Faces &faces );
+
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

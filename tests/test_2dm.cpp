@@ -25,6 +25,20 @@ TEST( Mesh2DMTest, WrongFile )
   EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
 }
 
+TEST( Mesh2DMTest, MeshWithNumberingGaps )
+{
+  //https://github.com/lutraconsulting/MDAL/issues/51
+  std::string path = test_file( "/2dm/mesh_with_numbering_gaps.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 5 );
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 2, f_count );
+}
+
 TEST( Mesh2DMTest, QuadAndTriangleFile )
 {
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
