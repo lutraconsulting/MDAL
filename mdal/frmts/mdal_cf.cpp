@@ -155,7 +155,7 @@ static void populate_nodata( std::vector<MDAL::Value> &vals, size_t from_i, size
 }
 
 
-std::shared_ptr<MDAL::Dataset> MDAL::LoaderCF::createFace2DDataset( size_t ts, const MDAL::CFDatasetGroupInfo &dsi,
+std::shared_ptr<MDAL::Dataset> MDAL::LoaderCF::createFace2DDataset( std::shared_ptr<DatasetGroup> group, size_t ts, const MDAL::CFDatasetGroupInfo &dsi,
     const std::vector<double> &vals_x, const std::vector<double> &vals_y,
     double fill_val_x, double fill_val_y )
 {
@@ -163,7 +163,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::LoaderCF::createFace2DDataset( size_t ts, c
   size_t nFaces2D = mDimensions.size( CFDimensions::Face2D );
   size_t nLine1D = mDimensions.size( CFDimensions::Line1D );
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared<MDAL::MemoryDataset>();
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared<MDAL::MemoryDataset>( group.get() );
   dataset->values.resize( mDimensions.faceCount() );
 
   populate_nodata( dataset->values,
@@ -194,11 +194,12 @@ void MDAL::LoaderCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
   {
     const CFDatasetGroupInfo dsi = it.second;
     // Create a dataset group
-    std::shared_ptr<MDAL::DatasetGroup> group = std::make_shared<MDAL::DatasetGroup>();
-    group->setUri( mFileName );
-    group->setName( dsi.name );
+    std::shared_ptr<MDAL::DatasetGroup> group = std::make_shared<MDAL::DatasetGroup>(
+          mesh,
+          mFileName,
+          dsi.name
+        );
     group->setIsScalar( !dsi.is_vector );
-    group->parent = mesh;
 
     // read X data
     double fill_val_x = mNcFile.getFillValue( dsi.ncid_x );
@@ -223,11 +224,10 @@ void MDAL::LoaderCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
       if ( dsi.outputType == CFDimensions::Face2D )
       {
         group->setIsOnVertices( false );
-        dataset = createFace2DDataset( ts, dsi, vals_x, vals_y, fill_val_x, fill_val_y );
+        dataset = createFace2DDataset( group, ts, dsi, vals_x, vals_y, fill_val_x, fill_val_y );
       }
 
-      dataset->parent = group.get();
-      dataset->time = time;
+      dataset->setTime( time );
       dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
       group->datasets.push_back( dataset );
     }

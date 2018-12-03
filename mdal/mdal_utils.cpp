@@ -323,13 +323,11 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<DatasetGroup> grp )
 
 MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
 {
-  assert( dataset->parent );
-
   Statistics ret;
   if ( !dataset )
     return ret;
 
-  bool isVector = !dataset->parent->isScalar();
+  bool isVector = !dataset->group()->isScalar();
   size_t bufLen = 2000;
   std::vector<double> buffer( isVector ? bufLen * 2 : bufLen );
 
@@ -376,18 +374,18 @@ void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertic
   if ( 0 == mesh->facesCount() )
     return;
 
-  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >();
+  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
+                                          mesh,
+                                          mesh->uri(),
+                                          "Bed Elevation"
+                                        );
   group->setIsOnVertices( true );
   group->setIsScalar( true );
-  group->setName( "Bed Elevation" );
-  group->setUri( mesh->uri() );
-  group->parent = mesh;
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >();
-  dataset->time = 0.0;
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group.get() );
+  dataset->setTime( 0.0 );
   dataset->values.resize( vertices.size() );
   dataset->active.resize( faces.size() );
-  dataset->parent = group.get();
   std::fill( dataset->active.begin(), dataset->active.end(), 1 );
   for ( size_t i = 0; i < vertices.size(); ++i )
   {

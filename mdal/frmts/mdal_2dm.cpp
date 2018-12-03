@@ -120,7 +120,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::Loader2dm::load( MDAL_Status *status )
       chunks = split( line,  " ", SplitBehaviour::SkipEmptyParts );
       assert( faceIndex < faceCount );
 
-      // size_t elemID = toSizeT( chunks[1] );
       Face &face = faces[faceIndex];
       face.resize( 4 );
       // Right now we just store node IDs here - we will convert them to node indices afterwards
@@ -134,7 +133,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::Loader2dm::load( MDAL_Status *status )
       chunks = split( line,  " ", SplitBehaviour::SkipEmptyParts );
       assert( faceIndex < faceCount );
 
-      // size_t elemID = toSizeT( chunks[1] );
       Face &face = faces[faceIndex];
       face.resize( 3 );
       // Right now we just store node IDs here - we will convert them to node indices afterwards

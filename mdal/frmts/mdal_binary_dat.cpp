@@ -125,17 +125,19 @@ void MDAL::LoaderBinaryDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
   if ( version != CT_VERSION ) // Version should be 3000
     EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
-  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(); // DAT datasets
-  group->setUri( mDatFile );
+  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
+                                          mesh,
+                                          mDatFile
+                                        ); // DAT datasets
   group->setIsOnVertices( true );
-  group->parent = mesh;
 
   // in TUFLOW results there could be also a special timestep (99999) with maximums
   // we will put it into a separate dataset
-  std::shared_ptr<DatasetGroup> groupMax = std::make_shared< DatasetGroup >();
-  groupMax->setUri( mDatFile );
+  std::shared_ptr<DatasetGroup> groupMax = std::make_shared< DatasetGroup >(
+        mesh,
+        mDatFile
+      );
   groupMax->setIsOnVertices( true );
-  groupMax->parent = mesh;
 
   while ( card != CT_ENDDS )
   {
@@ -257,10 +259,9 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
   size_t vertexCount = mesh->verticesCount();
   size_t faceCount = mesh->facesCount();
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
   dataset->values.resize( vertexCount );
   dataset->active.resize( faceCount );
-  dataset->parent = group.get();
 
   bool active = true;
   for ( size_t i = 0; i < faceCount; ++i )
@@ -301,13 +302,13 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
 
   if ( MDAL::equals( time, 99999.0 ) ) // Special TUFLOW dataset with maximus
   {
-    dataset->time = time;
+    dataset->setTime( time );
     dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
     groupMax->datasets.push_back( dataset );
   }
   else
   {
-    dataset->time = time; // TODO read TIMEUNITS
+    dataset->setTime( time ); // TODO read TIMEUNITS
     dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
     group->datasets.push_back( dataset );
   }

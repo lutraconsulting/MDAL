@@ -48,20 +48,30 @@ namespace MDAL
   class Dataset
   {
     public:
+      Dataset( DatasetGroup *parent );
       virtual ~Dataset();
-      double time;
 
       size_t valuesCount() const;
       virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) = 0;
       virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) = 0;
       virtual size_t activeData( size_t indexStart, size_t count, int *buffer ) = 0;
 
-      bool isValid = true;
-      DatasetGroup *parent = nullptr;
-
       Statistics statistics() const;
       void setStatistics( const Statistics &statistics );
+
+      bool isValid() const;
+      void setIsValid( bool isValid );
+
+      DatasetGroup *group() const;
+      Mesh *mesh() const;
+
+      double time() const;
+      void setTime( double time );
+
     private:
+      double mTime = std::numeric_limits<double>::quiet_NaN();
+      bool mIsValid = true;
+      DatasetGroup *mParent = nullptr;
       Statistics mStatistics;
   };
 
@@ -70,6 +80,13 @@ namespace MDAL
   class DatasetGroup
   {
     public:
+      DatasetGroup( Mesh *parent,
+                    const std::string &uri );
+
+      DatasetGroup( Mesh *parent,
+                    const std::string &uri,
+                    const std::string &name );
+
       std::string getMetadata( const std::string &key );
       void setMetadata( const std::string &key, const std::string &val );
 
@@ -78,7 +95,6 @@ namespace MDAL
 
       Metadata metadata;
       Datasets datasets;
-      Mesh *parent = nullptr;
 
       bool isScalar() const;
       void setIsScalar( bool isScalar );
@@ -87,12 +103,14 @@ namespace MDAL
       void setIsOnVertices( bool isOnVertices );
 
       std::string uri() const;
-      void setUri( const std::string &uri );
 
       Statistics statistics() const;
       void setStatistics( const Statistics &statistics );
 
+      Mesh *mesh() const;
+
     private:
+      Mesh *mParent = nullptr;
       bool mIsScalar = true;
       bool mIsOnVertices = true;
       std::string mUri; // file/uri from where it came

@@ -22,7 +22,7 @@ std::string test_file( std::string basename )
 bool getActive( DatasetH dataset, int index )
 {
   char active;
-  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::ACTIVE_BOOL, &active );
+  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::ACTIVE_INTEGER, &active );
   assert( nValuesRead == 1 );
   return static_cast<bool>( active );
 }

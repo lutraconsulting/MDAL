@@ -33,7 +33,8 @@ namespace MDAL
   class XmdfDataset: public Dataset
   {
     public:
-      XmdfDataset( const HdfDataset &valuesDs,
+      XmdfDataset( DatasetGroup *grp,
+                   const HdfDataset &valuesDs,
                    const HdfDataset &activeDs,
                    hsize_t timeIndex );
       ~XmdfDataset() override;

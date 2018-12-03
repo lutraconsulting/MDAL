@@ -348,24 +348,24 @@ void MDAL::LoaderGdal::addDatasetGroups()
   // Add dataset to mMesh
   for ( data_hash::const_iterator band = mBands.begin(); band != mBands.end(); band++ )
   {
-    std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >();
-    group->setUri( mFileName );
-    group->setName( band->first );
+    std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
+                                            mMesh.get(),
+                                            mFileName,
+                                            band->first
+                                          );
     group->setIsOnVertices( true );
-    group->parent = mMesh.get();
 
     for ( timestep_map::const_iterator time_step = band->second.begin(); time_step != band->second.end(); time_step++ )
     {
       std::vector<GDALRasterBandH> raster_bands = time_step->second;
       bool is_vector = ( raster_bands.size() > 1 );
 
-      std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
+      std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
       group->setIsScalar( !is_vector );
 
-      dataset->time = time_step->first;
+      dataset->setTime( time_step->first );
       dataset->values.resize( meshGDALDataset()->mNPoints );
       dataset->active.resize( meshGDALDataset()->mNVolumes );
-      dataset->parent = group.get();
 
       for ( std::vector<GDALRasterBandH>::size_type i = 0; i < raster_bands.size(); ++i )
       {

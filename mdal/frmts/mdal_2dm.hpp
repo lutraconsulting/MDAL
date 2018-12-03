@@ -36,7 +36,7 @@ namespace MDAL
 
     private:
       // 2dm supports "gaps" in the mesh indexing
-      // Store only the indices that have different index
+      // Store only the indices that have different index and ID
       // https://github.com/lutraconsulting/MDAL/issues/51
       std::map<size_t, size_t> mVertexIDtoIndex;
   };

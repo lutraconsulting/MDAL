@@ -70,11 +70,12 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
     oldFormat = true;
     isVector = ( line == "VECTOR" );
 
-    group = std::make_shared< DatasetGroup >();
-    group->setUri( mDatFile );
-    group->setName( name );
+    group = std::make_shared< DatasetGroup >(
+              mesh,
+              mDatFile,
+              name
+            );
     group->setIsScalar( !isVector );
-    group->parent = mesh;
   }
   else
     EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
@@ -124,12 +125,13 @@ void MDAL::LoaderAsciiDat::load( MDAL::Mesh *mesh, MDAL_Status *status )
       }
       isVector = cardType == "BEGVEC";
 
-      group = std::make_shared< DatasetGroup >();
-      group->setUri( mDatFile );
-      group->setName( name );
+      group = std::make_shared< DatasetGroup >(
+                mesh,
+                mDatFile,
+                name
+              );
       group->setIsScalar( !isVector );
       group->setIsOnVertices( !faceCentered );
-      group->parent = mesh;
     }
     else if ( !oldFormat && cardType == "ENDDS" )
     {
@@ -206,11 +208,10 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
   size_t vertexCount = mesh->verticesCount();
   size_t faceCount = mesh->facesCount();
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
-  dataset->time = t / 3600.; // TODO read TIMEUNITS
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
+  dataset->setTime( t / 3600. ); // TODO read TIMEUNITS
   dataset->values.resize( vertexCount );
   dataset->active.resize( faceCount );
-  dataset->parent = group.get();
 
   // only for new format
   for ( size_t i = 0; i < faceCount; ++i )
@@ -279,10 +280,9 @@ void MDAL::LoaderAsciiDat::readFaceTimestep(
 
   size_t faceCount = mesh->facesCount();
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >();
-  dataset->time = t / 3600.;
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
+  dataset->setTime( t / 3600. );
   dataset->values.resize( faceCount );
-  dataset->parent = group.get();
 
   // TODO: hasStatus
   for ( size_t index = 0; index < faceCount; ++index )

@@ -14,8 +14,7 @@ MDAL::MemoryDataset::~MemoryDataset() = default;
 
 size_t MDAL::MemoryDataset::activeData( size_t indexStart, size_t count, int *buffer )
 {
-  assert( parent );
-  if ( parent->isOnVertices() )
+  if ( group()->isOnVertices() )
   {
     assert( active.size() > indexStart ); //checked in C API interface
     assert( active.size() >= indexStart + count ); //checked in C API interface
@@ -30,10 +29,14 @@ size_t MDAL::MemoryDataset::activeData( size_t indexStart, size_t count, int *bu
   return count;
 }
 
+MDAL::MemoryDataset::MemoryDataset( MDAL::DatasetGroup *grp )
+  : Dataset( grp )
+{
+}
+
 size_t MDAL::MemoryDataset::scalarData( size_t indexStart, size_t count, double *buffer )
 {
-  assert( parent ); //checked in C API interface
-  assert( parent->isScalar() ); //checked in C API interface
+  assert( group()->isScalar() ); //checked in C API interface
 
   size_t i = 0;
   while ( true )
@@ -62,8 +65,7 @@ size_t MDAL::MemoryDataset::scalarData( size_t indexStart, size_t count, double 
 
 size_t MDAL::MemoryDataset::vectorData( size_t indexStart, size_t count, double *buffer )
 {
-  assert( parent ); //checked in C API interface
-  assert( !parent->isScalar() ); //checked in C API interface
+  assert( !group()->isScalar() ); //checked in C API interface
 
   size_t i = 0;
   while ( true )
