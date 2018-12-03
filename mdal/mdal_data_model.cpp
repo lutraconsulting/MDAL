@@ -11,17 +11,21 @@
 
 MDAL::Dataset::~Dataset() = default;
 
+MDAL::Dataset::Dataset( MDAL::DatasetGroup *parent )
+  : mParent( parent )
+{
+  assert( mParent );
+}
+
 size_t MDAL::Dataset::valuesCount() const
 {
-  assert( parent );
-  assert( parent->parent );
-  if ( parent->isOnVertices() )
+  if ( group()->isOnVertices() )
   {
-    return parent->parent->verticesCount();
+    return mesh()->verticesCount();
   }
   else
   {
-    return parent->parent->facesCount();
+    return mesh()->facesCount();
   }
 }
 
@@ -33,6 +37,53 @@ MDAL::Statistics MDAL::Dataset::statistics() const
 void MDAL::Dataset::setStatistics( const MDAL::Statistics &statistics )
 {
   mStatistics = statistics;
+}
+
+MDAL::DatasetGroup *MDAL::Dataset::group() const
+{
+  return mParent;
+}
+
+MDAL::Mesh *MDAL::Dataset::mesh() const
+{
+  return mParent->mesh();
+}
+
+double MDAL::Dataset::time() const
+{
+  return mTime;
+}
+
+void MDAL::Dataset::setTime( double time )
+{
+  mTime = time;
+}
+
+bool MDAL::Dataset::isValid() const
+{
+  return mIsValid;
+}
+
+void MDAL::Dataset::setIsValid( bool isValid )
+{
+  mIsValid = isValid;
+}
+
+MDAL::DatasetGroup::DatasetGroup( MDAL::Mesh *parent,
+                                  const std::string &uri,
+                                  const std::string &name )
+  : mParent( parent )
+  , mUri( uri )
+{
+  assert( mParent );
+  setName( name );
+}
+
+MDAL::DatasetGroup::DatasetGroup( MDAL::Mesh *parent, const std::string &uri )
+  : mParent( parent )
+  , mUri( uri )
+{
+  assert( mParent );
 }
 
 std::string MDAL::DatasetGroup::getMetadata( const std::string &key )
@@ -77,11 +128,6 @@ std::string MDAL::DatasetGroup::uri() const
   return mUri;
 }
 
-void MDAL::DatasetGroup::setUri( const std::string &uri )
-{
-  mUri = uri;
-}
-
 MDAL::Statistics MDAL::DatasetGroup::statistics() const
 {
   return mStatistics;
@@ -90,6 +136,11 @@ MDAL::Statistics MDAL::DatasetGroup::statistics() const
 void MDAL::DatasetGroup::setStatistics( const Statistics &statistics )
 {
   mStatistics = statistics;
+}
+
+MDAL::Mesh *MDAL::DatasetGroup::mesh() const
+{
+  return mParent;
 }
 
 bool MDAL::DatasetGroup::isOnVertices() const

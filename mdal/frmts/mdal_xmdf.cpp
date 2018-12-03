@@ -16,8 +16,9 @@
 
 MDAL::XmdfDataset::~XmdfDataset() = default;
 
-MDAL::XmdfDataset::XmdfDataset( const HdfDataset &valuesDs, const HdfDataset &activeDs, hsize_t timeIndex )
-  : mHdf5DatasetValues( valuesDs )
+MDAL::XmdfDataset::XmdfDataset( DatasetGroup *grp, const HdfDataset &valuesDs, const HdfDataset &activeDs, hsize_t timeIndex )
+  : Dataset( grp )
+  , mHdf5DatasetValues( valuesDs )
   , mHdf5DatasetActive( activeDs )
   , mTimeIndex( timeIndex )
 {
@@ -41,8 +42,7 @@ hsize_t MDAL::XmdfDataset::timeIndex() const
 
 size_t MDAL::XmdfDataset::scalarData( size_t indexStart, size_t count, double *buffer )
 {
-  assert( parent ); //checked in C API interface
-  assert( parent->isScalar() ); //checked in C API interface
+  assert( group()->isScalar() ); //checked in C API interface
   std::vector<hsize_t> offsets = {timeIndex(), indexStart};
   std::vector<hsize_t> counts = {1, count};
   std::vector<float> values = dsValues().readArray( offsets, counts );
@@ -56,8 +56,7 @@ size_t MDAL::XmdfDataset::scalarData( size_t indexStart, size_t count, double *b
 
 size_t MDAL::XmdfDataset::vectorData( size_t indexStart, size_t count, double *buffer )
 {
-  assert( parent ); //checked in C API interface
-  assert( !parent->isScalar() ); //checked in C API interface
+  assert( !group()->isScalar() ); //checked in C API interface
   std::vector<hsize_t> offsets = {timeIndex(), indexStart, 0};
   std::vector<hsize_t> counts = {1, count, 2};
   std::vector<float> values = dsValues().readArray( offsets, counts );
@@ -73,7 +72,6 @@ size_t MDAL::XmdfDataset::vectorData( size_t indexStart, size_t count, double *b
 
 size_t MDAL::XmdfDataset::activeData( size_t indexStart, size_t count, int *buffer )
 {
-  assert( parent ); //checked in C API interface
   std::vector<hsize_t> offsets = {timeIndex(), indexStart};
   std::vector<hsize_t> counts = {1, count};
   std::vector<uchar> active = dsActive().readArrayUint8( offsets, counts );
@@ -239,12 +237,13 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
   std::vector<float> times = dsTimes.readArray();
 
   // all fine, set group and return
-  group.reset( new DatasetGroup() );
-  group->setName( name );
+  group = std::make_shared<MDAL::DatasetGroup>(
+            mMesh,
+            mDatFile,
+            name
+          );
   group->setIsScalar( !isVector );
   group->setIsOnVertices( true );
-  group->setUri( mDatFile );
-  group->parent = mMesh;
 
   // lazy loading of min and max of the dataset group
   std::vector<float> mins = dsMins.readArray();
@@ -256,9 +255,8 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
 
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {
-    std::shared_ptr<XmdfDataset> dataset( new XmdfDataset( dsValues, dsActive, i ) );
-    dataset->parent = group.get();
-    dataset->time = double( times[i] );
+    std::shared_ptr<XmdfDataset> dataset( new XmdfDataset( group.get(), dsValues, dsActive, i ) );
+    dataset->setTime( double( times[i] ) );
     Statistics stats;
     stats.minimum = static_cast<double>( mins[i] );
     stats.maximum = static_cast<double>( maxs[i] );

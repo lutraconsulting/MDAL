@@ -117,18 +117,19 @@ void MDAL::Loader3Di::addBedElevation( MDAL::Mesh *mesh )
     return; //error reading the array
 
 
-  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >();
+  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
+                                          mesh,
+                                          mesh->uri(),
+                                          "Bed Elevation"
+                                        );
+
   group->setIsOnVertices( false );
   group->setIsScalar( true );
-  group->setName( "Bed Elevation" );
-  group->setUri( mesh->uri() );
-  group->parent = mesh;
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >();
-  dataset->time = 0.0;
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group.get() );
+  dataset->setTime( 0.0 );
   dataset->values.resize( faceCount );
   dataset->active.resize( faceCount );
-  dataset->parent = group.get();
   for ( size_t i = 0; i < faceCount; ++i )
   {
     dataset->values[i].x = MDAL::safeValue( coordZ[i], fillZ );

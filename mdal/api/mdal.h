@@ -213,11 +213,11 @@ enum MDAL_DataType
 {
   SCALAR_DOUBLE, //!< double value for scalar datasets
   VECTOR_2D_DOUBLE, //!< double, double value for vector datasets
-  ACTIVE_BOOL //!< active flag for datasets. Some formats support switching off the element for particular timestep.
+  ACTIVE_INTEGER //!< integer, active flag for dataset faces. Some formats support switching off the element for particular timestep.
 };
 
 //! Populates buffer with values from the dataset
-//! for nodata, returned is numeric_limits<double>:quiet_NaN
+//! for nodata, returned is numeric_limits<double>::quiet_NaN
 //!
 //! \param dataset handle to dataset
 //! \param indexStart index of face/vertex to start reading of values to the buffer
@@ -227,7 +227,7 @@ enum MDAL_DataType
 //!               For SCALAR_DOUBLE, the minimum size must be valuesCount * size_of(double)
 //!               For VECTOR_2D_DOUBLE, the minimum size must be valuesCount * 2 * size_of(double).
 //!                                     Values are returned as x1, y1, x2, y2, ..., xN, yN
-//!               For ACTIVE_BOOL, the minimum size must be valuesCount * size_of(char)
+//!               For ACTIVE_INTEGER, the minimum size must be valuesCount * size_of(int)
 //! \returns number of values written to buffer. If return value != count requested, see MDAL_LastStatus() for error type
 MDAL_EXPORT int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer );
 

@@ -33,6 +33,7 @@ namespace MDAL
   class MemoryDataset: public Dataset
   {
     public:
+      MemoryDataset( DatasetGroup *grp );
       ~MemoryDataset() override;
 
       size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;

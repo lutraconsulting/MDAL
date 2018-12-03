@@ -290,8 +290,7 @@ MeshH MDAL_G_mesh( DatasetGroupH group )
     return nullptr;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  assert( g->parent );
-  MDAL::Mesh *m = g->parent;
+  MDAL::Mesh *m = g->mesh();
   return static_cast< MeshH >( m );
 }
 
@@ -448,7 +447,7 @@ DatasetGroupH MDAL_D_group( DatasetH dataset )
     return nullptr;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  return static_cast< MDAL::DatasetGroup * >( d->parent );
+  return static_cast< MDAL::DatasetGroup * >( d->group() );
 }
 
 double MDAL_D_time( DatasetH dataset )
@@ -459,7 +458,7 @@ double MDAL_D_time( DatasetH dataset )
     return NODATA;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  return d->time;
+  return d->time();
 
 }
 
@@ -483,7 +482,7 @@ bool MDAL_D_isValid( DatasetH dataset )
     return false;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  return d->isValid;
+  return d->isValid();
 }
 
 int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer )
@@ -496,10 +495,10 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   size_t indexStartSizeT = static_cast<size_t>( indexStart );
   size_t countSizeT = static_cast<size_t>( count );
-  MDAL::DatasetGroup *g = d->parent;
+  MDAL::DatasetGroup *g = d->group();
   assert( g );
 
-  MDAL::Mesh *m = g->parent;
+  MDAL::Mesh *m = d->mesh();
   assert( m );
 
   size_t valuesCount;
@@ -523,7 +522,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       }
       valuesCount = d->valuesCount();
       break;
-    case MDAL_DataType::ACTIVE_BOOL:
+    case MDAL_DataType::ACTIVE_INTEGER:
       valuesCount = m->facesCount();
       break;
   }
@@ -551,7 +550,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::VECTOR_2D_DOUBLE:
       writtenValuesCount = d->vectorData( indexStartSizeT, countSizeT, static_cast<double *>( buffer ) );
       break;
-    case MDAL_DataType::ACTIVE_BOOL:
+    case MDAL_DataType::ACTIVE_INTEGER:
       writtenValuesCount = d->activeData( indexStartSizeT, countSizeT, static_cast<int *>( buffer ) );
       break;
   }
