@@ -152,9 +152,9 @@ namespace MDAL
       void setSourceCrsFromWKT( const std::string &wkt );
       void setSourceCrsFromEPSG( int code );
 
-      void setVerticesCount( const size_t &verticesCount );
-      void setFacesCount( const size_t &facesCount );
-      void setFaceVerticesMaximumCount( const size_t &faceVerticesMaximumCount );
+      void setVerticesCount( size_t verticesCount );
+      void setFacesCount( size_t facesCount );
+      void setFaceVerticesMaximumCount( size_t faceVerticesMaximumCount );
       void setExtent( const BBox &extent );
 
       virtual std::unique_ptr<MDAL::MeshVertexIterator> readVertices() = 0;

@@ -194,17 +194,17 @@ void MDAL::Mesh::setExtent( const BBox &extent )
   mExtent = extent;
 }
 
-void MDAL::Mesh::setFaceVerticesMaximumCount( const size_t &faceVerticesMaximumCount )
+void MDAL::Mesh::setFaceVerticesMaximumCount( size_t faceVerticesMaximumCount )
 {
   mFaceVerticesMaximumCount = faceVerticesMaximumCount;
 }
 
-void MDAL::Mesh::setFacesCount( const size_t &facesCount )
+void MDAL::Mesh::setFacesCount( size_t facesCount )
 {
   mFacesCount = facesCount;
 }
 
-void MDAL::Mesh::setVerticesCount( const size_t &verticesCount )
+void MDAL::Mesh::setVerticesCount( size_t verticesCount )
 {
   mVerticesCount = verticesCount;
 }
