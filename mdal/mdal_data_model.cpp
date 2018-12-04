@@ -150,6 +150,9 @@ bool MDAL::DatasetGroup::isOnVertices() const
 
 void MDAL::DatasetGroup::setIsOnVertices( bool isOnVertices )
 {
+  // datasets are initialized (e.g. values array, active array) based
+  // on this property. Do not allow to modify later on.
+  assert( datasets.empty() );
   mIsOnVertices = isOnVertices;
 }
 
@@ -160,6 +163,9 @@ bool MDAL::DatasetGroup::isScalar() const
 
 void MDAL::DatasetGroup::setIsScalar( bool isScalar )
 {
+  // datasets are initialized (e.g. values array, active array) based
+  // on this property. Do not allow to modify later on.
+  assert( datasets.empty() );
   mIsScalar = isScalar;
 }
 

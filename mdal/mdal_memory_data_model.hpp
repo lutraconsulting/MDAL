@@ -41,11 +41,37 @@ namespace MDAL
       size_t activeData( size_t indexStart, size_t count, int *buffer ) override;
 
       /**
-       * size - face count if !isOnVertices
-       * size - vertex count if isOnVertices
+       * valid pointer only for for dataset defined on vertices
        */
-      std::vector<Value> values;
-      std::vector<int> active; // size - face count. Whether the output for this is active...
+      int *active();
+      double *values();
+
+      const int *constActive() const;
+      const double *constValues() const;
+
+    private:
+      /**
+       * Stores vector2d/scalar data for dataset in form
+       * scalars: x1, x2, x3, ..., xN
+       * vector2D: x1, y1, x2, y2, x3, y3, .... , xN, yN
+       *
+       * all values are initialized to std::numerical_limits<double>::quiet_NaN (==NODATA)
+       *
+       * size:
+       *   - face count if isOnFaces & isScalar
+       *   - vertex count if isOnVertices & isScalar
+       *   - face count * 2 if isOnFaces & isVector
+       *   - vertex count * 2 if isOnVertices & isVector
+       */
+      std::vector<double> mValues;
+      /**
+       * Active flag, whether the face is active or not (disabled)
+       * Only make sense for dataset defined on vertices  with size == face count
+       * For dataset defined on faces, this is empty vector
+       *
+       * Values are initialized by default to 1 (active)
+       */
+      std::vector<int> mActive;
   };
 
   class MemoryMesh: public Mesh

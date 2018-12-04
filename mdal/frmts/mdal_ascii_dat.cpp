@@ -210,9 +210,8 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
   dataset->setTime( t / 3600. ); // TODO read TIMEUNITS
-  dataset->values.resize( vertexCount );
-  dataset->active.resize( faceCount );
 
+  int *active = dataset->active();
   // only for new format
   for ( size_t i = 0; i < faceCount; ++i )
   {
@@ -220,14 +219,12 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
     {
       std::string line;
       std::getline( stream, line );
-      dataset->active[i] = toBool( line );
+      active[i] = toBool( line );
     }
-    else
-      dataset->active[i] = true;
   }
 
   const Mesh2dm *m2dm = dynamic_cast<const Mesh2dm *>( mesh );
-
+  double *values = dataset->values();
   for ( size_t i = 0; i < mesh->verticesCount(); ++i )
   {
     std::string line;
@@ -244,23 +241,21 @@ void MDAL::LoaderAsciiDat::readVertexTimestep(
     {
       if ( tsItems.size() >= 2 ) // BASEMENT files with vectors have 3 columns
       {
-        dataset->values[index].x = toDouble( tsItems[0] );
-        dataset->values[index].y = toDouble( tsItems[1] );
+        values[2 * index] = toDouble( tsItems[0] );
+        values[2 * index + 1] = toDouble( tsItems[1] );
       }
       else
       {
         debug( "invalid timestep line" );
-        dataset->values[index].noData = true;
       }
     }
     else
     {
       if ( tsItems.size() >= 1 )
-        dataset->values[index].x = toDouble( tsItems[0] );
+        values[index] = toDouble( tsItems[0] );
       else
       {
         debug( "invalid timestep line" );
-        dataset->values[index].noData = true;
       }
     }
   }
@@ -282,8 +277,7 @@ void MDAL::LoaderAsciiDat::readFaceTimestep(
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
   dataset->setTime( t / 3600. );
-  dataset->values.resize( faceCount );
-
+  double *values = dataset->values();
   // TODO: hasStatus
   for ( size_t index = 0; index < faceCount; ++index )
   {
@@ -295,23 +289,21 @@ void MDAL::LoaderAsciiDat::readFaceTimestep(
     {
       if ( tsItems.size() >= 2 ) // BASEMENT files with vectors have 3 columns
       {
-        dataset->values[index].x = toDouble( tsItems[0] );
-        dataset->values[index].y = toDouble( tsItems[1] );
+        values[2 * index] = toDouble( tsItems[0] );
+        values[2 * index + 1] = toDouble( tsItems[1] );
       }
       else
       {
         debug( "invalid timestep line" );
-        dataset->values[index].noData = true;
       }
     }
     else
     {
       if ( tsItems.size() >= 1 )
-        dataset->values[index].x = toDouble( tsItems[0] );
+        values[index] = toDouble( tsItems[0] );
       else
       {
         debug( "invalid timestep line" );
-        dataset->values[index].noData = true;
       }
     }
   }

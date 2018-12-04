@@ -31,14 +31,6 @@ namespace MDAL
 
   typedef struct
   {
-    double x;
-    double y;
-
-    bool noData = false;
-  } Value; //Dataset Value
-
-  typedef struct
-  {
     double minimum = std::numeric_limits<double>::quiet_NaN();
     double maximum = std::numeric_limits<double>::quiet_NaN();
   } Statistics;

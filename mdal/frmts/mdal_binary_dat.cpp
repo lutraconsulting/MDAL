@@ -260,9 +260,8 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
   size_t faceCount = mesh->facesCount();
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
-  dataset->values.resize( vertexCount );
-  dataset->active.resize( faceCount );
 
+  int *activeFlags = dataset->active();
   bool active = true;
   for ( size_t i = 0; i < faceCount; ++i )
   {
@@ -272,9 +271,10 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
         return true; //error
 
     }
-    dataset->active[i] = active;
+    activeFlags[i] = active;
   }
 
+  double *values = dataset->values();
   for ( size_t i = 0; i < vertexCount; ++i )
   {
     if ( !isScalar )
@@ -286,8 +286,8 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
       if ( read( in, reinterpret_cast< char * >( &y ), 4 ) )
         return true; //error
 
-      dataset->values[i].x = static_cast< double >( x );
-      dataset->values[i].y = static_cast< double >( y );
+      values[2 * i] = static_cast< double >( x );
+      values[2 * i + 1] = static_cast< double >( y );
     }
     else
     {
@@ -296,7 +296,7 @@ bool MDAL::LoaderBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
       if ( read( in, reinterpret_cast< char * >( &scalar ), 4 ) )
         return true; //error
 
-      dataset->values[i].x = static_cast< double >( scalar );
+      values[i] = static_cast< double >( scalar );
     }
   }
 
