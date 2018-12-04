@@ -384,12 +384,10 @@ void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertic
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group.get() );
   dataset->setTime( 0.0 );
-  dataset->values.resize( vertices.size() );
-  dataset->active.resize( faces.size() );
-  std::fill( dataset->active.begin(), dataset->active.end(), 1 );
+  double *vals = dataset->values();
   for ( size_t i = 0; i < vertices.size(); ++i )
   {
-    dataset->values[i].x = vertices[i].z;
+    vals[i] = vertices[i].z;
   }
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );

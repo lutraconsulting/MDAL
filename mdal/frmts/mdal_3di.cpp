@@ -128,11 +128,10 @@ void MDAL::Loader3Di::addBedElevation( MDAL::Mesh *mesh )
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group.get() );
   dataset->setTime( 0.0 );
-  dataset->values.resize( faceCount );
-  dataset->active.resize( faceCount );
+  double *values = dataset->values();
   for ( size_t i = 0; i < faceCount; ++i )
   {
-    dataset->values[i].x = MDAL::safeValue( coordZ[i], fillZ );
+    values[i] = MDAL::safeValue( coordZ[i], fillZ );
   }
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->setStatistics( MDAL::calculateStatistics( group ) );
