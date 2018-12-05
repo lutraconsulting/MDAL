@@ -98,13 +98,13 @@ MDAL::MemoryMesh::MemoryMesh( size_t verticesCount, size_t facesCount, size_t fa
 
 std::unique_ptr<MDAL::MeshVertexIterator> MDAL::MemoryMesh::readVertices()
 {
-  std::unique_ptr<MDAL::MemoryMeshVertexIterator> it( new MemoryMeshVertexIterator( this ) );
+  std::unique_ptr<MDAL::MeshVertexIterator> it( new MemoryMeshVertexIterator( this ) );
   return it;
 }
 
 std::unique_ptr<MDAL::MeshFaceIterator> MDAL::MemoryMesh::readFaces()
 {
-  std::unique_ptr<MDAL::MemoryMeshFaceIterator> it( new MemoryMeshFaceIterator( this ) );
+  std::unique_ptr<MDAL::MeshFaceIterator> it( new MemoryMeshFaceIterator( this ) );
   return it;
 }
 
