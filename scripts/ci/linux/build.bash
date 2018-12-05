@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-echo "Linux native build"
-mkdir -p build_lnx
-cd build_lnx
+set -e
+
+echo "Linux Release build"
+mkdir -p build_rel_lnx
+cd build_rel_lnx
 cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
 make
 CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
@@ -17,5 +19,14 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=../Toolchain-mingw32.cmake \
 make
 cd ..
 
-echo "Check code syntax"
-./scripts/ci/linux/codestyle.bash
+echo "Linux Valgrind"
+mkdir -p build_db_lnx
+cd build_db_lnx
+cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON ..
+make
+valgrind --leak-check=full \
+         --show-leak-kinds=all \
+         --track-origins=yes \
+         --verbose \
+         ctest -VV
+cd ..
