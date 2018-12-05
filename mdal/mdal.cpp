@@ -41,7 +41,7 @@ const char *_return_str( const std::string &str )
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
 
-MeshH MDAL_LoadMesh( const char *meshFile )
+MeshH MDAL_LoadMesh(const char *meshFile )
 {
   if ( !meshFile )
   {
