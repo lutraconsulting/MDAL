@@ -154,7 +154,7 @@ std::string MDAL::toLower( const std::string &std )
 #ifdef WIN32
   //silence algorithm(1443): warning C4244: '=': conversion from 'int' to 'char'
   std::transform( res.begin(), res.end(), res.begin(),
-  []( char c ) {return static_cast<char>( std::tolower( c ) );} );
+  []( char c ) {return static_cast<char>( ::tolower( c ) );} );
 #else
   std::transform( res.begin(), res.end(), res.begin(), ::tolower );
 #endif
