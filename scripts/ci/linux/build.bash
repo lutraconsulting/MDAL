@@ -20,14 +20,12 @@ make
 cd ..
 
 echo "Linux Valgrind"
-which valgrind
 valgrind --version
 
 mkdir -p build_db_lnx
 cd build_db_lnx
 cmake ${CMAKE_OPTIONS} \
       -DCMAKE_BUILD_TYPE=Debug \
-      -DMEMORYCHECK_COMMAND:FILEPATH=`which valgrind` \
       -DMEMORYCHECK_COMMAND_OPTIONS="--leak-check=full --show-leak-kinds=all --track-origins=yes" \
       -DENABLE_TESTS=ON ..
 make
