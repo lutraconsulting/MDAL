@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Install
-          command: sudo apt-get install -y --allow-unauthenticated astyle
+          command: apt-get install -y astyle
       - run:
           name: Code Style
           command: ./scripts/ci/linux/codestyle.bash
