@@ -330,7 +330,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::LoaderCF::load( MDAL_Status *status )
     // Create datasets
     addDatasetGroups( mesh.get(), times, dsinfo_map );
 
-    return mesh;
+    return std::unique_ptr<Mesh>( mesh.release() );
   }
   catch ( MDAL_Status error )
   {

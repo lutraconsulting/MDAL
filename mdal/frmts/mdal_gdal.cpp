@@ -558,7 +558,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::LoaderGdal::load( MDAL_Status *status )
     if ( status ) *status = MDAL_Status::Err_InvalidData;
     mMesh.reset();
   }
-  return std::unique_ptr<Mesh>( mMesh.release() );
+  return std::move( mMesh );
 }
 
 void MDAL::LoaderGdal::parseBandIsVector( std::string &band_name, bool *is_vector, bool *is_x )
