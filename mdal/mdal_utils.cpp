@@ -366,7 +366,7 @@ void MDAL::combineStatistics( MDAL::Statistics &main, const MDAL::Statistics &ot
   }
 }
 
-void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertices, const Faces &faces )
+void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertices )
 {
   if ( !mesh )
     return;

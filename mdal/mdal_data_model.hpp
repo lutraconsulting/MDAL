@@ -11,6 +11,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <limits>
 #include "mdal.h"
 
 namespace MDAL

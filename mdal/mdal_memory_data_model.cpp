@@ -108,9 +108,9 @@ std::unique_ptr<MDAL::MeshFaceIterator> MDAL::MemoryMesh::readFaces()
   return it;
 }
 
-void MDAL::MemoryMesh::addBedElevationDataset( const MDAL::Vertices &vertices, const MDAL::Faces &faces )
+void MDAL::MemoryMesh::addBedElevationDataset( const MDAL::Vertices &vertices )
 {
-  MDAL::addBedElevationDatasetGroup( this, vertices, faces );
+  MDAL::addBedElevationDatasetGroup( this, vertices );
 }
 
 MDAL::MemoryMesh::~MemoryMesh() = default;
