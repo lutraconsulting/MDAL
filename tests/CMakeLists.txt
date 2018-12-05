@@ -46,10 +46,6 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/mdal/api)
 #########################################################################
 #########################################################################
 
-IF (UNIX AND NOT APPLE)
-  ADD_DEFINITIONS("-DLINUX")
-ENDIF(UNIX AND NOT APPLE)
-
 INCLUDE_DIRECTORIES(  
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}

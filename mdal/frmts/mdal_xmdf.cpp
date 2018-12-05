@@ -255,7 +255,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
 
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {
-    std::shared_ptr<XmdfDataset> dataset( new XmdfDataset( group.get(), dsValues, dsActive, i ) );
+    std::shared_ptr<XmdfDataset> dataset = std::make_shared< XmdfDataset >( group.get(), dsValues, dsActive, i );
     dataset->setTime( double( times[i] ) );
     Statistics stats;
     stats.minimum = static_cast<double>( mins[i] );

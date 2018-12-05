@@ -5,17 +5,9 @@
 #include <vector>
 #include <math.h>
 #include <assert.h>
-#if (defined LINUX) && (defined __GNUC__) && (!defined NDEBUG)
-#include <cstdlib>
-extern "C" void __libc_freeres( void );
-#endif
 
 void initTest()
 {
-//https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug.html#debug.memory
-#if (defined LINUX) && (defined __GNUC__) && (!defined NDEBUG)
-  atexit( __libc_freeres );
-#endif
 }
 
 const char *data_path()
