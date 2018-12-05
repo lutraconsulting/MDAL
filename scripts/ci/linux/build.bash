@@ -29,6 +29,13 @@ cmake ${CMAKE_OPTIONS} \
       -DMEMORYCHECK_COMMAND_OPTIONS="--leak-check=full --show-leak-kinds=all --track-origins=yes" \
       -DENABLE_TESTS=ON ..
 make
-CTEST_TARGET_SYSTEM=Linux-gcc; ctest -T memcheck
+CTEST_TARGET_SYSTEM=Linux-gcc; ctest -T memcheck 2>&1 | tee memcheck.log
+echo "Show memcheck results"
+ls -la /home/travis/build/lutraconsulting/MDAL/build_db_lnx/Testing/Temporary/MemoryChecker.*.log
+cat /home/travis/build/lutraconsulting/MDAL/build_db_lnx/Testing/Temporary/MemoryChecker.*.log
+
+if grep -q "Defects:" "memcheck.log"; then
+  exit 1
+fi
 
 cd ..
