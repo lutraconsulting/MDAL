@@ -6,10 +6,6 @@
 #include <math.h>
 #include <assert.h>
 
-void initTest()
-{
-}
-
 const char *data_path()
 {
   return TESTDATA;

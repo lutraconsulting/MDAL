@@ -89,6 +89,7 @@ TEST( Mest2DMTest, FacesApi )
 
     compareVectors( refIndices, indices );
   }
+  MDAL_CloseMesh( m );
 }
 
 void _populateVertices( MeshH m, std::vector<double> &ret, size_t itemsLen )
@@ -154,11 +155,11 @@ TEST( Mest2DMTest, VerticesApi )
 
     compareVectors( refCoors, coords );
   }
+  MDAL_CloseMesh( m );
 }
 
 int main( int argc, char **argv )
 {
-  initTest();
   testing::InitGoogleTest( &argc, argv );
   return RUN_ALL_TESTS();
 }

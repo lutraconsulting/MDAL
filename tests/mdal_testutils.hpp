@@ -15,8 +15,6 @@ const char *data_path();
 
 std::string test_file( std::string basename );
 
-void initTest();
-
 // Mesh
 std::vector<double> getCoordinates( MeshH mesh, int verticesCount );
 double getVertexXCoordinatesAt( MeshH mesh, int index );

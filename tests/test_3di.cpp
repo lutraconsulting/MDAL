@@ -220,7 +220,6 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
 
 int main( int argc, char **argv )
 {
-  initTest();
   testing::InitGoogleTest( &argc, argv );
   return RUN_ALL_TESTS();
 }

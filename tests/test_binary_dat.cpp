@@ -16,6 +16,7 @@ TEST( MeshBinaryDatTest, MissingMesh )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+  MDAL_CloseMesh( m );
 }
 
 TEST( MeshBinaryDatTest, QuadAndTriangleFile )
@@ -163,7 +164,6 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
 
 int main( int argc, char **argv )
 {
-  initTest();
   testing::InitGoogleTest( &argc, argv );
   return RUN_ALL_TESTS();
 }

@@ -34,6 +34,7 @@ TEST( MeshAsciiDatTest, MissingFile )
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_FileNotFound, s );
   EXPECT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+  MDAL_CloseMesh( m );
 }
 
 TEST( MeshAsciiDatTest, WrongFile )
@@ -44,6 +45,7 @@ TEST( MeshAsciiDatTest, WrongFile )
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
   EXPECT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+  MDAL_CloseMesh( m );
 }
 
 TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
@@ -327,8 +329,6 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
 
 int main( int argc, char **argv )
 {
-  initTest();
-
   testing::InitGoogleTest( &argc, argv );
   return RUN_ALL_TESTS();
 }
