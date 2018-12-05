@@ -50,11 +50,13 @@ for FILE in $FILES; do
         cmp -s $FILE $FILE.astyle
         if [ $? -ne 0 ]; then
             echo "Changed $FILE" >&2
-	    if [ $TRAVIS -eq 1 ]; then
-		diff $FILE $FILE.astyle >&2
-            fi
-	    mv $FILE.astyle $FILE  
             RETURN=1
+
+	        if [ $CI -eq 1 ]; then
+		      diff $FILE $FILE.astyle >&2
+            fi
+	        mv $FILE.astyle $FILE
+
         else
             rm $FILE.astyle
             echo "Unchanged $FILE" >&2

@@ -10,6 +10,7 @@ env:
     - CTEST_EXT_COLOR_OUTPUT=TRUE
     - CTEST_BUILD_FLAGS=-j4
     - TRAVIS=1
+    - CI=1
     - CTEST_MODEL=Nightly
 
 before_install:
