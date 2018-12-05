@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Install
-          command: 'sudo apt-get update; sudo apt-get install astyle'
+          command: 'apt-get update; apt-get install astyle'
       - run:
           name: Code Style
           command: ./scripts/ci/linux/codestyle.bash
