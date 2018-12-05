@@ -4,8 +4,8 @@ jobs:
     docker:
       - image: debian:sid
         environment:
-          CIRCLECI: 1
-          CI: 1
+          CIRCLECI: '1'
+          CI: '1'
     steps:
       - checkout
       - run:
