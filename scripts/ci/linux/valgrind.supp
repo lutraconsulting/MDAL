@@ -1,11 +1,11 @@
 {
    Suppress HF5
-   Memcheck:*
+   Memcheck:Leak
    fun:H5TS_cancel_count_inc
 }
 
 {
    Suppress HF5
-   Memcheck:*
+   Memcheck:Leak
    fun:H5E_get_stack
 }
