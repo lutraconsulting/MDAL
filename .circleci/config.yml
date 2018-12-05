@@ -6,8 +6,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Greeting
-          command: echo Hello, world.
+          name: Install
+          command: sudo apt-get install -y --allow-unauthenticated astyle
       - run:
-          name: Print the Current Time
-          command: date
+          name: Code Style
+          command: ./scripts/ci/linux/codestyle.bash

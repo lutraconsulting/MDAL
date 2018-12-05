@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/lutraconsulting/MDAL.svg?branch=master)](https://travis-ci.org/lutraconsulting/MDAL)
+[![CircleCI](https://circleci.com/gh/lutraconsulting/MDAL.svg?style=svg)](https://circleci.com/gh/lutraconsulting/MDAL)
 
 # MDAL
 Mesh Data Abstraction Library
@@ -25,7 +26,7 @@ For 64-bit version:
 
 * Install Microsoft Visual Studio 2017
 * Install OSGeo4W (64bit) to C:\OSGeo4W64
-* see [win build script](scripts/travis/windows/build.bash)
+* see [win build script](scripts/ci/windows/build.bash)
 
 ## Linux
 
@@ -46,7 +47,7 @@ make
 ## MacOS
 
 First you need to install homebrew and osgeo4mac dependencies, 
-see [osx install script](scripts/travis/osx/install.bash)
+see [osx install script](scripts/ci/osx/install.bash)
 
 To build, create build system with cmake and make sure you
 use dependencies from homebrew and not system ones

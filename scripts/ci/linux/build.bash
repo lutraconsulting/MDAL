@@ -18,5 +18,4 @@ make
 cd ..
 
 echo "Check code syntax"
-cd scripts; ./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.c* -print`
-cd ..
+./scripts/ci/linux/codestyle.bash

@@ -13,14 +13,14 @@ env:
     - CTEST_MODEL=Nightly
 
 before_install:
-  - ./scripts/travis/"$TRAVIS_OS_NAME"/install.bash
+  - ./scripts/ci/"$TRAVIS_OS_NAME"/install.bash
 
 install:
 
 before_script:
 
 script:
-  - ./scripts/travis/"$TRAVIS_OS_NAME"/build.bash
+  - ./scripts/ci/"$TRAVIS_OS_NAME"/build.bash
 
 after_script:
 
