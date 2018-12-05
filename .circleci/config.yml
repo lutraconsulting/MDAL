@@ -2,12 +2,12 @@ version: 2
 jobs:
   build:
     docker:
-      - image: debian:stretch
+      - image: debian:sid
     steps:
       - checkout
       - run:
           name: Install
-          command: ./scripts/ci/linux/install_codestyle.bash
+          command: apt-get install astyle
       - run:
           name: Code Style
           command: ./scripts/ci/linux/codestyle.bash
