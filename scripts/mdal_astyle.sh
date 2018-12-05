@@ -51,12 +51,8 @@ for FILE in $FILES; do
         if [ $? -ne 0 ]; then
             echo "Changed $FILE" >&2
             RETURN=1
-
-	        if [ $CI -eq 1 ]; then
-		      diff $FILE $FILE.astyle >&2
-            fi
+            diff $FILE $FILE.astyle >&2
 	        mv $FILE.astyle $FILE
-
         else
             rm $FILE.astyle
             echo "Unchanged $FILE" >&2
