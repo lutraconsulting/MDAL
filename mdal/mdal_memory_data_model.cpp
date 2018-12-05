@@ -15,9 +15,9 @@ MDAL::MemoryDataset::MemoryDataset( MDAL::DatasetGroup *grp )
   : Dataset( grp )
   , mValues( group()->isScalar() ? valuesCount() : 2 * valuesCount(),
              std::numeric_limits<double>::quiet_NaN() )
-  , mActive( group()->isOnVertices() ? mesh()->facesCount() : 0,
-             1 )
 {
+  if (group()->isOnVertices())
+    mActive = std::vector<int>(mesh()->facesCount(), 1);
 }
 
 MDAL::MemoryDataset::~MemoryDataset() = default;
