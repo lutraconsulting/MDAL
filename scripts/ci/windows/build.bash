@@ -23,5 +23,5 @@ C:/Program\ Files/CMake/bin/cmake --build .
 export PATH="$PATH:/c/OSGeo4W64/bin:/c/Users/travis/build/lutraconsulting/MDAL/build_win/tools/Debug:/c/Users/travis/build/lutraconsulting/MDAL/build_win/mdal/Debug"
 echo "PATH used: $PATH"
 
-C:/Program\ Files/CMake/bin/ctest -VV
+C:/Program\ Files/CMake/bin/ctest -VV --exclude-regex "mdalinfo_test"
 cd ..
