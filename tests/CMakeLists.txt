@@ -99,11 +99,4 @@ FOREACH(TESTSRC ${TESTS})
 ENDFOREACH(TESTSRC)
 
 # mdalinfo utility test
-IF(WIN32)
-  # https://github.com/lutraconsulting/MDAL/issues/39
-  SET(MDALINFO "mdalinfo.exe")
-ELSE(WIN32)
-  SET(MDALINFO "$<TARGET_FILE:mdalinfo>")
-ENDIF(WIN32)
-
-ADD_TEST(NAME mdalinfo_test COMMAND ${MDALINFO} "${TESTDATA_DIR}/2dm/regular_grid.2dm" "${TESTDATA_DIR}/xmdf/regular_grid.xmdf" )
+ADD_TEST(NAME mdalinfo_test COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/regular_grid.2dm" "${TESTDATA_DIR}/xmdf/regular_grid.xmdf" )
