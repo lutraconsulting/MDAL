@@ -8,11 +8,14 @@
 
 #include <string>
 #include <vector>
+
 #include "mdal.h"
 
 const char *data_path();
 
 std::string test_file( std::string basename );
+
+void initTest();
 
 // Mesh
 std::vector<double> getCoordinates( MeshH mesh, int verticesCount );

@@ -26,9 +26,10 @@ mkdir -p build_db_lnx
 cd build_db_lnx
 cmake ${CMAKE_OPTIONS} \
       -DCMAKE_BUILD_TYPE=Debug \
-      -DMEMORYCHECK_COMMAND_OPTIONS="--leak-check=full --show-leak-kinds=all --track-origins=yes" \
+      -DMEMORYCHECK_COMMAND_OPTIONS="--leak-check=yes --show-leak-kinds=all --track-origins=yes --num-callers=20 --leak-resolution=high --show-reachable=yes" \
       -DENABLE_TESTS=ON ..
-make
+
+make VERBOSE=1
 
 #https://stackoverflow.com/a/30403709/2838364
 GLIBCPP_FORCE_NEW=1; \
