@@ -87,7 +87,7 @@ namespace MDAL
       std::unique_ptr<MDAL::MeshVertexIterator> readVertices() override;
       std::unique_ptr<MDAL::MeshFaceIterator> readFaces() override;
 
-      void addBedElevationDataset( const Vertices &vertices );
+      void addBedElevationDataset( const Vertices &items );
 
       Vertices vertices;
       Faces faces;

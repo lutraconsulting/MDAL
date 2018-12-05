@@ -501,7 +501,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
   MDAL::Mesh *m = d->mesh();
   assert( m );
 
-  size_t valuesCount;
+  size_t valuesCount = 0;
 
   // Check that we are requesting correct 1D/2D for given dataset
   switch ( dataType )
@@ -541,7 +541,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
   }
 
   // Request data
-  size_t writtenValuesCount;
+  size_t writtenValuesCount = 0;
   switch ( dataType )
   {
     case MDAL_DataType::SCALAR_DOUBLE:

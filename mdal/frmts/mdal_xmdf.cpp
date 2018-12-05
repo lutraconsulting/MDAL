@@ -248,10 +248,10 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::LoaderXmdf::readXmdfGroupAsDatasetGrou
   // lazy loading of min and max of the dataset group
   std::vector<float> mins = dsMins.readArray();
   std::vector<float> maxs = dsMaxs.readArray();
-  Statistics stats;
-  stats.minimum = static_cast<double>( *std::min_element( mins.begin(), mins.end() ) );
-  stats.maximum = static_cast<double>( *std::max_element( maxs.begin(), maxs.end() ) );
-  group->setStatistics( stats );
+  Statistics grpStats;
+  grpStats.minimum = static_cast<double>( *std::min_element( mins.begin(), mins.end() ) );
+  grpStats.maximum = static_cast<double>( *std::max_element( maxs.begin(), maxs.end() ) );
+  group->setStatistics( grpStats );
 
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {

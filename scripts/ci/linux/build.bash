@@ -31,6 +31,6 @@ cmake ${CMAKE_OPTIONS} \
       -DMEMORYCHECK_COMMAND_OPTIONS="--leak-check=full --show-leak-kinds=all --track-origins=yes" \
       -DENABLE_TESTS=ON ..
 make
-ctest -D NightlyMemoryCheck
+CTEST_TARGET_SYSTEM=Linux-gcc; ctest -T memcheck
 
 cd ..
