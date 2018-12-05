@@ -11,6 +11,7 @@
 #include <sstream>
 #include <math.h>
 #include <assert.h>
+#include <cmath>
 
 bool MDAL::fileExists( const std::string &filename )
 {
@@ -271,14 +272,14 @@ MDAL::Statistics _calculateStatistics( const std::vector<double> &values, size_t
     {
       double x = values[2 * i];
       double y = values[2 * i + 1];
-      if ( isnan( x ) || isnan( y ) )
+      if ( std::isnan( x ) || std::isnan( y ) )
         continue;
       magnitude = sqrt( x * x + y * y );
     }
     else
     {
       double x = values[i];
-      if ( isnan( x ) )
+      if ( std::isnan( x ) )
         continue;
       magnitude = x;
     }
@@ -353,14 +354,14 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
 
 void MDAL::combineStatistics( MDAL::Statistics &main, const MDAL::Statistics &other )
 {
-  if ( isnan( main.minimum ) ||
-       ( !isnan( other.minimum ) && ( main.minimum > other.minimum ) ) )
+  if ( std::isnan( main.minimum ) ||
+       ( !std::isnan( other.minimum ) && ( main.minimum > other.minimum ) ) )
   {
     main.minimum = other.minimum;
   }
 
-  if ( isnan( main.maximum ) ||
-       ( !isnan( other.maximum ) && ( main.maximum < other.maximum ) ) )
+  if ( std::isnan( main.maximum ) ||
+       ( !std::isnan( other.maximum ) && ( main.maximum < other.maximum ) ) )
   {
     main.maximum = other.maximum;
   }
