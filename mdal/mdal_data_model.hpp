@@ -80,6 +80,8 @@ namespace MDAL
                     const std::string &uri,
                     const std::string &name );
 
+      ~DatasetGroup();
+
       std::string getMetadata( const std::string &key );
       void setMetadata( const std::string &key, const std::string &val );
 
