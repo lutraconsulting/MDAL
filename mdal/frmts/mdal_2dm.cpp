@@ -205,7 +205,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::Loader2dm::load( MDAL_Status *status )
   );
   mesh->faces = faces;
   mesh->vertices = vertices;
-  mesh->addBedElevationDataset( vertices );
-
+  MDAL::addBedElevationDatasetGroup( mesh.get(), vertices );
   return std::unique_ptr<Mesh>( mesh.release() );
 }
