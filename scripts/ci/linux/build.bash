@@ -7,8 +7,8 @@ mkdir -p build_rel_lnx
 cd build_rel_lnx
 cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
 make
-#CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
-CTEST_TARGET_SYSTEM=Linux-gcc; ctest -D Continuous
+CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
+# CTEST_TARGET_SYSTEM=Linux-gcc; ctest -D Continuous
 cd ..
 
 echo "MinGW Cross-compile Windows build"
@@ -34,16 +34,16 @@ cmake ${CMAKE_OPTIONS} \
 make VERBOSE=1
 
 # run and submit to cdash
-GLIBCPP_FORCE_NEW=1; \
-GLIBCXX_FORCE_NEW=1; \
-CTEST_TARGET_SYSTEM=Linux-gcc; \
-ctest -D ContinuousMemCheck 2>&1 | tee memcheck.log
-
-#https://stackoverflow.com/a/30403709/2838364
 # GLIBCPP_FORCE_NEW=1; \
 # GLIBCXX_FORCE_NEW=1; \
 # CTEST_TARGET_SYSTEM=Linux-gcc; \
-# ctest -T memcheck 2>&1 | tee memcheck.log
+# ctest -D ContinuousMemCheck 2>&1 | tee memcheck.log
+
+#https://stackoverflow.com/a/30403709/2838364
+GLIBCPP_FORCE_NEW=1; \
+GLIBCXX_FORCE_NEW=1; \
+CTEST_TARGET_SYSTEM=Linux-gcc; \
+ctest -T memcheck 2>&1 | tee memcheck.log
 
 if grep -q "Defects:" "memcheck.log"; then
   echo "Error: Show memcheck results"
