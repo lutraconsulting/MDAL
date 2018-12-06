@@ -32,17 +32,22 @@ cmake ${CMAKE_OPTIONS} \
 
 make VERBOSE=1
 
-#https://stackoverflow.com/a/30403709/2838364
+# run and submit to cdash
 GLIBCPP_FORCE_NEW=1; \
 GLIBCXX_FORCE_NEW=1; \
 CTEST_TARGET_SYSTEM=Linux-gcc; \
-ctest -T memcheck 2>&1 | tee memcheck.log
+ctest -D ContinuousMemoryCheck 2>&1 | tee memcheck.log
 
-echo "Show memcheck results"
-ls -la /home/travis/build/lutraconsulting/MDAL/build_db_lnx/Testing/Temporary/MemoryChecker.*.log
-cat /home/travis/build/lutraconsulting/MDAL/build_db_lnx/Testing/Temporary/MemoryChecker.*.log
+#https://stackoverflow.com/a/30403709/2838364
+# GLIBCPP_FORCE_NEW=1; \
+# GLIBCXX_FORCE_NEW=1; \
+# CTEST_TARGET_SYSTEM=Linux-gcc; \
+# ctest -T memcheck 2>&1 | tee memcheck.log
 
 if grep -q "Defects:" "memcheck.log"; then
+  echo "Error: Show memcheck results"
+  ls -la /home/travis/build/lutraconsulting/MDAL/build_db_lnx/Testing/Temporary/MemoryChecker.*.log
+  cat /home/travis/build/lutraconsulting/MDAL/build_db_lnx/Testing/Temporary/MemoryChecker.*.log
   exit 1
 fi
 
