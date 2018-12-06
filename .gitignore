@@ -6,7 +6,6 @@
 *.diff
 *.log*
 *.orig
-*.out
 *.prepare
 *.pyc
 *.sortinc

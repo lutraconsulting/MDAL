@@ -1,0 +1,11 @@
+--------------------------------------------------
+CELL ELEVATION DIFFERENCES AFTER APPLYING PIT TOOL
+--------------------------------------------------
+Cells in descending order of elevation differences
+--------------------------------------------------
+
+Cell        New Elev    Old Elev    Diff
+
+22         4264.02     4264.00     0.02
+23         4264.01     4264.00     0.01
+24         4264.01     4264.00     0.00
