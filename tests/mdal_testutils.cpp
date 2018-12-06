@@ -21,9 +21,11 @@ std::string test_file( std::string basename )
 
 bool getActive( DatasetH dataset, int index )
 {
-  char active;
+  int active;
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::ACTIVE_INTEGER, &active );
-  assert( nValuesRead == 1 );
+  if ( nValuesRead != 1 )
+    return 0;
+
   return static_cast<bool>( active );
 }
 
@@ -31,7 +33,9 @@ double getValue( DatasetH dataset, int index )
 {
   double val;
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::SCALAR_DOUBLE, &val );
-  assert( nValuesRead == 1 );
+  if ( nValuesRead != 1 )
+    return 0;
+
   return val;
 }
 
@@ -39,7 +43,9 @@ double getValueX( DatasetH dataset, int index )
 {
   double val[2];
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VECTOR_2D_DOUBLE, &val );
-  assert( nValuesRead == 1 );
+  if ( nValuesRead != 1 )
+    return 0;
+
   return val[0];
 }
 
@@ -47,7 +53,9 @@ double getValueY( DatasetH dataset, int index )
 {
   double val[2];
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VECTOR_2D_DOUBLE, &val );
-  assert( nValuesRead == 1 );
+  if ( nValuesRead != 1 )
+    return 0;
+
   return val[1];
 }
 

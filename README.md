@@ -13,9 +13,10 @@ You can use MDAL to load the following file formats:
 
 - [NetCDF](https://en.wikipedia.org/wiki/NetCDF): Generic format for scientific data. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
 - [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in meteorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
-- [XMDF](https://en.wikipedia.org/wiki/XMDF): **Lazy Loading** As an example, hydraulic outputs from TUFLOW modelling package
+- [XMDF](https://en.wikipedia.org/wiki/XMDF): **Lazy Loaded** As an example, hydraulic outputs from TUFLOW modelling package
 - [DAT](http://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat): Outputs of various hydrodynamic modelling packages (e.g. BASEMENT, HYDRO_AS-2D, TUFLOW)
 - [3Di](http://www.3di.nu): 3Di modelling package formate based on [CF Conventions](http://cfconventions.org)
+- [FLO-2D](http://www.flo-2d.com/): Outputs of the FLO-2D modelling package
 
 Some formats are loaded in-memory, some formats support lazy loading.
 
