@@ -16,6 +16,7 @@ TEST( MeshBinaryDatTest, MissingMesh )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+  MDAL_CloseMesh( m );
 }
 
 TEST( MeshBinaryDatTest, QuadAndTriangleFile )

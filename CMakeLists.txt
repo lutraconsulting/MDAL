@@ -80,6 +80,7 @@ ENDIF(BUILD_TOOLS)
 #############################################################
 # testing
 IF (ENABLE_TESTS)
+  INCLUDE (CTest)
   ADD_DEFINITIONS(-DENABLE_TESTS)
   ENABLE_TESTING()
   ADD_SUBDIRECTORY(tests)

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 echo "OSX native build"
 mkdir -p build_osx
 cd build_osx

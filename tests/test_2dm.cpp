@@ -37,6 +37,7 @@ TEST( Mesh2DMTest, MeshWithNumberingGaps )
   EXPECT_EQ( v_count, 5 );
   int f_count = MDAL_M_faceCount( m );
   EXPECT_EQ( 2, f_count );
+  MDAL_CloseMesh( m );
 }
 
 TEST( Mesh2DMTest, QuadAndTriangleFile )

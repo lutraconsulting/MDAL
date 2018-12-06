@@ -37,6 +37,7 @@ void _populateFaces( MeshH m, std::vector<int> &ret, size_t faceOffsetsBufferLen
 
     faceIndex += facesRead;
   }
+  MDAL_FI_close( it );
 }
 
 TEST( Mest2DMTest, FacesApi )
@@ -88,6 +89,7 @@ TEST( Mest2DMTest, FacesApi )
 
     compareVectors( refIndices, indices );
   }
+  MDAL_CloseMesh( m );
 }
 
 void _populateVertices( MeshH m, std::vector<double> &ret, size_t itemsLen )
@@ -114,6 +116,7 @@ void _populateVertices( MeshH m, std::vector<double> &ret, size_t itemsLen )
 
     vertexIndex += verticesRead;
   }
+  MDAL_VI_close( it );
 }
 
 TEST( Mest2DMTest, VerticesApi )
@@ -152,6 +155,7 @@ TEST( Mest2DMTest, VerticesApi )
 
     compareVectors( refCoors, coords );
   }
+  MDAL_CloseMesh( m );
 }
 
 int main( int argc, char **argv )

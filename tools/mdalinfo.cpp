@@ -80,5 +80,7 @@ int main( int argc, char *argv[] )
     std::cout << std::endl;
   }
 
+  MDAL_CloseMesh( m );
+
   return EXIT_SUCCESS;
 }
