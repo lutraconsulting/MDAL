@@ -7,7 +7,8 @@ mkdir -p build_rel_lnx
 cd build_rel_lnx
 cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
 make
-CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
+#CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
+CTEST_TARGET_SYSTEM=Linux-gcc; ctest -D Continuous
 cd ..
 
 echo "MinGW Cross-compile Windows build"
@@ -36,7 +37,7 @@ make VERBOSE=1
 GLIBCPP_FORCE_NEW=1; \
 GLIBCXX_FORCE_NEW=1; \
 CTEST_TARGET_SYSTEM=Linux-gcc; \
-ctest -D ContinuousMemoryCheck 2>&1 | tee memcheck.log
+ctest -D ContinuousMemCheck 2>&1 | tee memcheck.log
 
 #https://stackoverflow.com/a/30403709/2838364
 # GLIBCPP_FORCE_NEW=1; \
