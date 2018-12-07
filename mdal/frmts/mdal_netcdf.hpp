@@ -27,7 +27,7 @@ class NetCDFFile
       return mNcid;
     }
 
-    int openFile( const std::string &fileName )
+    void openFile( const std::string &fileName )
     {
       int res = nc_open( fileName.c_str(), NC_NOWRITE, &mNcid );
       if ( res != NC_NOERR )
