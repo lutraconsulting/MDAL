@@ -330,6 +330,9 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
-  return RUN_ALL_TESTS();
+  init_test();
+  int ret =  RUN_ALL_TESTS();
+  finalize_test();
+  return ret;
 }
 

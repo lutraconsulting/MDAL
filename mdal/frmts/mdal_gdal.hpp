@@ -70,7 +70,7 @@ namespace MDAL
     private:
       typedef std::map<double, std::vector<GDALRasterBandH> > timestep_map; //TIME (sorted), [X, Y]
       typedef std::map<std::string, timestep_map > data_hash; //Data Type, TIME (sorted), [X, Y]
-      typedef std::vector<GdalDataset *> gdal_datasets_vector; //GDAL (Sub)Datasets,
+      typedef std::vector<std::shared_ptr<GdalDataset>> gdal_datasets_vector; //GDAL (Sub)Datasets,
 
       void registerDriver();
 

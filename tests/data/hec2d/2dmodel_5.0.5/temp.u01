@@ -1,0 +1,17 @@
+Flow Title=temp
+Program Version=5.05
+Use Restart= 0 
+Boundary Location=                ,                ,        ,        ,                ,flowarea        ,                ,inflow                          
+Interval=1HOUR
+Flow Hydrograph= 2 
+      .1       1
+Stage Hydrograph TW Check=0
+Flow Hydrograph Slope= 0.005 
+DSS Path=
+Use DSS=False
+Use Fixed Start Time=False
+Fixed Start Date/Time=,
+Is Critical Boundary=False
+Critical Boundary Flow=
+Boundary Location=                ,                ,        ,        ,                ,flowarea        ,                ,outlet                          
+Friction Slope=0.005,0

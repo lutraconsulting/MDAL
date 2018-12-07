@@ -13,6 +13,9 @@
 
 const char *data_path();
 
+void init_test();
+void finalize_test();
+
 std::string test_file( std::string basename );
 
 // Mesh

@@ -28,11 +28,13 @@ IF(HDF5_FOUND)
     frmts/mdal_xmdf.cpp
     frmts/mdal_hdf5.cpp
     frmts/mdal_flo2d.cpp
+    frmts/mdal_hec2d.cpp
   )
   SET(MDAL_HEADERS ${MDAL_HEADERS}
     frmts/mdal_hdf5.hpp
     frmts/mdal_xmdf.hpp
     frmts/mdal_flo2d.hpp
+    frmts/mdal_hec2d.hpp
   )
 ENDIF(HDF5_FOUND)
 

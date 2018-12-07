@@ -2,6 +2,7 @@
 #define str(a) #a
 
 #include "mdal_testutils.hpp"
+#include "mdal_config.hpp"
 #include <vector>
 #include <math.h>
 #include <assert.h>
@@ -162,4 +163,13 @@ int getFaceVerticesIndexAt( MeshH mesh, int faceIndex, int index )
 
   int faceVertexIndex = vertexIndicesBuffer[static_cast<size_t>( id )];
   return faceVertexIndex;
+}
+
+void init_test()
+{
+
+}
+
+void finalize_test()
+{
 }

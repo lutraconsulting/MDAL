@@ -29,14 +29,12 @@ class NetCDFFile
 
     int openFile( const std::string &fileName )
     {
-      int ncid = 0;
       int res = nc_open( fileName.c_str(), NC_NOWRITE, &mNcid );
       if ( res != NC_NOERR )
       {
-        //qDebug("error: %s", nc_strerror(res));
+        MDAL::debug( nc_strerror(res) );
         throw MDAL_Status::Err_UnknownFormat;
       }
-      return ncid;
     }
 
     bool hasVariable( const std::string &name ) const

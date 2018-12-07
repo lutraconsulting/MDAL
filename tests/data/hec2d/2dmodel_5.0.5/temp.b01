@@ -1,0 +1,88 @@
+HEC-RAS 5.0.5 June 2018
+       1       1       0       0
+       0       0
+       F
+       1
+Initial Conditions Flow Information
+       1        Initial Profile
+ 3.1E+38       2
+Flow and Seasonal Roughness Flag (plan)
+       F       F
+       2       0       0
+       3       0    .001
+ 3.1E+38
+       1       1       0       0
+       0       0
+       F
+Project Title, Plan Title and Plan ShortID
+temp
+temp
+temp                                                            
+Job Control Information
+  Computation Interval  = 1MIN
+  Warmup Interval       =  0 
+  Instantaneous Profile = 1MIN
+  Hydrograph Interval   = 1MIN
+  Theta Simulation      =        1
+  Theta Warmup          =        1
+  Friction Slope Method =        2
+  Maximum Iterations    =       20
+  Max Iter WOImprovement=        0
+  Number Warmup Steps   =        0
+  Abort DZ Tolerance    =    98.43
+  DZ Tolerance          =    .0197
+  DZSA Tolerance        =    .0197
+  DQ Tolerance          =  3.1E+38
+  Weir Flow Stability   =        2
+  Spillway Stability    =        1
+  Write Restart File    =        F       F
+  Echo Input TS         =        F
+  Echo Parameters       =        F
+  Echo Output TS        =        F
+  DSS Message Level     =        4
+  Write HDF5 File       =        T
+  Write DSS File        =        T
+C:\Users\kthomson\Desktop\temp\temp.dss
+Computational Time Window
+  Start Date/Time       = 31Dec2017 2400
+  End Date/Time         = 01Jan2018 0100
+Initial Conditions (use restart file?)
+       F
+Log File Information
+       F       0       0
+Computation Level Output
+       F-3.4E+38 3.4E+38       F       F       F       F       F       F       F       F       F    1MIN
+Mixed Flow - Acceleration term reduction based on Froude number
+       F       4      .8       1
+Number of Gate Groups and Internal Boundaries with Gates
+       0       0       0       0
+Breach Data
+       0
+Hydrograph Data
+       2
+       F       F       T       F       F
+Upstream Flow Hydrograph
+       2
+       0     100    8760     100
+ 3.4E+38
+       F       F       F       T       F
+Downstream Normal Depth
+    .001
+Internal Observed Stage/Flow Boundaries
+       0
+Ground Water Interflows
+       0
+Old River Diversions
+       F
+Lateral Inflows, Ungaged Lateral Inflows, Outlet TS, and Observed DSS
+       0       0       0       0
+Stage and Flow Boundary and Ungaged Areas
+       0       0
+Time Slicing Parameters
+       F
+HYDROGRAPH LOCATIONS
+ 0 
+Rules (number of rule sets, number of lookbacks, number of tables)
+       0       0       0
+Extra Commands
+       0
