@@ -32,7 +32,7 @@ class NetCDFFile
       int res = nc_open( fileName.c_str(), NC_NOWRITE, &mNcid );
       if ( res != NC_NOERR )
       {
-        MDAL::debug( nc_strerror(res) );
+        MDAL::debug( nc_strerror( res ) );
         throw MDAL_Status::Err_UnknownFormat;
       }
     }
