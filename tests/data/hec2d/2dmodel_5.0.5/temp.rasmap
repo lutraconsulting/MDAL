@@ -1,0 +1,71 @@
+<RASMapper>
+  <Version>2.0.0</Version>
+  <RASProjectionFilename Filename="..\..\..\..\DMS\1\BR18057 - Supply of Bridge Consultancy Services_30\DRAINAGE\GIS\SETUP\DEM\Projection.prj" />
+  <Features>
+    <Layer Name="Profile Lines" Type="PolylineFeatureLayer" Filename=".\Features\Profile Lines.shp">
+      <LabelFeatures Checked="True" rows="1" cols="1" r0c0="Name" Position="3" Color="-16777216" />
+    </Layer>
+  </Features>
+  <Geometries>
+    <Layer Name="temp" Type="RASGeometry" Filename=".\temp.g01.hdf" />
+  </Geometries>
+  <Results>
+    <Layer Name="temp" Type="RASResults" Expanded="True" Filename=".\temp.p01.hdf">
+      <Layer Type="RASGeometry" Filename=".\temp.p01.hdf" />
+      <Layer Name="depth" Type="RASResultsMap">
+        <MapParameters MapType="depth" ProfileIndex="0" ProfileName="01JAN2018 00:00:00" />
+      </Layer>
+      <Layer Name="velocity" Type="RASResultsMap">
+        <MapParameters MapType="velocity" ProfileIndex="0" ProfileName="01JAN2018 00:00:00" />
+      </Layer>
+      <Layer Name="elevation" Type="RASResultsMap">
+        <MapParameters MapType="elevation" ProfileIndex="0" ProfileName="01JAN2018 00:00:00" />
+      </Layer>
+    </Layer>
+  </Results>
+  <MapLayers />
+  <Terrains Checked="True" Expanded="True">
+    <Layer Name="Terrain" Type="TerrainLayer" Checked="True" Filename=".\Terrain\Terrain.hdf">
+      <Symbology>
+        <SurfaceFill Colors="-10039894,-256,-16744448,-23296,-7667712,-5952982,-8355712,-1286" Values="0,250.732874768539,675.65878116216,1063.34255946599,1399.1273013938,1717.97212514653,2125.85241103035,65535" Stretched="True" />
+      </Symbology>
+      <Alpha>255</Alpha>
+      <ResampleMethod>near</ResampleMethod>
+      <Surface On="True" />
+    </Layer>
+  </Terrains>
+  <CurrentView>
+    <MaxX>472952.180387423</MaxX>
+    <MinX>457599.599842178</MinX>
+    <MaxY>9275900.27556773</MaxY>
+    <MinY>9264836.70660553</MinY>
+  </CurrentView>
+  <VelocitySettings>
+    <Density>1.5</Density>
+    <Lifetime>100</Lifetime>
+    <Radius>0.75</Radius>
+    <Method>2</Method>
+    <Timestep>1</Timestep>
+    <StaticColor>Black</StaticColor>
+  </VelocitySettings>
+  <AnimationSettings>
+    <DelayTimer>0</DelayTimer>
+  </AnimationSettings>
+  <Units>SI Units</Units>
+  <RenderMode>hybrid</RenderMode>
+  <MarksWarpMethod>False</MarksWarpMethod>
+  <CurrentSettings>
+    <ProjectSettings>
+      <RiverStationUnits>Feet</RiverStationUnits>
+      <RiverStationDecimalPlaces>0</RiverStationDecimalPlaces>
+      <HorizontalDecimalPlaces>1</HorizontalDecimalPlaces>
+      <VerticalDecimalPlaces>2</VerticalDecimalPlaces>
+      <XSMaxPoints>450</XSMaxPoints>
+      <LSMaxPoints>1000</LSMaxPoints>
+    </ProjectSettings>
+    <Folders>
+      <TerrainDestinationFolder>.\Terrain</TerrainDestinationFolder>
+      <TerrainSourceFolder>..\..\..\..\DMS\1\BR18057 - Supply of Bridge Consultancy Services_30\DRAINAGE\GIS\SETUP\DEM</TerrainSourceFolder>
+    </Folders>
+  </CurrentSettings>
+</RASMapper>

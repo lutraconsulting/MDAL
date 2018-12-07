@@ -74,6 +74,7 @@ IF(HDF5_FOUND)
   SET(TESTS ${TESTS}
     test_xmdf.cpp
     test_flo2d.cpp
+    test_hec2d.cpp
   )
 ENDIF(HDF5_FOUND)
 

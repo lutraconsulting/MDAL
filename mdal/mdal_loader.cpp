@@ -13,6 +13,7 @@
 #ifdef HAVE_HDF5
 #include "frmts/mdal_xmdf.hpp"
 #include "frmts/mdal_flo2d.hpp"
+#include "frmts/mdal_hec2d.hpp"
 #endif
 
 #ifdef HAVE_GDAL
@@ -46,6 +47,12 @@ std::unique_ptr<MDAL::Mesh> MDAL::Loader::load( const std::string &meshFile, MDA
       MDAL::LoaderFlo2D loaderFlo2D( meshFile );
       mesh = loaderFlo2D.load( status );
     }
+  }
+
+  if ( !mesh && status && *status == MDAL_Status::Err_UnknownFormat )
+  {
+    MDAL::LoaderHec2D loaderHec2D( meshFile );
+    mesh = loaderHec2D.load( status );
   }
 #endif
 

@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "mdal_config.hpp"
 #include "mdal.h"
 
 int main( int argc, char *argv[] )
@@ -81,6 +82,5 @@ int main( int argc, char *argv[] )
   }
 
   MDAL_CloseMesh( m );
-
   return EXIT_SUCCESS;
 }

@@ -476,7 +476,7 @@ void MDAL::LoaderGdal::registerDriver()
 const MDAL::GdalDataset *MDAL::LoaderGdal::meshGDALDataset()
 {
   assert( gdal_datasets.size() > 0 );
-  return gdal_datasets[0];
+  return gdal_datasets[0].get();
 }
 
 MDAL::LoaderGdal::LoaderGdal( const std::string &fileName, const std::string &driverName ):
@@ -505,7 +505,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::LoaderGdal::load( MDAL_Status *status )
     {
       std::string gdal_dataset_name = *iter;
       // Parse dataset parameters and projection
-      MDAL::GdalDataset *cfGDALDataset = new MDAL::GdalDataset;
+      std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = std::make_shared<MDAL::GdalDataset>();
       cfGDALDataset->init( gdal_dataset_name );
 
       if ( !mMesh )
@@ -520,19 +520,14 @@ std::unique_ptr<MDAL::Mesh> MDAL::LoaderGdal::load( MDAL_Status *status )
         createMesh();
 
         // Parse bands
-        parseRasterBands( cfGDALDataset );
+        parseRasterBands( cfGDALDataset.get() );
 
       }
-      else if ( meshes_equals( meshGDALDataset(), cfGDALDataset ) )
+      else if ( meshes_equals( meshGDALDataset(), cfGDALDataset.get() ) )
       {
         gdal_datasets.push_back( cfGDALDataset );
         // Parse bands
-        parseRasterBands( cfGDALDataset );
-      }
-      else
-      {
-        // Do not use
-        delete cfGDALDataset;
+        parseRasterBands( cfGDALDataset.get() );
       }
     }
 
@@ -545,10 +540,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::LoaderGdal::load( MDAL_Status *status )
     mMesh.reset();
   }
 
-  for ( auto it = gdal_datasets.begin(); it != gdal_datasets.end(); ++it )
-  {
-    delete ( *it );
-  }
   gdal_datasets.clear();
 
   if ( mPafScanline ) delete[] mPafScanline;

@@ -1,0 +1,7 @@
+{
+   NetCDF open leak
+   Memcheck:Leak
+   ...
+   fun:nc_open
+   ...
+}

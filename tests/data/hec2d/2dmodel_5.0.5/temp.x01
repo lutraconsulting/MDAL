@@ -1,0 +1,59 @@
+HEC-RAS 5.0.5 June 2018
+Section - Arrays Sizes
+temp                                                            
+       1       1       0       2       8       F
+       3       3       0       0       0       0       0       0
+       0       0       0       F       T       0       0       0       1       0       0       0
+       0       0       F       T       0       0       0       F       0       0       F
+       0
+       1       1       0       F       T       F       0       3      30       T       T       F       0
+       0     .01       F   .0098      20   .3281   .0098       T       5       T       F
+Section - Expansion and Contraction Coefficients
+       0       0       2
+Section - Expansion and Contraction Coefficients (Unsteady)
+       2
+       0       0       0       0
+Section - Minor Loss Coefficients (Geometry)
+       2
+       0       0
+Section - Job Control
+       1       1       1       F       F       1
+Section - Junction Information
+Section - Reach Boundaries
+       T       T       2       3        Fake River             F       F
+Section - Encroachment Data
+Section - Observed Water Surface Data
+Section - Roughness Change Factors
+Section - Breach Data
+Section - Storage Area Data
+SA     8                                                        flowarea        
+       0       0       0       5       T
+Section - Storage Area Connection Data
+Section - Pump Station Data
+Section - River Reach Data
+NODE   1Fake Reach      100                  100               0                                                
+       1       F
+       4
+       0      10       0       0     100       0     100      10
+Section - XS Manning's/Roughness Data
+       1       F       F       0
+       0     .03
+       0       0       0       0       F       F       0     100       F       F
+       1       0       F
+       0     100       0
+       0       T
+       0       0       0
+     .15      .3      33
+NODE   1Fake Reach      0                                      0                                                
+       1       F
+       4
+       0      10       0       0     100       0     100      10
+Section - XS Manning's/Roughness Data
+       1       F       F       0
+       0     .03
+       0       0       0       0       F       F       0     100       F       F
+       1       0       F
+       0     100       0
+       0       T
+       0       0       0
+     .15      .3      33

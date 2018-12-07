@@ -1,0 +1,68 @@
+ 
+                                              HEC-RAS - River Analysis System
+ 
+ 
+Project File:  C:\Users\kthomson\Desktop\temp\temp.prj
+ 
+Project Name:  temp
+ 
+ 
+Plan Name:     temp
+ 
+Short ID:      temp
+ 
+
+Starting Time:   31Dec2017 2400
+
+Ending Time:     01Jan2018 0100
+
+
+                ################################################
+                #                                              #
+                #                                              #
+                #       1D and 2D Unsteady Flow Module         #
+                #                                              #
+                #                                              #
+                #          HEC-RAS 5.0.5 June 2018             #
+                #                                              #
+                #             27SEP18 at 15:06:28              #
+                #                                              #
+                ################################################
+ 
+ 
+ 
+
+
+
+                 Volume Accounting in 1000 m^3
+
+                           External Boundary Flux of Water
+
+         US Inflow       Lat Hydro      DS Outflow        SA Hydro     Groundwater       2D Inflow      2D Outflow      Diversions
+         *********       *********      **********        ********     ***********       *********      **********      **********
+                                                                                             2.007                                
+
+                      River Reaches, Storage Areas, and 2D Areas
+
+    Start 1D Reach   Starting SA's     Starting 2D  Final 1D Reach      Final SA's  Final 2D Areas
+    **************   *************     ***********  **************      **********  **************
+                                                                                             2.007
+
+                             Error   Percent Error
+
+                             *****   *************
+                         -0.000000        0.000000
+
+
+
+
+
+
+
+                 Volume Accounting for 2D Flow Area in 1000 m^3                  
+
+           2D Area    Starting Vol      Ending Vol      Cum Inflow     Cum Outflow           Error   Percent Error
+           *******    ************      **********      **********     ***********           *****    ************
+ 
+ 
+          flowarea                           2.007           2.007                       -0.000000        0.000000
