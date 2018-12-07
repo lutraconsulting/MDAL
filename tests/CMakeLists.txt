@@ -87,6 +87,7 @@ ENDIF(GDAL_FOUND)
 IF(NETCDF_FOUND)
 SET(TESTS ${TESTS}
   test_3di.cpp
+  test_sww.cpp
 )
 ENDIF(NETCDF_FOUND)
 

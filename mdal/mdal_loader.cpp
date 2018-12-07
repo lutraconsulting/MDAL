@@ -22,6 +22,7 @@
 
 #ifdef HAVE_NETCDF
 #include "frmts/mdal_3di.hpp"
+#include "frmts/mdal_sww.hpp"
 #endif
 
 #if defined HAVE_GDAL && defined HAVE_NETCDF
@@ -62,6 +63,12 @@ std::unique_ptr<MDAL::Mesh> MDAL::Loader::load( const std::string &meshFile, MDA
     MDAL::Loader3Di loader3di( meshFile );
     mesh = loader3di.load( status );
   }
+
+  if ( !mesh && status && *status == MDAL_Status::Err_UnknownFormat )
+  {
+    MDAL::LoaderSWW loaderSWW( meshFile );
+    mesh = loaderSWW.load( status );
+  }
 #endif
 
 #ifdef HAVE_GDAL
@@ -74,8 +81,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::Loader::load( const std::string &meshFile, MDA
       mesh = loaderNetCDF.load( status );
     }
     else
-    {
 #endif // HAVE_GDAL && HAVE_NETCDF
+    {
       MDAL::LoaderGdalGrib loaderGrib( meshFile );
       mesh = loaderGrib.load( status );
     }
