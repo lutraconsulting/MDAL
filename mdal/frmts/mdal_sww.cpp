@@ -16,13 +16,47 @@
 // determine that when loading data
 #define DEPTH_THRESHOLD   0.0001   // in meters
 
-MDAL::LoaderSWW::LoaderSWW( const std::string &resultsFile )
-  : mFileName( resultsFile )
+MDAL::DriverSWW::DriverSWW()
+  : Driver( "SWW",
+            "AnuGA",
+            "*.sww",
+            DriverType::CanReadMeshAndDatasets )
 {
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::LoaderSWW::load( MDAL_Status *status )
+bool MDAL::DriverSWW::canRead( const std::string &uri )
 {
+  int ncid;
+  int res;
+
+  // open
+  res = nc_open( uri.c_str(), NC_NOWRITE, &ncid );
+  if ( res != NC_NOERR )
+  {
+    MDAL::debug( nc_strerror( res ) );
+    nc_close( ncid );
+    return false;
+  }
+
+  // get dimensions
+  int nVolumesId, nVerticesId, nPointsId, nTimestepsId;
+  if ( nc_inq_dimid( ncid, "number_of_volumes", &nVolumesId ) != NC_NOERR ||
+       nc_inq_dimid( ncid, "number_of_vertices", &nVerticesId ) != NC_NOERR ||
+       nc_inq_dimid( ncid, "number_of_points", &nPointsId ) != NC_NOERR ||
+       nc_inq_dimid( ncid, "number_of_timesteps", &nTimestepsId ) != NC_NOERR )
+  {
+    nc_close( ncid );
+    return false;
+  }
+
+  return true;
+}
+
+
+std::unique_ptr<MDAL::Mesh> MDAL::DriverSWW::load( const std::string &resultsFile,
+    MDAL_Status *status )
+{
+  mFileName = resultsFile;
   if ( status ) *status = MDAL_Status::None;
 
   int ncid;

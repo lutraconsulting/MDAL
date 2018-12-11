@@ -11,14 +11,17 @@
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
 #include "mdal.h"
+#include "mdal_driver.hpp"
 
 namespace MDAL
 {
-  class LoaderFlo2D
+  class DriverFlo2D: public Driver
   {
     public:
-      LoaderFlo2D( const std::string &resultsFile );
-      std::unique_ptr< Mesh > load( MDAL_Status *status );
+      DriverFlo2D();
+      ~DriverFlo2D( ) override = default;
+      bool canRead( const std::string &uri ) override;
+      std::unique_ptr< Mesh > load( const std::string &resultsFile, MDAL_Status *status ) override;
 
       static bool isFlo2DFile( const std::string &fileName );
 

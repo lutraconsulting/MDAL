@@ -12,14 +12,17 @@
 #include "mdal_memory_data_model.hpp"
 #include "mdal.h"
 #include "mdal_hdf5.hpp"
+#include "mdal_driver.hpp"
 
 namespace MDAL
 {
-  class LoaderHec2D
+  class DriverHec2D: public Driver
   {
     public:
-      LoaderHec2D( const std::string &resultsFile );
-      std::unique_ptr< Mesh > load( MDAL_Status *status );
+      DriverHec2D();
+      ~DriverHec2D( ) override = default;
+      bool canRead( const std::string &uri ) override;
+      std::unique_ptr< Mesh > load( const std::string &resultsFile, MDAL_Status *status ) override;
 
     private:
       std::unique_ptr< MDAL::MemoryMesh > mMesh;
