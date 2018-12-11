@@ -9,7 +9,7 @@
 #include <assert.h>
 
 #include "mdal.h"
-#include "mdal_loader.hpp"
+#include "mdal_driver_manager.hpp"
 #include "mdal_data_model.hpp"
 
 #define NODATA std::numeric_limits<double>::quiet_NaN()
@@ -38,6 +38,68 @@ const char *_return_str( const std::string &str )
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
+/// DRIVERS
+///////////////////////////////////////////////////////////////////////////////////////
+
+const char *MDAL_drivers()
+{
+  auto drs = MDAL::DriverManager::drivers();
+  std::string names;
+
+  for ( const auto &dr : drs )
+  {
+    if ( names.empty() )
+      names += dr->name();
+    else
+      names += ";;" + dr->name();
+  }
+
+  return _return_str( names );
+}
+
+bool MDAL_DR_meshLoadCapability( const char *driverName )
+{
+  const auto drv = MDAL::DriverManager::driver( driverName );
+  if ( drv )
+  {
+    return drv->type() == MDAL::DriverType::CanReadMeshAndDatasets;
+  }
+  else
+  {
+    sLastStatus = Err_MissingDriver;
+    return false;
+  }
+}
+
+const char *MDAL_DR_longName( const char *driverName )
+{
+  const auto drv = MDAL::DriverManager::driver( driverName );
+  if ( drv )
+  {
+    return _return_str( drv->name() );
+  }
+  else
+  {
+    sLastStatus = Err_MissingDriver;
+    return EMPTY_STR;
+  }
+}
+
+const char *MDAL_DR_filters( const char *driverName )
+{
+  const auto drv = MDAL::DriverManager::driver( driverName );
+  if ( drv )
+  {
+    return _return_str( drv->filters() );
+  }
+  else
+  {
+    sLastStatus = Err_MissingDriver;
+    return EMPTY_STR;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,7 +112,7 @@ MeshH MDAL_LoadMesh( const char *meshFile )
   }
 
   std::string filename( meshFile );
-  return static_cast< MeshH >( MDAL::Loader::load( filename, &sLastStatus ).release() );
+  return static_cast< MeshH >( MDAL::DriverManager::load( filename, &sLastStatus ).release() );
 }
 
 
@@ -150,7 +212,7 @@ void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile )
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
 
   std::string filename( datasetFile );
-  MDAL::Loader::loadDatasets( m, datasetFile, &sLastStatus );
+  MDAL::DriverManager::loadDatasets( m, datasetFile, &sLastStatus );
 }
 
 int MDAL_M_datasetGroupCount( MeshH mesh )

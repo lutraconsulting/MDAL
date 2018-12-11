@@ -108,7 +108,7 @@ static std::vector<int> readFace2Cells( const HdfFile &hdfFile, const std::strin
   return face2Cells;
 }
 
-void MDAL::LoaderHec2D::readFaceOutput( const HdfFile &hdfFile,
+void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
                                         const HdfGroup &rootGroup,
                                         const std::vector<size_t> &areaElemStartIndex,
                                         const std::vector<std::string> &flowAreaNames,
@@ -184,7 +184,7 @@ void MDAL::LoaderHec2D::readFaceOutput( const HdfFile &hdfFile,
   mMesh->datasetGroups.push_back( group );
 }
 
-void MDAL::LoaderHec2D::readFaceResults( const HdfFile &hdfFile,
+void MDAL::DriverHec2D::readFaceResults( const HdfFile &hdfFile,
     const std::vector<size_t> &areaElemStartIndex,
     const std::vector<std::string> &flowAreaNames )
 {
@@ -205,7 +205,7 @@ void MDAL::LoaderHec2D::readFaceResults( const HdfFile &hdfFile,
 }
 
 
-std::shared_ptr<MDAL::MemoryDataset> MDAL::LoaderHec2D::readElemOutput( const HdfGroup &rootGroup,
+std::shared_ptr<MDAL::MemoryDataset> MDAL::DriverHec2D::readElemOutput( const HdfGroup &rootGroup,
     const std::vector<size_t> &areaElemStartIndex,
     const std::vector<std::string> &flowAreaNames,
     const std::string rawDatasetName,
@@ -294,7 +294,7 @@ std::shared_ptr<MDAL::MemoryDataset> MDAL::LoaderHec2D::readElemOutput( const Hd
   return datasets[0];
 }
 
-std::shared_ptr<MDAL::MemoryDataset> MDAL::LoaderHec2D::readBedElevation(
+std::shared_ptr<MDAL::MemoryDataset> MDAL::DriverHec2D::readBedElevation(
   const HdfGroup &gGeom2DFlowAreas,
   const std::vector<size_t> &areaElemStartIndex,
   const std::vector<std::string> &flowAreaNames )
@@ -311,7 +311,7 @@ std::shared_ptr<MDAL::MemoryDataset> MDAL::LoaderHec2D::readBedElevation(
          );
 }
 
-void MDAL::LoaderHec2D::readElemResults(
+void MDAL::DriverHec2D::readElemResults(
   const HdfFile &hdfFile,
   std::shared_ptr<MDAL::MemoryDataset> bed_elevation,
   const std::vector<size_t> &areaElemStartIndex,
@@ -365,7 +365,7 @@ std::vector<std::string> read2DFlowAreasNames( HdfGroup gGeom2DFlowAreas )
   return names;
 }
 
-void MDAL::LoaderHec2D::setProjection( HdfFile hdfFile )
+void MDAL::DriverHec2D::setProjection( HdfFile hdfFile )
 {
   try
   {
@@ -375,7 +375,7 @@ void MDAL::LoaderHec2D::setProjection( HdfFile hdfFile )
   catch ( MDAL_Status ) { /* projection not set */}
 }
 
-void MDAL::LoaderHec2D::parseMesh(
+void MDAL::DriverHec2D::parseMesh(
   HdfGroup gGeom2DFlowAreas,
   std::vector<size_t> &areaElemStartIndex,
   const std::vector<std::string> &flowAreaNames )
@@ -452,13 +452,35 @@ void MDAL::LoaderHec2D::parseMesh(
   mMesh->vertices = vertices;
 }
 
-MDAL::LoaderHec2D::LoaderHec2D( const std::string &resultsFile )
-  : mFileName( resultsFile )
+MDAL::DriverHec2D::DriverHec2D()
+  : Driver( "HEC2D",
+            "HEC-RAS 2D",
+            "*.hdf",
+            DriverType::CanReadMeshAndDatasets )
 {
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::LoaderHec2D::load( MDAL_Status *status )
+bool MDAL::DriverHec2D::canRead( const std::string &uri )
 {
+  try
+  {
+    HdfFile hdfFile = openHdfFile( uri );
+    std::string fileType = openHdfAttribute( hdfFile, "File Type" );
+    if ( fileType != "HEC-RAS Results" )
+    {
+      return false;
+    }
+  }
+  catch ( MDAL_Status )
+  {
+    return false;
+  }
+  return true;
+}
+
+std::unique_ptr<MDAL::Mesh> MDAL::DriverHec2D::load( const std::string &resultsFile, MDAL_Status *status )
+{
+  mFileName = resultsFile;
   if ( status ) *status = MDAL_Status::None;
   mMesh.reset();
 

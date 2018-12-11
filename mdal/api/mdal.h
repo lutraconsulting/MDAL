@@ -76,6 +76,27 @@ MDAL_EXPORT const char *MDAL_Version();
 MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 
 ///////////////////////////////////////////////////////////////////////////////////////
+/// DRIVERS
+///////////////////////////////////////////////////////////////////////////////////////
+
+//! Returns all registered MDAL driver names separated by ";;"
+//! Name is unique identifier of the driver
+//! not thread-safe and valid only till next call
+MDAL_EXPORT const char *MDAL_drivers( );
+
+//! Returns whether driver can be used to mesh
+//! if false, driver can be only used to load datasets to existing mesh
+MDAL_EXPORT bool MDAL_DR_meshLoadCapability( const char *driverName );
+
+//! Returns long name of MDAL drivers
+//! not thread-safe and valid only till next call
+MDAL_EXPORT const char *MDAL_DR_longName( const char *driverName );
+
+//! Returns file filters that MDAL driver recognizes
+//! not thread-safe and valid only till next call
+MDAL_EXPORT const char *MDAL_DR_filters( const char *driverName );
+
+///////////////////////////////////////////////////////////////////////////////////////
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -11,15 +11,18 @@
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
 #include "mdal.h"
+#include "mdal_driver.hpp"
 
 namespace MDAL
 {
   // AnuGA format with extension .SWW
-  class LoaderSWW
+  class DriverSWW: public Driver
   {
     public:
-      LoaderSWW( const std::string &resultsFile );
-      std::unique_ptr< Mesh > load( MDAL_Status *status );
+      DriverSWW();
+      ~DriverSWW( ) override = default;
+      std::unique_ptr< Mesh > load( const std::string &resultsFile, MDAL_Status *status ) override;
+      bool canRead( const std::string &uri ) override;
     private:
       std::string mFileName;
   };

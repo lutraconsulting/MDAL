@@ -70,7 +70,7 @@ static double getDouble( const std::string &val )
   }
 }
 
-void MDAL::LoaderFlo2D::addStaticDataset(
+void MDAL::DriverFlo2D::addStaticDataset(
   bool isOnVertices,
   std::vector<double> &vals,
   const std::string &name,
@@ -95,7 +95,7 @@ void MDAL::LoaderFlo2D::addStaticDataset(
   mMesh->datasetGroups.push_back( group );
 }
 
-void MDAL::LoaderFlo2D::parseCADPTSFile( const std::string &datFileName, std::vector<CellCenter> &cells )
+void MDAL::DriverFlo2D::parseCADPTSFile( const std::string &datFileName, std::vector<CellCenter> &cells )
 {
   std::string cadptsFile( fileNameFromDir( datFileName, "CADPTS.DAT" ) );
   if ( !MDAL::fileExists( cadptsFile ) )
@@ -122,7 +122,7 @@ void MDAL::LoaderFlo2D::parseCADPTSFile( const std::string &datFileName, std::ve
   }
 }
 
-void MDAL::LoaderFlo2D::parseFPLAINFile( std::vector<double> &elevations,
+void MDAL::DriverFlo2D::parseFPLAINFile( std::vector<double> &elevations,
     const std::string &datFileName,
     std::vector<CellCenter> &cells )
 {
@@ -162,7 +162,7 @@ static void addDatasetToGroup( std::shared_ptr<MDAL::DatasetGroup> group, std::s
   }
 }
 
-void MDAL::LoaderFlo2D::parseTIMDEPFile( const std::string &datFileName, const std::vector<double> &elevations )
+void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const std::vector<double> &elevations )
 {
   // TIMDEP.OUT
   // this file is optional, so if not present, reading is skipped
@@ -276,7 +276,7 @@ void MDAL::LoaderFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
 }
 
 
-void MDAL::LoaderFlo2D::parseDEPTHFile( const std::string &datFileName, const std::vector<double> &elevations )
+void MDAL::DriverFlo2D::parseDEPTHFile( const std::string &datFileName, const std::vector<double> &elevations )
 {
   // this file is optional, so if not present, reading is skipped
   std::string depthFile( fileNameFromDir( datFileName, "DEPTH.OUT" ) );
@@ -321,7 +321,7 @@ void MDAL::LoaderFlo2D::parseDEPTHFile( const std::string &datFileName, const st
 }
 
 
-void MDAL::LoaderFlo2D::parseVELFPVELOCFile( const std::string &datFileName )
+void MDAL::DriverFlo2D::parseVELFPVELOCFile( const std::string &datFileName )
 {
   // these files are optional, so if not present, reading is skipped
   size_t nVertices = mMesh->verticesCount();
@@ -393,7 +393,7 @@ void MDAL::LoaderFlo2D::parseVELFPVELOCFile( const std::string &datFileName )
   addStaticDataset( true, maxVel, "Velocity/Maximums", datFileName );
 }
 
-double MDAL::LoaderFlo2D::calcCellSize( const std::vector<CellCenter> &cells )
+double MDAL::DriverFlo2D::calcCellSize( const std::vector<CellCenter> &cells )
 {
   // find first cell that is not izolated from the others
   // and return its distance to the neighbor's cell center
@@ -418,7 +418,7 @@ double MDAL::LoaderFlo2D::calcCellSize( const std::vector<CellCenter> &cells )
   throw MDAL_Status::Err_IncompatibleMesh;
 }
 
-MDAL::Vertex MDAL::LoaderFlo2D::createVertex( size_t position, double half_cell_size, const CellCenter &cell )
+MDAL::Vertex MDAL::DriverFlo2D::createVertex( size_t position, double half_cell_size, const CellCenter &cell )
 {
   MDAL::Vertex n;
   n.x = cell.x;
@@ -450,7 +450,7 @@ MDAL::Vertex MDAL::LoaderFlo2D::createVertex( size_t position, double half_cell_
   return n;
 }
 
-void MDAL::LoaderFlo2D::createMesh( const std::vector<CellCenter> &cells, double half_cell_size )
+void MDAL::DriverFlo2D::createMesh( const std::vector<CellCenter> &cells, double half_cell_size )
 {
   // Create all Faces from cell centers.
   // Vertexs must be also created, they are not stored in FLO-2D files
@@ -497,7 +497,7 @@ void MDAL::LoaderFlo2D::createMesh( const std::vector<CellCenter> &cells, double
   mMesh->vertices = vertices;
 }
 
-bool MDAL::LoaderFlo2D::isFlo2DFile( const std::string &fileName )
+bool MDAL::DriverFlo2D::isFlo2DFile( const std::string &fileName )
 {
   std::vector<std::string> required_files =
   {
@@ -514,7 +514,7 @@ bool MDAL::LoaderFlo2D::isFlo2DFile( const std::string &fileName )
   return true;
 }
 
-bool MDAL::LoaderFlo2D::parseHDF5Datasets( const std::string &datFileName )
+bool MDAL::DriverFlo2D::parseHDF5Datasets( const std::string &datFileName )
 {
   //return true on error
 
@@ -613,7 +613,7 @@ bool MDAL::LoaderFlo2D::parseHDF5Datasets( const std::string &datFileName )
   return false;
 }
 
-void MDAL::LoaderFlo2D::parseOUTDatasets( const std::string &datFileName, const std::vector<double> &elevations )
+void MDAL::DriverFlo2D::parseOUTDatasets( const std::string &datFileName, const std::vector<double> &elevations )
 {
   // Create Depth and Velocity datasets Time varying datasets
   parseTIMDEPFile( datFileName, elevations );
@@ -625,13 +625,36 @@ void MDAL::LoaderFlo2D::parseOUTDatasets( const std::string &datFileName, const 
   parseVELFPVELOCFile( datFileName );
 }
 
-MDAL::LoaderFlo2D::LoaderFlo2D( const std::string &resultsFile )
-  : mDatFileName( resultsFile )
+MDAL::DriverFlo2D::DriverFlo2D()
+  : Driver(
+      "FLO2D",
+      "Flo2D",
+      "*.nc",
+      DriverType::CanReadMeshAndDatasets )
 {
+
 }
 
-std::unique_ptr< MDAL::Mesh > MDAL::LoaderFlo2D::load( MDAL_Status *status )
+bool MDAL::DriverFlo2D::canRead( const std::string &uri )
 {
+  std::string cadptsFile( fileNameFromDir( uri, "CADPTS.DAT" ) );
+  if ( !MDAL::fileExists( cadptsFile ) )
+  {
+    return false;
+  }
+
+  std::string fplainFile( fileNameFromDir( uri, "FPLAIN.DAT" ) );
+  if ( !MDAL::fileExists( fplainFile ) )
+  {
+    return false;
+  }
+
+  return true;
+}
+
+std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &resultsFile, MDAL_Status *status )
+{
+  mDatFileName = resultsFile;
   if ( status ) *status = MDAL_Status::None;
   mMesh.reset();
   std::vector<CellCenter> cells;
