@@ -18,6 +18,11 @@ MDAL::DriverGdalGrib::DriverGdalGrib( )
     mRefTime( std::numeric_limits<double>::min() )
 {}
 
+MDAL::DriverGdalGrib *MDAL::DriverGdalGrib::create()
+{
+  return new DriverGdalGrib();
+}
+
 MDAL::DriverGdalGrib::~DriverGdalGrib() = default;
 
 bool MDAL::DriverGdalGrib::parseBandInfo( const MDAL::GdalDataset *cfGDALDataset,

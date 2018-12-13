@@ -635,6 +635,11 @@ MDAL::DriverFlo2D::DriverFlo2D()
 
 }
 
+MDAL::DriverFlo2D *MDAL::DriverFlo2D::create()
+{
+  return new DriverFlo2D();
+}
+
 bool MDAL::DriverFlo2D::canRead( const std::string &uri )
 {
   std::string cadptsFile( fileNameFromDir( uri, "CADPTS.DAT" ) );

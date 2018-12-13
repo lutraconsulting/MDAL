@@ -21,11 +21,25 @@ namespace MDAL
   class DriverManager
   {
     public:
-      static std::unique_ptr< Mesh > load( const std::string &meshFile, MDAL_Status *status );
-      static void loadDatasets( Mesh *mesh, const std::string &datasetFile, MDAL_Status *status );
+      static DriverManager &instance()
+      {
+        static DriverManager sInstance;
+        return sInstance;
+      }
+      DriverManager( DriverManager const & )   = delete;
+      void operator=( DriverManager const & )  = delete;
 
-      static std::vector<std::shared_ptr<MDAL::Driver>> drivers();
-      static std::shared_ptr<Driver> driver( const std::string &driverName );
+      std::unique_ptr< Mesh > load( const std::string &meshFile, MDAL_Status *status ) const;
+      void loadDatasets( Mesh *mesh, const std::string &datasetFile, MDAL_Status *status ) const;
+
+      size_t driversCount() const;
+      std::shared_ptr<MDAL::Driver> driver( const std::string &driverName ) const;
+      std::shared_ptr<MDAL::Driver> driver( size_t index ) const;
+
+    private:
+      DriverManager();
+
+      std::vector<std::shared_ptr<MDAL::Driver>> mDrivers;
   };
 
 } // namespace MDAL

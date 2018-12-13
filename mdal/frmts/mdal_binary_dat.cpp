@@ -80,6 +80,11 @@ MDAL::DriverBinaryDat::DriverBinaryDat():
 {
 }
 
+MDAL::DriverBinaryDat *MDAL::DriverBinaryDat::create()
+{
+  return new DriverBinaryDat();
+}
+
 MDAL::DriverBinaryDat::~DriverBinaryDat() = default;
 
 bool MDAL::DriverBinaryDat::canRead( const std::string &uri )

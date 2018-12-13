@@ -12,14 +12,16 @@
 #include "mdal_config.hpp"
 #include "mdal.h"
 
-void printDriverInfo( const std::string &driver )
+void printDriverInfo( int index )
 {
-  bool onlyMesh = MDAL_DR_meshLoadCapability( driver.data() );
+  DriverH driver = MDAL_driverFromIndex( index );
+  std::string name = MDAL_DR_name( driver );
+  bool onlyMesh = MDAL_DR_meshLoadCapability( driver );
   std::string meshFlag = onlyMesh ? "-mesh-" : "-data-";
-  std::string longName = MDAL_DR_longName( driver.data() );
-  std::string filters = MDAL_DR_filters( driver.data() );
+  std::string longName = MDAL_DR_longName( driver );
+  std::string filters = MDAL_DR_filters( driver );
 
-  std::cout << driver << " "
+  std::cout << name << " "
             << meshFlag << " (r): "
             << longName << " "
             << "(" << filters << ")"
@@ -28,17 +30,11 @@ void printDriverInfo( const std::string &driver )
 
 void printFormats()
 {
-  std::string driverNames =  MDAL_drivers();
-  std::string delimiter = ";;";
-  size_t pos = 0;
-  std::string driver;
-  while ( ( pos = driverNames.find( delimiter ) ) != std::string::npos )
+  int driverCount = MDAL_driverCount();
+  for ( int i = 0; i < driverCount; ++i )
   {
-    driver = driverNames.substr( 0, pos );
-    printDriverInfo( driver );
-    driverNames.erase( 0, pos + delimiter.length() );
+    printDriverInfo( i );
   }
-  printDriverInfo( driverNames );
 }
 
 
@@ -53,7 +49,7 @@ int main( int argc, char *argv[] )
   // PARSE ARGS
   if ( std::find( args.begin(), args.end(), "-h" ) != args.end() )
   {
-    std::cout << "mdalinfo mesh_file [dataset_file ...] [-h]" << std::endl;
+    std::cout << "mdalinfo mesh_file [dataset_file ...] [-h] [--formats]" << std::endl;
     return EXIT_SUCCESS;
   }
 

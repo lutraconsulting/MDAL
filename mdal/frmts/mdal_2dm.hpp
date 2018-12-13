@@ -47,6 +47,8 @@ namespace MDAL
     public:
       Driver2dm();
       ~Driver2dm() override;
+      Driver2dm *create() override;
+
       bool canRead( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &meshFile, MDAL_Status *status ) override;
 

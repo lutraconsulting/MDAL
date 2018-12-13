@@ -16,6 +16,11 @@ MDAL::DriverGdalNetCDF::DriverGdalNetCDF()
 {
 }
 
+MDAL::DriverGdalNetCDF *MDAL::DriverGdalNetCDF::create()
+{
+  return new DriverGdalNetCDF();
+}
+
 std::string MDAL::DriverGdalNetCDF::GDALFileName( const std::string &fileName )
 {
 #ifdef WIN32

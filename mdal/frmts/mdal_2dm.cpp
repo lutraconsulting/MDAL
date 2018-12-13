@@ -66,6 +66,11 @@ MDAL::Driver2dm::Driver2dm():
 {
 }
 
+MDAL::Driver2dm *MDAL::Driver2dm::create()
+{
+  return new Driver2dm();
+}
+
 MDAL::Driver2dm::~Driver2dm() = default;
 
 bool MDAL::Driver2dm::canRead( const std::string &uri )

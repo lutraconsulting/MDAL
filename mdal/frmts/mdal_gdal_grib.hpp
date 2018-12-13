@@ -20,7 +20,9 @@ namespace MDAL
   {
     public:
       DriverGdalGrib();
-      ~ DriverGdalGrib() override;
+      ~DriverGdalGrib() override;
+      DriverGdalGrib *create() override;
+
     private:
       bool parseBandInfo( const MDAL::GdalDataset *cfGDALDataset,
                           const metadata_hash &metadata, std::string &band_name,

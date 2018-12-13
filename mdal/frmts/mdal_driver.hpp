@@ -28,6 +28,8 @@ namespace MDAL
             );
       virtual ~Driver();
 
+      virtual Driver *create() = 0;
+
       std::string name() const;
       std::string longName() const;
       std::string filters() const;

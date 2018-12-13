@@ -24,6 +24,11 @@ MDAL::DriverSWW::DriverSWW()
 {
 }
 
+MDAL::DriverSWW *MDAL::DriverSWW::create()
+{
+  return new DriverSWW();
+}
+
 bool MDAL::DriverSWW::canRead( const std::string &uri )
 {
   int ncid;

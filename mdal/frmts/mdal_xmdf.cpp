@@ -93,6 +93,11 @@ MDAL::DriverXmdf::DriverXmdf()
 {
 }
 
+MDAL::DriverXmdf *MDAL::DriverXmdf::create()
+{
+  return new DriverXmdf();
+}
+
 bool MDAL::DriverXmdf::canRead( const std::string &uri )
 {
   HdfFile file( uri );

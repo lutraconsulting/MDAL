@@ -13,6 +13,11 @@ MDAL::Driver3Di::Driver3Di()
 {
 }
 
+MDAL::Driver3Di *MDAL::Driver3Di::create()
+{
+  return new Driver3Di();
+}
+
 MDAL::CFDimensions MDAL::Driver3Di::populateDimensions( const NetCDFFile &ncFile )
 {
   CFDimensions dims;

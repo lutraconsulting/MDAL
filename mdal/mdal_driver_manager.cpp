@@ -29,42 +29,7 @@
 #include "frmts/mdal_gdal_netcdf.hpp"
 #endif
 
-static std::vector<std::shared_ptr<MDAL::Driver>> meshDrivers()
-{
-  std::vector<std::shared_ptr<MDAL::Driver>> ret;
-
-  ret.push_back( std::make_shared<MDAL::Driver2dm>() );
-
-#ifdef HAVE_HDF5
-  ret.push_back( std::make_shared<MDAL::DriverFlo2D>() );
-  ret.push_back( std::make_shared<MDAL::DriverHec2D>() );
-#endif
-
-#ifdef HAVE_NETCDF
-  ret.push_back( std::make_shared<MDAL::Driver3Di>() );
-  ret.push_back( std::make_shared<MDAL::DriverSWW>() );
-  ret.push_back( std::make_shared<MDAL::DriverGdalNetCDF>() );
-#endif
-
-#if defined HAVE_GDAL && defined HAVE_NETCDF
-  ret.push_back( std::make_shared<MDAL::DriverGdalGrib>() );
-#endif // HAVE_GDAL && HAVE_NETCDF
-
-  return ret;
-}
-
-static std::vector<std::shared_ptr<MDAL::Driver>> datasetDrivers()
-{
-  std::vector<std::shared_ptr<MDAL::Driver>> ret;
-  ret.push_back( std::make_shared<MDAL::DriverAsciiDat>() );
-  ret.push_back( std::make_shared<MDAL::DriverBinaryDat>() );
-#ifdef HAVE_HDF5
-  ret.push_back( std::make_shared<MDAL::DriverXmdf>() );
-#endif
-  return ret;
-}
-
-std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFile, MDAL_Status *status )
+std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFile, MDAL_Status *status ) const
 {
   std::unique_ptr<MDAL::Mesh> mesh;
 
@@ -74,12 +39,13 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFi
     return std::unique_ptr<MDAL::Mesh>();
   }
 
-  std::vector<std::shared_ptr<MDAL::Driver>> drivers = meshDrivers();
-  for ( auto driver : drivers )
+  for ( const auto &driver : mDrivers )
   {
-    if ( driver->canRead( meshFile ) )
+    if ( ( driver->type() == DriverType::CanReadMeshAndDatasets ) &&
+         driver->canRead( meshFile ) )
     {
-      mesh = driver->load( meshFile, status );
+      std::unique_ptr<Driver> drv( driver->create() );
+      mesh = drv->load( meshFile, status );
       if ( mesh ) // stop if he have the mesh
         break;
     }
@@ -91,7 +57,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFi
   return mesh;
 }
 
-void MDAL::DriverManager::loadDatasets( Mesh *mesh, const std::string &datasetFile, MDAL_Status *status )
+void MDAL::DriverManager::loadDatasets( Mesh *mesh, const std::string &datasetFile, MDAL_Status *status ) const
 {
   if ( !MDAL::fileExists( datasetFile ) )
   {
@@ -105,12 +71,13 @@ void MDAL::DriverManager::loadDatasets( Mesh *mesh, const std::string &datasetFi
     return;
   }
 
-  std::vector<std::shared_ptr<MDAL::Driver>> drivers = datasetDrivers();
-  for ( auto driver : drivers )
+  for ( const auto &driver : mDrivers )
   {
-    if ( driver->canRead( datasetFile ) )
+    if ( ( driver->type() == DriverType::CanReadOnlyDatasets ) &&
+         driver->canRead( datasetFile ) )
     {
-      driver->load( datasetFile, mesh, status );
+      std::unique_ptr<Driver> drv( driver->create() );
+      drv->load( datasetFile, mesh, status );
       return;
     }
   }
@@ -119,21 +86,57 @@ void MDAL::DriverManager::loadDatasets( Mesh *mesh, const std::string &datasetFi
     *status = MDAL_Status::Err_UnknownFormat;
 }
 
-std::vector<std::shared_ptr<MDAL::Driver> > MDAL::DriverManager::drivers()
+size_t MDAL::DriverManager::driversCount() const
 {
-  auto meshDrs = meshDrivers();
-  const auto datasetDrs = datasetDrivers();
-  meshDrs.insert( meshDrs.end(), datasetDrs.begin(), datasetDrs.end() );
-  return meshDrs;
+  return mDrivers.size();
 }
 
-std::shared_ptr<MDAL::Driver> MDAL::DriverManager::driver( const std::string &driverName )
+std::shared_ptr<MDAL::Driver> MDAL::DriverManager::driver( size_t index ) const
 {
-  const auto drvs = drivers();
-  for ( const auto &dr : drvs )
+  if ( mDrivers.size() < index )
+  {
+    return std::shared_ptr<MDAL::Driver>();
+  }
+  else
+  {
+    return mDrivers[index];
+  }
+}
+
+std::shared_ptr<MDAL::Driver> MDAL::DriverManager::driver( const std::string &driverName ) const
+{
+  for ( const auto &dr : mDrivers )
   {
     if ( dr->name() == driverName )
       return dr;
   }
   return std::shared_ptr<MDAL::Driver>();
+}
+
+MDAL::DriverManager::DriverManager()
+{
+  // MESH DRIVERS
+  mDrivers.push_back( std::make_shared<MDAL::Driver2dm>() );
+
+#ifdef HAVE_HDF5
+  mDrivers.push_back( std::make_shared<MDAL::DriverFlo2D>() );
+  mDrivers.push_back( std::make_shared<MDAL::DriverHec2D>() );
+#endif
+
+#ifdef HAVE_NETCDF
+  mDrivers.push_back( std::make_shared<MDAL::Driver3Di>() );
+  mDrivers.push_back( std::make_shared<MDAL::DriverSWW>() );
+  mDrivers.push_back( std::make_shared<MDAL::DriverGdalNetCDF>() );
+#endif
+
+#if defined HAVE_GDAL && defined HAVE_NETCDF
+  mDrivers.push_back( std::make_shared<MDAL::DriverGdalGrib>() );
+#endif // HAVE_GDAL && HAVE_NETCDF
+
+  // DATASET DRIVERS
+  mDrivers.push_back( std::make_shared<MDAL::DriverAsciiDat>() );
+  mDrivers.push_back( std::make_shared<MDAL::DriverBinaryDat>() );
+#ifdef HAVE_HDF5
+  mDrivers.push_back( std::make_shared<MDAL::DriverXmdf>() );
+#endif
 }
