@@ -32,6 +32,11 @@ MDAL::DriverAsciiDat::DriverAsciiDat( ):
 {
 }
 
+MDAL::DriverAsciiDat *MDAL::DriverAsciiDat::create()
+{
+  return new DriverAsciiDat();
+}
+
 MDAL::DriverAsciiDat::~DriverAsciiDat( ) = default;
 
 bool MDAL::DriverAsciiDat::canRead( const std::string &uri )

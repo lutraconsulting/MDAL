@@ -20,6 +20,8 @@ namespace MDAL
     public:
       DriverFlo2D();
       ~DriverFlo2D( ) override = default;
+      DriverFlo2D *create() override;
+
       bool canRead( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &resultsFile, MDAL_Status *status ) override;
 

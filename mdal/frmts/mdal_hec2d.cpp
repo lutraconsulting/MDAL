@@ -460,6 +460,11 @@ MDAL::DriverHec2D::DriverHec2D()
 {
 }
 
+MDAL::DriverHec2D *MDAL::DriverHec2D::create()
+{
+  return new DriverHec2D();
+}
+
 bool MDAL::DriverHec2D::canRead( const std::string &uri )
 {
   try

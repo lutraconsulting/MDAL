@@ -8,6 +8,26 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 
+TEST( ApiTest, DriversApi )
+{
+  int driversCount = MDAL_driverCount();
+  ASSERT_TRUE( driversCount > 2 ); // variable based on the available drivers on system
+  DriverH dr = MDAL_driverFromIndex( 0 );
+  ASSERT_TRUE( dr );
+
+  std::string name = MDAL_DR_name( dr );
+  ASSERT_EQ( name, "2DM" );
+
+  std::string longName = MDAL_DR_longName( dr );
+  ASSERT_EQ( longName, "2DM Mesh File" );
+
+  bool meshLoad = MDAL_DR_meshLoadCapability( dr );
+  ASSERT_TRUE( meshLoad );
+
+  std::string filters = MDAL_DR_filters( dr );
+  ASSERT_EQ( filters, "*.2dm" );
+}
+
 void _populateFaces( MeshH m, std::vector<int> &ret, size_t faceOffsetsBufferLen, size_t vertexIndicesBufferLen )
 {
   int facesCount = MDAL_M_faceCount( m );
@@ -40,7 +60,7 @@ void _populateFaces( MeshH m, std::vector<int> &ret, size_t faceOffsetsBufferLen
   MDAL_FI_close( it );
 }
 
-TEST( Mest2DMTest, FacesApi )
+TEST( ApiTest, FacesApi )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
@@ -119,7 +139,7 @@ void _populateVertices( MeshH m, std::vector<double> &ret, size_t itemsLen )
   MDAL_VI_close( it );
 }
 
-TEST( Mest2DMTest, VerticesApi )
+TEST( ApiTest, VerticesApi )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
   MeshH m = MDAL_LoadMesh( path.c_str() );

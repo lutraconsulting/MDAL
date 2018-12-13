@@ -21,6 +21,8 @@ namespace MDAL
     public:
       DriverGdalNetCDF();
       ~DriverGdalNetCDF( ) override = default;
+      DriverGdalNetCDF *create() override;
+
     private:
       std::string GDALFileName( const std::string &fileName ) override;
       bool parseBandInfo( const MDAL::GdalDataset *cfGDALDataset,

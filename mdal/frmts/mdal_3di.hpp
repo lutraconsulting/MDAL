@@ -41,6 +41,7 @@ namespace MDAL
     public:
       Driver3Di();
       ~Driver3Di() override = default;
+      Driver3Di *create() override;
 
     private:
       CFDimensions populateDimensions( const NetCDFFile &ncFile ) override;
