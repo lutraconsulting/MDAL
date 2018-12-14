@@ -104,6 +104,7 @@ MDAL_EXPORT const char *MDAL_DR_name( DriverH driver );
 MDAL_EXPORT const char *MDAL_DR_longName( DriverH driver );
 
 //! Returns file filters that MDAL driver recognizes
+//! Filters are separated by ;;, e.g. *.abc;;*.def
 //! not thread-safe and valid only till next call
 MDAL_EXPORT const char *MDAL_DR_filters( DriverH driver );
 
