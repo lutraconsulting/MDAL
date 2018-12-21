@@ -31,7 +31,7 @@ cmake ${CMAKE_OPTIONS} \
       -DMEMORYCHECK_SUPPRESSIONS_FILE=../scripts/ci/linux/valgrind.supp \
       -DENABLE_TESTS=ON ..
 
-make VERBOSE=1
+make # VERBOSE=1
 
 # run and submit to cdash
 # GLIBCPP_FORCE_NEW=1; \
@@ -51,5 +51,19 @@ if grep -q "Defects:" "memcheck.log"; then
   cat /home/travis/build/lutraconsulting/MDAL/build_db_lnx/Testing/Temporary/MemoryChecker.*.log
   exit 1
 fi
+cd ..
+
+echo "Linux code coverage"
+mkdir -p build_coverage_lnx
+cd build_coverage_lnx
+cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON ..
+make
+CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
+
+lcov --directory . --capture --output-file coverage.info
+lcov --remove coverage.info '*/tests/*' '/usr/*' '*googletest/*' --output-file coverage.info
+lcov --list coverage.info
+# The value of ${COVERALLS_REPO_TOKEN}  is set in the settings page Travis project
+coveralls-lcov --repo-token ${COVERALLS_REPO_TOKEN} coverage.info
 
 cd ..
