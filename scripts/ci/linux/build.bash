@@ -51,5 +51,14 @@ if grep -q "Defects:" "memcheck.log"; then
   cat /home/travis/build/lutraconsulting/MDAL/build_db_lnx/Testing/Temporary/MemoryChecker.*.log
   exit 1
 fi
+cd ..
+
+echo "Linux code coverage"
+mkdir -p build_coverage_lnx
+cd build_coverage_lnx
+cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON ..
+make
+CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
+coveralls --exclude lib --exclude tests --gcov-options '\-lp'
 
 cd ..

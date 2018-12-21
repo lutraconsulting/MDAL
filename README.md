@@ -2,6 +2,8 @@
 [![CircleCI](https://circleci.com/gh/lutraconsulting/MDAL.svg?style=svg)](https://circleci.com/gh/lutraconsulting/MDAL)
 <!-- [<img src="https://my.cdash.org/images/cdash.gif" alt="cdash" width="20"/>](https://my.cdash.org/index.php?project=MDAL) -->
 
+[![Coverage Status](https://coveralls.io/repos/github/lutraconsulting/MDAL/badge.svg?branch=master)](https://coveralls.io/github/lutraconsulting/MDAL?branch=master)
+
 # MDAL
 Mesh Data Abstraction Library
 

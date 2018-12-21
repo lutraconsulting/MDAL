@@ -17,10 +17,25 @@ SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 # global vars
 SET (MDAL_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output CACHE PATH "Output base directory")
 SET (ENABLE_TESTS TRUE CACHE BOOL "Build tests?")
+SET (ENABLE_COVERAGE FALSE CACHE BOOL "Enable GCOV code coverage?")
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables?")
 SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that require HDF5")
 SET (WITH_GDAL TRUE CACHE BOOL "Build providers that require GDAL (e.g. GRIB)")
 SET (WITH_NETCDF TRUE CACHE BOOL "Build providers that require NETCDF (e.g. 3Di)")
+
+#############################################################
+# Setup code coverage
+IF(ENABLE_COVERAGE)
+  IF (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    MESSAGE(FATAL_ERROR "gcov coverage must be run in debug build type")
+  ENDIF(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+  IF(MSVC)
+    MESSAGE(FATAL_ERROR "gcov coverage is not implemented for Windows")
+  ENDIF(MSVC)
+
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+ENDIF()
 
 #############################################################
 # warnings https://stackoverflow.com/a/3818084/2838364
