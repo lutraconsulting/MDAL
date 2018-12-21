@@ -59,5 +59,5 @@ cd build_coverage_lnx
 cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON ..
 make
 CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
-coveralls #--exclude googletest-src --exclude tests --exclude CMakeFiles
+coveralls --include /home/travis/build/lutraconsulting/MDAL/mdal/
 cd ..
