@@ -34,7 +34,7 @@ IF(ENABLE_COVERAGE)
     MESSAGE(FATAL_ERROR "gcov coverage is not implemented for Windows")
   ENDIF(MSVC)
 
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 ENDIF()
 
 #############################################################

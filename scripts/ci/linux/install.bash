@@ -14,5 +14,6 @@ sudo apt-get install mingw-w64
 sudo apt-get install libc6-dbg gdb valgrind
 
 # Code coverage
-sudo apt-get install python-pip
-sudo pip install cpp-coveralls
+sudo apt-get install -y rubygems
+sudo apt-get install -y lcov
+sudo gem install coveralls-lcov

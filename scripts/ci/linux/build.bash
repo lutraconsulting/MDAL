@@ -59,5 +59,11 @@ cd build_coverage_lnx
 cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON ..
 make
 CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
-coveralls --include /home/travis/build/lutraconsulting/MDAL/mdal/
+
+lcov --directory . --capture --output-file coverage.info
+lcov --remove coverage.info '*/tests/*' '/usr/*' '*googletest/*' --output-file coverage.info
+lcov --list coverage.info
+# The value of ${COVERALLS_REPO_TOKEN}  is set in the settings page Travis project
+coveralls-lcov --repo-token ${COVERALLS_REPO_TOKEN} coverage.info
+
 cd ..
