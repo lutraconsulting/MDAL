@@ -31,7 +31,7 @@ cmake ${CMAKE_OPTIONS} \
       -DMEMORYCHECK_SUPPRESSIONS_FILE=../scripts/ci/linux/valgrind.supp \
       -DENABLE_TESTS=ON ..
 
-make VERBOSE=1
+make # VERBOSE=1
 
 # run and submit to cdash
 # GLIBCPP_FORCE_NEW=1; \
@@ -59,6 +59,6 @@ cd build_coverage_lnx
 cmake ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON ..
 make
 CTEST_TARGET_SYSTEM=Linux-gcc; ctest -VV
-coveralls --exclude lib --exclude tests --gcov-options '\-lp'
+coveralls --exclude googletest-src --exclude tests --exclude CMakeFiles --gcov-options '\-lp'
 
 cd ..
