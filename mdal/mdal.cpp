@@ -678,7 +678,41 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time )
 
 }
 
-int MDAL_D_write( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer )
+int MDAL_D_write( DatasetH dataset,
+                  int indexStart,
+                  int count,
+                  MDAL_DataType dataType,
+                  void *buffer )
+{
+
+}
+
+void MDAL_G_setMetadata( DatasetGroupH group, const char *key, const char *val )
+{
+
+}
+
+void MDAL_G_setMinimumMaximum( DatasetGroupH group, double min, double max )
+{
+
+}
+
+void MDAL_G_calculateMinimumMaximum( DatasetGroupH group )
+{
+
+}
+
+void MDAL_D_setMinimumMaximum( DatasetH dataset, double min, double max )
+{
+
+}
+
+void MDAL_D_calculateMinimumMaximum( DatasetH dataset )
+{
+
+}
+
+bool MDAL_DR_canWrite( DriverH driver )
 {
 
 }
