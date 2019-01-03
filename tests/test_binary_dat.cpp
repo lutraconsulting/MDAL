@@ -178,6 +178,7 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
 
     DriverH driver = MDAL_driverFromName( "BINARY_DAT" );
     ASSERT_NE( driver, nullptr );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
@@ -188,6 +189,10 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
                         scalarPath.c_str()
                       );
     ASSERT_NE( g, nullptr );
+
+    ASSERT_EQ( MDAL_G_metadataCount( g ), 1 );
+    MDAL_G_setMetadata( g, "testkey", "testvalue" );
+    ASSERT_EQ( MDAL_G_metadataCount( g ), 2 );
 
     MDAL_G_addDataset( g,
                        0.0,
@@ -200,12 +205,12 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
                        active.data()
                      );
 
-
     ASSERT_TRUE( MDAL_G_isInEditMode( g ) );
     MDAL_G_closeEditMode( g );
     ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
     ASSERT_FALSE( MDAL_G_isInEditMode( g ) );
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+    ASSERT_EQ( g, MDAL_D_group( MDAL_G_dataset( g, 0 ) ) );
 
     MDAL_CloseMesh( m );
   }
