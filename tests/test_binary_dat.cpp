@@ -206,6 +206,8 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
     ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
     ASSERT_FALSE( MDAL_G_isInEditMode( g ) );
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+
+    MDAL_CloseMesh( m );
   }
 
   // Ok, now try to load it from the new
