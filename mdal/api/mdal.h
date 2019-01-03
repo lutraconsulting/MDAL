@@ -140,6 +140,33 @@ MDAL_EXPORT int MDAL_M_datasetGroupCount( MeshH mesh );
 //! Returns dataset group handle
 MDAL_EXPORT DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index );
 
+//! Adds empty (new) dataset group to the mesh
+//! This increases dataset group count MDAL_M_datasetGroupCount() by 1
+//!
+//! The Dataset Group is opened in write mode. It may or may not store the data
+//! into file based on driver imlementation. To persist dataset group, call
+//! MDAL_G_closeEditMode();
+//!
+//! It is not possible to read and write to the same group at the same time,
+//! before reading finalize editing.
+//!
+//! Note that only ascii dat format is implemented.
+//!
+//! \param mesh mesh handle
+//! \param driver the driver to use for storing the data
+//! \param name dataset group name
+//! \param isOnVertices whether data is defined on vertices
+//! \param hasScalarData whether data is scalar (false = vector data)
+//! \param datasetGroupFile file to store the new dataset group
+//! \returns empty pointer if not possible to create group, otherwise handle to new group
+MDAL_EXPORT DatasetGroupH MDAL_M_addDatasetGroup( MeshH mesh,
+    const char *name,
+    bool isOnVertices,
+    bool hasScalarData,
+    DriverH driver,
+    const char *datasetGroupFile );
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// MESH VERTICES
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -212,6 +239,10 @@ MDAL_EXPORT const char *MDAL_G_metadataKey( DatasetGroupH group, int index );
 //! not thread-safe and valid only till next call
 MDAL_EXPORT const char *MDAL_G_metadataValue( DatasetGroupH group, int index );
 
+//! Adds new metadata to the group
+//! Group must be in edit mode MDAL_G_isInEditMode()
+MDAL_EXPORT void MDAL_G_setMetadata( DatasetGroupH group, const char *key, const char *val );
+
 //! Returns dataset group name
 //! not thread-safe and valid only till next call
 MDAL_EXPORT const char *MDAL_G_name( DatasetGroupH group );
@@ -225,6 +256,34 @@ MDAL_EXPORT bool MDAL_G_isOnVertices( DatasetGroupH group );
 //! Returns the min and max values of the group
 //! Returns NaN on error
 MDAL_EXPORT void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max );
+
+//! Stores minumum and maximum dataset value
+MDAL_EXPORT void MDAL_G_setMinimumMaximum( DatasetGroupH group, double min, double max );
+
+//! Calculates minumum and maximum dataset value and stores it
+MDAL_EXPORT void MDAL_G_calculateMinimumMaximum( DatasetGroupH group );
+
+//! Adds empty (new) dataset to the group
+//! This increases dataset group count MDAL_G_datasetCount() by 1
+//!
+//! The dataset is opened in write mode. It may or may not store the data
+//! into file based on driver imlementation. To persist dataset, call
+//! MDAL_G_closeEditMode() on parent group
+//!
+//! \param group parent group handle
+//! \param time time for dataset
+//! \returns empty pointer if not possible to create dataset (e.g. group opened in read mode), otherwise handle to new dataset
+MDAL_EXPORT DatasetH MDAL_G_addDataset( DatasetGroupH group,
+                                        double time );
+
+//! Returns whether dataset group is in edit mode
+MDAL_EXPORT bool MDAL_G_isInEditMode( DatasetGroupH group );
+
+//! Close edit mode for group and all its datasets.
+//! This may effectively write the data to the files or reopen the file in read-only mode
+//! based on driver implementation
+MDAL_EXPORT void MDAL_G_closeEditMode( DatasetGroupH group );
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS
@@ -265,9 +324,33 @@ enum MDAL_DataType
 //! \returns number of values written to buffer. If return value != count requested, see MDAL_LastStatus() for error type
 MDAL_EXPORT int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer );
 
+//! Modifies data in dataset with values from the buffer
+//! for nodata use numeric_limits<double>::quiet_NaN
+//!
+//! Parent dataset group must be in edit mode.
+//!
+//! \param dataset handle to dataset
+//! \param indexStart index of face/vertex to start write values from the buffer
+//! \param count number of values to be written to the dataset
+//! \param dataType type of values to be written to the dataset
+//! \param buffer input array with populated values
+//!               For SCALAR_DOUBLE, the minimum size must be valuesCount * size_of(double)
+//!               For VECTOR_2D_DOUBLE, the minimum size must be valuesCount * 2 * size_of(double).
+//!                                     Values are returned as x1, y1, x2, y2, ..., xN, yN
+//!               For ACTIVE_INTEGER, the minimum size must be valuesCount * size_of(int)
+//! \returns number of values written to dataset. If return value != count requested, see MDAL_LastStatus() for error type
+MDAL_EXPORT int MDAL_D_write( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer );
+
+
 //! Returns the min and max values of the dataset
 //! Returns NaN on error
 MDAL_EXPORT void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max );
+
+//! Stores minumum and maximum dataset value
+MDAL_EXPORT void MDAL_D_setMinimumMaximum( DatasetH dataset, double min, double max );
+
+//! Calculates minumum and maximum dataset value and stores it
+MDAL_EXPORT void MDAL_D_calculateMinimumMaximum( DatasetH dataset );
 
 #ifdef __cplusplus
 }
