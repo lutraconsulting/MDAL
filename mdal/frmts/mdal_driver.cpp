@@ -3,6 +3,7 @@
  Copyright (C) 2018 Lutra Consulting Ltd.
 */
 
+#include <string.h>
 #include "mdal_driver.hpp"
 #include "mdal_utils.hpp"
 #include "mdal_memory_data_model.hpp"
