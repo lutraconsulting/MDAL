@@ -17,7 +17,7 @@ namespace MDAL
     None          = 0,
     ReadMesh      = 1 << 0, //! Can read mesh and all datasets stored in the mesh file
     ReadDatasets  = 1 << 1, //! Can read only datasets (groups) from existing mesh
-    WriteDatasets = 1 << 1, //! Can write datasets (groups)
+    WriteDatasets = 1 << 2, //! Can write datasets (groups)
   };
 
   class Driver
@@ -59,7 +59,8 @@ namespace MDAL
                                   int *active );
 
       // persist to the file
-      virtual void persist( DatasetGroup *group );
+      // returns true on error, false on success
+      virtual bool persist( DatasetGroup *group );
 
     private:
       std::string mName;

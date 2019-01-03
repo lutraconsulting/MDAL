@@ -672,7 +672,11 @@ void MDAL_G_closeEditMode( DatasetGroupH group )
     return;
   }
 
-  dr->persist( g );
+  bool error = dr->persist( g );
+  if ( error )
+  {
+    sLastStatus = MDAL_Status::Err_InvalidData;
+  }
 }
 
 

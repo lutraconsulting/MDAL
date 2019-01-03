@@ -96,7 +96,7 @@ MDAL_EXPORT DriverH MDAL_driverFromName( const char *name );
 //! if false, driver can be only used to load datasets to existing mesh
 MDAL_EXPORT bool MDAL_DR_meshLoadCapability( DriverH driver );
 
-//! Returns whether driver has capability to write dataset (groups)
+//! Returns whether driver has capability to write/edit dataset (groups)
 MDAL_EXPORT bool MDAL_DR_writeDatasetsCapability( DriverH driver );
 
 //! Returns name of MDAL driver
@@ -147,14 +147,11 @@ MDAL_EXPORT DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index );
 //! Adds empty (new) dataset group to the mesh
 //! This increases dataset group count MDAL_M_datasetGroupCount() by 1
 //!
-//! The Dataset Group is opened in write mode. It may or may not store the data
-//! into file based on driver imlementation. To persist dataset group, call
-//! MDAL_G_closeEditMode();
+//! The Dataset Group is opened in edit mode.
+//! To persist dataset group, call MDAL_G_closeEditMode();
 //!
-//! It is not possible to read and write to the same group at the same time,
-//! before reading finalize editing.
-//!
-//! Note that only ascii dat format is implemented.
+//! It is not possible to read and write to the same group
+//! at the same time. Finalize edits before reading.
 //!
 //! \param mesh mesh handle
 //! \param driver the driver to use for storing the data
@@ -271,9 +268,8 @@ MDAL_EXPORT void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double
 //! Adds empty (new) dataset to the group
 //! This increases dataset group count MDAL_G_datasetCount() by 1
 //!
-//! The dataset is opened in write mode. It may or may not store the data
-//! into file based on driver imlementation. To persist dataset, call
-//! MDAL_G_closeEditMode() on parent group
+//! The dataset is opened in edit mode.
+//! To persist dataset, call MDAL_G_closeEditMode() on parent group
 //!
 //! Minimum and maximum dataset values are automatically calculated
 //!
@@ -283,7 +279,7 @@ MDAL_EXPORT void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double
 //!               For scalar data on faces, the size must be faces count
 //!               For vector data on vertices, the size must be vertex count * 2 (x1, y1, x2, y2, ..., xN, yN)
 //!               For vector data on faces, the size must be faces count * 2 (x1, y1, x2, y2, ..., xN, yN)
-//! \param active if empty pointer, all faces are active. Otherwise size must be equal to face count.
+//! \param active if null pointer, all faces are active. Otherwise size must be equal to face count.
 //! \returns empty pointer if not possible to create dataset (e.g. group opened in read mode), otherwise handle to new dataset
 MDAL_EXPORT DatasetH MDAL_G_addDataset( DatasetGroupH group,
                                         double time,
@@ -295,8 +291,8 @@ MDAL_EXPORT DatasetH MDAL_G_addDataset( DatasetGroupH group,
 MDAL_EXPORT bool MDAL_G_isInEditMode( DatasetGroupH group );
 
 //! Close edit mode for group and all its datasets.
-//! This may effectively write the data to the files or reopen the file in read-only mode
-//! based on driver implementation
+//! This may effectively write the data to the files and/or
+//! reopen the file in read-only mode
 //!
 //! When closed, minimum and maximum dataset group values are automatically calculated
 MDAL_EXPORT void MDAL_G_closeEditMode( DatasetGroupH group );

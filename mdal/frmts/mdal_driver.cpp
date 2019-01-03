@@ -82,8 +82,8 @@ void MDAL::Driver::createDataset( MDAL::DatasetGroup *group, double time, double
   group->datasets.push_back( dataset );
 }
 
-void MDAL::Driver::persist( MDAL::DatasetGroup *group )
+bool MDAL::Driver::persist( MDAL::DatasetGroup *group )
 {
   MDAL_UNUSED( group );
-  return;
+  return true; // failure
 }
