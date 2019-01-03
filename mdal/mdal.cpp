@@ -651,3 +651,34 @@ void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max )
   *min = stats.minimum;
   *max = stats.maximum;
 }
+
+DatasetGroupH MDAL_M_addDatasetGroup(
+  MeshH mesh,
+  const char *name,
+  bool isOnVertices,
+  bool hasScalarData,
+  DriverH driver,
+  const char *datasetGroupFile )
+{
+
+}
+
+bool MDAL_G_isInEditMode( DatasetGroupH group )
+{
+
+}
+
+void MDAL_G_closeEditMode( DatasetGroupH group )
+{
+
+}
+
+DatasetH MDAL_G_addDataset( DatasetGroupH group, double time )
+{
+
+}
+
+int MDAL_D_write( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer )
+{
+
+}

@@ -253,14 +253,14 @@ MDAL_EXPORT bool MDAL_G_hasScalarData( DatasetGroupH group );
 //! Whether dataset is on vertices
 MDAL_EXPORT bool MDAL_G_isOnVertices( DatasetGroupH group );
 
-//! Returns the min and max values of the group
+//! Returns the minimum and maximum values of the group
 //! Returns NaN on error
 MDAL_EXPORT void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max );
 
-//! Stores minumum and maximum dataset value
+//! Stores minimum and maximum dataset value
 MDAL_EXPORT void MDAL_G_setMinimumMaximum( DatasetGroupH group, double min, double max );
 
-//! Calculates minumum and maximum dataset value and stores it
+//! Calculates minimum and maximum dataset value and stores it
 MDAL_EXPORT void MDAL_G_calculateMinimumMaximum( DatasetGroupH group );
 
 //! Adds empty (new) dataset to the group
@@ -342,14 +342,14 @@ MDAL_EXPORT int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_D
 MDAL_EXPORT int MDAL_D_write( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer );
 
 
-//! Returns the min and max values of the dataset
+//! Returns the minimum and maximum values of the dataset
 //! Returns NaN on error
 MDAL_EXPORT void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max );
 
-//! Stores minumum and maximum dataset value
+//! Stores minimum and maximum dataset value
 MDAL_EXPORT void MDAL_D_setMinimumMaximum( DatasetH dataset, double min, double max );
 
-//! Calculates minumum and maximum dataset value and stores it
+//! Calculates minimum and maximum dataset value and stores it
 MDAL_EXPORT void MDAL_D_calculateMinimumMaximum( DatasetH dataset );
 
 #ifdef __cplusplus
