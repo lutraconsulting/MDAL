@@ -161,6 +161,98 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshBinaryDatTest, WriteScalarTest )
+{
+  std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
+  std::string scalarPath = tmp_file( "/2dm_WriteScalarTest.dat" );
+  std::vector<double> vals = {1, 2, 3, 4, 5};
+  std::vector<int> active = {1, 1};
+
+  // Create a new dat file
+  {
+
+    MeshH m = MDAL_LoadMesh( path.c_str() );
+    ASSERT_NE( m, nullptr );
+
+    ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+    DriverH driver = MDAL_driverFromName( "BINARY_DAT" );
+    ASSERT_NE( driver, nullptr );
+
+    DatasetGroupH g = MDAL_M_addDatasetGroup(
+                        m,
+                        "scalarGrp",
+                        true,
+                        true,
+                        driver,
+                        scalarPath.c_str()
+                      );
+    ASSERT_NE( g, nullptr );
+
+    MDAL_G_addDataset( g,
+                       0.0,
+                       vals.data(),
+                       active.data()
+                     );
+    MDAL_G_addDataset( g,
+                       1.0,
+                       vals.data(),
+                       active.data()
+                     );
+
+
+    ASSERT_TRUE( MDAL_G_isInEditMode( g ) );
+    MDAL_G_closeEditMode( g );
+    ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+    ASSERT_FALSE( MDAL_G_isInEditMode( g ) );
+    ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+  }
+
+  // Ok, now try to load it from the new
+  // file and test the
+  // values are there
+  {
+    MeshH m = MDAL_LoadMesh( path.c_str() );
+    ASSERT_NE( m, nullptr );
+    MDAL_M_LoadDatasets( m, scalarPath.c_str() );
+    MDAL_Status s = MDAL_LastStatus();
+    EXPECT_EQ( MDAL_Status::None, s );
+    ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "scalarGrp" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    bool onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( true, onVertices );
+
+    ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    bool active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 5, count );
+
+    double value = getValue( ds, 0 );
+    EXPECT_DOUBLE_EQ( 1, value );
+
+    MDAL_CloseMesh( m );
+  }
+}
 
 int main( int argc, char **argv )
 {
@@ -170,4 +262,3 @@ int main( int argc, char **argv )
   finalize_test();
   return ret;
 }
-

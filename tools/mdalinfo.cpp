@@ -81,6 +81,7 @@ int main( int argc, char *argv[] )
   if ( m )
   {
     std::cout << "Mesh loaded: OK" << std::endl;
+    std::cout << "  Driver: " << MDAL_M_driverName( m ) <<  std::endl;
     std::cout << "  Vertex count: " << MDAL_M_vertexCount( m ) <<  std::endl;
     std::cout << "  Face count: " << MDAL_M_faceCount( m ) << std::endl;
     std::cout << "  Projection: " << MDAL_M_projection( m ) << std::endl;
@@ -110,7 +111,8 @@ int main( int argc, char *argv[] )
   for ( int i = 0; i < MDAL_M_datasetGroupCount( m ); ++i )
   {
     auto group = MDAL_M_datasetGroup( m, i );
-    std::cout << "  " << MDAL_G_name( group )
+    std::cout << " " << MDAL_G_driverName( group )
+              << ": " << MDAL_G_name( group )
               << " " << MDAL_G_datasetCount( group );
     if ( !MDAL_G_hasScalarData( group ) )
       std::cout << " ( Vector ) ";

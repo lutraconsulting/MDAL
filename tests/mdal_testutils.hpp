@@ -17,6 +17,7 @@ void init_test();
 void finalize_test();
 
 std::string test_file( std::string basename );
+std::string tmp_file( std::string basename );
 
 // Mesh
 std::vector<double> getCoordinates( MeshH mesh, int verticesCount );

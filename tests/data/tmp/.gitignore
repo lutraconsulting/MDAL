@@ -1,0 +1,4 @@
+# Ignore everything in this directory, which contains results from some tests
+*
+# Except this file
+!.gitignore

@@ -51,6 +51,9 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   int maxCount = MDAL_M_faceVerticesMaximumCount( m );
   EXPECT_EQ( maxCount, 4 );
 
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "2DM" );
+
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 5 );
   double x = getVertexXCoordinatesAt( m, 0 );

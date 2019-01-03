@@ -55,6 +55,7 @@ enum MDAL_Status
   Err_IncompatibleDataset,
   Err_IncompatibleDatasetGroup,
   Err_MissingDriver,
+  Err_MissingDriverCapability,
   // Warnings
   Warn_UnsupportedElement,
   Warn_InvalidElements,
@@ -95,6 +96,9 @@ MDAL_EXPORT DriverH MDAL_driverFromName( const char *name );
 //! if false, driver can be only used to load datasets to existing mesh
 MDAL_EXPORT bool MDAL_DR_meshLoadCapability( DriverH driver );
 
+//! Returns whether driver has capability to write dataset (groups)
+MDAL_EXPORT bool MDAL_DR_writeDatasetsCapability( DriverH driver );
+
 //! Returns name of MDAL driver
 //! not thread-safe and valid only till next call
 MDAL_EXPORT const char *MDAL_DR_name( DriverH driver );
@@ -107,9 +111,6 @@ MDAL_EXPORT const char *MDAL_DR_longName( DriverH driver );
 //! Filters are separated by ;;, e.g. *.abc;;*.def
 //! not thread-safe and valid only till next call
 MDAL_EXPORT const char *MDAL_DR_filters( DriverH driver );
-
-//! Returns whether driver has capability to write
-MDAL_EXPORT bool MDAL_DR_canWrite( DriverH driver );
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// MESH
@@ -169,6 +170,9 @@ MDAL_EXPORT DatasetGroupH MDAL_M_addDatasetGroup( MeshH mesh,
     DriverH driver,
     const char *datasetGroupFile );
 
+//! Returns name of MDAL driver
+//! not thread-safe and valid only till next call
+MDAL_EXPORT const char *MDAL_M_driverName( MeshH mesh );
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// MESH VERTICES
@@ -249,6 +253,10 @@ MDAL_EXPORT void MDAL_G_setMetadata( DatasetGroupH group, const char *key, const
 //! Returns dataset group name
 //! not thread-safe and valid only till next call
 MDAL_EXPORT const char *MDAL_G_name( DatasetGroupH group );
+
+//! Returns name of MDAL driver
+//! not thread-safe and valid only till next call
+MDAL_EXPORT const char *MDAL_G_driverName( DatasetGroupH group );
 
 //! Whether dataset has scalar data associated
 MDAL_EXPORT bool MDAL_G_hasScalarData( DatasetGroupH group );

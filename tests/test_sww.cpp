@@ -21,6 +21,9 @@ TEST( MeshSWWTest, Cairns )
   const char *projection = MDAL_M_projection( m );
   EXPECT_EQ( std::string( "" ), std::string( projection ) );
 
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "SWW" );
+
   // ///////////
   // Vertices
   // ///////////
