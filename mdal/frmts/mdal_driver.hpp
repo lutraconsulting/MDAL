@@ -55,8 +55,8 @@ namespace MDAL
       // create new dataset from array
       virtual void createDataset( DatasetGroup *group,
                                   double time,
-                                  double *values,
-                                  int *active );
+                                  const double *values,
+                                  const int *active );
 
       // persist to the file
       // returns true on error, false on success

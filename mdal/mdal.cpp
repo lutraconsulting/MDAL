@@ -590,7 +590,7 @@ void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max )
   *max = stats.maximum;
 }
 
-DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, double *values, int *active )
+DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *values, const int *active )
 {
   if ( !group )
   {

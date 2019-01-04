@@ -71,7 +71,7 @@ void MDAL::Driver::createDatasetGroup( MDAL::Mesh *mesh, const std::string &grou
   mesh->datasetGroups.push_back( grp );
 }
 
-void MDAL::Driver::createDataset( MDAL::DatasetGroup *group, double time, double *values, int *active )
+void MDAL::Driver::createDataset( MDAL::DatasetGroup *group, double time, const double *values, const int *active )
 {
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group );
   dataset->setTime( time );

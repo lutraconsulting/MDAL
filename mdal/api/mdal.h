@@ -283,8 +283,8 @@ MDAL_EXPORT void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double
 //! \returns empty pointer if not possible to create dataset (e.g. group opened in read mode), otherwise handle to new dataset
 MDAL_EXPORT DatasetH MDAL_G_addDataset( DatasetGroupH group,
                                         double time,
-                                        double *values,
-                                        int *active
+                                        const double *values,
+                                        const int *active
                                       );
 
 //! Returns whether dataset group is in edit mode
