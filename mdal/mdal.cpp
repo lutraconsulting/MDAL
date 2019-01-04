@@ -51,6 +51,12 @@ int MDAL_driverCount()
 
 DriverH MDAL_driverFromIndex( int index )
 {
+  if ( index < 0 )
+  {
+    sLastStatus = MDAL_Status::Err_MissingDriver;
+    return nullptr;
+  }
+
   size_t idx = static_cast<size_t>( index );
   std::shared_ptr<MDAL::Driver> driver = MDAL::DriverManager::instance().driver( idx );
   return static_cast<DriverH>( driver.get() );
@@ -647,6 +653,7 @@ void MDAL_G_closeEditMode( DatasetGroupH group )
   if ( !group )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
 

@@ -376,45 +376,45 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
   }
 
   // version card
-  writeRawData( out, ( char * )&CT_VERSION, 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_VERSION ), 4 );
 
   // objecttype
-  writeRawData( out, ( char * )&CT_OBJTYPE, 4 );
-  writeRawData( out, ( char * )&CT_2D_MESHES, 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_OBJTYPE ), 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_2D_MESHES ), 4 );
 
   // float size
-  writeRawData( out, ( char * )&CT_SFLT, 4 );
-  writeRawData( out, ( char * )&CT_FLOAT_SIZE, 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_SFLT ), 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_FLOAT_SIZE ), 4 );
 
   // Flag size
-  writeRawData( out, ( char * )&CT_SFLG, 4 );
-  writeRawData( out, ( char * )&CF_FLAG_SIZE, 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_SFLG ), 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CF_FLAG_SIZE ), 4 );
 
   // Dataset Group Type
   if ( group->isScalar() )
   {
-    writeRawData( out, ( char * )&CT_BEGSCL, 4 );
+    writeRawData( out, reinterpret_cast< const char * >( &CT_BEGSCL ), 4 );
   }
   else
   {
-    writeRawData( out, ( char * )&CT_BEGVEC, 4 );
+    writeRawData( out, reinterpret_cast< const char * >( &CT_BEGVEC ), 4 );
   }
 
   // Object id (ignored)
   int ignored_val = 1;
-  writeRawData( out, ( char * )&CT_OBJID, 4 );
-  writeRawData( out, ( char * )&ignored_val, 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_OBJID ), 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &ignored_val ), 4 );
 
   // Num nodes
-  writeRawData( out, ( char * )&CT_NUMDATA, 4 );
-  writeRawData( out, ( char * )&nodeCount, 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_NUMDATA ), 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &nodeCount ), 4 );
 
   // Num cells
-  writeRawData( out, ( char * )&CT_NUMCELLS, 4 );
-  writeRawData( out, ( char * )&elemCount, 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_NUMCELLS ), 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &elemCount ), 4 );
 
   // Name
-  writeRawData( out, ( char * )&CT_NAME, 4 );
+  writeRawData( out, reinterpret_cast< const char * >( &CT_NAME ), 4 );
   writeRawData( out, MDAL::leftJustified( group->name(), 39 ).c_str(), 40 );
 
   // Time steps
@@ -424,10 +424,10 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
   {
     const std::shared_ptr<MDAL::MemoryDataset> dataset = std::dynamic_pointer_cast<MDAL::MemoryDataset>( group->datasets[time_index] );
 
-    writeRawData( out, ( char * )&CT_TS, 4 );
-    writeRawData( out, ( char * )&istat, 1 );
+    writeRawData( out, reinterpret_cast< const char * >( &CT_TS ), 4 );
+    writeRawData( out, reinterpret_cast< const char * >( &istat ), 1 );
     float ftime = static_cast<float>( dataset->time() );
-    writeRawData( out, ( char * )&ftime, 4 );
+    writeRawData( out, reinterpret_cast< const char * >( &ftime ), 4 );
 
     if ( istat )
     {
@@ -435,7 +435,7 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
       for ( size_t i = 0; i < elemCount; i++ )
       {
         bool active = static_cast<bool>( dataset->active()[i] );
-        writeRawData( out, ( char * )&active, 1 );
+        writeRawData( out, reinterpret_cast< const char * >( &active ), 1 );
       }
     }
 
@@ -446,18 +446,18 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
       {
         float x = static_cast<float>( dataset->values()[2 * i] );
         float y = static_cast<float>( dataset->values()[2 * i + 1 ] );
-        writeRawData( out, ( char * )&x, 4 );
-        writeRawData( out, ( char * )&y, 4 );
+        writeRawData( out, reinterpret_cast< const char * >( &x ), 4 );
+        writeRawData( out, reinterpret_cast< const char * >( &y ), 4 );
       }
       else
       {
         float val = static_cast<float>( dataset->values()[i] );
-        writeRawData( out, ( char * )&val, 4 );
+        writeRawData( out, reinterpret_cast< const char * >( &val ), 4 );
       }
     }
   }
 
-  if ( writeRawData( out, ( char * )&CT_ENDDS, 4 ) ) return true;
+  if ( writeRawData( out, reinterpret_cast< const char * >( &CT_ENDDS ), 4 ) ) return true;
 
   return false;
 }

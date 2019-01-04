@@ -47,7 +47,6 @@ namespace MDAL
   bool contains( const std::string &str, const std::string &substr, ContainsBehaviour behaviour = CaseSensitive );
   bool contains( const std::vector<std::string> &list, const std::string &str );
   std::string replace( const std::string &str, const std::string &substr, const std::string &replacestr, ContainsBehaviour behaviour = CaseSensitive );
-  std::string removeLastChar( const std::string &str );
   //! left justify and truncate, resulting string will always have width chars
   std::string leftJustified( const std::string &str, size_t width, char fill = ' ' );
 

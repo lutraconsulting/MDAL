@@ -237,13 +237,6 @@ std::string MDAL::replace( const std::string &str, const std::string &substr, co
   return res;
 }
 
-std::string MDAL::removeLastChar( const std::string &str )
-{
-  std::string ret( str );
-  ret.pop_back();
-  return ret;
-}
-
 MDAL::BBox MDAL::computeExtent( const MDAL::Vertices &vertices )
 {
   BBox b;
