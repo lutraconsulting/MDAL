@@ -44,6 +44,9 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   ASSERT_NE( g, nullptr );
   ASSERT_EQ( MDAL_G_mesh( g ), m );
 
+  std::string driverName = MDAL_G_driverName( g );
+  EXPECT_EQ( driverName, "XMDF" );
+
   int meta_count = MDAL_G_metadataCount( g );
   ASSERT_EQ( 1, meta_count );
 

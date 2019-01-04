@@ -3,10 +3,17 @@
  Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
 */
 #include "gtest/gtest.h"
+#include <limits>
+#include <cmath>
 
 //mdal
 #include "mdal.h"
 #include "mdal_testutils.hpp"
+
+TEST( ApiTest, GlobalApi )
+{
+  EXPECT_NE( MDAL_Version(), std::string( "" ) );
+}
 
 TEST( ApiTest, DriversApi )
 {
@@ -26,6 +33,34 @@ TEST( ApiTest, DriversApi )
 
   std::string filters = MDAL_DR_filters( dr );
   ASSERT_EQ( filters, "*.2dm" );
+
+  // Some wrong calls tests
+  EXPECT_EQ( MDAL_driverFromIndex( -1 ), nullptr );
+  EXPECT_EQ( MDAL_driverFromIndex( MDAL_driverCount() ), nullptr );
+  EXPECT_EQ( MDAL_driverFromName( "invaliddrivername" ), nullptr );
+  EXPECT_FALSE( MDAL_DR_meshLoadCapability( nullptr ) );
+  EXPECT_FALSE( MDAL_DR_writeDatasetsCapability( nullptr ) );
+  EXPECT_EQ( MDAL_DR_longName( nullptr ), std::string( "" ) );
+  EXPECT_EQ( MDAL_DR_name( nullptr ), std::string( "" ) );
+  EXPECT_EQ( MDAL_DR_filters( nullptr ), std::string( "" ) );
+}
+
+TEST( ApiTest, MeshApi )
+{
+  EXPECT_EQ( MDAL_LoadMesh( nullptr ), nullptr );
+  EXPECT_EQ( MDAL_M_projection( nullptr ), std::string( "" ) );
+  double a, b, c, d;
+  MDAL_M_extent( nullptr, &a, &b, &c, &d );
+  EXPECT_TRUE( std::isnan( a ) );
+
+  EXPECT_EQ( MDAL_M_vertexCount( nullptr ), 0 );
+  EXPECT_EQ( MDAL_M_faceCount( nullptr ), 0 );
+  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( nullptr ), 0 );
+  MDAL_M_LoadDatasets( nullptr, nullptr );
+  EXPECT_EQ( MDAL_M_datasetGroupCount( nullptr ), 0 );
+  EXPECT_EQ( MDAL_M_datasetGroup( nullptr, 0 ), nullptr );
+  EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, true, true, nullptr, nullptr ), nullptr );
+  EXPECT_EQ( MDAL_M_driverName( nullptr ), nullptr );
 }
 
 void _populateFaces( MeshH m, std::vector<int> &ret, size_t faceOffsetsBufferLen, size_t vertexIndicesBufferLen )
@@ -110,6 +145,10 @@ TEST( ApiTest, FacesApi )
     compareVectors( refIndices, indices );
   }
   MDAL_CloseMesh( m );
+
+  // Some wrong calls tests
+  EXPECT_EQ( MDAL_M_vertexIterator( nullptr ), nullptr );
+  EXPECT_EQ( MDAL_VI_next( nullptr, 0, nullptr ), 0 );
 }
 
 void _populateVertices( MeshH m, std::vector<double> &ret, size_t itemsLen )
@@ -176,6 +215,44 @@ TEST( ApiTest, VerticesApi )
     compareVectors( refCoors, coords );
   }
   MDAL_CloseMesh( m );
+
+  // Some wrong calls tests
+  EXPECT_EQ( MDAL_M_faceIterator( nullptr ), nullptr );
+  EXPECT_EQ( MDAL_FI_next( nullptr, 0, nullptr, 0, nullptr ), 0 );
+}
+
+TEST( ApiTest, GroupsApi )
+{
+  EXPECT_EQ( MDAL_G_mesh( nullptr ), nullptr );
+  EXPECT_EQ( MDAL_G_datasetCount( nullptr ), 0 );
+  EXPECT_EQ( MDAL_G_dataset( nullptr, 0 ), nullptr );
+  EXPECT_EQ( MDAL_G_metadataCount( nullptr ), 0 );
+  EXPECT_EQ( MDAL_G_metadataKey( nullptr, 0 ), std::string( "" ) );
+  EXPECT_EQ( MDAL_G_metadataValue( nullptr, 0 ), std::string( "" ) );
+  EXPECT_EQ( MDAL_G_name( nullptr ), std::string( "" ) );
+  EXPECT_EQ( MDAL_G_hasScalarData( nullptr ), true );
+  EXPECT_EQ( MDAL_G_isOnVertices( nullptr ), true );
+  double a, b;
+  MDAL_G_minimumMaximum( nullptr, &a, &b );
+  EXPECT_TRUE( std::isnan( a ) );
+
+  EXPECT_EQ( MDAL_G_addDataset( nullptr, 0, nullptr, nullptr ), nullptr );
+  EXPECT_EQ( MDAL_G_isInEditMode( nullptr ), true );
+  MDAL_G_closeEditMode( nullptr );
+  MDAL_G_setMetadata( nullptr, nullptr, nullptr );
+  EXPECT_EQ( MDAL_G_driverName( nullptr ), std::string( "" ) );
+}
+
+TEST( ApiTest, DatasetsApi )
+{
+  EXPECT_EQ( MDAL_D_group( nullptr ), nullptr );
+  EXPECT_TRUE( std::isnan( MDAL_D_time( nullptr ) ) );
+  EXPECT_EQ( MDAL_D_valueCount( nullptr ), 0 );
+  EXPECT_EQ( MDAL_D_isValid( nullptr ), false );
+  EXPECT_EQ( MDAL_D_data( nullptr, 0, 0, MDAL_DataType::SCALAR_DOUBLE, nullptr ), 0 );
+  double a, b;
+  MDAL_D_minimumMaximum( nullptr, &a, &b );
+  EXPECT_TRUE( std::isnan( a ) );
 }
 
 int main( int argc, char **argv )
