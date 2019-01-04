@@ -93,7 +93,7 @@ size_t MDAL::DriverManager::driversCount() const
 
 std::shared_ptr<MDAL::Driver> MDAL::DriverManager::driver( size_t index ) const
 {
-  if ( mDrivers.size() < index )
+  if ( mDrivers.size() <= index )
   {
     return std::shared_ptr<MDAL::Driver>();
   }
