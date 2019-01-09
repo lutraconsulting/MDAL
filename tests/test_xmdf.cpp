@@ -35,12 +35,12 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   EXPECT_DOUBLE_EQ( 168700.98499999999, minY );
   EXPECT_DOUBLE_EQ( 168750.98499999999, maxY );
 
-  ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 9, MDAL_M_datasetGroupCount( m ) );
 
   /*
    *  STATIC DATASET (Depth)
    */
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
   ASSERT_NE( g, nullptr );
   ASSERT_EQ( MDAL_G_mesh( g ), m );
 
@@ -120,12 +120,12 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
 
-  ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 9, MDAL_M_datasetGroupCount( m ) );
 
   /*
    *  VECTOR DATASET (MAXIMUMS)
    */
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -185,6 +185,75 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 0.38855308294296265, max );
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshXmdfTest, CustomGroupsDataset )
+{
+  // XMDF created with various TUFLOW utilities
+  // where we have missing the standard groups like Temporal
+  std::string path = test_file( "/2dm/M01_5m_002.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  path = test_file( "/xmdf/custom_groups.xmdf" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Vector Velocity" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
+  ASSERT_EQ( 37, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 20893, count );
+
+  {
+    std::vector<int> active( 3 );
+    std::vector<int> expectedActive = {0, 0, 0};
+    int nValuesRead = MDAL_D_data( ds, 66, 3, MDAL_DataType::ACTIVE_INTEGER, active.data() );
+    ASSERT_EQ( 3,  nValuesRead );
+    EXPECT_EQ( active, expectedActive );
+
+    std::vector<double> values( 3 );
+    std::vector<double> expectedValue = {180, 180, 180};
+
+    nValuesRead = MDAL_D_data( ds, 66, 3, MDAL_DataType::SCALAR_DOUBLE, values.data() );
+    ASSERT_EQ( 3,  nValuesRead );
+    if ( !compareVectors( values, expectedValue ) )
+    {
+      EXPECT_EQ( values, expectedValue );
+    }
+  }
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 180, max );
+  EXPECT_DOUBLE_EQ( 180, min );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 180, max );
+  EXPECT_DOUBLE_EQ( -179.99665832519531, min );
+
   MDAL_CloseMesh( m );
 }
 
