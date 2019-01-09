@@ -61,7 +61,7 @@ namespace MDAL
       /**
        * Driver for XMDF Files
        *
-       * Structure of the file. Groups are optional since it depends
+       * Structure of the TUFLOW file. Groups are optional since it depends
        * on tools which groups are created.
        * - root
        *   - Temporal
