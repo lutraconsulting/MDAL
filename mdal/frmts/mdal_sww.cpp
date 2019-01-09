@@ -7,9 +7,11 @@
 #include <string>
 #include <string.h>
 #include <vector>
+#include <netcdf.h>
 
 #include "mdal_netcdf.hpp"
 #include "mdal_sww.hpp"
+#include "mdal_utils.hpp"
 
 // threshold for determining whether an element is active (wet)
 // the format does not explicitly store that information so we

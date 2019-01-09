@@ -4,6 +4,7 @@
 */
 
 #include "mdal_3di.hpp"
+#include <netcdf.h>
 
 MDAL::Driver3Di::Driver3Di()
   : DriverCF(

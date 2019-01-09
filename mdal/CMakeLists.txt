@@ -55,6 +55,7 @@ IF(NETCDF_FOUND)
   SET(MDAL_SOURCES ${MDAL_SOURCES}
     frmts/mdal_cf.cpp
     frmts/mdal_3di.cpp
+    frmts/mdal_netcdf.cpp
     frmts/mdal_sww.cpp
   )
   SET(MDAL_HEADERS ${MDAL_HEADERS}
