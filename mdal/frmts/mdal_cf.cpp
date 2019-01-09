@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <string>
+#include <netcdf.h>
 
 #include "mdal_data_model.hpp"
 #include "mdal_cf.hpp"
