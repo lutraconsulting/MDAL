@@ -12,7 +12,7 @@
 
 TEST( MeshSWWTest, Cairns )
 {
-  std::string path = test_file( "/sww/cairns.sww" );
+  std::string path = test_file( "/sww/anuga-viewer/cairns.sww" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -69,7 +69,7 @@ TEST( MeshSWWTest, Cairns )
   // ///////////
   // Bed elevation dataset
   // ///////////
-  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
   DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
@@ -118,7 +118,7 @@ TEST( MeshSWWTest, Cairns )
   ASSERT_EQ( 1, meta_count );
 
   name = MDAL_G_name( g );
-  EXPECT_EQ( std::string( "Stage" ), std::string( name ) );
+  EXPECT_EQ( std::string( "stage" ), std::string( name ) );
 
   scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
@@ -134,7 +134,7 @@ TEST( MeshSWWTest, Cairns )
   EXPECT_EQ( true, valid );
 
   active = getActive( ds, 0 );
-  EXPECT_EQ( false, active );
+  EXPECT_EQ( true, active );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 2579, count );
@@ -151,43 +151,120 @@ TEST( MeshSWWTest, Cairns )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 6.7305092811584473, max );
 
-  // ///////////
-  // "Depth"
-  // ///////////
-  g = MDAL_M_datasetGroup( m, 2 );
-  ASSERT_NE( g, nullptr );
+  MDAL_CloseMesh( m );
+}
 
-  meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+TEST( MeshSWWTest, Flat )
+{
+  std::string path = test_file( "/sww/anuga-viewer/flat.sww" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
 
-  name = MDAL_G_name( g );
-  EXPECT_EQ( std::string( "Depth" ), std::string( name ) );
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "" ), std::string( projection ) );
 
-  scalar = MDAL_G_hasScalarData( g );
-  EXPECT_EQ( true, scalar );
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "SWW" );
 
-  onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( 2579, v_count );
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 4962, f_count );
 
-  ASSERT_EQ( 51, MDAL_G_datasetCount( g ) );
-  ds = MDAL_G_dataset( g, 29 );
-  ASSERT_NE( ds, nullptr );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
-  valid = MDAL_D_isValid( ds );
-  EXPECT_EQ( true, valid );
+  MDAL_CloseMesh( m );
+}
 
-  active = getActive( ds, 50 );
-  EXPECT_EQ( false, active );
 
-  count = MDAL_D_valueCount( ds );
-  ASSERT_EQ( 2579, count );
+TEST( MeshSWWTest, Catchment )
+{
+  std::string path = test_file( "/sww/anuga-viewer/Small_catchment_testcase.sww" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
 
-  value = getValue( ds, 1000 );
-  EXPECT_DOUBLE_EQ( 1.34523606300354, value );
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "" ), std::string( projection ) );
 
-  MDAL_D_minimumMaximum( ds, &min, &max );
-  EXPECT_DOUBLE_EQ( 0, min );
-  EXPECT_DOUBLE_EQ( 6.7142167091369629, max );
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "SWW" );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( 19164, v_count );
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 6388, f_count );
+
+  ASSERT_EQ( 13, MDAL_M_datasetGroupCount( m ) );
+
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "momentum" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_EQ( false, MDAL_G_hasScalarData( g ) );
+  }
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "momentum/Maximums" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_EQ( false, MDAL_G_hasScalarData( g ) );
+  }
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "elevation" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_EQ( true, MDAL_G_hasScalarData( g ) );
+  }
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshSWWTest, Laminar )
+{
+  std::string path = test_file( "/sww/anuga-viewer/laminar.sww" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "" ), std::string( projection ) );
+
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "SWW" );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( 3721, v_count );
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 7200, f_count );
+
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshSWWTest, Wave )
+{
+  std::string path = test_file( "/sww/anuga-viewer/holl_bch_wave_mesh_elevation_smooth_ys10.0_ft500.0_size4802.sww" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "" ), std::string( projection ) );
+
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "SWW" );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( 2500, v_count );
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 4802, f_count );
+
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
   MDAL_CloseMesh( m );
 }
