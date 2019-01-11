@@ -5,6 +5,7 @@
 
 #include "mdal_3di.hpp"
 #include <netcdf.h>
+#include <assert.h>
 
 MDAL::Driver3Di::Driver3Di()
   : DriverCF(
