@@ -21,9 +21,14 @@ class NetCDFFile
     int handle() const;
     void openFile( const std::string &fileName );
     bool hasVariable( const std::string &name ) const;
+
     std::vector<int> readIntArr( const std::string &name, size_t dim ) const;
     std::vector<double> readDoubleArr( const std::string &name, size_t dim ) const;
+    bool hasArr( const std::string &name ) const;
+    std::vector<std::string> readArrNames() const;
+
     int getAttrInt( const std::string &name, const std::string &attr_name ) const;
+    double getAttrDouble( int varid, const std::string &attr_name ) const;
     std::string getAttrStr( const std::string &name, const std::string &attr_name ) const;
     std::string getAttrStr( const std::string &name, int varid ) const;
     double getFillValue( int varid ) const;

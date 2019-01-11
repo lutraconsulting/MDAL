@@ -23,7 +23,7 @@ int NetCDFFile::handle() const
   return mNcid;
 }
 
-void NetCDFFile::openFile(const std::string& fileName)
+void NetCDFFile::openFile( const std::string &fileName )
 {
   int res = nc_open( fileName.c_str(), NC_NOWRITE, &mNcid );
   if ( res != NC_NOERR )
@@ -33,14 +33,14 @@ void NetCDFFile::openFile(const std::string& fileName)
   }
 }
 
-bool NetCDFFile::hasVariable(const std::string& name) const
+bool NetCDFFile::hasVariable( const std::string &name ) const
 {
   assert( mNcid != 0 );
   int varid;
   return ( nc_inq_varid( mNcid, name.c_str(), &varid ) == NC_NOERR );
 }
 
-std::vector<int> NetCDFFile::readIntArr(const std::string& name, size_t dim) const
+std::vector<int> NetCDFFile::readIntArr( const std::string &name, size_t dim ) const
 {
   assert( mNcid != 0 );
   int arr_id;
@@ -56,7 +56,7 @@ std::vector<int> NetCDFFile::readIntArr(const std::string& name, size_t dim) con
   return arr_val;
 }
 
-std::vector<double> NetCDFFile::readDoubleArr(const std::string& name, size_t dim) const
+std::vector<double> NetCDFFile::readDoubleArr( const std::string &name, size_t dim ) const
 {
   assert( mNcid != 0 );
 
@@ -73,7 +73,45 @@ std::vector<double> NetCDFFile::readDoubleArr(const std::string& name, size_t di
   return arr_val;
 }
 
-int NetCDFFile::getAttrInt(const std::string& name, const std::string& attr_name) const
+bool NetCDFFile::hasArr( const std::string &name ) const
+{
+  assert( mNcid != 0 );
+
+  int arr_id;
+  return nc_inq_varid( mNcid, name.c_str(), &arr_id ) == NC_NOERR;
+}
+
+std::vector<std::string> NetCDFFile::readArrNames() const
+{
+  assert( mNcid != 0 );
+
+  std::vector<std::string> res;
+  int nvars;
+  if ( nc_inq_varids( mNcid, &nvars, nullptr ) != NC_NOERR )
+  {
+    throw MDAL_Status::Err_UnknownFormat;
+  }
+
+  std::vector<int> varids( static_cast<size_t>( nvars ) );
+  if ( nc_inq_varids( mNcid, &nvars, varids.data() ) != NC_NOERR )
+  {
+    throw MDAL_Status::Err_UnknownFormat;
+  }
+
+  for ( size_t i = 0; i < static_cast<size_t>( nvars ); ++i )
+  {
+    std::vector<char> cname( NC_MAX_NAME + 1 );
+    if ( nc_inq_varname( mNcid, varids[i], cname.data() ) != NC_NOERR )
+    {
+      throw MDAL_Status::Err_UnknownFormat;
+    }
+    res.push_back( cname.data() );
+  }
+
+  return res;
+}
+
+int NetCDFFile::getAttrInt( const std::string &name, const std::string &attr_name ) const
 {
   assert( mNcid != 0 );
 
@@ -91,7 +129,7 @@ int NetCDFFile::getAttrInt(const std::string& name, const std::string& attr_name
   return val;
 }
 
-std::string NetCDFFile::getAttrStr(const std::string& name, const std::string& attr_name) const
+std::string NetCDFFile::getAttrStr( const std::string &name, const std::string &attr_name ) const
 {
   assert( mNcid != 0 );
 
@@ -100,7 +138,7 @@ std::string NetCDFFile::getAttrStr(const std::string& name, const std::string& a
   return getAttrStr( attr_name, arr_id );
 }
 
-std::string NetCDFFile::getAttrStr(const std::string& name, int varid) const
+std::string NetCDFFile::getAttrStr( const std::string &name, int varid ) const
 {
   assert( mNcid != 0 );
 
@@ -124,22 +162,27 @@ std::string NetCDFFile::getAttrStr(const std::string& name, int varid) const
   return res;
 }
 
-double NetCDFFile::getFillValue(int varid) const
+double NetCDFFile::getFillValue( int varid ) const
 {
-  double fill;
-  if ( nc_get_att_double( mNcid, varid, "_FillValue", &fill ) )
-    fill = std::numeric_limits<double>::quiet_NaN(); // not present/set
-  return fill;
+  return getAttrDouble( varid, "_FillValue" );
 }
 
-int NetCDFFile::getVarId(const std::string& name)
+double NetCDFFile::getAttrDouble( int varid, const std::string &attr_name ) const
+{
+  double res;
+  if ( nc_get_att_double( mNcid, varid, attr_name.c_str(), &res ) )
+    res = std::numeric_limits<double>::quiet_NaN(); // not present/set
+  return res;
+}
+
+int NetCDFFile::getVarId( const std::string &name )
 {
   int ncid_val;
   if ( nc_inq_varid( mNcid, name.c_str(), &ncid_val ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
   return ncid_val;
 }
 
-void NetCDFFile::getDimension(const std::string& name, size_t* val, int* ncid_val) const
+void NetCDFFile::getDimension( const std::string &name, size_t *val, int *ncid_val ) const
 {
   assert( mNcid != 0 );
 
@@ -147,7 +190,7 @@ void NetCDFFile::getDimension(const std::string& name, size_t* val, int* ncid_va
   if ( nc_inq_dimlen( mNcid, *ncid_val, val ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
 }
 
-void NetCDFFile::getDimensionOptional(const std::string& name, size_t* val, int* ncid_val) const
+void NetCDFFile::getDimensionOptional( const std::string &name, size_t *val, int *ncid_val ) const
 {
   assert( mNcid != 0 );
 

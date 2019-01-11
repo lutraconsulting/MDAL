@@ -24,6 +24,9 @@ bool MDAL::fileExists( const std::string &filename )
 
 bool MDAL::startsWith( const std::string &str, const std::string &substr, ContainsBehaviour behaviour )
 {
+  if ( str.size() < substr.size() )
+    return false;
+
   if ( behaviour == ContainsBehaviour::CaseSensitive )
     return str.rfind( substr, 0 ) == 0;
   else
@@ -32,6 +35,9 @@ bool MDAL::startsWith( const std::string &str, const std::string &substr, Contai
 
 bool MDAL::endsWith( const std::string &str, const std::string &substr, ContainsBehaviour behaviour )
 {
+  if ( str.size() < substr.size() )
+    return false;
+
   if ( behaviour == ContainsBehaviour::CaseSensitive )
     return str.rfind( substr ) == ( str.size() - substr.size() );
   else
