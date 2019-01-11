@@ -335,9 +335,10 @@ void MDAL::DriverGdal::activateFaces( std::shared_ptr<MemoryDataset> tos )
     Face elem = mMesh->faces.at( idx );
     for ( size_t i = 0; i < 4; ++i )
     {
+      const size_t vertexIndex = elem[i];
       if ( isScalar )
       {
-        double val = values[elem[i]];
+        double val = values[vertexIndex];
         if ( std::isnan( val ) )
         {
           active[idx] = 0; //NOT ACTIVE
@@ -346,8 +347,8 @@ void MDAL::DriverGdal::activateFaces( std::shared_ptr<MemoryDataset> tos )
       }
       else
       {
-        double x = values[elem[2 * i]];
-        double y = values[elem[2 * i + 1]];
+        double x = values[2 * vertexIndex];
+        double y = values[2 * vertexIndex + 1];
         if ( std::isnan( x ) || std::isnan( y ) )
         {
           active[idx] = 0; //NOT ACTIVE
