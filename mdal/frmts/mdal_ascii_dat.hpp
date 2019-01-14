@@ -37,7 +37,7 @@ namespace MDAL
    *
    * In one file, there is always one dataset group stored.
    *
-   * Sometime the the "older" datasets may have some part of the
+   * Sometime the "older" datasets may have some part of the
    * header missing, e.g. the file starts with SCALAR or VECTOR or TS
    * keyword. The older format does not have "active" flags for faces
    * and does not recognize most of the keywords. Old format data
