@@ -20,6 +20,7 @@ You can use MDAL to load the following file formats:
 - [FLO-2D](http://www.flo-2d.com/): Outputs of the FLO-2D modelling package
 - [HEC-RAS](http://www.hec.usace.army.mil/software/hec-ras/): Outputs of the HEC-RAS modelling package
 - [SWW](http://anuga.anu.edu.au/): Outputs of the ANUGA modelling package
+- [HYDRO_AS-2D](https://www.aquaveo.com/software/sms-hydro-as-2d): Outputs of the HYDRO_AS-2D modelling package
 
 Some formats are loaded in-memory, some formats support lazy loading.
 
