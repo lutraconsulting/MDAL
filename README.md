@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/lutraconsulting/MDAL.svg?branch=master)](https://travis-ci.org/lutraconsulting/MDAL)
 [![CircleCI](https://circleci.com/gh/lutraconsulting/MDAL.svg?style=svg)](https://circleci.com/gh/lutraconsulting/MDAL)
-[![Coverage Status](https://coveralls.io/repos/github/lutraconsulting/MDAL/badge.svg?branch=master)](https://coveralls.io/github/lutraconsulting/MDAL?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/lutraconsulting/MDAL.svg)](https://coveralls.io/github/lutraconsulting/MDAL?branch=master)
 <!-- [<img src="https://my.cdash.org/images/cdash.gif" alt="cdash" width="20"/>](https://my.cdash.org/index.php?project=MDAL) -->
 
 # MDAL
@@ -13,7 +13,7 @@ see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposal
 You can use MDAL to load the following file formats:
 
 - [NetCDF](https://en.wikipedia.org/wiki/NetCDF): Generic format for scientific data. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
-- [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in meteorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
+- [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in metmastereorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
 - [XMDF](https://en.wikipedia.org/wiki/XMDF): **Lazy Loaded** As an example, hydraulic outputs from TUFLOW modelling package
 - [DAT](http://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat): Outputs of various hydrodynamic modelling packages (e.g. BASEMENT, HYDRO_AS-2D, TUFLOW)
 - [3Di](http://www.3di.nu): 3Di modelling package formate based on [CF Conventions](http://cfconventions.org)
