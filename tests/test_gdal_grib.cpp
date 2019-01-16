@@ -98,6 +98,49 @@ TEST( MeshGdalGribTest, VectorFile )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshGdalGribTest, ScalarFileWithUComponent )
+{
+  // https://github.com/lutraconsulting/MDAL/issues/79
+  std::string path = test_file( "/grib/wind_only_u_component.grib" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "10 metre wind [m/s]" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
+  ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  bool active = getActive( ds, 0 );
+  EXPECT_EQ( true, active );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 115680, count );
+
+  double value = getValue( ds, 1600 );
+  EXPECT_DOUBLE_EQ( -0.818756103515625, value );
+
+  MDAL_CloseMesh( m );
+}
 
 int main( int argc, char **argv )
 {
