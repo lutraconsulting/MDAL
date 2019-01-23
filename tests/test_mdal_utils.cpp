@@ -24,7 +24,7 @@ struct SplitTestData
 };
 
 
-TEST( MdalUtilsTest, Split )
+TEST( MdalUtilsTest, SplitString )
 {
   std::vector<SplitTestData> tests =
   {
@@ -37,7 +37,6 @@ TEST( MdalUtilsTest, Split )
   };
   for ( const auto &test : tests )
   {
-    EXPECT_EQ( test.mExpectedResult, MDAL::split( test.mInput, ';' ) );
     EXPECT_EQ( test.mExpectedResult, MDAL::split( test.mInput, ";" ) );
   }
 
@@ -52,6 +51,23 @@ TEST( MdalUtilsTest, Split )
   for ( const auto &test : tests2 )
   {
     EXPECT_EQ( test.mExpectedResult, MDAL::split( test.mInput, ";;;" ) );
+  }
+}
+
+TEST( MdalUtilsTest, SplitChar )
+{
+  std::vector<SplitTestData> tests =
+  {
+    SplitTestData( "a;b;c", {"a", "b", "c"} ),
+    SplitTestData( "a;;b;c", {"a", "b", "c"} ),
+    SplitTestData( "a;b;", {"a", "b"} ),
+    SplitTestData( ";b;", {"b"} ),
+    SplitTestData( "a", {"a"} ),
+    SplitTestData( "", {} )
+  };
+  for ( const auto &test : tests )
+  {
+    EXPECT_EQ( test.mExpectedResult, MDAL::split( test.mInput, ';' ) );
   }
 }
 
