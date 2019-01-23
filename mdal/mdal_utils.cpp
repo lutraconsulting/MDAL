@@ -76,7 +76,10 @@ std::vector<std::string> MDAL::split( const std::string &str,
   do
   {
     next = str.find( delimiter, start );
-    token = str.substr( start, next - start );
+    if ( next == std::string::npos )
+      token = str.substr( start ); // rest of the string
+    else
+      token = str.substr( start, next - start ); // part of the string
     if ( !token.empty() )
       list.push_back( token );
     start = next + delimiter.size();
