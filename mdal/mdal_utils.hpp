@@ -94,7 +94,7 @@ namespace MDAL
 
   // time
   //! Returns a delimiter to get time in hours
-  double parseTimeUnits( const std::string &units );
+  MDAL_TEST_EXPORT double parseTimeUnits( const std::string &units );
 
   // statistics
   void combineStatistics( Statistics &main, const Statistics &other );

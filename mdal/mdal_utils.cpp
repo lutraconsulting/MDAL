@@ -52,12 +52,13 @@ std::vector<std::string> MDAL::split( const std::string &str,
   std::string::const_iterator start = str.begin();
   std::string::const_iterator end = str.end();
   std::string::const_iterator next;
+  std::string token;
   do
   {
     next = std::find( start, end, delimiter );
-    const std::string token( start, next );
+    token = std::string( start, next );
     if ( !token.empty() )
-      list.emplace_back( token );
+      list.push_back( token );
     start = next + 1;
   }
   while ( next != end );
@@ -74,11 +75,11 @@ std::vector<std::string> MDAL::split( const std::string &str,
   std::string token;
   do
   {
-    next = str.find_first_of( delimiter, start );
+    next = str.find( delimiter, start );
     token = str.substr( start, next - start );
     if ( !token.empty() )
-      list.emplace_back( token );
-    start = next + 1;
+      list.push_back( token );
+    start = next + delimiter.size();
   }
   while ( next != std::string::npos );
   return list;
