@@ -59,9 +59,13 @@ std::vector<std::string> MDAL::split( const std::string &str,
     token = std::string( start, next );
     if ( !token.empty() )
       list.push_back( token );
-    start = next + 1;
+
+    if ( next == end )
+      break;
+    else
+      start = next + 1;
   }
-  while ( next != end );
+  while ( true );
   return list;
 }
 
