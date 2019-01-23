@@ -59,12 +59,15 @@ namespace MDAL
   bool toBool( const std::string &str );
   bool isNumber( const std::string &str );
 
-  enum SplitBehaviour
-  {
-    SkipEmptyParts,
-    KeepEmptyParts
-  };
-  std::vector<std::string> split( const std::string &str, const std::string &delimiter, SplitBehaviour behaviour );
+  /**
+   * Splits by deliminer and skips empty parts.
+   * Faster than version with std::string
+   */
+  std::vector<std::string> split( const std::string &str, const char delimiter );
+
+  //! Splits by deliminer and skips empty parts
+  std::vector<std::string> split( const std::string &str, const std::string &delimiter );
+
   std::string join( const std::vector<std::string> parts, const std::string &delimiter );
 
   //! Right trim

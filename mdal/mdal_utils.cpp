@@ -44,27 +44,43 @@ bool MDAL::endsWith( const std::string &str, const std::string &substr, Contains
     return endsWith( toLower( str ), toLower( substr ), ContainsBehaviour::CaseSensitive );
 }
 
-std::vector<std::string> MDAL::split( const std::string &str, const std::string &delimiter, SplitBehaviour behaviour )
+std::vector<std::string> MDAL::split( const std::string &str,
+                                      const char delimiter
+                                    )
 {
-  std::string remaining( str );
   std::vector<std::string> list;
-  size_t pos = 0;
-  std::string token;
-  while ( ( pos = remaining.find( delimiter ) ) != std::string::npos )
+  std::string::const_iterator start = str.begin();
+  std::string::const_iterator end = str.end();
+  std::string::const_iterator next;
+  do
   {
-    token = remaining.substr( 0, pos );
-
-    if ( behaviour == SplitBehaviour::SkipEmptyParts )
-    {
-      if ( !token.empty() )
-        list.push_back( token );
-    }
-    else
-      list.push_back( token );
-
-    remaining.erase( 0, pos + delimiter.length() );
+    next = std::find( start, end, delimiter );
+    const std::string token( start, next );
+    if ( !token.empty() )
+      list.emplace_back( token );
+    start = next + 1;
   }
-  list.push_back( remaining );
+  while ( next != end );
+  return list;
+}
+
+
+std::vector<std::string> MDAL::split( const std::string &str,
+                                      const std::string &delimiter )
+{
+  std::vector<std::string> list;
+  std::string::size_type start = 0;
+  std::string::size_type next;
+  std::string token;
+  do
+  {
+    next = str.find_first_of( delimiter, start );
+    token = str.substr( start, next - start );
+    if ( !token.empty() )
+      list.emplace_back( token );
+    start = next + 1;
+  }
+  while ( next != std::string::npos );
   return list;
 }
 
@@ -308,7 +324,7 @@ double MDAL::parseTimeUnits( const std::string &units )
   // "seconds since 2001-05-05 00:00:00"
   // "hours since 1900-01-01 00:00:0.0"
   // "days since 1961-01-01 00:00:00"
-  const std::vector<std::string> units_list = MDAL::split( units, " since ", SkipEmptyParts );
+  const std::vector<std::string> units_list = MDAL::split( units, " since " );
   if ( units_list.size() == 2 )
   {
     // Give me hours

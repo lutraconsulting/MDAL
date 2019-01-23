@@ -68,6 +68,7 @@ SET(TESTS
     test_api.cpp
     test_ascii_dat.cpp
     test_binary_dat.cpp
+    test_mdal_utils.cpp
 )
 
 IF(HDF5_FOUND)
