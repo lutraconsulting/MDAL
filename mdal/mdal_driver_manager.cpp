@@ -129,9 +129,9 @@ MDAL::DriverManager::DriverManager()
   mDrivers.push_back( std::make_shared<MDAL::DriverGdalNetCDF>() );
 #endif
 
-#if defined HAVE_GDAL && defined HAVE_NETCDF
+#ifdef HAVE_GDAL
   mDrivers.push_back( std::make_shared<MDAL::DriverGdalGrib>() );
-#endif // HAVE_GDAL && HAVE_NETCDF
+#endif
 
   // DATASET DRIVERS
   mDrivers.push_back( std::make_shared<MDAL::DriverAsciiDat>() );
