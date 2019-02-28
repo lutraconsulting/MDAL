@@ -51,9 +51,9 @@ namespace MDAL
    *
    * full specification here: https://www.xmswiki.com/wiki/SMS:2D_Mesh_Files_*.2dm
    *
-   * Exception for the official specification is for recognision of cell-centered
-   * elevation values suppoted by BASEMENT 3.x releases
-   * In case of face definition has extra column, it is parsed and recognized as
+   * Exception for the official specification is for recognition of cell-centered
+   * elevation values supported by BASEMENT 3.x releases
+   * If face definition has extra column, it is parsed and recognized as
    * elevation, e.g. format for triangle
    * E3T id 1 2 3 mat_id elevation
    * and added automatically as "Bed Elevation (Face)"

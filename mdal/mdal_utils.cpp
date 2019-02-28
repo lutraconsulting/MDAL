@@ -516,7 +516,7 @@ void MDAL::addFaceScalarDatasetGroup( MDAL::Mesh *mesh,
   if ( values.empty() )
     return;
 
-  if ( 0 == mesh->facesCount() )
+  if ( mesh->facesCount() == 0 )
     return;
 
   assert( values.size() ==  mesh->facesCount() );
