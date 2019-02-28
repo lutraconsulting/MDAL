@@ -11,7 +11,7 @@ see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposal
 ## Supported Formats
 
 You can use MDAL to load the following file formats:
-
+- [2DM](https://www.xmswiki.com/wiki/SMS:2D_Mesh_Files_*.2dm): Mesh representation of various various hydrodynamic modelling packages (e.g. BASEMENT, TUFLOW)
 - [NetCDF](https://en.wikipedia.org/wiki/NetCDF): Generic format for scientific data. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
 - [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in metmastereorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
 - [XMDF](https://en.wikipedia.org/wiki/XMDF): **Lazy Loaded** As an example, hydraulic outputs from TUFLOW modelling package
