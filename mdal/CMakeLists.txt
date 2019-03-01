@@ -9,6 +9,8 @@ SET(MDAL_SOURCES
   mdal_memory_data_model.cpp
   frmts/mdal_driver.cpp
   frmts/mdal_2dm.cpp
+  frmts/mdal_slf.cpp
+  frmts/SerafinReader.cpp
   frmts/mdal_ascii_dat.cpp
   frmts/mdal_binary_dat.cpp
 )
@@ -21,6 +23,9 @@ SET(MDAL_HEADERS
   mdal_memory_data_model.hpp
   frmts/mdal_driver.hpp
   frmts/mdal_2dm.hpp
+  frmts/mdal_slf.hpp
+  frmts/SerafinReader.h
+  frmts/FFileReader.h
   frmts/mdal_ascii_dat.hpp
   frmts/mdal_binary_dat.hpp
 )
