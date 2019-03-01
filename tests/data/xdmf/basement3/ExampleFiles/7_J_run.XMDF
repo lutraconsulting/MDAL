@@ -1,0 +1,266 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="2.0">
+    <Domain>
+        <Topology TopologyType="Triangle" Name="Topology" NumberOfElements="21030">
+            <DataItem ItemType="Uniform" Dimensions="63090" Format="HDF">
+                7_J_run_results.h5:CellsAll/Topology
+            </DataItem>
+        </Topology>
+        <Geometry GeometryType="XY" Name="Coordinates">
+            <DataItem ItemType="Uniform" Dimensions="22522" Format="HDF">
+                7_J_run_results.h5:NodesAll/Coordnts
+            </DataItem>
+        </Geometry>
+        <Grid GridType="Collection" Name="7_J_run_results.h5" CollectionType="Temporal">
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 0.000000" Value="0.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_depth" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="21030" Function="$0-$1">
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 3" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/HydState/0000000
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000000
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="flow_velocity_abs" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="21030" Function="sqrt($0/($2-$3)*$0/($2-$3) + $1/($2-$3)*$1/($2-$3))">
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 1 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 3" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/HydState/0000000
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 2 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 3" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/HydState/0000000
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 3" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/HydState/0000000
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000000
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="friction_chezy" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="21030">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 21030 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                            7_J_run_results.h5:/RESULTS/CellsAll/ChezyCoe/0000000
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="ns_hyd_discharge" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="21030">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 1 1 1 1 21030 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="21030 10" Format="HDF">
+                            7_J_run_results.h5:/RESULTS/NodeStrg/StateVar/0000000
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="ns_mor_discharge" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="21030">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 8 1 1 1 21030 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="21030 10" Format="HDF">
+                            7_J_run_results.h5:/RESULTS/NodeStrg/StateVar/0000000
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="21030">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 21030 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                            7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000000
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="delta_z" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="21030" Function="$1-$0">
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000000
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000000
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 1.000000" Value="1.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_depth" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="21030" Function="$0-$1">
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 3" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/HydState/0000001
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000001
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="flow_velocity_abs" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="21030" Function="sqrt($0/($2-$3)*$0/($2-$3) + $1/($2-$3)*$1/($2-$3))">
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 1 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 3" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/HydState/0000001
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 2 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 3" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/HydState/0000001
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 3" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/HydState/0000001
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000001
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="friction_chezy" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="21030">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 21030 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                            7_J_run_results.h5:/RESULTS/CellsAll/ChezyCoe/0000001
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="ns_hyd_discharge" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="21030">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 1 1 1 1 21030 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="21030 10" Format="HDF">
+                            7_J_run_results.h5:/RESULTS/NodeStrg/StateVar/0000001
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="ns_mor_discharge" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="21030">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 8 1 1 1 21030 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="21030 10" Format="HDF">
+                            7_J_run_results.h5:/RESULTS/NodeStrg/StateVar/0000001
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="21030">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 21030 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                            7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000001
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="delta_z" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="21030" Function="$1-$0">
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000000
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="21030">
+                            <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                                0 0 0 1 1 1 21030 1 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="21030 1" Format="HDF">
+                                7_J_run_results.h5:/RESULTS/CellsAll/BottomEl/0000001
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+        </Grid>
+    </Domain>
+</Xdmf>

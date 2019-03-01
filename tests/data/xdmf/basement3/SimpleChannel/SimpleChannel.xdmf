@@ -1,0 +1,552 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="2.0">
+    <Domain>
+        <Topology TopologyType="Triangle" Name="Topology" NumberOfElements="77">
+            <DataItem ItemType="Uniform" Dimensions="231" Format="HDF">
+                SimpleChannel_results.h5:CellsAll/Topology
+            </DataItem>
+        </Topology>
+        <Geometry GeometryType="XY" Name="Coordinates">
+            <DataItem ItemType="Uniform" Dimensions="108" Format="HDF">
+                SimpleChannel_results.h5:NodesAll/Coordnts
+            </DataItem>
+        </Geometry>
+        <Grid GridType="Collection" Name="SimpleChannel_results.h5" CollectionType="Temporal">
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 0.000000" Value="0.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 
+1 1 1 
+77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000000
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 
+1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000000
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 
+1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000000
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 10.000000" Value="10.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 
+1 1 1 
+77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000001
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000001
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000001
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 20.000000" Value="20.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000002
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000002
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000002
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 30.000000" Value="30.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000003
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000003
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000003
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 40.000000" Value="40.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000004
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000004
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000004
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 50.000000" Value="50.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000005
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000005
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000005
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 60.000000" Value="60.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000006
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000006
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000006
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 70.000000" Value="70.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000007
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000007
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000007
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 80.000000" Value="80.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000008
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000008
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000008
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 90.000000" Value="90.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000009
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000009
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000009
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+            <Grid GridType="Uniform" Name="Timestep">
+                <Time TimeType="Single" Name="time = 100.000000" Value="100.000000">
+                </Time>
+                <Topology TopologyType="Triangle" Reference="/Xdmf/Domain/Topology[1]">
+                </Topology>
+                <Geometry GeometryType="XY" Reference="/Xdmf/Domain/Geometry[1]">
+                </Geometry>
+                <Attribute AttributeType="Scalar" Name="water_surface" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                            SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000010
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Name="bottom_elevation" Center="Cell">
+                    <DataItem ItemType="HyperSlab" Dimensions="77">
+                        <DataItem ItemType="Uniform" Dimensions="3 3" Format="XML">
+                            0 0 0 1 1 1 77 1 1
+                        </DataItem>
+                        <DataItem ItemType="Uniform" Dimensions="77 1" Format="HDF">
+                            SimpleChannel_results.h5:CellsAll/BottomEl
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+                <Attribute AttributeType="Vector" Name="spec_discharge" Center="Cell">
+                    <DataItem ItemType="Function" Dimensions="77" Function="JOIN($0, $1, 0*$1)">
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 1 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000010
+                            </DataItem>
+                        </DataItem>
+                        <DataItem ItemType="HyperSlab" Dimensions="77">
+                            <DataItem ItemType="Uniform" Dimensions="3 2" Format="XML">
+                                0 2 1 1 77 1
+                            </DataItem>
+                            <DataItem ItemType="Uniform" Dimensions="77 3" Format="HDF">
+                                SimpleChannel_results.h5:/RESULTS/CellsAll/HydState/0000010
+                            </DataItem>
+                        </DataItem>
+                    </DataItem>
+                </Attribute>
+            </Grid>
+        </Grid>
+    </Domain>
+</Xdmf>

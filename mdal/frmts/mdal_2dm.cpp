@@ -166,7 +166,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
       // E** id vertex_id1, vertex_id2, ... material_id (elevation - optional)
       // vertex ids are numbered from 1
       // Right now we just store node IDs here - we will convert them to node indices afterwards
-      assert( chunks.size() > faceVertexCount + 2 );
+      assert( chunks.size() > faceVertexCount + 1 );
 
       for ( size_t i = 0; i < faceVertexCount; ++i )
         face[i] = MDAL::toSizeT( chunks[i + 2] ) - 1; // 2dm is numbered from 1
