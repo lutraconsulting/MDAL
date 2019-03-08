@@ -251,8 +251,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   mesh->vertices = vertices;
 
   // Add Bed Elevations
-  MDAL::addBedElevationDatasetGroup( mesh.get(), vertices );
   MDAL::addFaceScalarDatasetGroup( mesh.get(), elementCenteredElevation, "Bed Elevation (Face)" );
+  MDAL::addBedElevationDatasetGroup( mesh.get(), vertices );
 
   return std::unique_ptr<Mesh>( mesh.release() );
 }

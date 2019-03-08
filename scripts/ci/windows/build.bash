@@ -16,6 +16,8 @@ C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15 Win64" ${CMAKE_OPTIONS} \
    -DGDAL_DIR="${OSGEO4W_DIR}" \
    -DGDAL_LIBRARY="${OSGEO4W_DIR}/lib/gdal_i.lib" \
    -DGDAL_INCLUDE_DIR="${OSGEO4W_DIR}/include" \
+   -DLIBXML2_LIBRARIES="${OSGEO4W_DIR}/lib/libxml2.lib" \
+   -DLIBXML2_INCLUDE_DIR="${OSGEO4W_DIR}/include/libxml2" \
    ..
 
 C:/Program\ Files/CMake/bin/cmake --build .

@@ -42,7 +42,7 @@ For 64-bit version:
 install dependencies for drivers
 
 ```
-sudo apt-get install libgdal-dev libhdf5-dev libnetcdf-dev
+sudo apt-get install libgdal-dev libhdf5-dev libnetcdf-dev libxml2-dev
 ```
 
 and use cmake to generate build system

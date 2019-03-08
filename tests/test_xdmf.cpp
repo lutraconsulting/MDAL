@@ -8,7 +8,132 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 
-/*
+TEST( XdmfTest, Basement3HumpsTest )
+{
+  std::string path = test_file( "/xdmf/basement3/3HumpsTest/3_humps_mesh.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  std::string path2 = test_file( "/xdmf/basement3/3HumpsTest/three_humps.xdmf" );
+  MDAL_M_LoadDatasets( m, path2.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  EXPECT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "water_surface" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    bool onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
+
+    ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 2 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    bool active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 18497, count );
+
+    double value = getValue( ds, 145 );
+    EXPECT_DOUBLE_EQ( 0.73621612176773543, value );
+
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_DOUBLE_EQ( 0.0, min );
+    EXPECT_DOUBLE_EQ( 2.9100000000000001, max );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_DOUBLE_EQ( 0.0, min );
+    EXPECT_DOUBLE_EQ( 2.9100000000000001, max );
+
+    double time = MDAL_D_time( ds );
+    EXPECT_DOUBLE_EQ( 20, time );
+  }
+
+  MDAL_CloseMesh( m );
+}
+
+
+TEST( XdmfTest, Basement3Slopes )
+{
+  std::string path = test_file( "/xdmf/basement3/3Slopes/3Slopes_Counter.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  std::string path2 = test_file( "/xdmf/basement3/3Slopes/7_J_run.XMDF" );
+  MDAL_M_LoadDatasets( m, path2.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  EXPECT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "friction_chezy" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    bool onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
+
+    ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 1 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    bool active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 21030, count );
+
+    double value = getValue( ds, 145 );
+    EXPECT_DOUBLE_EQ( 383.91154621338592, value );
+
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_DOUBLE_EQ( 378.67290092503674, min );
+    EXPECT_DOUBLE_EQ( 494.81692722296532, max );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_DOUBLE_EQ( 0.0, min );
+    EXPECT_DOUBLE_EQ( 494.816927222965329, max );
+
+    double time = MDAL_D_time( ds );
+    EXPECT_DOUBLE_EQ( 1, time );
+  }
+
+  MDAL_CloseMesh( m );
+}
+
+
 TEST( XdmfTest, Basement3SimpleChannel )
 {
   std::string path = test_file( "/xdmf/basement3/SimpleChannel/SimpleChannel.2dm" );
@@ -21,20 +146,17 @@ TEST( XdmfTest, Basement3SimpleChannel )
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
 
-  // ///////////
-  // Scalar Dataset
-  // ///////////
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
     ASSERT_EQ( 1, meta_count );
 
     const char *name = MDAL_G_name( g );
-    EXPECT_EQ( std::string( "h" ), std::string( name ) );
+    EXPECT_EQ( std::string( "water_surface" ), std::string( name ) );
 
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
@@ -42,8 +164,8 @@ TEST( XdmfTest, Basement3SimpleChannel )
     bool onVertices = MDAL_G_isOnVertices( g );
     EXPECT_EQ( false, onVertices );
 
-    ASSERT_EQ( 21, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 2 );
+    ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 3 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -53,38 +175,108 @@ TEST( XdmfTest, Basement3SimpleChannel )
     EXPECT_EQ( true, active );
 
     int count = MDAL_D_valueCount( ds );
-    ASSERT_EQ( 5790, count );
+    ASSERT_EQ( 77, count );
 
-    double value = getValue( ds, 210 );
-    EXPECT_DOUBLE_EQ( 0.0, value );
-
-    value = getValue( ds, 5000 );
-    EXPECT_DOUBLE_EQ( 0.97462528944015503, value);
+    double value = getValue( ds, 30 );
+    EXPECT_DOUBLE_EQ( 0.41129252269409461, value );
 
     double min, max;
     MDAL_D_minimumMaximum( ds, &min, &max );
-    EXPECT_DOUBLE_EQ( 0, min );
-    EXPECT_DOUBLE_EQ( 1.0916943550109863, max );
+    EXPECT_DOUBLE_EQ( 0.29132377244494195, min );
+    EXPECT_DOUBLE_EQ( 0.48486230912036832, max );
 
     MDAL_G_minimumMaximum( g, &min, &max );
-    EXPECT_DOUBLE_EQ( -0.15686002373695374, min );
-    EXPECT_DOUBLE_EQ( 1.0916943550109863, max );
+    EXPECT_DOUBLE_EQ( 0.0040000000000000001, min );
+    EXPECT_DOUBLE_EQ( 0.48486232713374577, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 100.895, time );
-
-    // lets try another timestep too
-    ds = MDAL_G_dataset( g, 10 );
-    ASSERT_NE( ds, nullptr );
-
-    value = getValue( ds, 5000 );
-    EXPECT_DOUBLE_EQ( 0.19425453245639801, value );
+    EXPECT_DOUBLE_EQ( 30, time );
   }
 
   MDAL_CloseMesh( m );
 }
 
-*/
+
+TEST( XdmfTest, Basement3SimpleGeometry )
+{
+  std::string path = test_file( "/xdmf/basement3/SimpleGeometry/test.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  std::string path2 = test_file( "/xdmf/basement3/SimpleGeometry/test.xmf" );
+  MDAL_M_LoadDatasets( m, path2.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  EXPECT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "water_surface" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    bool onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
+
+    ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 3 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    bool active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 9, count );
+
+    double value = getValue( ds, 30 );
+    EXPECT_DOUBLE_EQ( 0.0, value );
+
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_DOUBLE_EQ( 1.9182098447965066, min );
+    EXPECT_DOUBLE_EQ( 2.0899662203297678, max );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_DOUBLE_EQ( 1.8713530882459224, min );
+    EXPECT_DOUBLE_EQ( 2.1451217674360481, max );
+
+    double time = MDAL_D_time( ds );
+    EXPECT_DOUBLE_EQ( 6, time );
+  }
+
+  MDAL_CloseMesh( m );
+}
+
+
+TEST( XdmfTest, Basement3SimpleGeometryWithFunctions )
+{
+  std::string path = test_file( "/xdmf/basement3/SimpleGeometry/test.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  std::string path2 = test_file( "/xdmf/basement3/SimpleGeometry/test_with_functions.xmf" );
+  MDAL_M_LoadDatasets( m, path2.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  EXPECT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_CloseMesh( m );
+}
+
 TEST( XdmfTest, Simple )
 {
   std::string path = test_file( "/xdmf/simple/simpleXFMD.2dm" );

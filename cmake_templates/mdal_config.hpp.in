@@ -9,7 +9,7 @@
 
 #cmakedefine HAVE_NETCDF
 
-#cmakedefine HAVE_TINYXML2
+#cmakedefine HAVE_XML
 
 #endif // MDAL_CONFIG_HPP
 

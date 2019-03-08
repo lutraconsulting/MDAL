@@ -193,7 +193,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
   ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -228,7 +228,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
   // Bed elevation dataset and face elevation dataset
   {
 
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );

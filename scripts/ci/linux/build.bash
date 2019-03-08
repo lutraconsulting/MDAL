@@ -16,7 +16,8 @@ mkdir -p build_mingw
 cd build_mingw
 cmake .. -DCMAKE_TOOLCHAIN_FILE=../Toolchain-mingw32.cmake \
          -DWITH_GDAL=OFF -DENABLE_TESTS=OFF -DWITH_HDF5=OFF \
-         -DWITH_NETCDF=OFF ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel
+         -DWITH_XML=OFF -DWITH_NETCDF=OFF \
+         ${CMAKE_OPTIONS} -DCMAKE_BUILD_TYPE=Rel
 make
 cd ..
 

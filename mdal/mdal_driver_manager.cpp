@@ -29,7 +29,7 @@
 #include "frmts/mdal_gdal_netcdf.hpp"
 #endif
 
-#if defined HAVE_HDF5 && defined HAVE_TINYXML2
+#if defined HAVE_HDF5 && defined HAVE_XML
 #include "frmts/mdal_xdmf.hpp"
 #endif
 
@@ -147,7 +147,7 @@ MDAL::DriverManager::DriverManager()
   mDrivers.push_back( std::make_shared<MDAL::DriverXmdf>() );
 #endif
 
-#if defined HAVE_HDF5 && defined HAVE_TINYXML2
+#if defined HAVE_HDF5 && defined HAVE_XML
   mDrivers.push_back( std::make_shared<MDAL::DriverXdmf>() );
 #endif
 }

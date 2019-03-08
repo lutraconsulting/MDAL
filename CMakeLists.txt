@@ -22,7 +22,7 @@ SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables?")
 SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that require HDF5 (e.g. XMDF, XDMF)")
 SET (WITH_GDAL TRUE CACHE BOOL "Build providers that require GDAL (e.g. GRIB)")
 SET (WITH_NETCDF TRUE CACHE BOOL "Build providers that require NETCDF (e.g. 3Di)")
-SET (WITH_TINYXML2 TRUE CACHE BOOL "Build providers that require XML (e.g. XMDF)")
+SET (WITH_XML TRUE CACHE BOOL "Build providers that require LIBXML2 (e.g. XDMF)")
 
 #############################################################
 # Setup code coverage
@@ -78,13 +78,14 @@ IF (WITH_NETCDF)
   ENDIF (NETCDF_FOUND)
 ENDIF(WITH_NETCDF)
 
-IF (WITH_TINYXML2)
-  FIND_PACKAGE(TinyXML2 REQUIRED)
-  IF (TINYXML2_FOUND)
+IF (WITH_XML)
+  FIND_PACKAGE(LibXml2 REQUIRED)
+  IF (LIBXML2_FOUND)
     # following variable is used in mdal_config.h
-    SET (HAVE_TINYXML2 TRUE)
-  ENDIF (TINYXML2_FOUND)
-ENDIF(WITH_TINYXML2)
+    SET (XML_FOUND TRUE)
+    SET (HAVE_XML TRUE)
+  ENDIF (LIBXML2_FOUND)
+ENDIF(WITH_XML)
 
 #############################################################
 # create mdal_config.h
