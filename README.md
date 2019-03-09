@@ -14,14 +14,17 @@ You can use MDAL to load the following file formats:
 - [2DM](https://www.xmswiki.com/wiki/SMS:2D_Mesh_Files_*.2dm): Mesh representation of various various hydrodynamic modelling packages (e.g. BASEMENT, TUFLOW)
 - [NetCDF](https://en.wikipedia.org/wiki/NetCDF): Generic format for scientific data. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
 - [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in metmastereorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
-- [XMDF](https://en.wikipedia.org/wiki/XMDF): **Lazy Loaded** As an example, hydraulic outputs from TUFLOW modelling package
+- [XMDF*](https://en.wikipedia.org/wiki/XMDF): As an example, hydraulic outputs from TUFLOW modelling package
 - [DAT](http://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat): Outputs of various hydrodynamic modelling packages (e.g. BASEMENT, HYDRO_AS-2D, TUFLOW)
 - [3Di](http://www.3di.nu): 3Di modelling package formate based on [CF Conventions](http://cfconventions.org)
 - [FLO-2D](http://www.flo-2d.com/): Outputs of the FLO-2D modelling package
 - [HEC-RAS](http://www.hec.usace.army.mil/software/hec-ras/): Outputs of the HEC-RAS modelling package
 - [SWW](http://anuga.anu.edu.au/): Outputs of the ANUGA modelling package
+- [SAGA FLOW**](https://gis.stackexchange.com/a/254942/59405): Rasters in the SAGA flow direction format
 
-Some formats are loaded in-memory, some formats support lazy loading.
+\* Data lazy loaded
+
+\*\* Formats can be preprocessed using QGIS [Crayfish](https://plugins.qgis.org/plugins/crayfish/)/Mesh processing algorithm to one of supported formats
 
 # Build 
 
