@@ -33,13 +33,6 @@ void NetCDFFile::openFile( const std::string &fileName )
   }
 }
 
-bool NetCDFFile::hasVariable( const std::string &name ) const
-{
-  assert( mNcid != 0 );
-  int varid;
-  return ( nc_inq_varid( mNcid, name.c_str(), &varid ) == NC_NOERR );
-}
-
 std::vector<int> NetCDFFile::readIntArr( const std::string &name, size_t dim ) const
 {
   assert( mNcid != 0 );
@@ -76,7 +69,6 @@ std::vector<double> NetCDFFile::readDoubleArr( const std::string &name, size_t d
 bool NetCDFFile::hasArr( const std::string &name ) const
 {
   assert( mNcid != 0 );
-
   int arr_id;
   return nc_inq_varid( mNcid, name.c_str(), &arr_id ) == NC_NOERR;
 }
@@ -188,19 +180,4 @@ void NetCDFFile::getDimension( const std::string &name, size_t *val, int *ncid_v
 
   if ( nc_inq_dimid( mNcid, name.c_str(), ncid_val ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
   if ( nc_inq_dimlen( mNcid, *ncid_val, val ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
-}
-
-void NetCDFFile::getDimensionOptional( const std::string &name, size_t *val, int *ncid_val ) const
-{
-  assert( mNcid != 0 );
-
-  try
-  {
-    getDimension( name, val, ncid_val );
-  }
-  catch ( MDAL_Status )
-  {
-    *ncid_val = -1;
-    *val = 0;
-  }
 }
