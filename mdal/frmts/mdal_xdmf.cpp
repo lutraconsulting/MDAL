@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <map>
 #include <cmath>
+#include <limits>
 
 #include "mdal_xdmf.hpp"
 #include "mdal_utils.hpp"
@@ -111,6 +112,151 @@ size_t MDAL::XdmfDataset::activeData( size_t indexStart, size_t count, int *buff
 // //////////////////////////////////////////////////////////////////////////////
 // //////////////////////////////////////////////////////////////////////////////
 
+
+MDAL::XdmfFunctionDataset::XdmfFunctionDataset(
+  MDAL::DatasetGroup *grp,
+  MDAL::XdmfFunctionDataset::FunctionType type,
+  double time )
+  : MDAL::Dataset( grp )
+  , mType( type )
+  , mBaseReferenceGroup( "XDMF", grp->mesh(), grp->uri() )
+{
+  setTime( time );
+  mBaseReferenceGroup.setIsScalar( true );
+  mBaseReferenceGroup.setIsOnVertices( grp->isOnVertices() );
+  mBaseReferenceGroup.setName( "Base group for reference datasets" );
+}
+
+MDAL::XdmfFunctionDataset::~XdmfFunctionDataset() = default;
+
+void MDAL::XdmfFunctionDataset::addReferenceDataset( const HyperSlab &slab, const HdfDataset &hdfDataset, double time )
+{
+  std::shared_ptr<MDAL::XdmfDataset> xdmfDataset = std::make_shared<MDAL::XdmfDataset>(
+        &mBaseReferenceGroup,
+        slab,
+        hdfDataset,
+        time
+      );
+  mReferenceDatasets.push_back( xdmfDataset );
+}
+
+void MDAL::XdmfFunctionDataset::swap()
+{
+  if ( mReferenceDatasets.size() < 2 )
+    return;
+  std::swap( mReferenceDatasets[0], mReferenceDatasets[1] );
+}
+
+size_t MDAL::XdmfFunctionDataset::scalarData( size_t indexStart, size_t count, double *buffer )
+{
+  assert( group()->isScalar() ); //checked in C API interface
+  assert( mType != FunctionType::Join );
+
+  if ( mType == FunctionType::Substract )
+    return substractFunction( indexStart, count, buffer );
+
+  if ( mType == FunctionType::Flow )
+    return flowFunction( indexStart, count, buffer );
+
+  return 0;
+}
+
+size_t MDAL::XdmfFunctionDataset::vectorData( size_t indexStart, size_t count, double *buffer )
+{
+  assert( !group()->isScalar() ); //checked in C API interface
+  assert( mType == FunctionType::Join );
+
+  return joinFunction( indexStart, count, buffer );
+}
+
+size_t MDAL::XdmfFunctionDataset::activeData( size_t indexStart, size_t count, int *buffer )
+{
+  MDAL_UNUSED( indexStart );
+  memset( buffer, 1, count * sizeof( int ) );
+  return count;
+}
+
+size_t MDAL::XdmfFunctionDataset::substractFunction( size_t indexStart, size_t count, double *buffer )
+{
+  std::vector<double> buf( 2 * count, std::numeric_limits<double>::quiet_NaN() );
+  size_t copyVals = extractRawData( indexStart, count, 2, buf );
+  for ( size_t j = 0; j < copyVals; ++j )
+  {
+    double x0 = buf[j];
+    double x1 = buf[count + j];
+    if ( !std::isnan( x0 ) && !std::isnan( x1 ) )
+      buffer[j] = x1 - x0;
+  }
+  return copyVals;
+}
+
+size_t MDAL::XdmfFunctionDataset::flowFunction( size_t indexStart, size_t count, double *buffer )
+{
+  std::vector<double> buf( 4 * count, std::numeric_limits<double>::quiet_NaN() );
+  size_t copyVals = extractRawData( indexStart, count, 4, buf );
+  for ( size_t j = 0; j < copyVals; ++j )
+  {
+    double x0 = buf[1 * count + j];
+    double x1 = buf[1 * count + j];
+    double x2 = buf[2 * count + j];
+    double x3 = buf[3 * count + j];
+
+    if ( !std::isnan( x0 ) &&
+         !std::isnan( x1 ) &&
+         !std::isnan( x2 ) &&
+         !MDAL::equals( x2, x3 )
+       )
+    {
+      double diff = x2 - x3;
+      buffer[j] = sqrt( ( x0 / diff ) * ( x0 / diff ) + ( x1 / diff ) * ( x1 / diff ) );
+    }
+  }
+  return copyVals;
+}
+
+size_t MDAL::XdmfFunctionDataset::joinFunction( size_t indexStart, size_t count, double *buffer )
+{
+  std::vector<double> buf( 2 * count, std::numeric_limits<double>::quiet_NaN() );
+  size_t copyVals = extractRawData( indexStart, count, 2, buf );
+  for ( size_t j = 0; j < copyVals; ++j )
+  {
+    double x = buf[j];
+    double y = buf[count + j];
+    if ( !std::isnan( x ) && !std::isnan( y ) )
+    {
+      buffer[2 * j] = x;
+      buffer[2 * j + 1] = y;
+    }
+  }
+  return copyVals;
+}
+
+size_t MDAL::XdmfFunctionDataset::extractRawData( size_t indexStart, size_t count, size_t nDatasets, std::vector< double > &buf )
+{
+  assert( buf.size() == nDatasets * count );
+
+  if ( mReferenceDatasets.size() < nDatasets )
+    return 0;
+
+  if ( !mReferenceDatasets[0]->group()->isScalar() )
+    return 0;
+
+  size_t ret = mReferenceDatasets[0]->scalarData( indexStart, count, buf.data() );
+  for ( size_t i = 1; i < nDatasets ; ++i )
+  {
+    if ( !mReferenceDatasets[i]->group()->isScalar() )
+      return 0;
+    size_t ret1 = mReferenceDatasets[i]->scalarData( indexStart, count, buf.data() + count * i );
+    if ( ret != ret1 )
+      return 0;
+  }
+  return ret;
+}
+
+// //////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////
+
 MDAL::HyperSlab MDAL::DriverXdmf::parseHyperSlab( const std::string &str, size_t dimX )
 {
   std::stringstream slabSS( str );
@@ -169,6 +315,44 @@ MDAL::HyperSlab MDAL::DriverXdmf::parseHyperSlab( const std::string &str, size_t
   return slab;
 }
 
+MDAL::HyperSlab MDAL::DriverXdmf::parseHyperSlabNode( const XMLFile &xmfFile, xmlNodePtr node )
+{
+  std::string slabDimS = xmfFile.attribute( node, "Dimensions" );
+  std::vector<size_t> slabDim = parseDimensions2D( slabDimS );
+  if ( slabDim[0] != 3 || ( slabDim[1] != 2 && slabDim[1] != 3 ) )
+  {
+    MDAL::debug( "Only two-dimensional slab array with dim 3x3 is supported (1)" );
+    throw MDAL_Status::Err_UnknownFormat;
+  }
+
+  std::string slabS = xmfFile.content( node );
+  HyperSlab slab = parseHyperSlab( slabS, slabDim[1] );
+  return slab;
+}
+
+HdfDataset MDAL::DriverXdmf::parseHdf5Node( const XMLFile &xmfFile, xmlNodePtr node )
+{
+  std::string snapshotDimS = xmfFile.attribute( node, "Dimensions" );
+  std::vector<size_t> snapshotDim = parseDimensions2D( snapshotDimS );
+
+  std::string hdf5Name, hdf5Path;
+  hdf5NamePath( xmfFile.content( node ), hdf5Name, hdf5Path );
+
+  std::shared_ptr<HdfFile> hdfFile;
+  if ( mHdfFiles.count( hdf5Name ) == 0 )
+  {
+    hdfFile = std::make_shared<HdfFile>( hdf5Name );
+    mHdfFiles[hdf5Name] = hdfFile;
+  }
+  else
+  {
+    hdfFile = mHdfFiles[hdf5Name];
+  }
+
+  HdfDataset hdfDataset( hdfFile->id(), hdf5Path );
+  return hdfDataset;
+}
+
 void MDAL::DriverXdmf::hdf5NamePath( const std::string &dataItemPath, std::string &filePath, std::string &hdf5Path )
 {
   std::string dirName = MDAL::dirName( mDatFile );
@@ -210,11 +394,41 @@ std::vector<size_t> MDAL::DriverXdmf::parseDimensions2D( const std::string &data
   return slabDim;
 }
 
-MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
+std::pair<HdfDataset, MDAL::HyperSlab> MDAL::DriverXdmf::parseXdmfDataset(
+  const XMLFile &xmfFile,
+  xmlNodePtr itemNod )
 {
   size_t facesCount = mMesh->facesCount();
+
+  size_t dim = xmfFile.querySizeTAttribute( itemNod, "Dimensions" );
+  if ( dim != facesCount )
+  {
+    MDAL::debug( "Dataset dimensions should correspond to the number of mesh elements" );
+    throw MDAL_Status::Err_UnknownFormat;
+  }
+
+  xmlNodePtr node1 = xmfFile.getCheckChild( itemNod, "DataItem" );
+  xmlNodePtr node2 = xmfFile.getCheckSibling( node1, "DataItem" );
+
+  std::string format1 = xmfFile.attribute( node1, "Format" );
+  std::string format2 = xmfFile.attribute( node2, "Format" );
+
+  if ( ( format1 == "XML" ) && ( format2 == "HDF" ) )
+  {
+    HyperSlab slab = parseHyperSlabNode( xmfFile, node1 );
+    HdfDataset hdfDataset = parseHdf5Node( xmfFile, node2 );
+    return std::make_pair( hdfDataset, slab );
+  }
+  else
+  {
+    MDAL::debug( "Only XML hyperSlab and HDF dataset Format supported" );
+    throw MDAL_Status::Err_UnknownFormat;
+  }
+}
+
+MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
+{
   std::map< std::string, std::shared_ptr<MDAL::DatasetGroup> > groups;
-  std::map< std::string, std::shared_ptr<HdfFile> > hdfFiles;
   size_t nTimesteps = 0;
 
   XMLFile xmfFile;
@@ -261,91 +475,88 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
 
       if ( xmfFile.checkAttribute( itemNod, "ItemType", "Function" ) )
       {
-        // unsupported
-        continue;
-      }
-
-      if ( !xmfFile.checkAttribute( itemNod, "ItemType", "HyperSlab" ) &&
-           !xmfFile.checkAttribute( itemNod, "Type", "HyperSlab" ) )
-      {
-        MDAL::debug( "Expecting HyperSlab ItemType and Type" );
-        throw MDAL_Status::Err_UnknownFormat;
-      }
-
-      size_t dim = xmfFile.querySizeTAttribute( itemNod, "Dimensions" );
-      if ( dim != facesCount )
-      {
-        MDAL::debug( "Dataset dimensions should correspond to the number of mesh elements" );
-        throw MDAL_Status::Err_UnknownFormat;
-      }
-      xmlNodePtr slabNod = xmfFile.getCheckChild( itemNod, "DataItem" );
-      xmfFile.checkAttribute( slabNod, "Format", "XML", "Only XML hyperSlab format supported" );
-
-      std::string slabDimS = xmfFile.attribute( slabNod, "Dimensions" );
-      std::vector<size_t> slabDim = parseDimensions2D( slabDimS );
-      if ( slabDim[0] != 3 || ( slabDim[1] != 2 && slabDim[1] != 3 ) )
-      {
-        MDAL::debug( "Only two-dimensional slab array with dim 3x3 is supported (1)" );
-        throw MDAL_Status::Err_UnknownFormat;
-      }
-
-      std::string slabS = xmfFile.content( slabNod );
-      const HyperSlab slab = parseHyperSlab( slabS, slabDim[1] );
-
-      xmlNodePtr snapshotNod = xmfFile.getCheckSibling( slabNod, "DataItem" );
-
-      xmfFile.checkAttribute( snapshotNod, "Format", "HDF", "Only HDF dataset format supported" );
-      std::string snapshotDimS = xmfFile.attribute( snapshotNod, "Dimensions" );
-      std::vector<size_t> snapshotDim = parseDimensions2D( snapshotDimS );
-
-      std::string hdf5Name, hdf5Path;
-      hdf5NamePath( xmfFile.content( snapshotNod ), hdf5Name, hdf5Path );
-
-      std::shared_ptr<HdfFile> hdfFile;
-      if ( hdfFiles.count( hdf5Name ) == 0 )
-      {
-        hdfFile = std::make_shared<HdfFile>( hdf5Name );
-        hdfFiles[hdf5Name] = hdfFile;
-      }
-      else
-      {
-        hdfFile = hdfFiles[hdf5Name];
-      }
-
-      std::shared_ptr<MDAL::DatasetGroup> group;
-      if ( groups.count( groupName ) == 0 )
-      {
-        group = std::make_shared<MDAL::DatasetGroup>(
-                  "XDMF",
-                  mMesh,
-                  mDatFile,
-                  groupName
-                );
-        group->setIsScalar( slab.isScalar );
-        group->setIsOnVertices( false ); //only center-based implemented
-        groups[groupName] = group;
-      }
-      else
-      {
-        group = groups[groupName];
-        if ( group->isScalar() != slab.isScalar )
+        std::string function = xmfFile.attribute( itemNod, "Function" );
+        function = MDAL::replace( function, " ", "" );
+        XdmfFunctionDataset::FunctionType type;
+        bool reversed = false;
+        bool isScalar = true;
+        if ( function == "sqrt($0/($2-$3)*$0/($2-$3)+$1/($2-$3)*$1/($2-$3))" )
         {
-          MDAL::debug( "Inconsistent groups" );
-          throw MDAL_Status::Err_UnknownFormat;
+          type = XdmfFunctionDataset::Flow;
         }
-      }
+        else if ( function == "$0-$1" )
+        {
+          reversed = true;
+          type = XdmfFunctionDataset::Substract;
+        }
+        else if ( function == "$1-$0" )
+        {
+          type = XdmfFunctionDataset::Substract;
+        }
+        else if ( ( function == "JOIN($0,$1,0*$1)" ) || ( function == "JOIN($0,$1,0)" ) )
+        {
+          type = XdmfFunctionDataset::Join;
+          isScalar = false;
+        }
 
-      HdfDataset hdfDataset( hdfFile->id(), hdf5Path );
-      std::shared_ptr<MDAL::XdmfDataset> xdmfDataset = std::make_shared<MDAL::XdmfDataset>(
-            group.get(),
-            slab,
-            hdfDataset,
-            time
-          );
-      // This basically forces to load all data to calculate statistics!
-      const MDAL::Statistics stats = MDAL::calculateStatistics( xdmfDataset );
-      xdmfDataset->setStatistics( stats );
-      group->datasets.push_back( xdmfDataset );
+        std::shared_ptr<MDAL::DatasetGroup> group = findGroup( groups, groupName, isScalar );
+        std::shared_ptr<MDAL::XdmfFunctionDataset> xdmfFunctionDataset = std::make_shared<MDAL::XdmfFunctionDataset>(
+              group.get(),
+              type,
+              time
+            );
+
+        xmlNodePtr dataNod = xmfFile.getCheckChild( itemNod, "DataItem" );
+        for ( ;
+              dataNod != nullptr;
+              dataNod = xmfFile.getCheckSibling( dataNod, "DataItem", false ) )
+        {
+          if (
+            xmfFile.checkAttribute( dataNod, "ItemType", "HyperSlab" ) ||
+            xmfFile.checkAttribute( dataNod, "Type", "HyperSlab" ) )
+          {
+            std::pair<HdfDataset, HyperSlab> data = parseXdmfDataset( xmfFile, dataNod );
+            xdmfFunctionDataset->addReferenceDataset( data.second, data.first, time );
+          }
+          else
+          {
+            MDAL::debug( "Expecting HyperSlab Types under Function" );
+            throw MDAL_Status::Err_UnknownFormat;
+          }
+        }
+
+        if ( reversed )
+        {
+          xdmfFunctionDataset->swap();
+        }
+
+        // This basically forces to load all data to calculate statistics!
+        const MDAL::Statistics stats = MDAL::calculateStatistics( xdmfFunctionDataset );
+        xdmfFunctionDataset->setStatistics( stats );
+        group->datasets.push_back( xdmfFunctionDataset );
+      }
+      else if (
+        xmfFile.checkAttribute( itemNod, "ItemType", "HyperSlab" ) ||
+        xmfFile.checkAttribute( itemNod, "Type", "HyperSlab" ) )
+      {
+        std::pair<HdfDataset, HyperSlab> data = parseXdmfDataset( xmfFile, itemNod );
+        std::shared_ptr<MDAL::DatasetGroup> group = findGroup( groups, groupName, data.second.isScalar );
+        std::shared_ptr<MDAL::XdmfDataset> xdmfDataset = std::make_shared<MDAL::XdmfDataset>(
+              group.get(),
+              data.second,
+              data.first,
+              time
+            );
+        // This basically forces to load all data to calculate statistics!
+        const MDAL::Statistics stats = MDAL::calculateStatistics( xdmfDataset );
+        xdmfDataset->setStatistics( stats );
+        group->datasets.push_back( xdmfDataset );
+      }
+      else
+      {
+        MDAL::debug( "Expecting Function or HyperSlab Type" );
+        throw MDAL_Status::Err_UnknownFormat;
+      }
     }
   }
 
@@ -368,6 +579,35 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
   }
 
   return ret;
+}
+
+std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXdmf::findGroup( std::map<std::string, std::shared_ptr<MDAL::DatasetGroup> > &groups,
+    const std::string &groupName,
+    bool isScalar )
+{
+  std::shared_ptr<MDAL::DatasetGroup> group;
+  if ( groups.count( groupName ) == 0 )
+  {
+    group = std::make_shared<MDAL::DatasetGroup>(
+              "XDMF",
+              mMesh,
+              mDatFile,
+              groupName
+            );
+    group->setIsScalar( isScalar );
+    group->setIsOnVertices( false ); //only center-based implemented
+    groups[groupName] = group;
+  }
+  else
+  {
+    group = groups[groupName];
+    if ( group->isScalar() != isScalar )
+    {
+      MDAL::debug( "Inconsistent groups" );
+      throw MDAL_Status::Err_UnknownFormat;
+    }
+  }
+  return group;
 }
 
 

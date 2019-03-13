@@ -20,10 +20,11 @@ TEST( XdmfTest, Basement3HumpsTest )
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
+  // normal scalar dataset
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -67,6 +68,55 @@ TEST( XdmfTest, Basement3HumpsTest )
     EXPECT_DOUBLE_EQ( 20, time );
   }
 
+  // FUNCTION: JOIN($0, $1, 0*$1) dataset
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "spec_discharge" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( false, scalar );
+
+    bool onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
+
+    ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 2 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    bool active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 18497, count );
+
+    double valueX = getValueX( ds, 145 );
+    EXPECT_DOUBLE_EQ( -0.01422131435481137, valueX );
+
+    double valueY = getValueY( ds, 145 );
+    EXPECT_DOUBLE_EQ( -0.30278839626026738, valueY );
+
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_DOUBLE_EQ( 0.0, min );
+    EXPECT_DOUBLE_EQ( 2.0280154310589538, max );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_DOUBLE_EQ( 0.0, min );
+    EXPECT_DOUBLE_EQ( 4.9994493491047303, max );
+
+    double time = MDAL_D_time( ds );
+    EXPECT_DOUBLE_EQ( 20, time );
+  }
+
   MDAL_CloseMesh( m );
 }
 
@@ -83,10 +133,11 @@ TEST( XdmfTest, Basement3Slopes )
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
+  // normal dataset
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -130,6 +181,144 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_DOUBLE_EQ( 1, time );
   }
 
+  // FUNCTION: $1 - $0
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "delta_z" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    bool onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
+
+    ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 1 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    bool active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 21030, count );
+
+    double value = getValue( ds, 7493 );
+    EXPECT_DOUBLE_EQ( 0.0030000000000001137, value );
+
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_DOUBLE_EQ( -8.3107706316809526e-05, min );
+    EXPECT_DOUBLE_EQ( 0.0030000000000001137, max );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_DOUBLE_EQ( -8.3107706316809526e-05, min );
+    EXPECT_DOUBLE_EQ( 0.0030000000000001137, max );
+
+    double time = MDAL_D_time( ds );
+    EXPECT_DOUBLE_EQ( 1, time );
+  }
+
+  // FUNCTION: $0 - $1
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "water_depth" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    bool onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
+
+    ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 1 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    bool active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 21030, count );
+
+    double value = getValue( ds, 7493 );
+    EXPECT_DOUBLE_EQ( 3.0361991037085616, value );
+
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_DOUBLE_EQ( 1.0093761225415925, min );
+    EXPECT_DOUBLE_EQ( 3.0788896191491268, max );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_DOUBLE_EQ( 1.0093761225415925, min );
+    EXPECT_DOUBLE_EQ( 3.0788896191491268, max );
+
+    double time = MDAL_D_time( ds );
+    EXPECT_DOUBLE_EQ( 1, time );
+  }
+
+  // FUNCTION: sqrt($0/($2-$3)*$0/($2-$3) + $1/($2-$3)*$1/($2-$3))
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "flow_velocity_abs" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    bool onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
+
+    ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 1 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    bool active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 21030, count );
+
+    double value = getValue( ds, 7493 );
+    EXPECT_DOUBLE_EQ( 7.0036239300095486, value );
+
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_DOUBLE_EQ( 1.4142135623730951, min );
+    EXPECT_DOUBLE_EQ( 18.579443815111134, max );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_DOUBLE_EQ( 1.4142135623730951, min );
+    EXPECT_DOUBLE_EQ( 18.579443815111134, max );
+
+    double time = MDAL_D_time( ds );
+    EXPECT_DOUBLE_EQ( 1, time );
+  }
+
   MDAL_CloseMesh( m );
 }
 
@@ -146,10 +335,10 @@ TEST( XdmfTest, Basement3SimpleChannel )
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -255,24 +444,6 @@ TEST( XdmfTest, Basement3SimpleGeometry )
     double time = MDAL_D_time( ds );
     EXPECT_DOUBLE_EQ( 6, time );
   }
-
-  MDAL_CloseMesh( m );
-}
-
-
-TEST( XdmfTest, Basement3SimpleGeometryWithFunctions )
-{
-  std::string path = test_file( "/xdmf/basement3/SimpleGeometry/test.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
-  EXPECT_NE( m, nullptr );
-  MDAL_Status s = MDAL_LastStatus();
-  ASSERT_EQ( MDAL_Status::None, s );
-
-  std::string path2 = test_file( "/xdmf/basement3/SimpleGeometry/test_with_functions.xmf" );
-  MDAL_M_LoadDatasets( m, path2.c_str() );
-  s = MDAL_LastStatus();
-  EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
 
   MDAL_CloseMesh( m );
 }
