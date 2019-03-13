@@ -1,7 +1,6 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2018 Lutra Consulting Ltd.
- Christophe Coulet - Arteliagroup
+ Copyright (C) 2019 Christophe Coulet - Arteliagroup
 */
 
 #include <stddef.h>
@@ -58,7 +57,8 @@ bool MDAL::DriverSlf::canRead( const std::string &uri )
   this->FileStream = new std::ifstream(uri, std::ifstream::in | std::ifstream::binary );
   this->Reader = new SerafinReader( FileStream);
   this->Reader->GetTitle( title);
-  if ( !endsWith( title, "SELAFIN " ) || !endsWith( title, "SELAFIND" ) )
+  this->Reader->GetTitleFormat( titleFormat);
+  if ( !startsWith( titleFormat, "SERAFIN" ) && !startsWith( titleFormat, "SERAFIND" ) )
   {
     return false;
   }
@@ -76,37 +76,40 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSlf::load( const std::string &meshFile, 
   
   int Nvertex = this->Reader->GetNumberOfNodes();
   int Nfaces = this->Reader->GetNumberOfElement();
+  int Ndp = this->Reader->GetNodeByElements();
 
   // Allocate memory
   std::vector<Vertex> vertices( Nvertex );
   std::vector<Face> faces( Nfaces );
 
-  float* XValues = NULL;
-  float* YValues = NULL;
-  float* ZValues = NULL;
+  float* XValues = new float[Nvertex];
+  float* YValues = new float[Nvertex];
+  //float* ZValues = new float[Nvertex];
   
   this->Reader->GetXValues(0, Nvertex, XValues);
   this->Reader->GetYValues(0, Nvertex, YValues);
-  this->Reader->GetZValues(0, Nvertex, ZValues, 0);
+  //this->Reader->GetZValues(0, Nvertex, ZValues, 0);
   
-  for ( size_t vertexIndex = 1; Nvertex; vertexIndex++)
+  for ( size_t vertexIndex = 0; vertexIndex < Nvertex; vertexIndex++)
   {
-    Vertex &vertex = vertices[vertexIndex-1];
+    Vertex &vertex = vertices[vertexIndex];
     vertex.x = double( XValues[vertexIndex] );
     vertex.y = double( YValues[vertexIndex] );
-    vertex.z = double( ZValues[vertexIndex] );
-  }
+    vertex.z = 0; //double( ZValues[vertexIndex] );
+  } 
+ 
+  // Allocate memory
+  int* Ikle = new int[Nfaces * Ndp];
   
-  int* Ikle = NULL;
   this->Reader->WriteConnectivity(Ikle);
   
-  for ( size_t faceIndex = 1; Nfaces; faceIndex++)
+  for ( size_t faceIndex = 0; faceIndex < Nfaces; faceIndex++)
   {
-    Face &face = faces[faceIndex-1];
+    Face &face = faces[faceIndex];
     face.resize( 3 );
-    face[0] = Ikle[(faceIndex-1)*3 + 0];
-    face[1] = Ikle[(faceIndex-1)*3 + 1];
-    face[2] = Ikle[(faceIndex-1)*3 + 2];
+    face[0] = Ikle[(faceIndex)*3 + 0];
+    face[1] = Ikle[(faceIndex)*3 + 1];
+    face[2] = Ikle[(faceIndex)*3 + 2];
   }
   
   std::unique_ptr< MeshSlf > mesh(

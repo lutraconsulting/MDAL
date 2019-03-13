@@ -1,7 +1,6 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
- Christophe Coulet - Arteliagroup
+ Copyright (C) 2019 Christophe Coulet - Arteliagroup
 */
 
 #ifndef MDAL_SLF_HPP
@@ -40,7 +39,8 @@ namespace MDAL
       bool canRead( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &meshFile, MDAL_Status *status ) override;
 
-	  char* title;
+	  char title[80];
+      char titleFormat[8];
       ifstream *FileStream;  // Flux de lecture du fichier
       SerafinReader* Reader; /** /!\ Instance de lecture du fichier Serafin **/
 

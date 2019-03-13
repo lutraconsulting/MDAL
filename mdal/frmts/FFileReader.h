@@ -1,4 +1,4 @@
-// Module developped by herve ozdoba - Sept 2008 ( herve-externe.ozdoba at edf.fr / herve at ozdoba.fr )
+// Module initially developped by herve ozdoba - Sept 2008 ( herve-externe.ozdoba at edf.fr / herve at ozdoba.fr )
 
 #ifndef __FFileReader_h__
 #define __FFileReader_h__
@@ -127,15 +127,23 @@ protected:
             if ( this->BigEndian) {
                 Swap32((char*)(&BlocSize));
             }
-            cerr << "BlocSize " << BlocSize << "\n";
-                
         };
 
 private:
     //[inline] Gestion des swaps pour la prise en charge l/ge
     #define Intervert(i,j) {one_byte = data[i]; data[i] = data[j]; data[j] = one_byte;}
-    void Swap32	 (char* data) {char one_byte;Intervert(0,3);Intervert(1,2);}
-    void Swap32Array (const long int size, char* data) {long int indent;for(indent = 0; indent!= size; indent++) Swap32(&data[indent*4]);};
+    void Swap32	 (char* data)
+    {
+        char one_byte;
+        Intervert(0,3);
+        Intervert(1,2);
+    }
+    
+    void Swap32Array (const long int size, char* data)
+    {
+        long int indent;
+        for(indent = 0; indent!= size; indent++) Swap32(&data[indent*4]);
+    };
     
     FFileReader(const FFileReader&); // Pas implémentée
     void operator=(const FFileReader&);   // Pas implémentée
