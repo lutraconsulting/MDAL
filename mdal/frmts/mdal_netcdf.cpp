@@ -37,15 +37,9 @@ std::vector<int> NetCDFFile::readIntArr( const std::string &name, size_t dim ) c
 {
   assert( mNcid != 0 );
   int arr_id;
-  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR )
-  {
-    throw MDAL_Status::Err_UnknownFormat;
-  }
+  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
   std::vector<int> arr_val( dim );
-  if ( nc_get_var_int( mNcid, arr_id, arr_val.data() ) != NC_NOERR )
-  {
-    throw MDAL_Status::Err_UnknownFormat;
-  }
+  if ( nc_get_var_int( mNcid, arr_id, arr_val.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
   return arr_val;
 }
 
@@ -54,15 +48,9 @@ std::vector<double> NetCDFFile::readDoubleArr( const std::string &name, size_t d
   assert( mNcid != 0 );
 
   int arr_id;
-  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR )
-  {
-    throw MDAL_Status::Err_UnknownFormat;
-  }
+  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
   std::vector<double> arr_val( dim );
-  if ( nc_get_var_double( mNcid, arr_id, arr_val.data() ) != NC_NOERR )
-  {
-    throw MDAL_Status::Err_UnknownFormat;
-  }
+  if ( nc_get_var_double( mNcid, arr_id, arr_val.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
   return arr_val;
 }
 
@@ -79,24 +67,15 @@ std::vector<std::string> NetCDFFile::readArrNames() const
 
   std::vector<std::string> res;
   int nvars;
-  if ( nc_inq_varids( mNcid, &nvars, nullptr ) != NC_NOERR )
-  {
-    throw MDAL_Status::Err_UnknownFormat;
-  }
+  if ( nc_inq_varids( mNcid, &nvars, nullptr ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
 
   std::vector<int> varids( static_cast<size_t>( nvars ) );
-  if ( nc_inq_varids( mNcid, &nvars, varids.data() ) != NC_NOERR )
-  {
-    throw MDAL_Status::Err_UnknownFormat;
-  }
+  if ( nc_inq_varids( mNcid, &nvars, varids.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
 
   for ( size_t i = 0; i < static_cast<size_t>( nvars ); ++i )
   {
     std::vector<char> cname( NC_MAX_NAME + 1 );
-    if ( nc_inq_varname( mNcid, varids[i], cname.data() ) != NC_NOERR )
-    {
-      throw MDAL_Status::Err_UnknownFormat;
-    }
+    if ( nc_inq_varname( mNcid, varids[i], cname.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
     res.push_back( cname.data() );
   }
 
@@ -108,16 +87,10 @@ int NetCDFFile::getAttrInt( const std::string &name, const std::string &attr_nam
   assert( mNcid != 0 );
 
   int arr_id;
-  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR )
-  {
-    throw MDAL_Status::Err_UnknownFormat;
-  }
+  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
 
   int val;
-  if ( nc_get_att_int( mNcid, arr_id, attr_name.c_str(), &val ) )
-  {
-    throw MDAL_Status::Err_UnknownFormat;
-  }
+  if ( nc_get_att_int( mNcid, arr_id, attr_name.c_str(), &val ) ) throw MDAL_Status::Err_UnknownFormat;
   return val;
 }
 
@@ -142,8 +115,7 @@ std::string NetCDFFile::getAttrStr( const std::string &name, int varid ) const
     return std::string();
   }
 
-  char *string_attr;
-  string_attr = ( char * ) malloc( attlen + 1 );
+  char *string_attr = static_cast<char *>( malloc( attlen + 1 ) );
 
   if ( nc_get_att_text( mNcid, varid, name.c_str(), string_attr ) ) throw MDAL_Status::Err_UnknownFormat;
   string_attr[attlen] = '\0';
