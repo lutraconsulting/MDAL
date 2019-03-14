@@ -27,7 +27,9 @@ You can use MDAL to load the following file formats:
 
 \*\* Formats can be preprocessed using QGIS [Crayfish](https://plugins.qgis.org/plugins/crayfish/)/Mesh processing algorithm to one of supported formats
 
-# Coding standards & Contribution
+# Development
+
+## Coding standards & Contribution
 
 MDAL is open-source project and all contributions to either documentation, format support, testing or code are 
 more than appreciated. Any change to the code must go through Pull Request, followed by review of one of the 
@@ -41,9 +43,9 @@ To be able to accept a pull request, please verify that:
 - code is reasonably documented and easy to read
 - all tests passes
 
-# Build 
+## Build 
 
-## Windows 
+### Windows 
 
 For 64-bit version:
 
@@ -51,7 +53,7 @@ For 64-bit version:
 * Install OSGeo4W (64bit) to C:\OSGeo4W64
 * see [win build script](scripts/ci/windows/build.bash)
 
-## Linux
+### Linux
 
 install dependencies for drivers
 
@@ -67,7 +69,7 @@ cmake -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
 make
 ```
 
-## MacOS
+### MacOS
 
 First you need to install homebrew and osgeo4mac dependencies, 
 see [osx install script](scripts/ci/osx/install.bash)
@@ -82,11 +84,11 @@ cmake -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
 make
 ```
 
-# Tests
+## Tests
 
 run ctest command in build directory `ctest -VV`
 
-# Contribution
+## Code syntax
 
 format code:
 ```
