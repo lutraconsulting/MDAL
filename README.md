@@ -41,6 +41,8 @@ To be able to accept a pull request, please verify that:
 - code is properly unit-tested with a set of small test files under `tests/data/<format>` (code coverage > 90%)
 - code is reasonably documented and easy to read
 - code compiles without any compilation warnings
+- no dead-code (e.g. unused functions) or commented out code
+- all new code or new dependencies (e.g. libraries) have GPLv2 compatible license
 - all tests pass
 
 ## Build 
