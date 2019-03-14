@@ -38,10 +38,9 @@ MDAL core developer.
 To be able to accept a pull request, please verify that:
 
 - code follows [QGIS coding style](https://qgis.org/en/site/getinvolved/development/qgisdevelopersguide/codingstandards.html)
-[Coding standards](CODING_STANDARDS.md)
 - code is properly unit-tested with a set of small test files under `tests/data/<format>` (code coverage > 90%)
 - code is reasonably documented and easy to read
-- all tests passes
+- all tests pass
 
 ## Build 
 
