@@ -27,6 +27,20 @@ You can use MDAL to load the following file formats:
 
 \*\* Formats can be preprocessed using QGIS [Crayfish](https://plugins.qgis.org/plugins/crayfish/)/Mesh processing algorithm to one of supported formats
 
+# Coding standards & Contribution
+
+MDAL is open-source project and all contributions to either documentation, format support, testing or code are 
+more than appreciated. Any change to the code must go through Pull Request, followed by review of one of the 
+MDAL core developer. 
+
+To be able to accept a pull request, please verify that:
+
+- code follows [QGIS coding style](https://qgis.org/en/site/getinvolved/development/qgisdevelopersguide/codingstandards.html)
+[Coding standards](CODING_STANDARDS.md)
+- code is properly unit-tested with a set of small test files under `tests/data/<format>` (code coverage > 90%)
+- code is reasonably documented and easy to read
+- all tests passes
+
 # Build 
 
 ## Windows 
