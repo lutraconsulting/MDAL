@@ -1,9 +1,12 @@
 language: shell
 sudo: required
-os:
-  - linux
-  - osx
-  - windows 
+
+matrix:
+  include:
+  - os: linux
+    dist: xenial
+  - os: osx
+  - os: windows
 
 env:
   global:

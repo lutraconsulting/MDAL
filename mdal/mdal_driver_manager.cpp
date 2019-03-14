@@ -29,6 +29,10 @@
 #include "frmts/mdal_gdal_netcdf.hpp"
 #endif
 
+#if defined HAVE_HDF5 && defined HAVE_XML
+#include "frmts/mdal_xdmf.hpp"
+#endif
+
 std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFile, MDAL_Status *status ) const
 {
   std::unique_ptr<MDAL::Mesh> mesh;
@@ -126,6 +130,9 @@ MDAL::DriverManager::DriverManager()
 #ifdef HAVE_NETCDF
   mDrivers.push_back( std::make_shared<MDAL::Driver3Di>() );
   mDrivers.push_back( std::make_shared<MDAL::DriverSWW>() );
+#endif
+
+#if defined HAVE_GDAL && defined HAVE_NETCDF
   mDrivers.push_back( std::make_shared<MDAL::DriverGdalNetCDF>() );
 #endif
 
@@ -138,5 +145,9 @@ MDAL::DriverManager::DriverManager()
   mDrivers.push_back( std::make_shared<MDAL::DriverBinaryDat>() );
 #ifdef HAVE_HDF5
   mDrivers.push_back( std::make_shared<MDAL::DriverXmdf>() );
+#endif
+
+#if defined HAVE_HDF5 && defined HAVE_XML
+  mDrivers.push_back( std::make_shared<MDAL::DriverXdmf>() );
 #endif
 }

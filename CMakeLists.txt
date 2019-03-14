@@ -19,9 +19,10 @@ SET (MDAL_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output CACHE PATH "Output base di
 SET (ENABLE_TESTS TRUE CACHE BOOL "Build tests?")
 SET (ENABLE_COVERAGE FALSE CACHE BOOL "Enable GCOV code coverage?")
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables?")
-SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that require HDF5")
+SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that require HDF5 (e.g. XMDF, XDMF)")
 SET (WITH_GDAL TRUE CACHE BOOL "Build providers that require GDAL (e.g. GRIB)")
 SET (WITH_NETCDF TRUE CACHE BOOL "Build providers that require NETCDF (e.g. 3Di)")
+SET (WITH_XML TRUE CACHE BOOL "Build providers that require LIBXML2 (e.g. XDMF)")
 
 #############################################################
 # Setup code coverage
@@ -35,7 +36,7 @@ IF(ENABLE_COVERAGE)
   ENDIF(MSVC)
 
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-ENDIF()
+ENDIF(ENABLE_COVERAGE)
 
 #############################################################
 # warnings https://stackoverflow.com/a/3818084/2838364
@@ -49,7 +50,7 @@ IF(MSVC)
 ELSEIF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR APPLE )
   # Update if necessary
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
-ENDIF()
+ENDIF(MSVC)
 
 #############################################################
 # optional libraries
@@ -59,7 +60,7 @@ IF (WITH_HDF5)
     # following variable is used in mdal_config.h
     SET (HAVE_HDF5 TRUE)
   ENDIF (HDF5_FOUND)
-ENDIF()
+ENDIF(WITH_HDF5)
 
 IF (WITH_GDAL)
   FIND_PACKAGE(GDAL REQUIRED)
@@ -67,7 +68,7 @@ IF (WITH_GDAL)
     # following variable is used in mdal_config.h
     SET (HAVE_GDAL TRUE)
   ENDIF (GDAL_FOUND)
-ENDIF()
+ENDIF(WITH_GDAL)
 
 IF (WITH_NETCDF)
   FIND_PACKAGE(NetCDF REQUIRED)
@@ -75,7 +76,16 @@ IF (WITH_NETCDF)
     # following variable is used in mdal_config.h
     SET (HAVE_NETCDF TRUE)
   ENDIF (NETCDF_FOUND)
-ENDIF()
+ENDIF(WITH_NETCDF)
+
+IF (WITH_XML)
+  FIND_PACKAGE(LibXml2 REQUIRED)
+  IF (LIBXML2_FOUND)
+    # following variable is used in mdal_config.h
+    SET (XML_FOUND TRUE)
+    SET (HAVE_XML TRUE)
+  ENDIF (LIBXML2_FOUND)
+ENDIF(WITH_XML)
 
 #############################################################
 # create mdal_config.h

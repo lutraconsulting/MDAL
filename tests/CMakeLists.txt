@@ -69,7 +69,6 @@ SET(TESTS
     test_ascii_dat.cpp
     test_binary_dat.cpp
     test_mdal_utils.cpp
-    test_basement.cpp
 )
 
 IF(HDF5_FOUND)
@@ -98,6 +97,12 @@ IF(GDAL_FOUND AND NETCDF_FOUND)
     test_gdal_netcdf.cpp
   )
 ENDIF(GDAL_FOUND AND NETCDF_FOUND)
+
+IF(HDF5_FOUND AND XML_FOUND)
+  SET(TESTS ${TESTS}
+    test_xdmf.cpp
+  )
+ENDIF(HDF5_FOUND AND XML_FOUND)
 
 FOREACH(TESTSRC ${TESTS})
     ADD_MDAL_TEST(${TESTSRC})

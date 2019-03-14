@@ -1,0 +1,1269 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="2.0">
+	<Domain>
+		<Grid Name="H_Evolution" GridType="Collection" CollectionType="Temporal">
+			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="0"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_0
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_0
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_0
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_0
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="50.1985"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_1
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_1
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_1
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_1
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="100.895"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_2
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_2
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_2
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_2
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="151.659"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_3
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_3
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_3
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_3
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="201.58"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_4
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_4
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_4
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_4
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="252.837"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_5
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_5
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_5
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_5
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="300.36"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_6
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_6
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_6
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_6
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="352.066"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_7
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_7
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_7
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_7
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="404.44"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_8
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_8
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_8
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_8
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="454.883"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_9
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_9
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_9
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_9
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="504.249"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_10
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_10
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_10
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_10
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="551.903"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_11
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_11
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_11
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_11
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="600.53"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_12
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_12
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_12
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_12
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="650.203"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_13
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_13
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_13
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_13
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="704.499"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_14
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_14
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_14
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_14
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="752.368"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_15
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_15
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_15
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_15
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="802.041"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_16
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_16
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_16
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_16
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="851.715"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_17
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_17
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_17
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_17
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="901.389"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_18
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_18
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_18
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_18
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="951.062"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_19
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_19
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_19
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_19
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>			<Grid Name="SWDF2D_MESH" GridType="Uniform">
+				<Time Value="1000.74"/>
+				<Topology NumberOfElements="5790" TopologyType="Triangle">
+					<DataItem Format="HDF" Dimensions="5790 3">
+						simpleXFMD.h5:/mesh/cells
+					</DataItem>
+				</Topology>
+				<Geometry GeometryType="XYZ">
+					<DataItem Format="HDF" Dimensions="2972 3">
+						simpleXFMD.h5:/mesh/nodes
+					</DataItem>
+				</Geometry>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 0 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_20
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 1 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_20
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Scalar" Center="Cell" Name="h_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 4 0
+							1 1 1
+							5790 1 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_20
+						</DataItem>
+					</DataItem>
+				</Attribute>
+				<Attribute AttributeType="Vector" Center="Cell" Name="v_max">
+					<DataItem ItemType="HyperSlab" Dimensions="5790 3" Type="HyperSlab">
+						<DataItem Dimensions="3 3" Format="XML">
+							0 5 0
+							1 1 1
+							5790 3 1
+						</DataItem>
+						<DataItem Dimensions="5790 3" Format="HDF">
+							simpleXFMD.h5:/sim_results/snapshot_20
+						</DataItem>
+					</DataItem>
+				</Attribute>
+			</Grid>
+		</Grid>
+	</Domain>
+</Xdmf>

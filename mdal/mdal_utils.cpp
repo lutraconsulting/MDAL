@@ -453,6 +453,9 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
     {
       valsRead = dataset->scalarData( i, bufLen, buffer.data() );
     }
+    if ( valsRead == 0 )
+      return ret;
+
     MDAL::Statistics dsStats = _calculateStatistics( buffer, valsRead, isVector );
     combineStatistics( ret, dsStats );
     i += valsRead;
