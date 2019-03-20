@@ -8,6 +8,7 @@
 //mdal
 #include "mdal.h"
 #include "mdal_testutils.hpp"
+#include "gdal.h"
 
 TEST( MeshGdalGribTest, ScalarFile )
 {
@@ -97,6 +98,55 @@ TEST( MeshGdalGribTest, VectorFile )
 
   MDAL_CloseMesh( m );
 }
+
+// with older GDAL versions it raises getgridtemplate: GDT Template 3.12 not defined.
+#if GDAL_VERSION_MAJOR >=2 && GDAL_VERSION_MINOR >=3
+TEST( MeshGdalGribTest, WithoutNODATA )
+{
+  // see https://github.com/lutraconsulting/MDAL/issues/104
+  std::string path = test_file( "/grib/saga_flow_without_nodata.grb" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "flow" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  bool active = getActive( ds, 0 );
+  EXPECT_EQ( true, active );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 191178, count );
+
+  double valueX = getValueX( ds, 1600 );
+  EXPECT_DOUBLE_EQ( 0, valueX );
+
+  double valueY = getValueY( ds, 1600 );
+  EXPECT_DOUBLE_EQ( 1, valueY );
+  MDAL_CloseMesh( m );
+}
+#endif
 
 TEST( MeshGdalGribTest, ScalarFileWithUComponent )
 {
