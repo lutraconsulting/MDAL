@@ -317,7 +317,11 @@ void MDAL::DriverGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared
 {
   assert( raster_band );
 
-  double nodata =  GDALGetRasterNoDataValue( raster_band, nullptr );
+  int pbSuccess;
+  double nodata =  GDALGetRasterNoDataValue( raster_band, &pbSuccess );
+  if ( pbSuccess == 0 ) nodata = std::numeric_limits<double>::quiet_NaN();
+  bool hasNoData = !std::isnan( nodata );
+
   unsigned int mXSize = meshGDALDataset()->mXSize;
   unsigned int mYSize = meshGDALDataset()->mYSize;
 
@@ -349,7 +353,8 @@ void MDAL::DriverGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared
     {
       unsigned int idx = x + mXSize * y;
       double val = mPafScanline[x];
-      if ( !MDAL::equals( val, nodata ) )
+
+      if ( !hasNoData || !MDAL::equals( val, nodata ) )
       {
         // values is prepolulated with NODATA values, so store only legal values
         if ( is_vector )
