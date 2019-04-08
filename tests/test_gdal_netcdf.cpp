@@ -61,7 +61,7 @@ TEST( MeshGdalNetCDFTest, Indonesia )
     ASSERT_EQ( 234, count );
 
     double value = getValue( ds, 50 );
-    EXPECT_DOUBLE_EQ( 32759, value );
+    EXPECT_DOUBLE_EQ( 0.99988487698798889, value );
 
     MDAL_CloseMesh( m );
   }
