@@ -48,6 +48,91 @@ TEST( MeshAsciiDatTest, WrongFile )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFileWithNumberingGaps )
+{
+  std::string meshPath = test_file( "/2dm/mesh_with_numbering_gaps.2dm" );
+  MeshH m = MDAL_LoadMesh( meshPath.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  std::string path = test_file( "/ascii_dat/mesh_with_numbering_gaps_scalar.dat" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *key = MDAL_G_metadataKey( g, 0 );
+  EXPECT_EQ( std::string( "name" ), std::string( key ) );
+
+  const char *val = MDAL_G_metadataValue( g, 0 );
+  EXPECT_EQ( std::string( "mesh_with_numbering_gaps_scalar" ), std::string( val ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  bool onVertices = MDAL_G_isOnVertices( g );
+  EXPECT_EQ( true, onVertices );
+
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  bool active = getActive( ds, 0 );
+  EXPECT_EQ( true, active );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 5, count );
+
+  double value = getValue( ds, 0 );
+  EXPECT_DOUBLE_EQ( 1, value );
+
+  value = getValue( ds, 1 );
+  EXPECT_DOUBLE_EQ( 2, value );
+
+  value = getValue( ds, 2 );
+  EXPECT_DOUBLE_EQ( 3, value );
+
+  value = getValue( ds, 3 );
+  EXPECT_DOUBLE_EQ( 4, value );
+
+  value = getValue( ds, 4 );
+  EXPECT_DOUBLE_EQ( 5, value );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 1, min );
+  EXPECT_DOUBLE_EQ( 5, max );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 1, min );
+  EXPECT_DOUBLE_EQ( 10, max );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( XdmfTest, MeshNumberedFrom0 )
+{
+  std::string path = test_file( "/xdmf/simple/simpleXFMD.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // basically it should be denied with any ascii dat file
+  std::string datDath = test_file( "/ascii_dat/mesh_with_numbering_gaps_scalar.dat" );
+  MDAL_M_LoadDatasets( m, datDath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+  MDAL_CloseMesh( m );
+}
+
 TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
 {
   MeshH m = mesh();
