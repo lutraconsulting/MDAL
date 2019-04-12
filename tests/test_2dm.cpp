@@ -40,6 +40,13 @@ TEST( Mesh2DMTest, MeshWithNumberingGaps )
   MDAL_CloseMesh( m );
 }
 
+TEST( Mesh2DMTest, MeshWithUnorderedIds )
+{
+  std::string path = test_file( "/2dm/unordered_ids.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_EQ( m, nullptr );
+}
+
 TEST( Mesh2DMTest, QuadAndTriangleFile )
 {
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
