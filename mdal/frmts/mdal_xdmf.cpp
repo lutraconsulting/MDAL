@@ -152,8 +152,8 @@ size_t MDAL::XdmfFunctionDataset::scalarData( size_t indexStart, size_t count, d
   assert( group()->isScalar() ); //checked in C API interface
   assert( mType != FunctionType::Join );
 
-  if ( mType == FunctionType::Substract )
-    return substractFunction( indexStart, count, buffer );
+  if ( mType == FunctionType::Subtract )
+    return subtractFunction( indexStart, count, buffer );
 
   if ( mType == FunctionType::Flow )
     return flowFunction( indexStart, count, buffer );
@@ -176,7 +176,7 @@ size_t MDAL::XdmfFunctionDataset::activeData( size_t indexStart, size_t count, i
   return count;
 }
 
-size_t MDAL::XdmfFunctionDataset::substractFunction( size_t indexStart, size_t count, double *buffer )
+size_t MDAL::XdmfFunctionDataset::subtractFunction( size_t indexStart, size_t count, double *buffer )
 {
   std::vector<double> buf( 2 * count, std::numeric_limits<double>::quiet_NaN() );
   size_t copyVals = extractRawData( indexStart, count, 2, buf );
@@ -487,11 +487,11 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
         else if ( function == "$0-$1" )
         {
           reversed = true;
-          type = XdmfFunctionDataset::Substract;
+          type = XdmfFunctionDataset::Subtract;
         }
         else if ( function == "$1-$0" )
         {
-          type = XdmfFunctionDataset::Substract;
+          type = XdmfFunctionDataset::Subtract;
         }
         else if ( ( function == "JOIN($0,$1,0*$1)" ) || ( function == "JOIN($0,$1,0)" ) )
         {
