@@ -136,12 +136,12 @@ static void populate_vals( bool is_vector, double *vals, size_t i,
 {
   if ( is_vector )
   {
-    vals[2 * i] =   MDAL::safeValue( vals_x[idx], fill_val_x );
-    vals[2 * i + 1] =   MDAL::safeValue( vals_y[idx], fill_val_y );
+    vals[2 * i] = MDAL::safeValue( vals_x[idx], fill_val_x );
+    vals[2 * i + 1] = MDAL::safeValue( vals_y[idx], fill_val_y );
   }
   else
   {
-    vals[i] =   MDAL::safeValue( vals_x[idx], fill_val_x );
+    vals[i] = MDAL::safeValue( vals_x[idx], fill_val_x );
   }
 }
 
@@ -190,7 +190,7 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
 
     // read X data
     double fill_val_x = mNcFile.getFillValue( dsi.ncid_x );
-    std::vector<double> vals_x( dsi.arr_size );
+    std::vector<double> vals_x( dsi.arr_size, std::numeric_limits<double>::quiet_NaN() );
     if ( nc_get_var_double( mNcFile.handle(), dsi.ncid_x, vals_x.data() ) ) CF_THROW_ERR;
 
     // read Y data if vector
@@ -199,7 +199,7 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
     if ( dsi.is_vector )
     {
       fill_val_y = mNcFile.getFillValue( dsi.ncid_y );
-      vals_y.resize( dsi.arr_size );
+      vals_y.resize( dsi.arr_size, std::numeric_limits<double>::quiet_NaN() );
       if ( nc_get_var_double( mNcFile.handle(), dsi.ncid_y, vals_y.data() ) ) CF_THROW_ERR;
     }
 

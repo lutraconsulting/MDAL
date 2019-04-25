@@ -33,6 +33,8 @@ class NetCDFFile
     double getFillValue( int varid ) const;
     int getVarId( const std::string &name );
     void getDimension( const std::string &name, size_t *val, int *ncid_val ) const;
+    bool hasDimension( const std::string &name ) const;
+
   private:
     int mNcid; // C handle to the file
 };

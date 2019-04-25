@@ -153,3 +153,9 @@ void NetCDFFile::getDimension( const std::string &name, size_t *val, int *ncid_v
   if ( nc_inq_dimid( mNcid, name.c_str(), ncid_val ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
   if ( nc_inq_dimlen( mNcid, *ncid_val, val ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
 }
+
+bool NetCDFFile::hasDimension( const std::string &name ) const
+{
+  int ncid_val;
+  return nc_inq_dimid( mNcid, name.c_str(), &ncid_val ) == NC_NOERR;
+}

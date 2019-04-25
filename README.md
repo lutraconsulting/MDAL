@@ -17,7 +17,8 @@ You can use MDAL to load the following file formats:
 - [XMDF*](https://en.wikipedia.org/wiki/XMDF): As an example, hydraulic outputs from TUFLOW modelling package
 - [XDMF](http://xdmf.org/index.php/Main_Page): As an example, hydraulic outputs from BASEMENT 3.x modelling package
 - [DAT](http://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat): Outputs of various hydrodynamic modelling packages (e.g. BASEMENT, HYDRO_AS-2D, TUFLOW)
-- [3Di](http://www.3di.nu): 3Di modelling package formate based on [CF Conventions](http://cfconventions.org)
+- [3Di](http://www.3di.nu): 3Di modelling package format based on [CF Conventions](http://cfconventions.org)
+- [UGRID](https://www.deltares.nl/en/): Unstructured Grid format based on [CF Conventions](http://cfconventions.org)
 - [FLO-2D](http://www.flo-2d.com/): Outputs of the FLO-2D modelling package
 - [HEC-RAS](http://www.hec.usace.army.mil/software/hec-ras/): Outputs of the HEC-RAS modelling package
 - [SWW](http://anuga.anu.edu.au/): Outputs of the ANUGA modelling package
