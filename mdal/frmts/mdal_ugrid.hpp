@@ -15,7 +15,6 @@
 
 namespace MDAL
 {
-
   /**
    * Driver of UGRID file format.
    *
@@ -29,18 +28,23 @@ namespace MDAL
       DriverUgrid *create() override;
 
     private:
-      CFDimensions populateDimensions( const NetCDFFile &ncFile ) override;
+      CFDimensions populateDimensions( ) override;
       void populateFacesAndVertices( Vertices &vertices, Faces &faces ) override;
       void populateVertices( Vertices &vertices );
       void populateFaces( Faces &faces );
-      void addBedElevation( Mesh *mesh ) override;
+      void addBedElevation( MemoryMesh *mesh ) override;
       std::string getCoordinateSystemVariableName() override;
       std::set<std::string> ignoreNetCDFVariables() override;
-      std::string nameSuffix( CFDimensions::Type type ) override;
       void parseNetCDFVariableMetadata( int varid, const std::string &variableName,
                                         std::string &name, bool *is_vector, bool *is_x ) override;
 
+      void parse2VariablesFromAttribute( const std::string &name, const std::string &attr_name,
+                                         std::string &var1, std::string &var2,
+                                         bool optional ) const;
+      std::string findMeshName( int dimension, bool optional ) const;
       std::string mMesh2dName;
+      std::string mMesh1dName;
+      std::string nodeZVariableName() const;
   };
 
 } // namespace MDAL

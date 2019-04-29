@@ -79,7 +79,6 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
         continue;
 
       size_t arr_size = mDimensions.size( mDimensions.type( dimid ) ) * nTimesteps;
-      std::string suffix = nameSuffix( mDimensions.type( dimid ) );
 
       // Get name, if it is vector and if it is x or y
       std::string name;
@@ -87,8 +86,6 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
       bool is_x = false;
 
       parseNetCDFVariableMetadata( varid, variable_name, name, &is_vector, &is_x );
-      if ( !suffix.empty() )
-        name = name + " (" + suffix + ")";
 
       // Add it to the map
       auto it = dsinfo_map.find( name );
@@ -254,7 +251,8 @@ bool MDAL::DriverCF::canRead( const std::string &uri )
   {
     NetCDFFile ncFile;
     ncFile.openFile( uri );
-    populateDimensions( ncFile );
+    mNcFile = ncFile;
+    populateDimensions( );
   }
   catch ( MDAL_Status )
   {
@@ -318,7 +316,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
     mNcFile.openFile( mFileName );
 
     // Parse dimensions
-    mDimensions = populateDimensions( mNcFile );
+    mDimensions = populateDimensions( );
 
     // Create mMesh
     Faces faces;

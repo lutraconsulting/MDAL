@@ -42,12 +42,12 @@ TEST( MeshUgridTest, DFlow11Manzese )
   f_v = getFaceVerticesIndexAt( m, 1, 3 );
   EXPECT_EQ( 26, f_v );
 
-  ASSERT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 10, MDAL_M_datasetGroupCount( m ) );
 
   // ///////////
   // Dataset
   // ///////////
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -126,9 +126,9 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   // ///////////
   // dataset
   // ///////////
-  ASSERT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 10, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 7 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -203,9 +203,9 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   // ///////////
   // dataset
   // ///////////
-  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 6, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -280,9 +280,9 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   // ///////////
   // scalar dataset
   // ///////////
-  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 6, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -328,7 +328,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   // ///////////
   // Vector Dataset
   // ///////////
-  g = MDAL_M_datasetGroup( m, 0 );
+  g = MDAL_M_datasetGroup( m, 1 );
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
