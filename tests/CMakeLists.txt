@@ -91,6 +91,7 @@ IF(NETCDF_FOUND)
 SET(TESTS ${TESTS}
   test_3di.cpp
   test_sww.cpp
+  test_ugrid.cpp
 )
 ENDIF(NETCDF_FOUND)
 

@@ -323,14 +323,16 @@ bool MDAL::equals( double val1, double val2, double eps )
 
 double MDAL::safeValue( double val, double nodata, double eps )
 {
-  if ( equals( val, nodata, eps ) )
-  {
-    return std::numeric_limits<double>::quiet_NaN();
-  }
-  else
-  {
+  if ( std::isnan( val ) )
     return val;
-  }
+
+  if ( std::isnan( nodata ) )
+    return val;
+
+  if ( equals( val, nodata, eps ) )
+    return std::numeric_limits<double>::quiet_NaN();
+
+  return val;
 }
 
 double MDAL::parseTimeUnits( const std::string &units )
