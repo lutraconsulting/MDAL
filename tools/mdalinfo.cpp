@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
   // PARSE ARGS
   if ( std::find( args.begin(), args.end(), "-h" ) != args.end() )
   {
-    std::cout << "mdalinfo mesh_file [dataset_file ...] [-h] [--formats]" << std::endl;
+    std::cout << "mdalinfo mesh_file [dataset_file ...] [-h] [--formats] [--stats]" << std::endl;
     return EXIT_SUCCESS;
   }
 
@@ -59,19 +59,28 @@ int main( int argc, char *argv[] )
     return EXIT_SUCCESS;
   }
 
+  bool stats = false;
+  auto it = std::find( args.begin(), args.end(),  "--stats" );
+  if ( it != args.end() )
+  {
+    stats = true;
+    args.erase(it);
+    --argc;
+  }
+
   if ( argc < 2 ) // no mesh argument
   {
     std::cout << "Missing mesh file argument" << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::string mesh_file = argv[1];
+  std::string mesh_file = args[1];
 
   std::vector<std::string> extraDatasets;
   if ( argc > 2 ) // additional dataset arguments
   {
     for ( int i = 2; i < argc; ++i )
-      extraDatasets.push_back( argv[i] );
+      extraDatasets.push_back( args[i] );
   }
 
 
@@ -84,7 +93,10 @@ int main( int argc, char *argv[] )
     std::cout << "  Driver: " << MDAL_M_driverName( m ) <<  std::endl;
     std::cout << "  Vertex count: " << MDAL_M_vertexCount( m ) <<  std::endl;
     std::cout << "  Face count: " << MDAL_M_faceCount( m ) << std::endl;
-    std::cout << "  Projection: " << MDAL_M_projection( m ) << std::endl;
+    std::string projection = MDAL_M_projection( m );
+    if (projection.empty())
+      projection = "undefined";
+    std::cout << "  Projection: " << projection << std::endl;
   }
   else
   {
@@ -111,11 +123,23 @@ int main( int argc, char *argv[] )
   for ( int i = 0; i < MDAL_M_datasetGroupCount( m ); ++i )
   {
     auto group = MDAL_M_datasetGroup( m, i );
-    std::cout << " " << MDAL_G_driverName( group )
-              << ": " << MDAL_G_name( group )
-              << " " << MDAL_G_datasetCount( group );
+    std::cout << "  " << MDAL_G_name( group );
     if ( !MDAL_G_hasScalarData( group ) )
       std::cout << " ( Vector ) ";
+
+    if (stats) {
+      double min, max;
+      MDAL_G_minimumMaximum( group, &min, &max );
+      std::string definedOn = "faces";
+      if (MDAL_G_isOnVertices(group))
+        definedOn = "vertices";
+      std::cout << std::endl << "    driver:        " << MDAL_G_driverName( group );
+      std::cout << std::endl << "    dataset count: " << MDAL_G_datasetCount( group );
+      std::cout << std::endl << "    defined on:    " << definedOn;
+      std::cout << std::endl << "    min:           " << min;
+      std::cout << std::endl << "    max:           " << max;
+
+    }
     std::cout << std::endl;
   }
 
