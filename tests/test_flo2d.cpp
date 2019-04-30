@@ -186,137 +186,143 @@ TEST( MeshFlo2dTest, BarnHDF5 )
 
 TEST( MeshFlo2dTest, basic )
 {
-  std::string path = test_file( "/flo2d/basic/BASE.OUT" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
-  ASSERT_NE( m, nullptr );
-  MDAL_Status s = MDAL_LastStatus();
-  EXPECT_EQ( MDAL_Status::None, s );
-
-  // ///////////
-  // Vertices
-  // ///////////
-  int v_count = MDAL_M_vertexCount( m );
-  EXPECT_EQ( v_count, 16 );
-
-  std::vector<double> expectedCoords =
+  std::vector<std::string> files;
+  files.push_back( "basic" );
+  files.push_back( "basic_with_dos_eol" );
+  for ( const std::string &file : files )
   {
-    1.59, 3.00, 0.00,
-    2.59,  3.00, 0.00,
-    3.59,  3.00, 0.00,
-    1.59,  2.00, 0.00,
-    2.59,  2.00, 0.00,
-    3.59,  2.00, 0.00,
-    1.59, 1.00, 0.00,
-    2.59,  1.00, 0.00,
-    3.59, 1.00, 0.00
-  };
-  EXPECT_EQ( expectedCoords.size(), 9 * 3 );
+    std::string path = test_file( "/flo2d/" + file + "/BASE.OUT" );
+    MeshH m = MDAL_LoadMesh( path.c_str() );
+    ASSERT_NE( m, nullptr );
+    MDAL_Status s = MDAL_LastStatus();
+    EXPECT_EQ( MDAL_Status::None, s );
 
-  std::vector<double> coordinates = getCoordinates( m, 9 );
+    // ///////////
+    // Vertices
+    // ///////////
+    int v_count = MDAL_M_vertexCount( m );
+    EXPECT_EQ( v_count, 16 );
 
-  compareVectors( expectedCoords, coordinates );
+    std::vector<double> expectedCoords =
+    {
+      1.59, 3.00, 0.00,
+      2.59,  3.00, 0.00,
+      3.59,  3.00, 0.00,
+      1.59,  2.00, 0.00,
+      2.59,  2.00, 0.00,
+      3.59,  2.00, 0.00,
+      1.59, 1.00, 0.00,
+      2.59,  1.00, 0.00,
+      3.59, 1.00, 0.00
+    };
+    EXPECT_EQ( expectedCoords.size(), 9 * 3 );
 
-  // ///////////
-  // Faces
-  // ///////////
-  int f_count = MDAL_M_faceCount( m );
-  EXPECT_EQ( 9, f_count );
+    std::vector<double> coordinates = getCoordinates( m, 9 );
 
-  // test face 1
-  int f_v_count = getFaceVerticesCountAt( m, 1 );
-  EXPECT_EQ( 4, f_v_count ); //quad
-  int f_v = getFaceVerticesIndexAt( m, 1, 0 );
-  EXPECT_EQ( 4, f_v );
-  f_v = getFaceVerticesIndexAt( m, 1, 1 );
-  EXPECT_EQ( 5, f_v );
-  f_v = getFaceVerticesIndexAt( m, 1, 2 );
-  EXPECT_EQ( 1, f_v );
-  f_v = getFaceVerticesIndexAt( m, 1, 3 );
-  EXPECT_EQ( 0, f_v );
+    compareVectors( expectedCoords, coordinates );
 
-  // ///////////
-  // Bed elevation dataset
-  // ///////////
-  ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
+    // ///////////
+    // Faces
+    // ///////////
+    int f_count = MDAL_M_faceCount( m );
+    EXPECT_EQ( 9, f_count );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
-  ASSERT_NE( g, nullptr );
+    // test face 1
+    int f_v_count = getFaceVerticesCountAt( m, 1 );
+    EXPECT_EQ( 4, f_v_count ); //quad
+    int f_v = getFaceVerticesIndexAt( m, 1, 0 );
+    EXPECT_EQ( 4, f_v );
+    f_v = getFaceVerticesIndexAt( m, 1, 1 );
+    EXPECT_EQ( 5, f_v );
+    f_v = getFaceVerticesIndexAt( m, 1, 2 );
+    EXPECT_EQ( 1, f_v );
+    f_v = getFaceVerticesIndexAt( m, 1, 3 );
+    EXPECT_EQ( 0, f_v );
 
-  int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+    // ///////////
+    // Bed elevation dataset
+    // ///////////
+    ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
-  const char *name = MDAL_G_name( g );
-  EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    ASSERT_NE( g, nullptr );
 
-  bool scalar = MDAL_G_hasScalarData( g );
-  EXPECT_EQ( true, scalar );
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
 
-  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
-  ASSERT_NE( ds, nullptr );
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
 
-  bool valid = MDAL_D_isValid( ds );
-  EXPECT_EQ( true, valid );
+    bool onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
 
-  int count = MDAL_D_valueCount( ds );
-  ASSERT_EQ( 9, count );
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
 
-  double value = getValue( ds, 0 );
-  EXPECT_DOUBLE_EQ( 1.48, value );
+    bool active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
 
-  // ///////////
-  // Scalar Dataset
-  // ///////////
-  g = MDAL_M_datasetGroup( m, 1 );
-  ASSERT_NE( g, nullptr );
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 9, count );
 
-  meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+    double value = getValue( ds, 0 );
+    EXPECT_DOUBLE_EQ( 1.48, value );
 
-  name = MDAL_G_name( g );
-  EXPECT_EQ( std::string( "Depth" ), std::string( name ) );
+    // ///////////
+    // Scalar Dataset
+    // ///////////
+    g = MDAL_M_datasetGroup( m, 1 );
+    ASSERT_NE( g, nullptr );
 
-  scalar = MDAL_G_hasScalarData( g );
-  EXPECT_EQ( true, scalar );
+    meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
 
-  onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+    name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "Depth" ), std::string( name ) );
 
-  ASSERT_EQ( 3, MDAL_G_datasetCount( g ) );
-  ds = MDAL_G_dataset( g, 0 );
-  ASSERT_NE( ds, nullptr );
+    scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
 
-  valid = MDAL_D_isValid( ds );
-  EXPECT_EQ( true, valid );
+    onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
 
-  active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+    ASSERT_EQ( 3, MDAL_G_datasetCount( g ) );
+    ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
 
-  count = MDAL_D_valueCount( ds );
-  ASSERT_EQ( 9, count );
+    valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
 
-  value = getValue( ds, 1 );
-  EXPECT_DOUBLE_EQ( 1, value );
+    active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
 
-  double min, max;
-  MDAL_D_minimumMaximum( ds, &min, &max );
-  EXPECT_DOUBLE_EQ( 1, min );
-  EXPECT_DOUBLE_EQ( 1, max );
+    count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 9, count );
 
-  MDAL_G_minimumMaximum( g, &min, &max );
-  EXPECT_DOUBLE_EQ( 1, min );
-  EXPECT_DOUBLE_EQ( 3, max );
+    value = getValue( ds, 1 );
+    EXPECT_DOUBLE_EQ( 1, value );
 
-  double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 0.5, time );
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_DOUBLE_EQ( 1, min );
+    EXPECT_DOUBLE_EQ( 1, max );
 
-  MDAL_CloseMesh( m );
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_DOUBLE_EQ( 1, min );
+    EXPECT_DOUBLE_EQ( 3, max );
+
+    double time = MDAL_D_time( ds );
+    EXPECT_DOUBLE_EQ( 0.5, time );
+
+    MDAL_CloseMesh( m );
+  }
 }
 
 TEST( MeshFlo2dTest, basic_required_files_only )

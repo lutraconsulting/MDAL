@@ -64,7 +64,7 @@ int main( int argc, char *argv[] )
   if ( it != args.end() )
   {
     stats = true;
-    args.erase(it);
+    args.erase( it );
     --argc;
   }
 
@@ -94,7 +94,7 @@ int main( int argc, char *argv[] )
     std::cout << "  Vertex count: " << MDAL_M_vertexCount( m ) <<  std::endl;
     std::cout << "  Face count: " << MDAL_M_faceCount( m ) << std::endl;
     std::string projection = MDAL_M_projection( m );
-    if (projection.empty())
+    if ( projection.empty() )
       projection = "undefined";
     std::cout << "  Projection: " << projection << std::endl;
   }
@@ -127,11 +127,12 @@ int main( int argc, char *argv[] )
     if ( !MDAL_G_hasScalarData( group ) )
       std::cout << " ( Vector ) ";
 
-    if (stats) {
+    if ( stats )
+    {
       double min, max;
       MDAL_G_minimumMaximum( group, &min, &max );
       std::string definedOn = "faces";
-      if (MDAL_G_isOnVertices(group))
+      if ( MDAL_G_isOnVertices( group ) )
         definedOn = "vertices";
       std::cout << std::endl << "    driver:        " << MDAL_G_driverName( group );
       std::cout << std::endl << "    dataset count: " << MDAL_G_datasetCount( group );
