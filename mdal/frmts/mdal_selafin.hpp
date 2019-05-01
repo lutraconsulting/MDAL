@@ -45,7 +45,7 @@ namespace MDAL
                        std::vector<size_t> &ikle,
                        std::vector<double> &x,
                        std::vector<double> &y );
-      void addData( const std::vector<std::string> &var_names, const std::vector<timestep_map> &data, size_t nPoints, size_t nElems );
+      void addData( const std::vector<std::string> &var_names, const std::vector<timestep_map> &data, size_t nPoints );
       void parseFile( std::vector<std::string> &var_names,
                       double *xOrigin,
                       double *yOrigin,

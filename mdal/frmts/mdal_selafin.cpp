@@ -3,6 +3,8 @@
  Copyright (C) 2019 Peter Petrik (zilolv at gmail dot com)
 */
 
+#include <stdio.h>
+#include <string.h>
 #include <stddef.h>
 #include <iosfwd>
 #include <iostream>
@@ -80,7 +82,7 @@ static double read_double( std::ifstream &in, bool streamInFloatPrecision )
     }
     memcpy( reinterpret_cast< char * >( &ret ),
             reinterpret_cast< char * >( &buffer ),
-            4 );
+            8 );
   }
   return ret;
 }
@@ -398,7 +400,7 @@ void MDAL::DriverSelafin::createMesh(
   mMesh->vertices = nodes;
 }
 
-void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names, const std::vector<timestep_map> &data, size_t nPoints, size_t nElems )
+void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names, const std::vector<timestep_map> &data, size_t nPoints )
 {
   for ( size_t nName = 0; nName < var_names.size(); ++nName )
   {
@@ -504,16 +506,25 @@ bool MDAL::DriverSelafin::canRead( const std::string &uri )
   std::ifstream in( uri, std::ifstream::in | std::ifstream::binary );
   if ( !in ) return false;
 
-  try
-  {
-    bool streamInFloatPrecision = getStreamPrecision( in );
-    MDAL_UNUSED( streamInFloatPrecision );
-    return true;
-  }
-  catch ( MDAL_Status )
-  {
+  // The first four bytes of the file should contain the values (in hexadecimal): 00 00 00 50.
+  // This actually indicates the start of a string of length 80 in the file.
+  // At position 84 in the file, the eight next bytes should read (in hexadecimal): 00 00 00 50 00 00 00 04.
+  unsigned char data[ 92 ];
+  in.read( reinterpret_cast< char * >( &data ), 92 );
+  if ( !in )
     return false;
-  }
+
+  if ( data[0] != 0 || data[1] != 0 ||
+       data[2] != 0 || data[3] != 0x50 )
+    return false;
+
+  if ( data[84 + 0] != 0 || data[84 + 1] != 0 ||
+       data[84 + 2] != 0 || data[84 + 3] != 0x50 ||
+       data[84 + 4] != 0 || data[84 + 5] != 0 ||
+       data[84 + 6] != 0 || data[84 + 7] != 8 )
+    return false;
+
+  return true;
 }
 
 std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFile, MDAL_Status *status )
@@ -555,7 +566,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFi
                 x,
                 y );
 
-    addData( var_names, data, nPoints, nElems );
+    addData( var_names, data, nPoints );
   }
   catch ( MDAL_Status error )
   {
