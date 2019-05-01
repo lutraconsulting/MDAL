@@ -174,6 +174,9 @@ namespace MDAL
 
       DatasetGroups datasetGroups;
 
+      //! Find a dataset group by name
+      std::shared_ptr<DatasetGroup> group( const std::string &name );
+
       size_t verticesCount() const;
       size_t facesCount() const;
       std::string uri() const;

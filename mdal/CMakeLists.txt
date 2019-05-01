@@ -11,6 +11,7 @@ SET(MDAL_SOURCES
   frmts/mdal_2dm.cpp
   frmts/mdal_ascii_dat.cpp
   frmts/mdal_binary_dat.cpp
+  frmts/mdal_selafin.cpp
 )
 
 SET(MDAL_HEADERS
@@ -23,6 +24,7 @@ SET(MDAL_HEADERS
   frmts/mdal_2dm.hpp
   frmts/mdal_ascii_dat.hpp
   frmts/mdal_binary_dat.hpp
+  frmts/mdal_selafin.hpp
 )
 
 IF(HDF5_FOUND)
