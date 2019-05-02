@@ -249,26 +249,6 @@ void MDAL::Mesh::setSourceCrsFromEPSG( int code )
   setSourceCrs( std::string( "EPSG:" ) + std::to_string( code ) );
 }
 
-void MDAL::Mesh::setExtent( const BBox &extent )
-{
-  mExtent = extent;
-}
-
-void MDAL::Mesh::setFaceVerticesMaximumCount( size_t faceVerticesMaximumCount )
-{
-  mFaceVerticesMaximumCount = faceVerticesMaximumCount;
-}
-
-void MDAL::Mesh::setFacesCount( size_t facesCount )
-{
-  mFacesCount = facesCount;
-}
-
-void MDAL::Mesh::setVerticesCount( size_t verticesCount )
-{
-  mVerticesCount = verticesCount;
-}
-
 size_t MDAL::Mesh::verticesCount() const
 {
   return mVerticesCount;
