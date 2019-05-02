@@ -22,6 +22,207 @@
 #include "mdal_utils.hpp"
 #include <math.h>
 
+MDAL::SerafinStreamReader::SerafinStreamReader() = default;
+
+void MDAL::SerafinStreamReader::initialize( const std::string &fileName )
+{
+  mFileName = fileName;
+  if ( !MDAL::fileExists( mFileName ) )
+  {
+    throw MDAL_Status::Err_FileNotFound;
+  }
+
+  mIn = std::ifstream( mFileName, std::ifstream::in | std::ifstream::binary );
+  if ( !mIn )
+    throw MDAL_Status::Err_FileNotFound; // Couldn't open the file
+
+  // get length of file:
+  mIn.seekg( 0, mIn.end );
+  mFileSize = mIn.tellg();
+  mIn.seekg( 0, mIn.beg );
+
+  mStreamInFloatPrecision = getStreamPrecision();
+  mIsNativeLittleEndian = MDAL::isNativeLittleEndian();
+}
+
+bool MDAL::SerafinStreamReader::getStreamPrecision( )
+{
+  ignore_array_length( );
+  ignore( 72 );
+  std::string varType = read_string_without_length( 8 );
+  bool ret;
+  if ( varType == "SERAFIN" )
+  {
+    ret = true;
+  }
+  else if ( varType == "SERAFIND" )
+  {
+    ret = false;
+  }
+  else
+  {
+    throw MDAL_Status::Err_UnknownFormat;
+  }
+  ignore_array_length( );
+  return ret;
+}
+
+std::string MDAL::SerafinStreamReader::read_string( size_t len )
+{
+  size_t length = read_sizet();
+  if ( length != len ) throw MDAL_Status::Err_UnknownFormat;
+  std::string ret = read_string_without_length( len );
+  ignore_array_length();
+  return ret;
+}
+
+std::vector<double> MDAL::SerafinStreamReader::read_double_arr( size_t len )
+{
+  size_t length = read_sizet();
+  if ( mStreamInFloatPrecision )
+  {
+    if ( length != len * 4 ) throw MDAL_Status::Err_UnknownFormat;
+  }
+  else
+  {
+    if ( length != len * 8 ) throw MDAL_Status::Err_UnknownFormat;
+  }
+  std::vector<double> ret( len );
+  for ( size_t i = 0; i < len; ++i )
+  {
+    ret[i] = read_double();
+  }
+  ignore_array_length();
+  return ret;
+}
+
+std::vector<int> MDAL::SerafinStreamReader::read_int_arr( size_t len )
+{
+  size_t length = read_sizet();
+  if ( length != len * 4 ) throw MDAL_Status::Err_UnknownFormat;
+  std::vector<int> ret( len );
+  for ( size_t i = 0; i < len; ++i )
+  {
+    ret[i] = read_int();
+  }
+  ignore_array_length();
+  return ret;
+}
+
+std::vector<size_t> MDAL::SerafinStreamReader::read_size_t_arr( size_t len )
+{
+  size_t length = read_sizet();
+  if ( length != len * 4 ) throw MDAL_Status::Err_UnknownFormat;
+  std::vector<size_t> ret( len );
+  for ( size_t i = 0; i < len; ++i )
+  {
+    ret[i] = read_sizet();
+  }
+  ignore_array_length();
+  return ret;
+}
+
+std::string MDAL::SerafinStreamReader::read_string_without_length( size_t len )
+{
+  std::vector<char> ptr( len );
+  mIn.read( ptr.data(), static_cast<int>( len ) );
+  if ( !mIn )
+    throw MDAL_Status::Err_UnknownFormat;
+
+  size_t str_length = 0;
+  for ( size_t i = len; i > 0; --i )
+  {
+    if ( ptr[i - 1] != 0x20 )
+    {
+      str_length = i;
+      break;
+    }
+  }
+  std::string ret( ptr.data(), str_length );
+  return ret;
+}
+
+double MDAL::SerafinStreamReader::read_double( )
+{
+  double ret;
+  unsigned char buffer[8];
+
+  if ( mStreamInFloatPrecision )
+  {
+    float ret_f;
+    if ( mIn.read( reinterpret_cast< char * >( &buffer ), 4 ) )
+      if ( !mIn )
+        throw MDAL_Status::Err_UnknownFormat;
+    if ( mIsNativeLittleEndian )
+    {
+      std::reverse( reinterpret_cast< char * >( &buffer ), reinterpret_cast< char * >( &buffer ) + 4 );
+    }
+    memcpy( reinterpret_cast< char * >( &ret_f ),
+            reinterpret_cast< char * >( &buffer ),
+            4 );
+    ret = static_cast<double>( ret_f );
+  }
+  else
+  {
+    if ( mIn.read( reinterpret_cast< char * >( &buffer ), 8 ) )
+      if ( !mIn )
+        throw MDAL_Status::Err_UnknownFormat;
+    if ( mIsNativeLittleEndian )
+    {
+      std::reverse( reinterpret_cast< char * >( &buffer ), reinterpret_cast< char * >( &buffer ) + 8 );
+    }
+    memcpy( reinterpret_cast< char * >( &ret ),
+            reinterpret_cast< char * >( &buffer ),
+            8 );
+  }
+  return ret;
+}
+
+
+int MDAL::SerafinStreamReader::read_int( )
+{
+  unsigned char data[4];
+
+  if ( mIn.read( reinterpret_cast< char * >( &data ), 4 ) )
+    if ( !mIn )
+      throw MDAL_Status::Err_UnknownFormat;
+  if ( mIsNativeLittleEndian )
+  {
+    std::reverse( reinterpret_cast< char * >( &data ), reinterpret_cast< char * >( &data ) + 4 );
+  }
+  int var;
+  memcpy( reinterpret_cast< char * >( &var ),
+          reinterpret_cast< char * >( &data ),
+          4 );
+  return var;
+}
+
+size_t MDAL::SerafinStreamReader::read_sizet()
+{
+  int var = read_int( );
+  return static_cast<size_t>( var );
+}
+
+size_t MDAL::SerafinStreamReader::remainingBytes()
+{
+  return static_cast<size_t>( mFileSize - mIn.tellg() );
+}
+
+void MDAL::SerafinStreamReader::ignore( int len )
+{
+  mIn.ignore( len );
+  if ( !mIn )
+    throw MDAL_Status::Err_UnknownFormat;
+}
+
+void MDAL::SerafinStreamReader::ignore_array_length( )
+{
+  ignore( 4 );
+}
+
+// //////////////////////////////
+// DRIVER
+// //////////////////////////////
 MDAL::DriverSelafin::DriverSelafin():
   Driver( "SELAFIN",
           "Selafin File",
@@ -38,109 +239,6 @@ MDAL::DriverSelafin *MDAL::DriverSelafin::create()
 
 MDAL::DriverSelafin::~DriverSelafin() = default;
 
-static std::string read_string( std::ifstream &in, int len )
-{
-  std::vector<char> ptr( static_cast<size_t>( len ) );
-
-  in.read( ptr.data(), len );
-  if ( !in )
-    throw MDAL_Status::Err_UnknownFormat;
-
-  std::string ret = std::string( ptr.data() );
-  ret = MDAL::trim( ret );
-  return ret;
-}
-
-static double read_double( std::ifstream &in, bool streamInFloatPrecision )
-{
-  double ret;
-  unsigned char buffer[8];
-
-  if ( streamInFloatPrecision )
-  {
-    float ret_f;
-    if ( in.read( reinterpret_cast< char * >( &buffer ), 4 ) )
-      if ( !in )
-        throw MDAL_Status::Err_UnknownFormat;
-    if ( MDAL::isNativeLittleEndian() )
-    {
-      std::reverse( reinterpret_cast< char * >( &buffer ), reinterpret_cast< char * >( &buffer ) + 4 );
-    }
-    memcpy( reinterpret_cast< char * >( &ret_f ),
-            reinterpret_cast< char * >( &buffer ),
-            4 );
-    ret = static_cast<double>( ret_f );
-  }
-  else
-  {
-    if ( in.read( reinterpret_cast< char * >( &buffer ), 8 ) )
-      if ( !in )
-        throw MDAL_Status::Err_UnknownFormat;
-    if ( MDAL::isNativeLittleEndian() )
-    {
-      std::reverse( reinterpret_cast< char * >( &buffer ), reinterpret_cast< char * >( &buffer ) + 8 );
-    }
-    memcpy( reinterpret_cast< char * >( &ret ),
-            reinterpret_cast< char * >( &buffer ),
-            8 );
-  }
-  return ret;
-}
-
-
-static int read_int( std::ifstream &in )
-{
-  unsigned char data[4];
-
-  if ( in.read( reinterpret_cast< char * >( &data ), 4 ) )
-    if ( !in )
-      throw MDAL_Status::Err_UnknownFormat;
-  if ( MDAL::isNativeLittleEndian() )
-  {
-    std::reverse( reinterpret_cast< char * >( &data ), reinterpret_cast< char * >( &data ) + 4 );
-  }
-  int var;
-  memcpy( reinterpret_cast< char * >( &var ),
-          reinterpret_cast< char * >( &data ),
-          4 );
-  return var;
-}
-
-static size_t read_sizet( std::ifstream &in )
-{
-  int var = read_int( in );
-  return static_cast<size_t>( var );
-}
-
-static void record_boundary( std::ifstream &in )
-{
-  in.ignore( 4 );
-  if ( !in )
-    throw MDAL_Status::Err_UnknownFormat;
-}
-
-bool MDAL::DriverSelafin::getStreamPrecision( std::ifstream &in )
-{
-  record_boundary( in );
-  std::string title = read_string( in, 72 );
-  MDAL_UNUSED( title );
-  std::string varType = read_string( in, 8 );
-  bool ret;
-  if ( varType == "SERAFIN" )
-  {
-    ret = true;
-  }
-  else if ( varType == "SERAFIND" )
-  {
-    ret = false;
-  }
-  else
-  {
-    throw MDAL_Status::Err_UnknownFormat;
-  }
-  record_boundary( in );
-  return ret;
-}
 
 void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
                                      double *xOrigin,
@@ -153,47 +251,28 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
                                      std::vector<double> &y,
                                      std::vector<timestep_map> &data )
 {
-  if ( !MDAL::fileExists( mFileName ) )
-  {
-    throw MDAL_Status::Err_FileNotFound;
-  }
-
-  std::ifstream in( mFileName, std::ifstream::in | std::ifstream::binary );
-  if ( !in )
-    throw MDAL_Status::Err_FileNotFound; // Couldn't open the file
-
-  // get length of file:
-  in.seekg( 0, in.end );
-  long long length = in.tellg();
-  in.seekg( 0, in.beg );
 
   /* 1 record containing the title of the study (72 characters) and a 8 characters
   string indicating the type of format (SERAFIN or SERAFIND)
   */
-  bool streamInFloatPrecision = getStreamPrecision( in );
+  mReader.initialize( mFileName );
 
   /* 1 record containing the two integers NBV(1) and NBV(2) (number of linear
      and quadratic variables, NBV(2) with the value of 0 for Telemac, as
-     quadratic values are not saved so far)
+     quadratic values are not saved so far), numbered from 1 in docs
   */
-  record_boundary( in );
-  size_t NBV1 = read_sizet( in );
-  int NBV2 = read_int( in );
-  MDAL_UNUSED( NBV2 );
-  record_boundary( in );
+  std::vector<size_t> nbv = mReader.read_size_t_arr( 2 );
 
   /* NBV(1) records containing the names and units of each variab
      le (over 32 characters)
   */
-  for ( size_t i = 0; i < NBV1; ++i )
+  for ( size_t i = 0; i < nbv[0]; ++i )
   {
-    record_boundary( in );
-    var_names.push_back( read_string( in, 32 ) );
-    record_boundary( in );
+    var_names.push_back( mReader.read_string( 32 ) );
   }
 
   /* 1 record containing the integers table IPARAM (10 integers, of which only
-      the 6 are currently being used),
+      the 6 are currently being used), numbered from 1 in docs
 
       - if IPARAM (3) != 0: the value corresponds to the x-coordinate of the
       origin of the mesh,
@@ -214,54 +293,33 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
       by the array KNOLG (total initial number of points). All the other
       numbers are local to the sub-domain, including IKLE
   */
+  std::vector<int> params = mReader.read_int_arr( 10 );
+  *xOrigin = static_cast<double>( params[2] );
+  *yOrigin = static_cast<double>( params[3] );
 
-  record_boundary( in );
-
-  int IPARAM[11]; // keep the numbering from the document
-  for ( int i = 1; i < 11; ++i )
-  {
-    IPARAM[i] = read_int( in );
-  }
-  *xOrigin = IPARAM[3];
-  *yOrigin = IPARAM[4];
-
-  if ( IPARAM[7] != 0 )
+  if ( params[6] != 0 )
   {
     // would need additional parsing
     throw MDAL_Status::Err_MissingDriver;
   }
 
-  record_boundary( in );
-
-
   /*
     if IPARAM (10) = 1: a record containing the computation starting date
   */
 
-  if ( IPARAM[10] == 1 )
+  if ( params[9] == 1 )
   {
-    record_boundary( in );
-    int dummy_date_data;
-    dummy_date_data = read_int( in ); //year
-    dummy_date_data = read_int( in ); //month
-    dummy_date_data = read_int( in ); //hour
-    dummy_date_data = read_int( in ); //minute
-    dummy_date_data = read_int( in ); //second
-    dummy_date_data = read_int( in ); //milisecond
-    MDAL_UNUSED( dummy_date_data )
-    record_boundary( in );
+    std::vector<int> datetime = mReader.read_int_arr( 6 );
+    MDAL_UNUSED( datetime )
   }
 
   /* 1 record containing the integers NELEM,NPOIN,NDP,1 (number of
      elements, number of points, number of points per element and the value 1)
    */
-  record_boundary( in );
-  *nElem = read_sizet( in );
-  *nPoint = read_sizet( in );
-  *nPointsPerElem = read_sizet( in );
-  int dummy = read_int( in );
-  MDAL_UNUSED( dummy );
-  record_boundary( in );
+  std::vector<size_t> numbers = mReader.read_size_t_arr( 4 );
+  *nElem = numbers[0];
+  *nPoint = numbers[1];
+  *nPointsPerElem = numbers[2];
 
   /* 1 record containing table IKLE (integer array
      of dimension (NDP,NELEM)
@@ -269,51 +327,29 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
 
      Attention: in TELEMAC-2D, the dimensions of this array are (NELEM,NDP))
   */
-
-  record_boundary( in );
-  ikle.resize( ( *nElem ) * ( *nPointsPerElem ) );
+  ikle = mReader.read_size_t_arr( ( *nElem ) * ( *nPointsPerElem ) );
   for ( size_t i = 0; i < ikle.size(); ++i )
   {
-    ikle[i] = read_sizet( in );
     -- ikle[i];  //numbered from 1
   }
-  record_boundary( in );
 
   /* 1 record containing table IPOBO (integer array of dimension NPOIN); the
      value of one element is 0 for an internal point, and
      gives the numbering of boundary points for the others
   */
-  record_boundary( in );
-  std::vector<int> iPointBoundary( *nPoint );
-  for ( size_t i = 0; i < iPointBoundary.size(); ++i )
-  {
-    iPointBoundary[i] = read_int( in );
-  }
-  record_boundary( in );
+  std::vector<int> iPointBoundary = mReader.read_int_arr( *nPoint );
+  MDAL_UNUSED( iPointBoundary );
 
   /* 1 record containing table X (real array of dimension NPOIN containing the
      abscissae of the points)
   */
-
-  record_boundary( in );
-  x.resize( *nPoint );
-  for ( size_t i = 0; i < x.size(); ++i )
-  {
-    x[i] = read_double( in, streamInFloatPrecision );
-  }
-  record_boundary( in );
+  x = mReader.read_double_arr( *nPoint );
 
   /* 1 record containing table Y (real array of dimension NPOIN containing the
      abscissae of the points)
   */
+  y = mReader.read_double_arr( *nPoint );
 
-  record_boundary( in );
-  y.resize( *nPoint );
-  for ( size_t i = 0; i < y.size(); ++i )
-  {
-    y[i] = read_double( in, streamInFloatPrecision );
-  }
-  record_boundary( in );
 
   /* Next, for each time step, the following are found:
      - 1 record containing time T (real),
@@ -321,25 +357,17 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
   */
   data.resize( var_names.size() );
 
-  size_t nTimesteps = ( length - in.tellg() ) / ( 12 + ( 4 + ( *nPoint ) * 4 + 4 ) * var_names.size() );
+  size_t nTimesteps = mReader.remainingBytes() / ( 12 + ( 4 + ( *nPoint ) * 4 + 4 ) * var_names.size() );
   for ( size_t nT = 0; nT < nTimesteps; ++nT )
   {
-    record_boundary( in );
-    double time = read_double( in, streamInFloatPrecision );
-    record_boundary( in );
+    std::vector<double> times = mReader.read_double_arr( 1 );
+    double time = times[0];
 
     for ( size_t i = 0; i < var_names.size(); ++i )
     {
-      record_boundary( in );
-
       timestep_map &datait = data[i];
-      std::vector<double> datavals( *nPoint );
-      for ( size_t e = 0; e < datavals.size(); ++e )
-      {
-        datavals[e] = read_double( in, streamInFloatPrecision );
-      }
+      std::vector<double> datavals = mReader.read_double_arr( *nPoint );
       datait[time] = datavals;
-      record_boundary( in );
     }
   }
 }

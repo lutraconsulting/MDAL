@@ -9,6 +9,8 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <iostream>
+#include <fstream>
 
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
@@ -17,6 +19,35 @@
 
 namespace MDAL
 {
+  class SerafinStreamReader
+  {
+    public:
+      SerafinStreamReader();
+      void initialize( const std::string &fileName );
+
+      std::string read_string( size_t len );
+      std::vector<double> read_double_arr( size_t len );
+      std::vector<int> read_int_arr( size_t len );
+      std::vector<size_t> read_size_t_arr( size_t len );
+
+      double read_double( );
+      int read_int( );
+      size_t read_sizet( );
+
+      size_t remainingBytes();
+    private:
+      void ignore_array_length( );
+      std::string read_string_without_length( size_t len );
+      void ignore( int len );
+      bool getStreamPrecision();
+
+      std::string mFileName;
+      bool mStreamInFloatPrecision = true;
+      bool mIsNativeLittleEndian = true;
+      long long mFileSize = -1;
+      std::ifstream mIn;
+  };
+
   /**
    * Serafin format (also called Selafin)
    *
@@ -61,6 +92,7 @@ namespace MDAL
 
       std::unique_ptr< MDAL::MemoryMesh > mMesh;
       std::string mFileName;
+      SerafinStreamReader mReader;
   };
 
 } // namespace MDAL

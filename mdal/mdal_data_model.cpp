@@ -232,7 +232,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::Mesh::group( const std::string &name )
       return grp;
   }
   return std::shared_ptr<MDAL::DatasetGroup>();
-};
+}
 
 void MDAL::Mesh::setSourceCrs( const std::string &str )
 {
