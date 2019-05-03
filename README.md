@@ -20,6 +20,7 @@ You can use MDAL to load the following file formats:
 - [3Di](http://www.3di.nu): 3Di modelling package format based on [CF Conventions](http://cfconventions.org)
 - [UGRID](https://www.deltares.nl/en/): Unstructured Grid format based on [CF Conventions](http://cfconventions.org)
 - [FLO-2D](http://www.flo-2d.com/): Outputs of the FLO-2D modelling package
+- [Selafin/Serafin](https://www.gdal.org/drv_selafin.html): Outputs of the TELEMAC 2D hydrodynamic modelling package
 - [HEC-RAS](http://www.hec.usace.army.mil/software/hec-ras/): Outputs of the HEC-RAS modelling package
 - [SWW](http://anuga.anu.edu.au/): Outputs of the ANUGA modelling package
 - [SAGA FLOW**](https://gis.stackexchange.com/a/254942/59405): Rasters in the SAGA flow direction format

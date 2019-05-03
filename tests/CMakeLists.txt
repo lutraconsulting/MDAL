@@ -71,6 +71,7 @@ SET(TESTS
     test_ascii_dat.cpp
     test_binary_dat.cpp
     test_mdal_utils.cpp
+    test_selafin.cpp
 )
 
 IF(HDF5_FOUND)
@@ -115,3 +116,4 @@ ENDFOREACH(TESTSRC)
 ADD_TEST(NAME mdalinfo_test COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/regular_grid.2dm" "${TESTDATA_DIR}/xmdf/regular_grid.xmdf" )
 ADD_TEST(NAME mdalinfo_test2 COMMAND $<TARGET_FILE:mdalinfo> "--formats" )
 ADD_TEST(NAME mdalinfo_test3 COMMAND $<TARGET_FILE:mdalinfo> "-h" )
+ADD_TEST(NAME mdalinfo_test4 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/regular_grid.2dm" "${TESTDATA_DIR}/xmdf/regular_grid.xmdf" "--stats" )
