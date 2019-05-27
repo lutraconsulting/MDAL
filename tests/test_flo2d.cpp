@@ -162,24 +162,24 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   EXPECT_EQ( false, onVertices );
 
   ASSERT_EQ( 20, MDAL_G_datasetCount( g ) );
-  ds = MDAL_G_dataset( g, 5 );
+  ds = MDAL_G_dataset( g, 17 );
   ASSERT_NE( ds, nullptr );
 
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 0 );
+  active = getActive( ds, 300 );
   EXPECT_EQ( true, active );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 521, count );
 
-  value = getValueX( ds, 0 );
-  EXPECT_DOUBLE_EQ( 0, value );
+  value = getValueX( ds, 234 );
+  EXPECT_DOUBLE_EQ( 0.27071857452392578, value );
 
   MDAL_D_minimumMaximum( ds, &min, &max );
-  EXPECT_DOUBLE_EQ( 0, min );
-  EXPECT_DOUBLE_EQ( 0, max );
+  EXPECT_DOUBLE_EQ( 0.1241119660936652, min );
+  EXPECT_DOUBLE_EQ( 2.847882132344469, max );
 
   MDAL_CloseMesh( m );
 }
@@ -320,6 +320,48 @@ TEST( MeshFlo2dTest, basic )
 
     double time = MDAL_D_time( ds );
     EXPECT_DOUBLE_EQ( 0.5, time );
+
+    // ///////////
+    // Max Depth
+    // ///////////
+    g = MDAL_M_datasetGroup( m, 4 );
+    ASSERT_NE( g, nullptr );
+
+    meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "Depth/Maximums" ), std::string( name ) );
+
+    scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    onVertices = MDAL_G_isOnVertices( g );
+    EXPECT_EQ( false, onVertices );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    active = getActive( ds, 0 );
+    EXPECT_EQ( true, active );
+
+    count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 9, count );
+
+    value = getValue( ds, 1 );
+    EXPECT_DOUBLE_EQ( 2, value );
+
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_DOUBLE_EQ( 2, min );
+    EXPECT_DOUBLE_EQ( 4, max );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_DOUBLE_EQ( 2, min );
+    EXPECT_DOUBLE_EQ( 4, max );
 
     MDAL_CloseMesh( m );
   }
