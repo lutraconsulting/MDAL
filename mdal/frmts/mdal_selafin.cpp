@@ -452,6 +452,20 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names, co
       var_name =  MDAL::replace( var_name, "velocity v", "velocity" );
       var_name =  MDAL::replace( var_name, "along y", "" );
     }
+    
+    if ( MDAL::contains( var_name, "vitesse u" ) || MDAL::contains( var_name, "suivant x" ) )
+    {
+      is_vector = true;
+      var_name = MDAL::replace( var_name, "vitesse u", "vitesse" );
+      var_name = MDAL::replace( var_name, "suivant x", "" );
+    }
+    else if ( MDAL::contains( var_name, "vitesse v" ) || MDAL::contains( var_name, "suivant y" ) )
+    {
+      is_vector = true;
+      is_x =  false;
+      var_name =  MDAL::replace( var_name, "vitesse v", "vitesse" );
+      var_name =  MDAL::replace( var_name, "suivant y", "" );
+    }
 
     std::shared_ptr<DatasetGroup> group = mMesh->group( var_name );
     if ( !group )
