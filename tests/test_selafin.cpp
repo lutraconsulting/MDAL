@@ -154,7 +154,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
 
   double value = getValue( ds, 8667 );
   EXPECT_DOUBLE_EQ( 31.965662002563477, value );
-  
+
   double min, max;
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( -0.00673320097848773, min );
@@ -215,4 +215,3 @@ int main( int argc, char **argv )
   finalize_test();
   return ret;
 }
-

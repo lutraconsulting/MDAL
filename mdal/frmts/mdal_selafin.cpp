@@ -452,7 +452,7 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names, co
       var_name =  MDAL::replace( var_name, "velocity v", "velocity" );
       var_name =  MDAL::replace( var_name, "along y", "" );
     }
-    
+
     if ( MDAL::contains( var_name, "vitesse u" ) || MDAL::contains( var_name, "suivant x" ) )
     {
       is_vector = true;
@@ -615,6 +615,5 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFi
     if ( status ) *status = ( error );
     mMesh.reset();
   }
-
   return std::unique_ptr<Mesh>( mMesh.release() );
 }
