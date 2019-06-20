@@ -115,7 +115,8 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( 3, f_v_count ); //only triangles!
 
-  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+  int var_count = MDAL_M_datasetGroupCount( m );
+  ASSERT_EQ( 4, var_count ); // 4 variables (Velocity, Water Depth, Free Surface and Bottom)
 
   // ///////////
   // Scalar Dataset
