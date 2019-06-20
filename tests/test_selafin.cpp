@@ -121,7 +121,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   // ///////////
   // Scalar Dataset
   // ///////////
-  DatasetGroupH r = MDAL_M_datasetGroup( m, 3 );
+  DatasetGroupH r = MDAL_M_datasetGroup( m, 2 );
   ASSERT_NE( r, nullptr );
 
   int meta_count = MDAL_G_metadataCount( r );
@@ -196,13 +196,13 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_EQ( 13541, count );
 
   value = getValueX( ds, 8667 );
-  EXPECT_DOUBLE_EQ( 6.23201, value );
+  EXPECT_DOUBLE_EQ( 6.2320127487183, value );
   value = getValueY( ds, 8667 );
-  EXPECT_DOUBLE_EQ( -0.972719, value );
+  EXPECT_DOUBLE_EQ( -0.9727190732956, value );
 
   MDAL_D_minimumMaximum( ds, &min, &max );
-  EXPECT_DOUBLE_EQ( 0.0, min );
-  EXPECT_DOUBLE_EQ( 7.56736, max );
+  EXPECT_DOUBLE_EQ( 0.0000000000024, min );
+  EXPECT_DOUBLE_EQ( 7.5673562379168, max );
 
   MDAL_CloseMesh( m );
 }
