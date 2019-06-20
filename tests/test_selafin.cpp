@@ -128,7 +128,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_EQ( 1, meta_count );
 
   const char *name = MDAL_G_name( r );
-  EXPECT_EQ( std::string( "SURFACE LIBRE" ), std::string( name ) );
+  EXPECT_EQ( std::string( "surface libre   m" ), std::string( name ) );
 
   bool scalar = MDAL_G_hasScalarData( r );
   EXPECT_EQ( true, scalar );
@@ -153,16 +153,16 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_EQ( 13541, count );
 
   double value = getValue( ds, 8667 );
-  EXPECT_DOUBLE_EQ( 28.0886745452881, value );
+  EXPECT_DOUBLE_EQ( 31.965662002563477, value );
   
   double min, max;
   MDAL_D_minimumMaximum( ds, &min, &max );
-  EXPECT_DOUBLE_EQ( -0.0067332, min );
-  EXPECT_DOUBLE_EQ( 100.002, max );
+  EXPECT_DOUBLE_EQ( -0.00673320097848773, min );
+  EXPECT_DOUBLE_EQ( 100.00228118896484, max );
 
   MDAL_G_minimumMaximum( r, &min, &max );
-  EXPECT_DOUBLE_EQ( -0.0067332, min );
-  EXPECT_DOUBLE_EQ( 100.002, max );
+  EXPECT_DOUBLE_EQ( -0.00673320097848773, min );
+  EXPECT_DOUBLE_EQ( 100.00228118896484, max );
 
   // ///////////
   // Vector Dataset
@@ -174,7 +174,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_EQ( 1, meta_count );
 
   name = MDAL_G_name( r );
-  EXPECT_EQ( std::string( "Vitesse" ), std::string( name ) );
+  EXPECT_EQ( std::string( "vitesse       ms" ), std::string( name ) );
 
   scalar = MDAL_G_hasScalarData( r );
   EXPECT_EQ( false, scalar );
@@ -196,13 +196,13 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_EQ( 13541, count );
 
   value = getValueX( ds, 8667 );
-  EXPECT_DOUBLE_EQ( 6.2320127487183, value );
+  EXPECT_DOUBLE_EQ( 6.2320127487182617, value );
   value = getValueY( ds, 8667 );
-  EXPECT_DOUBLE_EQ( -0.9727190732956, value );
+  EXPECT_DOUBLE_EQ( -0.97271907329559326, value );
 
   MDAL_D_minimumMaximum( ds, &min, &max );
-  EXPECT_DOUBLE_EQ( 0.0000000000024, min );
-  EXPECT_DOUBLE_EQ( 7.5673562379168, max );
+  EXPECT_DOUBLE_EQ( 2.3694833011052991e-12, min );
+  EXPECT_DOUBLE_EQ( 7.5673562379016834, max );
 
   MDAL_CloseMesh( m );
 }
