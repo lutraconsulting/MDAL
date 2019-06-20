@@ -159,30 +159,30 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   EXPECT_DOUBLE_EQ( -0.0067332, min );
   EXPECT_DOUBLE_EQ( 100.002, max );
 
-  MDAL_G_minimumMaximum( g, &min, &max );
+  MDAL_G_minimumMaximum( r, &min, &max );
   EXPECT_DOUBLE_EQ( -0.0067332, min );
   EXPECT_DOUBLE_EQ( 100.002, max );
 
   // ///////////
   // Vector Dataset
   // ///////////
-  g = MDAL_M_datasetGroup( m, 0 );
-  ASSERT_NE( g, nullptr );
+  r = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( r, nullptr );
 
-  meta_count = MDAL_G_metadataCount( g );
+  meta_count = MDAL_G_metadataCount( r );
   ASSERT_EQ( 1, meta_count );
 
-  name = MDAL_G_name( g );
+  name = MDAL_G_name( r );
   EXPECT_EQ( std::string( "Vitesse" ), std::string( name ) );
 
-  scalar = MDAL_G_hasScalarData( g );
+  scalar = MDAL_G_hasScalarData( r );
   EXPECT_EQ( false, scalar );
 
-  onVertices = MDAL_G_isOnVertices( g );
+  onVertices = MDAL_G_isOnVertices( r );
   EXPECT_EQ( true, onVertices );
 
-  ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-  ds = MDAL_G_dataset( g, 1 );
+  ASSERT_EQ( 2, MDAL_G_datasetCount( r ) );
+  ds = MDAL_G_dataset( r, 1 );
   ASSERT_NE( ds, nullptr );
 
   valid = MDAL_D_isValid( ds );
