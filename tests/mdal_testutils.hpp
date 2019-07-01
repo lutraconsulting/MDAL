@@ -8,6 +8,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdio>
 
 #include "mdal.h"
 

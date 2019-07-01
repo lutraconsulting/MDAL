@@ -143,6 +143,18 @@ MeshH MDAL_LoadMesh( const char *meshFile )
   return static_cast< MeshH >( MDAL::DriverManager::instance().load( filename, &sLastStatus ).release() );
 }
 
+void MDAL_SaveMesh( MeshH mesh, const char *meshFile )
+{
+  if ( !meshFile )
+  {
+    sLastStatus = MDAL_Status::Err_FileNotFound;
+    return;
+  }
+
+  std::string filename( meshFile );
+  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), filename, "2DM", &sLastStatus );
+}
+
 
 void MDAL_CloseMesh( MeshH mesh )
 {

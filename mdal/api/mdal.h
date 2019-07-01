@@ -56,6 +56,7 @@ enum MDAL_Status
   Err_IncompatibleDatasetGroup,
   Err_MissingDriver,
   Err_MissingDriverCapability,
+  Err_FailToWriteToDisk,
   // Warnings
   Warn_UnsupportedElement,
   Warn_InvalidElements,
@@ -120,6 +121,10 @@ MDAL_EXPORT const char *MDAL_DR_filters( DriverH driver );
 //! This may effectively load whole mesh in-memory for some providers
 //! Caller must free memory with MDAL_CloseMesh() afterwards
 MDAL_EXPORT MeshH MDAL_LoadMesh( const char *meshFile );
+
+MDAL_EXPORT void MDAL_SaveMesh( MeshH mesh, const char *meshFile );
+
+
 //! Closes mesh, frees the memory
 MDAL_EXPORT void MDAL_CloseMesh( MeshH mesh );
 //! Returns mesh projection

@@ -82,6 +82,7 @@ namespace MDAL
 
       bool canRead( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &meshFile, MDAL_Status *status ) override;
+      void save( const std::string &uri, MDAL_Status *status, Mesh *mesh ) override;
 
     private:
       std::string mMeshFile;

@@ -57,6 +57,13 @@ void MDAL::Driver::load( const std::string &uri, Mesh *mesh, MDAL_Status *status
   return;
 }
 
+void MDAL::Driver::save( const std::string &uri, MDAL_Status *status, MDAL::Mesh *mesh )
+{
+  MDAL_UNUSED( uri );
+  MDAL_UNUSED( mesh );
+  MDAL_UNUSED( status );
+}
+
 void MDAL::Driver::createDatasetGroup( MDAL::Mesh *mesh, const std::string &groupName, bool isOnVertices, bool hasScalarData, const std::string &datasetGroupFile )
 {
   std::shared_ptr<MDAL::DatasetGroup> grp(

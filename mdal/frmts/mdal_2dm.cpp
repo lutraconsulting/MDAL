@@ -286,3 +286,63 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
 
   return std::unique_ptr<Mesh>( mesh.release() );
 }
+
+void MDAL::Driver2dm::save( const std::string &uri, MDAL_Status *status, MDAL::Mesh *mesh )
+{
+  if ( status ) *status = MDAL_Status::None;
+
+  std::ofstream file( uri, std::ofstream::out );
+
+  if ( !file.is_open() )
+  {
+    if ( status ) *status = MDAL_Status::Err_FailToWriteToDisk;
+  }
+
+  std::string line = "MESH2D";
+  file << line << std::endl;
+
+  //write vertices
+  std::unique_ptr<MDAL::MeshVertexIterator> vertexIterator = mesh->readVertices();
+  double vertex[3];
+  for ( size_t i = 0; i < mesh->verticesCount(); ++i )
+  {
+    vertexIterator->next( 1, vertex );
+    line = "ND ";
+    line.append( std::to_string( i + 1 ) );
+    for ( size_t j = 0; j < 3; ++j )
+    {
+      line.append( " " );
+      line.append( std::to_string( vertex[j] ) );
+    }
+    file << line << std::endl;
+  }
+
+  //write faces
+  std::unique_ptr<MDAL::MeshFaceIterator> faceIterator = mesh->readFaces();
+  for ( size_t i = 0; i < mesh->facesCount(); ++i )
+  {
+    int faceOffsets[1];
+    int vertexIndices[4]; //max 4 vertices for a face
+    faceIterator->next( 1, faceOffsets, 4, vertexIndices );
+
+    if ( faceOffsets[0] > 2 && faceOffsets[0] < 5 )
+    {
+      if ( faceOffsets[0] == 3 )
+        line = "E3T ";
+      if ( faceOffsets[0] == 4 )
+        line = "E4Q ";
+
+      line.append( std::to_string( i + 1 ) );
+
+      for ( int j = 0; j < faceOffsets[0]; ++j )
+      {
+        line.append( " " );
+        line.append( std::to_string( vertexIndices[j] + 1 ) );
+      }
+    }
+
+    file << line << std::endl;
+
+  }
+  file.close();
+}

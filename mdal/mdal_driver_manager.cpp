@@ -92,6 +92,14 @@ void MDAL::DriverManager::loadDatasets( Mesh *mesh, const std::string &datasetFi
     *status = MDAL_Status::Err_UnknownFormat;
 }
 
+void MDAL::DriverManager::save( MDAL::Mesh *mesh, const std::string &uri, const std::string &driverName, MDAL_Status *status ) const
+{
+  auto selectedDriver = driver( driverName );
+  std::unique_ptr<Driver> drv( selectedDriver->create() );
+
+  drv->save( uri, status, mesh );
+}
+
 size_t MDAL::DriverManager::driversCount() const
 {
   return mDrivers.size();
@@ -155,3 +163,4 @@ MDAL::DriverManager::DriverManager()
   mDrivers.push_back( std::make_shared<MDAL::DriverXdmf>() );
 #endif
 }
+
