@@ -283,6 +283,8 @@ TEST( Mesh2DMTest, SaveMeshToFile )
   std::string fileNameToSave = tmp_file( "/quad_and_triangle_saveTest.2dm" );
   MDAL_SaveMesh( meshToSave, fileNameToSave.c_str() );
 
+  MDAL_CloseMesh( meshToSave );
+
   //open the saved mesh and test it (same as QuadAndTriangleFile test)
   MeshH m = MDAL_LoadMesh( fileNameToSave.c_str() );
 
