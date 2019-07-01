@@ -57,7 +57,7 @@ void MDAL::Driver::load( const std::string &uri, Mesh *mesh, MDAL_Status *status
   return;
 }
 
-void MDAL::Driver::save( const std::string &uri, MDAL_Status *status, MDAL::Mesh *mesh )
+void MDAL::Driver::save( const std::string &uri, MDAL::Mesh *mesh, MDAL_Status *status )
 {
   MDAL_UNUSED( uri );
   MDAL_UNUSED( mesh );

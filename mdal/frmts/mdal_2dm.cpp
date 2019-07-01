@@ -82,7 +82,7 @@ MDAL::Driver2dm::Driver2dm():
   Driver( DRIVER_NAME,
           "2DM Mesh File",
           "*.2dm",
-          Capability::ReadMesh
+          Capability::ReadMesh | Capability::SaveMesh
         )
 {
 }
@@ -271,7 +271,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
     new Mesh2dm(
       vertices.size(),
       faces.size(),
-      4, //maximum quads
+      MAX_VERTICES_PER_FACE_2DM,
       computeExtent( vertices ),
       mMeshFile,
       vertexIDtoIndex
@@ -287,7 +287,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   return std::unique_ptr<Mesh>( mesh.release() );
 }
 
-void MDAL::Driver2dm::save( const std::string &uri, MDAL_Status *status, MDAL::Mesh *mesh )
+void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh, MDAL_Status *status )
 {
   if ( status ) *status = MDAL_Status::None;
 

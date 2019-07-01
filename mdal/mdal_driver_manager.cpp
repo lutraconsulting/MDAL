@@ -95,9 +95,10 @@ void MDAL::DriverManager::loadDatasets( Mesh *mesh, const std::string &datasetFi
 void MDAL::DriverManager::save( MDAL::Mesh *mesh, const std::string &uri, const std::string &driverName, MDAL_Status *status ) const
 {
   auto selectedDriver = driver( driverName );
+
   std::unique_ptr<Driver> drv( selectedDriver->create() );
 
-  drv->save( uri, status, mesh );
+  drv->save( uri, mesh, status );
 }
 
 size_t MDAL::DriverManager::driversCount() const
