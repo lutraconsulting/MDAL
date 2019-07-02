@@ -14,6 +14,7 @@
 #include <vector>
 #include <stddef.h>
 #include <limits>
+#include <sstream>
 
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
@@ -65,6 +66,15 @@ namespace MDAL
   int toInt( const std::string &str );
   double toDouble( const std::string &str );
   bool toBool( const std::string &str );
+
+  //! Returns the string with a adapted format to coordinate
+  //! precision is the number of digits after the digital point if fabs(value)>180 (seems to not be a geographic coordinate)
+  //! precision+6 is the number of digits after the digital point if fabs(value)<=180 (could be a geographic coordinate)
+  std::string coordinateToString( double coordinate, int precision = 2 );
+
+  //! Returns a string with scientific format
+  //! precision is the number of signifiant digits
+  std::string doubleToString( double value, int precision = 6 );
 
   /**
    * Splits by deliminer and skips empty parts.

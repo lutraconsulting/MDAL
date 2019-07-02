@@ -42,6 +42,11 @@ bool MDAL::Driver::hasCapability( MDAL::Capability capability ) const
   return capability == ( mCapabilityFlags & capability );
 }
 
+int MDAL::Driver::faceVerticesMaximumCount() const
+{
+  return -1;
+}
+
 std::unique_ptr< MDAL::Mesh > MDAL::Driver::load( const std::string &uri, MDAL_Status *status )
 {
   MDAL_UNUSED( uri );

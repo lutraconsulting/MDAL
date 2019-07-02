@@ -7,6 +7,7 @@
 //mdal
 #include "mdal.h"
 #include "mdal_testutils.hpp"
+#include "mdal_utils.hpp"
 
 TEST( Mesh2DMTest, MissingFile )
 {
@@ -278,9 +279,11 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
 }
 
 
-
 TEST( Mesh2DMTest, SaveMeshToFile )
 {
+  //test driver capability
+  EXPECT_TRUE( MDAL_DR_SaveMeshCapability( MDAL_driverFromName( "2DM" ) ) );
+
   //open a mesh
   std::string pathSource = test_file( "/2dm/quad_and_triangle.2dm" );
   MeshH meshToSave = MDAL_LoadMesh( pathSource.c_str() );
@@ -296,6 +299,28 @@ TEST( Mesh2DMTest, SaveMeshToFile )
 
   std::remove( fileNameToSave.c_str() );
 }
+
+
+TEST( Mesh2DMTest, SaveMeshWithMoreThan4VerticesperFaceToFile )
+{
+  //Fake memory mesh
+  MDAL::MemoryMesh meshWithMoreThan4VerticesPerFace( "Fake",
+      0,
+      0,
+      5, //more than 4 vertices per face
+      MDAL::BBox(),
+      "fake" );
+
+  std::string fileNameToSave = tmp_file( "/quad_and_triangle_saveTest.2dm" );
+  MeshH m = static_cast<MeshH>( &meshWithMoreThan4VerticesPerFace );
+  MDAL_SaveMesh( m, fileNameToSave.c_str(), "2DM" );
+
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+
+  std::remove( fileNameToSave.c_str() );
+}
+
 
 
 int main( int argc, char **argv )

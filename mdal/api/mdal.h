@@ -128,8 +128,9 @@ MDAL_EXPORT MeshH MDAL_LoadMesh( const char *meshFile );
 //! Closes mesh, frees the memory
 MDAL_EXPORT void MDAL_CloseMesh( MeshH mesh );
 
-//! Save mesh on a file whith the specified driver. On error see MDAL_LastStatus for error type.
-//! Save the datasets if the driver has the capability
+//! Saves mesh on a file with the specified driver. On error see MDAL_LastStatus for error type.
+//! Saves the datasets if the driver has the capability (as, right now, only the 2DM format is implemented for saving,
+//! it does not save the datasets except the terrain elevation of the mesh (Z value of vertices)).
 MDAL_EXPORT void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver );
 
 //! Returns mesh projection

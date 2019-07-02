@@ -309,11 +309,14 @@ void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh, MDAL_Statu
     vertexIterator->next( 1, vertex );
     line = "ND ";
     line.append( std::to_string( i + 1 ) );
-    for ( size_t j = 0; j < 3; ++j )
+    for ( size_t j = 0; j < 2; ++j )
     {
       line.append( " " );
-      line.append( std::to_string( vertex[j] ) );
+      line.append( MDAL::coordinateToString( vertex[j] ) );
     }
+    line.append( " " );
+    line.append( MDAL::doubleToString( vertex[2] ) );
+
     file << line << std::endl;
   }
 

@@ -40,9 +40,8 @@ namespace MDAL
 
       virtual bool canRead( const std::string &uri ) = 0;
 
-      //return the maximum vertices per mesh for this driver, default value is big
-      int faceVerticesMaximumCount() const
-      {return INT32_MAX;}
+      //! returns the maximum vertices per face
+      virtual int faceVerticesMaximumCount() const;
 
       // loads mesh
       virtual std::unique_ptr< Mesh > load( const std::string &uri, MDAL_Status *status );
