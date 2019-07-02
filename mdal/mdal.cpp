@@ -92,6 +92,18 @@ bool MDAL_DR_writeDatasetsCapability( DriverH driver )
   return d->hasCapability( MDAL::Capability::WriteDatasets );
 }
 
+bool MDAL_DR_SaveMeshCapability( DriverH driver )
+{
+  if ( !driver )
+  {
+    sLastStatus = MDAL_Status::Err_MissingDriver;
+    return false;
+  }
+
+  MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
+  return d->hasCapability( MDAL::Capability::SaveMesh );
+}
+
 const char *MDAL_DR_longName( DriverH driver )
 {
   if ( !driver )
@@ -141,6 +153,39 @@ MeshH MDAL_LoadMesh( const char *meshFile )
 
   std::string filename( meshFile );
   return static_cast< MeshH >( MDAL::DriverManager::instance().load( filename, &sLastStatus ).release() );
+}
+
+void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
+{
+  if ( !meshFile )
+  {
+    sLastStatus = MDAL_Status::Err_FileNotFound;
+    return;
+  }
+
+  std::string driverName( driver );
+  auto d = MDAL::DriverManager::instance().driver( driver );
+
+  if ( !d )
+  {
+    sLastStatus = MDAL_Status::Err_MissingDriver;
+    return;
+  }
+
+  if ( !d->hasCapability( MDAL::Capability::SaveMesh ) )
+  {
+    sLastStatus = MDAL_Status::Err_MissingDriverCapability;
+    return;
+  }
+
+  if ( d->faceVerticesMaximumCount() < MDAL_M_faceVerticesMaximumCount( mesh ) )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return;
+  }
+
+  std::string filename( meshFile );
+  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), filename, driverName, &sLastStatus );
 }
 
 
@@ -867,3 +912,4 @@ void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max )
   *min = stats.minimum;
   *max = stats.maximum;
 }
+

@@ -7,6 +7,7 @@
 //mdal
 #include "mdal.h"
 #include "mdal_testutils.hpp"
+#include "mdal_utils.hpp"
 
 TEST( Mesh2DMTest, MissingFile )
 {
@@ -47,9 +48,8 @@ TEST( Mesh2DMTest, MeshWithUnorderedIds )
   EXPECT_EQ( m, nullptr );
 }
 
-TEST( Mesh2DMTest, QuadAndTriangleFile )
+void _test_QuadAndTriangleFile( const std::string  &path )
 {
-  std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -127,10 +127,18 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   MDAL_CloseMesh( m );
 }
 
+TEST( Mesh2DMTest, QuadAndTriangleFile )
+{
+  std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
+
+  _test_QuadAndTriangleFile( path );
+}
+
 TEST( Mesh2DMTest, RegularGridFile )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
+
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -269,6 +277,29 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
 
   MDAL_CloseMesh( m );
 }
+
+
+TEST( Mesh2DMTest, SaveMeshToFile )
+{
+  //test driver capability
+  EXPECT_TRUE( MDAL_DR_SaveMeshCapability( MDAL_driverFromName( "2DM" ) ) );
+
+  //open a mesh
+  std::string pathSource = test_file( "/2dm/quad_and_triangle.2dm" );
+  MeshH meshToSave = MDAL_LoadMesh( pathSource.c_str() );
+
+  //save the mesh
+  std::string fileNameToSave = tmp_file( "/quad_and_triangle_saveTest.2dm" );
+  MDAL_SaveMesh( meshToSave, fileNameToSave.c_str(), "2DM" );
+
+  MDAL_CloseMesh( meshToSave );
+
+  //open the saved mesh and test it (same as QuadAndTriangleFile test)
+  _test_QuadAndTriangleFile( fileNameToSave );
+
+  std::remove( fileNameToSave.c_str() );
+}
+
 
 int main( int argc, char **argv )
 {

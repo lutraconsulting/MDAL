@@ -56,6 +56,7 @@ enum MDAL_Status
   Err_IncompatibleDatasetGroup,
   Err_MissingDriver,
   Err_MissingDriverCapability,
+  Err_FailToWriteToDisk,
   // Warnings
   Warn_UnsupportedElement,
   Warn_InvalidElements,
@@ -99,6 +100,9 @@ MDAL_EXPORT bool MDAL_DR_meshLoadCapability( DriverH driver );
 //! Returns whether driver has capability to write/edit dataset (groups)
 MDAL_EXPORT bool MDAL_DR_writeDatasetsCapability( DriverH driver );
 
+//! Returns whether driver has capability to save mesh
+MDAL_EXPORT bool MDAL_DR_SaveMeshCapability( DriverH driver );
+
 //! Returns name of MDAL driver
 //! not thread-safe and valid only till next call
 MDAL_EXPORT const char *MDAL_DR_name( DriverH driver );
@@ -120,8 +124,15 @@ MDAL_EXPORT const char *MDAL_DR_filters( DriverH driver );
 //! This may effectively load whole mesh in-memory for some providers
 //! Caller must free memory with MDAL_CloseMesh() afterwards
 MDAL_EXPORT MeshH MDAL_LoadMesh( const char *meshFile );
+
 //! Closes mesh, frees the memory
 MDAL_EXPORT void MDAL_CloseMesh( MeshH mesh );
+
+//! Saves mesh on a file with the specified driver. On error see MDAL_LastStatus for error type.
+//! Saves the datasets if the driver has the capability (as, right now, only the 2DM format is implemented for saving,
+//! it does not save the datasets except the terrain elevation of the mesh (Z value of vertices)).
+MDAL_EXPORT void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver );
+
 //! Returns mesh projection
 //! not thread-safe and valid only till next call
 MDAL_EXPORT const char *MDAL_M_projection( MeshH mesh );
