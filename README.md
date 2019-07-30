@@ -13,7 +13,7 @@ see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposal
 You can use MDAL to load the following file formats:
 - [2DM](https://www.xmswiki.com/wiki/SMS:2D_Mesh_Files_*.2dm): Mesh representation of various various hydrodynamic modelling packages (e.g. BASEMENT, TUFLOW)
 - [NetCDF](https://en.wikipedia.org/wiki/NetCDF): Generic format for scientific data. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
-- [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in metmastereorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
+- [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in meteorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
 - [XMDF*](https://en.wikipedia.org/wiki/XMDF): As an example, hydraulic outputs from TUFLOW modelling package
 - [XDMF](http://xdmf.org/index.php/Main_Page): As an example, hydraulic outputs from BASEMENT 3.x modelling package
 - [DAT](http://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat): Outputs of various hydrodynamic modelling packages (e.g. BASEMENT, HYDRO_AS-2D, TUFLOW)
@@ -33,9 +33,9 @@ You can use MDAL to load the following file formats:
 
 ## Coding standards & Contribution
 
-MDAL is open-source project and all contributions to either documentation, format support, testing or code are 
-more than appreciated. Any change to the code must go through Pull Request, followed by review of one of the 
-MDAL core developer. 
+MDAL is an open-source project and all contributions to either documentation, format support, testing or code are 
+more than appreciated. Any change to the code must go through Pull Request, followed by review by one of the 
+MDAL core developers. 
 
 To be able to accept a pull request, please verify that:
 
