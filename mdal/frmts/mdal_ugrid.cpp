@@ -61,33 +61,96 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
 
   // 2D Mesh
 
-  // node_dimension is usually something like nMesh2D_node
-  // number of nodes/vertices in the mesh
-  const std::string mesh2dNode = mNcFile.getAttrStr( mMesh2dName, "node_dimension" );
-  mNcFile.getDimension( mesh2dNode, &count, &ncid );
-  dims.setDimension( CFDimensions::Vertex2D, count, ncid );
+  //node dimension location is retrieved from the node variable
 
-  // face_dimension is usually something like nMesh2D_face
-  // number of faces in the mesh
-  const std::string mesh2dFace = mNcFile.getAttrStr( mMesh2dName, "face_dimension" );
-  mNcFile.getDimension( mesh2dFace, &count, &ncid );
-  dims.setDimension( CFDimensions::Face2D, count, ncid );
+  std::vector<std::string> nodeVariablesName = MDAL::split( mNcFile.getAttrStr( mMesh2dName, "node_coordinates" ), ' ' );
+  if ( nodeVariablesName.size() < 2 )
+    throw MDAL_Status::Err_UnknownFormat;
 
-  // edge_dimension is usually something like nMesh2D_edge
-  // number of edges in the mesh
+  std::vector<size_t> nodeDimension;
+  std::vector<int> nodeDimensionId;
+  mNcFile.getDimensions( nodeVariablesName.at( 0 ), nodeDimension, nodeDimensionId );
+  if ( nodeDimension.size() != 1 )
+    throw MDAL_Status::Err_UnknownFormat;
+
+  dims.setDimension( CFDimensions::Vertex2D, nodeDimension.at( 0 ), nodeDimensionId.at( 0 ) );
+
+
+  //face dimension location is retrieved from the face_node_connectivity variable
+  //if face_dimension is defined as attribute, the dimension at this location help to desambiguate vertex per faces and number of faces
+
+  std::string faceConnectivityVariablesName = mNcFile.getAttrStr( mMesh2dName, "face_node_connectivity" );
+  std::string faceDimensionLocation = mNcFile.getAttrStr( mMesh2dName, "face_dimension" );
+  if ( faceConnectivityVariablesName == "" )
+    throw MDAL_Status::Err_UnknownFormat;
+
+  size_t facesCount;
+  size_t maxVerticesPerFace;
+
+  std::vector<size_t> faceDimension;
+  std::vector<int> faceDimensionId;
+  int facesIndexDimensionId;
+  int maxVerticesPerFaceDimensionId;
+  mNcFile.getDimensions( faceConnectivityVariablesName, faceDimension, faceDimensionId );
+  if ( faceDimension.size() != 2 )
+    throw MDAL_Status::Err_UnknownFormat;
+
+  if ( faceDimensionLocation != "" )
+  {
+    mNcFile.getDimension( faceDimensionLocation, &facesCount, &ncid );
+    if ( facesCount == faceDimension.at( 0 ) )
+    {
+      facesIndexDimensionId = faceDimensionId.at( 0 );
+      maxVerticesPerFaceDimensionId = faceDimensionId.at( 1 );
+      maxVerticesPerFace = faceDimension.at( 1 );
+    }
+    else
+    {
+      facesIndexDimensionId = faceDimensionId.at( 1 );
+      maxVerticesPerFaceDimensionId = faceDimensionId.at( 0 );
+      maxVerticesPerFace = faceDimension.at( 0 );
+    }
+  }
+  else
+  {
+    facesIndexDimensionId = faceDimensionId.at( 0 );
+    facesCount = faceDimension.at( 0 );
+    maxVerticesPerFaceDimensionId = faceDimensionId.at( 1 );
+    maxVerticesPerFace = faceDimension.at( 1 );
+  }
+
+  dims.setDimension( CFDimensions::Face2D, facesCount, facesIndexDimensionId );
+  dims.setDimension( CFDimensions::MaxVerticesInFace, maxVerticesPerFace, maxVerticesPerFaceDimensionId );
+
+
+
+  // number of edges in the mesh, not required for UGRID format, so catch the exception to handle with it.
+  //Is it usefull with MDAL ? It seems MDAL don't use edges
   const std::string mesh2dEdge = mNcFile.getAttrStr( mMesh2dName, "edge_dimension" );
-  mNcFile.getDimension( mesh2dEdge, &count, &ncid );
-  dims.setDimension( CFDimensions::Face2DEdge, count, ncid );
+  try
+  {
+    mNcFile.getDimension( mesh2dEdge, &count, &ncid );
+    dims.setDimension( CFDimensions::Face2DEdge, count, ncid );
+  }
+  catch ( MDAL_Status )
+  {
+    mNcFile.getDimension( mesh2dEdge, &count, &ncid );
+    dims.setDimension( CFDimensions::Face2DEdge, 0, -1 );
+  }
 
-  // max_face_nodes_dimension is usually something like max_nMesh2D_face_nodes
-  // maximum number of vertices in faces
-  const std::string mesh2dMaxNodesInFace = mNcFile.getAttrStr( mMesh2dName, "max_face_nodes_dimension" );
-  mNcFile.getDimension( mesh2dMaxNodesInFace, &count, &ncid );
-  dims.setDimension( CFDimensions::MaxVerticesInFace, count, ncid );
 
   // Time
-  mNcFile.getDimension( "time", &count, &ncid );
-  dims.setDimension( CFDimensions::Time, count, ncid );
+  // not required for UGRID format, so catch the exception to handle with it
+  try
+  {
+    mNcFile.getDimension( "time", &count, &ncid );
+    dims.setDimension( CFDimensions::Time, count, ncid );
+  }
+  catch ( MDAL_Status )
+  {
+    dims.setDimension( CFDimensions::Time, 0, -1 );
+  }
+
 
   return dims;
 }
