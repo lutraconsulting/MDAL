@@ -93,6 +93,18 @@ TEST( MeshUgridTest, DFlow11Manzese )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshUgridTest, DFlow11ManzeseNodeZValue )
+{
+  std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  double z = getVertexZCoordinatesAt( m, 0 );
+  ASSERT_EQ( z, 42.8397 );
+}
+
 TEST( MeshUgridTest, DFlow11Simplebox )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/simplebox_hex7_map.nc" );

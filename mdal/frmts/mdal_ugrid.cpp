@@ -47,7 +47,27 @@ std::string MDAL::DriverUgrid::nodeZVariableName() const
 {
   // looks like mesh attributes does not have node_z array name
   // reference
-  return mMesh2dName + "_node_z";
+  //return mMesh2dName + "_node_z";
+
+  std::string nodeZVariableName;
+  if ( nodeZVariableName == "" )
+  {
+    const std::vector<std::string> variables = mNcFile.readArrNames();
+    for ( const std::string &varName : variables )
+    {
+      const std::string stdName = mNcFile.getAttrStr( varName, "standard_name" );
+      const std::string meshName = mNcFile.getAttrStr( varName, "mesh" );
+      const std::string location = mNcFile.getAttrStr( varName, "location" );
+
+      if ( stdName == "altitude" && meshName == mMesh2dName && location == "node" )
+      {
+        nodeZVariableName = varName;
+        break;
+      }
+    }
+  }
+
+  return nodeZVariableName;
 }
 
 MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
@@ -124,33 +144,28 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
 
 
 
-  // number of edges in the mesh, not required for UGRID format, so catch the exception to handle with it.
-  //Is it usefull with MDAL ? It seems MDAL don't use edges
+  // number of edges in the mesh, not required for UGRID format
   const std::string mesh2dEdge = mNcFile.getAttrStr( mMesh2dName, "edge_dimension" );
-  try
+  if ( mNcFile.hasDimension( mesh2dEdge ) )
   {
     mNcFile.getDimension( mesh2dEdge, &count, &ncid );
     dims.setDimension( CFDimensions::Face2DEdge, count, ncid );
   }
-  catch ( MDAL_Status )
+  else
   {
-    mNcFile.getDimension( mesh2dEdge, &count, &ncid );
     dims.setDimension( CFDimensions::Face2DEdge, 0, -1 );
   }
 
-
-  // Time
-  // not required for UGRID format, so catch the exception to handle with it
-  try
+  // Time not required for UGRID format
+  if ( mNcFile.hasDimension( "time" ) )
   {
     mNcFile.getDimension( "time", &count, &ncid );
     dims.setDimension( CFDimensions::Time, count, ncid );
   }
-  catch ( MDAL_Status )
+  else
   {
     dims.setDimension( CFDimensions::Time, 0, -1 );
   }
-
 
   return dims;
 }
