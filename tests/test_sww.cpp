@@ -198,22 +198,22 @@ TEST( MeshSWWTest, Catchment )
   int f_count = MDAL_M_faceCount( m );
   EXPECT_EQ( 6388, f_count );
 
-  ASSERT_EQ( 13, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 9, MDAL_M_datasetGroupCount( m ) );
 
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
     EXPECT_EQ( std::string( "momentum" ), std::string( MDAL_G_name( g ) ) );
     EXPECT_EQ( false, MDAL_G_hasScalarData( g ) );
   }
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
     EXPECT_EQ( std::string( "momentum/Maximums" ), std::string( MDAL_G_name( g ) ) );
     EXPECT_EQ( false, MDAL_G_hasScalarData( g ) );
   }
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
     ASSERT_NE( g, nullptr );
     EXPECT_EQ( std::string( "elevation" ), std::string( MDAL_G_name( g ) ) );
     EXPECT_EQ( true, MDAL_G_hasScalarData( g ) );
