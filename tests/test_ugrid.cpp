@@ -103,6 +103,8 @@ TEST( MeshUgridTest, DFlow11ManzeseNodeZValue )
 
   double z = getVertexZCoordinatesAt( m, 0 );
   ASSERT_EQ( z, 42.8397 );
+
+  MDAL_CloseMesh( m );
 }
 
 TEST( MeshUgridTest, DFlow11Simplebox )
