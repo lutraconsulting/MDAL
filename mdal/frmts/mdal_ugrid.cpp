@@ -45,29 +45,22 @@ std::string MDAL::DriverUgrid::findMeshName( int dimension, bool optional ) cons
 
 std::string MDAL::DriverUgrid::nodeZVariableName() const
 {
-  // looks like mesh attributes does not have node_z array name
-  // reference
-  //return mMesh2dName + "_node_z";
-
-  std::string nodeZVariableName;
-  if ( nodeZVariableName == "" )
+  const std::vector<std::string> variables = mNcFile.readArrNames();
+  for ( const std::string &varName : variables )
   {
-    const std::vector<std::string> variables = mNcFile.readArrNames();
-    for ( const std::string &varName : variables )
-    {
-      const std::string stdName = mNcFile.getAttrStr( varName, "standard_name" );
-      const std::string meshName = mNcFile.getAttrStr( varName, "mesh" );
-      const std::string location = mNcFile.getAttrStr( varName, "location" );
+    const std::string stdName = mNcFile.getAttrStr( varName, "standard_name" );
+    const std::string meshName = mNcFile.getAttrStr( varName, "mesh" );
+    const std::string location = mNcFile.getAttrStr( varName, "location" );
 
-      if ( stdName == "altitude" && meshName == mMesh2dName && location == "node" )
-      {
-        nodeZVariableName = varName;
-        break;
-      }
+    if ( stdName == "altitude" && meshName == mMesh2dName && location == "node" )
+    {
+      return varName;
     }
   }
 
-  return nodeZVariableName;
+  // not found, the file in non UGRID standard conforming,
+  // but lets try the common name
+  return mMesh2dName + "_node_z";
 }
 
 MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )

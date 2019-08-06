@@ -83,7 +83,7 @@ namespace MDAL
       ~Driver2dm() override;
       Driver2dm *create() override;
 
-      int faceVerticesMaximumCount() const
+      int faceVerticesMaximumCount() const override
       {return MAX_VERTICES_PER_FACE_2DM;}
 
       bool canRead( const std::string &uri ) override;
