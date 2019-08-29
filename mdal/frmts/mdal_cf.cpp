@@ -71,8 +71,24 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
       }
       else
       {
+        /*UGRID convention says "The order of dimensions on a data variable is arbitrary",
+        *So time dimension is not necessary the first dimension, event if the convention recommands it.
+        *And prevent that any of the the two dimensions is not time dimension
+        */
+        if ( mDimensions.type( dimids[0] ) == CFDimensions::Time )
+        {
+          dimid = dimids[1];
+        }
+        else if ( mDimensions.type( dimids[1] ) == CFDimensions::Time )
+        {
+          dimid = dimids[0];
+        }
+        else
+        {
+          continue;
+        }
+
         nTimesteps = mDimensions.size( CFDimensions::Time );
-        dimid = dimids[1];
       }
 
       if ( !mDimensions.isDatasetType( mDimensions.type( dimid ) ) )
@@ -228,6 +244,13 @@ void MDAL::DriverCF::parseTime( std::vector<double> &times )
 {
 
   size_t nTimesteps = mDimensions.size( CFDimensions::Time );
+  if ( 0 == nTimesteps )
+  {
+    //if no time dimension is present creates only one time step to store the potential time-independent variable
+    nTimesteps = 1;
+    times = std::vector<double>( 1, 0 );
+    return;
+  }
   times = mNcFile.readDoubleArr( "time", nTimesteps );
   std::string units = mNcFile.getAttrStr( "time", "units" );
   double div_by = MDAL::parseTimeUnits( units );
