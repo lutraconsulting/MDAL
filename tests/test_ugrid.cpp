@@ -396,6 +396,8 @@ TEST( MeshUgridTest, UGRIFFormatWithoutTime )
 
   int f_count = MDAL_M_faceCount( m );
   EXPECT_EQ( 4, f_count );
+
+  MDAL_CloseMesh( m );
 }
 
 
