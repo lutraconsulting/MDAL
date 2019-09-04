@@ -383,6 +383,23 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshUgridTest, UGRIFFormatWithoutTime )
+{
+  std::string path = test_file( "/ugrid/TINUGRID.tin" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( 5, v_count );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 4, f_count );
+
+  MDAL_CloseMesh( m );
+}
+
 
 int main( int argc, char **argv )
 {
