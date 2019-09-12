@@ -82,6 +82,19 @@ std::vector<std::string> NetCDFFile::readArrNames() const
   return res;
 }
 
+bool NetCDFFile::hasAttrInt( const std::string &name, const std::string &attr_name ) const
+{
+  assert( mNcid != 0 );
+
+  int arr_id;
+  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR ) return false;
+
+  int val;
+  if ( nc_get_att_int( mNcid, arr_id, attr_name.c_str(), &val ) ) return false;
+
+  return true;
+}
+
 int NetCDFFile::getAttrInt( const std::string &name, const std::string &attr_name ) const
 {
   assert( mNcid != 0 );

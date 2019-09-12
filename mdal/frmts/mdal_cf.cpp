@@ -185,6 +185,34 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverCF::createFace2DDataset( std::shared_
   return dataset;
 }
 
+std::shared_ptr<MDAL::Dataset> MDAL::DriverCF::createVertex2DDataset( std::shared_ptr<MDAL::DatasetGroup> group,
+    size_t ts, const MDAL::CFDatasetGroupInfo &dsi,
+    const std::vector<double> &vals_x,
+    const std::vector<double> &vals_y,
+    double fill_val_x, double fill_val_y )
+{
+  assert( dsi.outputType == CFDimensions::Vertex2D );
+  size_t nVertices2D = mDimensions.size( CFDimensions::Vertex2D );
+
+  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared<MDAL::MemoryDataset>( group.get() );
+
+  for ( size_t i = 0; i < nVertices2D; ++i )
+  {
+    size_t idx = ts * nVertices2D + i;
+    populate_vals( dsi.is_vector,
+                   dataset->values(),
+                   i,
+                   vals_x,
+                   vals_y,
+                   idx,
+                   fill_val_x,
+                   fill_val_y );
+
+  }
+
+  return dataset;
+}
+
 void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<double> &times, const MDAL::cfdataset_info_map &dsinfo_map )
 {
   /* PHASE 2 - add dataset groups */
@@ -199,7 +227,16 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
           dsi.name
         );
     group->setIsScalar( !dsi.is_vector );
-    group->setIsOnVertices( false );
+
+    if ( dsi.outputType == CFDimensions::Vertex2D )
+      group->setIsOnVertices( true );
+    else if ( dsi.outputType == CFDimensions::Face2D )
+      group->setIsOnVertices( false );
+    else
+    {
+      // unsupported
+      continue;
+    }
 
     // read X data
     double fill_val_x = mNcFile.getFillValue( dsi.ncid_x );
@@ -225,6 +262,13 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
       if ( dsi.outputType == CFDimensions::Face2D )
       {
         dataset = createFace2DDataset( group, ts, dsi, vals_x, vals_y, fill_val_x, fill_val_y );
+      }
+      else     // Vertex2D
+      {
+        dataset = createVertex2DDataset( group, ts, dsi, vals_x, vals_y, fill_val_x, fill_val_y );
+      }
+      if ( dataset )
+      {
         dataset->setTime( time );
         dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
         group->datasets.push_back( dataset );
