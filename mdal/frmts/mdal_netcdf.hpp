@@ -26,6 +26,7 @@ class NetCDFFile
     bool hasArr( const std::string &name ) const;
     std::vector<std::string> readArrNames() const;
 
+    bool hasAttrInt( const std::string &name, const std::string &attr_name ) const;
     int getAttrInt( const std::string &name, const std::string &attr_name ) const;
     double getAttrDouble( int varid, const std::string &attr_name ) const;
     /**

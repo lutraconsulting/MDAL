@@ -209,7 +209,9 @@ void MDAL::DriverUgrid::populateFaces( MDAL::Faces &faces )
   const std::string mesh2dFaceNodeConnectivity = mNcFile.getAttrStr( mMesh2dName, "face_node_connectivity" );
 
   size_t verticesInFace = mDimensions.size( CFDimensions::MaxVerticesInFace );
-  int fill_val = mNcFile.getAttrInt( mesh2dFaceNodeConnectivity, "_FillValue" );
+  int fill_val = -1;
+  if ( mNcFile.hasAttrInt( mesh2dFaceNodeConnectivity, "_FillValue" ) )
+    fill_val = mNcFile.getAttrInt( mesh2dFaceNodeConnectivity, "_FillValue" );
   int start_index = mNcFile.getAttrInt( mesh2dFaceNodeConnectivity, "start_index" );
   std::vector<int> face_nodes_conn = mNcFile.readIntArr( mesh2dFaceNodeConnectivity, faceCount * verticesInFace );
 
@@ -352,16 +354,18 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid, const std::strin
   }
   else
   {
-    if ( MDAL::contains( long_name, ", x-component" ) )
+    if ( MDAL::contains( long_name, ", x-component" ) || MDAL::contains( long_name, "u component of " ) )
     {
       *is_vector = true;
       name = MDAL::replace( long_name, ", x-component", "" );
+      name = MDAL::replace( name, "u component of ", "" );
     }
-    else if ( MDAL::contains( long_name, ", y-component" ) )
+    else if ( MDAL::contains( long_name, ", y-component" ) || MDAL::contains( long_name, "v component of " ) )
     {
       *is_vector = true;
       *is_x = false;
       name = MDAL::replace( long_name, ", y-component", "" );
+      name = MDAL::replace( name, "v component of ", "" );
     }
     else
     {
