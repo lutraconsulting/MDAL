@@ -24,10 +24,13 @@ You can use MDAL to load the following file formats:
 - [HEC-RAS](http://www.hec.usace.army.mil/software/hec-ras/): Outputs of the HEC-RAS modelling package
 - [SWW](http://anuga.anu.edu.au/): Outputs of the ANUGA modelling package
 - [SAGA FLOW**](https://gis.stackexchange.com/a/254942/59405): Rasters in the SAGA flow direction format
+- [ADCIRC***](https://adcirc.org): ADCIRC hydrodynamic model results
 
 \* Data lazy loaded
 
 \*\* Formats can be preprocessed using QGIS [Crayfish](https://plugins.qgis.org/plugins/crayfish/)/Mesh processing algorithm to one of supported formats
+
+\*\*\* Results should pre pre-processed to become [UGRID compliant](https://github.com/lutraconsulting/MDAL/issues/155#issuecomment-530853839)
 
 # Development
 
