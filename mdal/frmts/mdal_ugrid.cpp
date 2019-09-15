@@ -252,10 +252,15 @@ std::string MDAL::DriverUgrid::getCoordinateSystemVariableName()
   std::string coordinate_system_variable;
 
   // first try to get the coordinate system variable from grid definition
-  if ( mNcFile.hasArr( nodeZVariableName() ) )
+  std::vector<std::string> nodeVariablesName = MDAL::split( mNcFile.getAttrStr( mMesh2dName, "node_coordinates" ), ' ' );
+  if ( nodeVariablesName.size() > 1 )
   {
-    coordinate_system_variable = mNcFile.getAttrStr( nodeZVariableName(), "grid_mapping" );
+    if ( mNcFile.hasArr( nodeVariablesName[0] ) )
+    {
+      coordinate_system_variable = mNcFile.getAttrStr( nodeVariablesName[0], "grid_mapping" );
+    }
   }
+
 
   // if automatic discovery fails, try to check some hardcoded common variables that store projection
   if ( coordinate_system_variable.empty() )
