@@ -262,6 +262,9 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 183.5, time );
 
+  std::string crs = MDAL_M_projection( m );
+  EXPECT_EQ( "EPSG:28992", crs );
+
   MDAL_CloseMesh( m );
 }
 
@@ -379,6 +382,9 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 0.66413616798770714, max );
+
+  std::string crs = MDAL_M_projection( m );
+  EXPECT_EQ( "EPSG:28992", crs );
 
   MDAL_CloseMesh( m );
 }
