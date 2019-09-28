@@ -43,10 +43,16 @@ static HdfDataset openHdfDataset( const HdfGroup &hdfGroup, const std::string &n
   return dsFileType;
 }
 
-
 static std::string openHdfAttribute( const HdfFile &hdfFile, const std::string &name )
 {
   HdfAttribute attr = hdfFile.attribute( name );
+  if ( !attr.isValid() ) throw MDAL_Status::Err_UnknownFormat;
+  return attr.readString();
+}
+
+static std::string openHdfAttribute( const HdfDataset &hdfDataset, const std::string &name )
+{
+  HdfAttribute attr = hdfDataset.attribute( name );
   if ( !attr.isValid() ) throw MDAL_Status::Err_UnknownFormat;
   return attr.readString();
 }
@@ -69,12 +75,55 @@ static HdfGroup get2DFlowAreasGroup( const HdfFile &hdfFile, const std::string l
   return g2DFlowRes;
 }
 
+static std::string getDataTimeUnit( HdfDataset &dsTime )
+{
+  // Initially we expect data to be in hours
+  std::string dataTimeUnit = "Hours";
+
+  // First we look for the Time attribute
+  if ( dsTime.hasAttribute( "Time" ) )
+  {
+    dataTimeUnit = openHdfAttribute( dsTime, "Time" );
+    return dataTimeUnit;
+  }
+
+  // Some variants of HEC_RAS have time unit stored in Variables attribute
+  // With read values looking like "Time|Days       "
+  if ( dsTime.hasAttribute( "Variables" ) )
+  {
+    dataTimeUnit = openHdfAttribute( dsTime, "Variables" );
+
+    // Extracting only time unit from the string
+    // Removing the "Time|" prefix
+    dataTimeUnit.erase( 0, 5 );
+    // Removing extra spaces at the end
+    dataTimeUnit.erase( dataTimeUnit.find_first_of( " " ), dataTimeUnit.size() - 1 );
+  }
+
+  return dataTimeUnit;
+}
+
+static void convertTimeDataToHours( std::vector<float> &times, const std::string &originalTimeDataUnit )
+{
+  if ( originalTimeDataUnit != "Hours" )
+  {
+    for ( size_t i = 0; i < times.size(); i++ )
+    {
+      if ( originalTimeDataUnit == "Seconds" ) { times[i] /= 3600; }
+      else if ( originalTimeDataUnit == "Minutes" ) { times[i] /= 60; }
+      else if ( originalTimeDataUnit == "Days" ) { times[i] *= 24; }
+    }
+  }
+}
+
 static std::vector<float> readTimes( const HdfFile &hdfFile )
 {
   HdfGroup gBaseO = getBaseOutputGroup( hdfFile );
   HdfGroup gUnsteadTS = openHdfGroup( gBaseO, "Unsteady Time Series" );
-  HdfDataset dsTimes = openHdfDataset( gUnsteadTS, "Time" );
-  std::vector<float> times = dsTimes.readArray();
+  HdfDataset dsTime = openHdfDataset( gUnsteadTS, "Time" );
+  std::string dataTimeUnits = getDataTimeUnit( dsTime );
+  std::vector<float> times = dsTime.readArray();
+  convertTimeDataToHours( times, dataTimeUnits );
   return times;
 }
 

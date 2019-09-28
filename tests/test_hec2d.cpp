@@ -256,7 +256,7 @@ TEST( MeshHec2dTest, MultiAreas )
   EXPECT_DOUBLE_EQ( 706.2740478515625, max );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 2.5, time );
+  EXPECT_DOUBLE_EQ( 60, time );
 
   MDAL_CloseMesh( m );
 }
@@ -361,7 +361,7 @@ TEST( MeshHec2dTest, model_505 )
   EXPECT_DOUBLE_EQ( 43.28509521484375, max );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 0.0034722222480922937, time );
+  EXPECT_DOUBLE_EQ( 0.083333335816860199, time );
 
 
   MDAL_CloseMesh( m );
