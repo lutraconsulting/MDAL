@@ -26,6 +26,13 @@ namespace MDAL
    * There is a small change in the format in HEC-RAS 5.0.5+, where
    *    - Header File Type is different (HEC-RAS Results vs HEC-RAS Geometry)
    *    - Names or areas are stored in different place (names array vs attributes array)
+   *
+   * Time data unit should be present in Time dataset and Time or Variable attribute for given dataset root,
+   * Since MDAL API is reporting times in float hours, the original values need to be corrected
+   * based on value found in the Time attribute.
+   * - readTimes(..) function handles reading of time data from HDF5 file
+   * - convertTimeDataToHours(..) multiples or divides original timedata based on original time unit
+   * - getDataTimeUnit(..) reports back time unit found in data file
    */
   class DriverHec2D: public Driver
   {
