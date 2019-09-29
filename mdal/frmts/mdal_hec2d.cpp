@@ -116,6 +116,19 @@ static void convertTimeDataToHours( std::vector<float> &times, const std::string
   }
 }
 
+static std::string readReferenceTime( const HdfFile &hdfFile )
+{
+  std::string refTime;
+  HdfGroup gBaseO = getBaseOutputGroup( hdfFile );
+  HdfGroup gUnsteadTS = openHdfGroup( gBaseO, "Unsteady Time Series" );
+  HdfDataset dsTimeDateStamp = openHdfDataset( gUnsteadTS, "Time Date Stamp" );
+  std::vector<std::string> timeStamps = dsTimeDateStamp.readArrayString();
+
+  if ( timeStamps.size() > 0 )
+    refTime = timeStamps[0];
+  return refTime;
+}
+
 static std::vector<float> readTimes( const HdfFile &hdfFile )
 {
   HdfGroup gBaseO = getBaseOutputGroup( hdfFile );
@@ -148,7 +161,8 @@ void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
                                         const std::vector<std::string> &flowAreaNames,
                                         const std::string rawDatasetName,
                                         const std::string datasetName,
-                                        const std::vector<float> &times )
+                                        const std::vector<float> &times,
+                                        const std::string &referenceTime )
 {
   double eps = std::numeric_limits<double>::min();
 
@@ -160,6 +174,7 @@ void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
                                         );
   group->setIsOnVertices( false );
   group->setIsScalar( true );
+  group->setReferenceTime( referenceTime );
 
   std::vector<std::shared_ptr<MDAL::MemoryDataset>> datasets;
 
@@ -226,17 +241,17 @@ void MDAL::DriverHec2D::readFaceResults( const HdfFile &hdfFile,
   // UNSTEADY
   HdfGroup flowGroup = get2DFlowAreasGroup( hdfFile, "Unsteady Time Series" );
   std::vector<float> times = readTimes( hdfFile );
-
-  readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Face Shear Stress", "Face Shear Stress", times );
-  readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Face Velocity", "Face Velocity", times );
+  std::string referenceTime = readReferenceTime( hdfFile );
+  readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Face Shear Stress", "Face Shear Stress", times, referenceTime );
+  readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Face Velocity", "Face Velocity", times, referenceTime );
 
   // SUMMARY
   flowGroup = get2DFlowAreasGroup( hdfFile, "Summary Output" );
   times.clear();
   times.push_back( 0.0f );
 
-  readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Maximum Face Shear Stress", "Face Shear Stress/Maximums", times );
-  readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Maximum Face Velocity", "Face Velocity/Maximums", times );
+  readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Maximum Face Shear Stress", "Face Shear Stress/Maximums", times, referenceTime );
+  readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Maximum Face Velocity", "Face Velocity/Maximums", times, referenceTime );
 }
 
 
@@ -246,7 +261,8 @@ std::shared_ptr<MDAL::MemoryDataset> MDAL::DriverHec2D::readElemOutput( const Hd
     const std::string rawDatasetName,
     const std::string datasetName,
     const std::vector<float> &times,
-    std::shared_ptr<MDAL::MemoryDataset> bed_elevation )
+    std::shared_ptr<MDAL::MemoryDataset> bed_elevation,
+    const std::string &referenceTime )
 {
   double eps = std::numeric_limits<double>::min();
 
@@ -258,6 +274,7 @@ std::shared_ptr<MDAL::MemoryDataset> MDAL::DriverHec2D::readElemOutput( const Hd
                                         );
   group->setIsOnVertices( false );
   group->setIsScalar( true );
+  group->setReferenceTime( referenceTime );
 
   std::vector<std::shared_ptr<MDAL::MemoryDataset>> datasets;
 
@@ -336,6 +353,8 @@ std::shared_ptr<MDAL::MemoryDataset> MDAL::DriverHec2D::readBedElevation(
   const std::vector<std::string> &flowAreaNames )
 {
   std::vector<float> times( 1, 0.0f );
+  std::string referenceTime;
+
   return readElemOutput(
            gGeom2DFlowAreas,
            areaElemStartIndex,
@@ -343,7 +362,8 @@ std::shared_ptr<MDAL::MemoryDataset> MDAL::DriverHec2D::readBedElevation(
            "Cells Minimum Elevation",
            "Bed Elevation",
            times,
-           std::shared_ptr<MDAL::MemoryDataset>()
+           std::shared_ptr<MDAL::MemoryDataset>(),
+           referenceTime
          );
 }
 
@@ -356,6 +376,7 @@ void MDAL::DriverHec2D::readElemResults(
   // UNSTEADY
   HdfGroup flowGroup = get2DFlowAreasGroup( hdfFile, "Unsteady Time Series" );
   std::vector<float> times = readTimes( hdfFile );
+  std::string referenceTime = readReferenceTime( hdfFile );
 
   readElemOutput(
     flowGroup,
@@ -364,7 +385,8 @@ void MDAL::DriverHec2D::readElemResults(
     "Water Surface",
     "Water Surface",
     times,
-    bed_elevation );
+    bed_elevation,
+    referenceTime );
   readElemOutput(
     flowGroup,
     areaElemStartIndex,
@@ -372,12 +394,14 @@ void MDAL::DriverHec2D::readElemResults(
     "Depth",
     "Depth",
     times,
-    bed_elevation );
+    bed_elevation,
+    referenceTime );
 
   // SUMMARY
   flowGroup = get2DFlowAreasGroup( hdfFile, "Summary Output" );
   times.clear();
   times.push_back( 0.0f );
+  referenceTime.clear();
 
   readElemOutput(
     flowGroup,
@@ -386,7 +410,8 @@ void MDAL::DriverHec2D::readElemResults(
     "Maximum Water Surface",
     "Water Surface/Maximums",
     times,
-    bed_elevation
+    bed_elevation,
+    referenceTime
   );
 }
 

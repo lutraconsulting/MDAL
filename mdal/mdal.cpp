@@ -731,6 +731,16 @@ void MDAL_G_closeEditMode( DatasetGroupH group )
   }
 }
 
+const char *MDAL_G_referenceTime( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return EMPTY_STR;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  return _return_str( g->referenceTime() );
+}
 
 void MDAL_G_setMetadata( DatasetGroupH group, const char *key, const char *val )
 {
