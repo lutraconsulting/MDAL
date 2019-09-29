@@ -306,6 +306,8 @@ MDAL_EXPORT bool MDAL_G_isInEditMode( DatasetGroupH group );
 //! When closed, minimum and maximum dataset group values are automatically calculated
 MDAL_EXPORT void MDAL_G_closeEditMode( DatasetGroupH group );
 
+//! Returns reference time for dataset group
+MDAL_EXPORT const char *MDAL_G_referenceTime( DatasetGroupH group );
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS

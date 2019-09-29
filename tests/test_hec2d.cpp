@@ -363,6 +363,8 @@ TEST( MeshHec2dTest, model_505 )
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 0.083333335816860199, time );
 
+  const char *referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "01JAN2018 00:00:00" ), std::string( referenceTime ) );
 
   MDAL_CloseMesh( m );
 }
