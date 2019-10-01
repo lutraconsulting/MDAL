@@ -30,13 +30,10 @@ namespace MDAL
    * Time data unit should be present in Time dataset and Time or Variable attribute for given dataset root,
    * Since MDAL API is reporting times in float hours, the original values need to be corrected
    * based on value found in the Time attribute.
-   * - readTimes(..) function handles reading of time data from HDF5 file
-   * - convertTimeDataToHours(..) multiples or divides original timedata based on original time unit
-   * - getDataTimeUnit(..) reports back time unit found in data file
    *
-   * Reference time readout is handled by readReferenceTime(),
-   * Dataset Time Date Stamp is keeping all the reference times
-   * MDAL API is returning first value from this dataset via MDAL_G_referenceTime(..)
+   * All reference times can be found in Time Data Stamp dataset.
+   * First value in the dataset is reported by MDAL as reference time
+   *
    */
   class DriverHec2D: public Driver
   {

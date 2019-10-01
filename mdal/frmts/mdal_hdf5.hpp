@@ -237,14 +237,7 @@ inline HdfDataset HdfGroup::dataset( const std::string &dsName ) const { return 
 inline bool HdfDataset::hasAttribute( const std::string &attr_name ) const
 {
   htri_t res = H5Aexists( d->id, attr_name.c_str() );
-  if ( res > 0 )
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return  res > 0 ;
 }
 
 inline HdfAttribute HdfFile::attribute( const std::string &attr_name ) const { return HdfAttribute( d->id, attr_name ); }

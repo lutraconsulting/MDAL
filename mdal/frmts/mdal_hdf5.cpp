@@ -82,7 +82,7 @@ std::string HdfAttribute::readString() const
 
   H5Tclose( datatype );
   std::string res( name );
-  MDAL::trim( res );
+  res = MDAL::trim( res );
   return res;
 }
 
