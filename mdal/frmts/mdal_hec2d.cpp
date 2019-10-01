@@ -106,7 +106,7 @@ static void convertTimeDataToHours( std::vector<float> &times, const std::string
     for ( size_t i = 0; i < times.size(); i++ )
     {
       if ( originalTimeDataUnit == "Seconds" ) { times[i] /= 3600.0f; }
-      else if ( originalTimeDataUnit == "Minutes" ) { times[i] /= 60; }
+      else if ( originalTimeDataUnit == "Minutes" ) { times[i] /= 60.0f; }
       else if ( originalTimeDataUnit == "Days" ) { times[i] *= 24; }
     }
   }
