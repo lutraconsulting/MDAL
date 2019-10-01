@@ -92,12 +92,8 @@ static std::string getDataTimeUnit( HdfDataset &dsTime )
   if ( dsTime.hasAttribute( "Variables" ) )
   {
     dataTimeUnit = openHdfAttribute( dsTime, "Variables" );
-
-    // Extracting only time unit from the string
     // Removing the "Time|" prefix
-    dataTimeUnit.erase( 0, 5 );
-    // Removing extra spaces at the end
-    dataTimeUnit.erase( dataTimeUnit.find_first_of( " " ), dataTimeUnit.size() - 1 );
+    dataTimeUnit = MDAL::replace( dataTimeUnit, "Time|", "" );
   }
 
   return dataTimeUnit;
@@ -109,7 +105,7 @@ static void convertTimeDataToHours( std::vector<float> &times, const std::string
   {
     for ( size_t i = 0; i < times.size(); i++ )
     {
-      if ( originalTimeDataUnit == "Seconds" ) { times[i] /= 3600; }
+      if ( originalTimeDataUnit == "Seconds" ) { times[i] /= 3600.0f; }
       else if ( originalTimeDataUnit == "Minutes" ) { times[i] /= 60; }
       else if ( originalTimeDataUnit == "Days" ) { times[i] *= 24; }
     }
@@ -241,7 +237,7 @@ void MDAL::DriverHec2D::readFaceResults( const HdfFile &hdfFile,
   // UNSTEADY
   HdfGroup flowGroup = get2DFlowAreasGroup( hdfFile, "Unsteady Time Series" );
   std::vector<float> times = readTimes( hdfFile );
-  std::string referenceTime = readReferenceTime( hdfFile );
+  const std::string referenceTime = readReferenceTime( hdfFile );
   readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Face Shear Stress", "Face Shear Stress", times, referenceTime );
   readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Face Velocity", "Face Velocity", times, referenceTime );
 
