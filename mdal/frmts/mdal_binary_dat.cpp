@@ -33,8 +33,8 @@ static const int CT_NUMCELLS  = 180;
 static const int CT_NAME      = 190;
 static const int CT_TS        = 200;
 static const int CT_ENDDS     = 210;
-//static const int CT_RT_JULIAN = 240;
-//static const int CT_TIMEUNITS = 250;
+static const int CT_RT_JULIAN = 240;
+static const int CT_TIMEUNITS = 250;
 static const int CT_2D_MESHES = 3;
 static const int CT_FLOAT_SIZE = 4;
 static const int CF_FLAG_SIZE = 1;
@@ -142,6 +142,9 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
   int numdata;
   int numcells;
   char groupName[40];
+  double referenceTime;
+  int timeUnit;
+  std::string timeUnitStr;
   char istat;
   float time;
 
@@ -243,6 +246,44 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
           groupName[39] = 0;
         group->setName( trim( std::string( groupName ) ) );
         groupMax->setName( group->name() + "/Maximums" );
+        break;
+
+      case CT_RT_JULIAN:
+        // Reference time
+        if ( readIStat( in, sflg, &istat ) )
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+
+        if ( read( in, reinterpret_cast< char * >( &time ), 8 ) )
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+
+        referenceTime = static_cast<double>( time );
+        group->setReferenceTime( std::to_string( referenceTime ) );
+        break;
+
+      case CT_TIMEUNITS:
+        // Time unit
+        if ( read( in, reinterpret_cast< char * >( &timeUnit ), 4 ) )
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+
+        switch ( timeUnit )
+        {
+          case 0:
+            timeUnitStr = "hours";
+            break;
+          case 1:
+            timeUnitStr = "minutes";
+            break;
+          case 2:
+            timeUnitStr = "seconds";
+            break;
+          case 4:
+            timeUnitStr = "days";
+            break;
+          default:
+            timeUnitStr = "unknown";
+            break;
+        }
+        group->setMetadata( "TIMEUNITS", timeUnitStr );
         break;
 
       case CT_TS:
