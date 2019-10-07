@@ -142,7 +142,7 @@ void MDAL::DriverAsciiDat::loadNewFormat( std::ifstream &in,
   std::shared_ptr<DatasetGroup> group; // DAT outputs data
   std::string groupName( MDAL::baseName( mDatFile ) );
   std::string line;
-
+  std::string referenceTime;
   // see if it contains face-centered results - supported by BASEMENT
   bool faceCentered = false;
   if ( contains( groupName, "_els_" ) )
@@ -201,6 +201,7 @@ void MDAL::DriverAsciiDat::loadNewFormat( std::ifstream &in,
               );
       group->setIsScalar( !isVector );
       group->setIsOnVertices( !faceCentered );
+      group->setReferenceTime( referenceTime );
     }
     else if ( cardType == "ENDDS" )
     {
@@ -225,6 +226,26 @@ void MDAL::DriverAsciiDat::loadNewFormat( std::ifstream &in,
       size_t quoteIdx2 = line.find( '\"', quoteIdx1 + 1 );
       if ( quoteIdx1 != std::string::npos && quoteIdx2 != std::string::npos )
         group->setName( line.substr( quoteIdx1 + 1, quoteIdx2 - quoteIdx1 - 1 ) );
+    }
+    else if ( cardType == "RT_JULIAN" && items.size() >= 2 )
+    {
+      size_t quoteIdx1 = line.find( " " );
+      size_t quoteIdx2 = line.size();
+      if ( quoteIdx1 != std::string::npos && quoteIdx2 != std::string::npos )
+        referenceTime = ( line.substr( quoteIdx1 + 1, quoteIdx2 - quoteIdx1 - 1 ) );
+    }
+    else if ( cardType == "TIMEUNITS" && items.size() >= 2 )
+    {
+      if ( !group )
+      {
+        debug( "TIMEUNITS card for no active dataset!" );
+        EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+      }
+
+      size_t quoteIdx1 = line.find( " " );
+      size_t quoteIdx2 = line.size();
+      if ( quoteIdx1 != std::string::npos && quoteIdx2 != std::string::npos )
+        group->setMetadata( "TIMEUNITS", line.substr( quoteIdx1 + 1, quoteIdx2 - quoteIdx1 - 1 ) );
     }
     else if ( cardType == "TS" && items.size() >= 3 )
     {

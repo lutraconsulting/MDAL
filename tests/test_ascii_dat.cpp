@@ -146,7 +146,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -204,7 +204,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -268,7 +268,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -370,7 +370,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFileWithTabs )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -419,7 +419,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
