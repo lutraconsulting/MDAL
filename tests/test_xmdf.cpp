@@ -48,7 +48,7 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   EXPECT_EQ( driverName, "XMDF" );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Depth" ), std::string( name ) );
@@ -129,7 +129,7 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Vector Velocity/Maximums" ), std::string( name ) );
@@ -206,7 +206,7 @@ TEST( MeshXmdfTest, CustomGroupsDataset )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Vector Velocity" ), std::string( name ) );

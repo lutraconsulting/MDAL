@@ -247,6 +247,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
   bool isVector = dimValues.size() == 3;
 
   std::vector<double> times = dsTimes.readArrayDouble();
+  std::string timeUnit = rootGroup.attribute( "TimeUnits" ).readString();
 
   // all fine, set group and return
   group = std::make_shared<MDAL::DatasetGroup>(
@@ -257,6 +258,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
           );
   group->setIsScalar( !isVector );
   group->setIsOnVertices( true );
+  group->setMetadata( "TIMEUNITS", timeUnit );
 
   // lazy loading of min and max of the dataset group
   std::vector<float> mins = dsMins.readArray();
