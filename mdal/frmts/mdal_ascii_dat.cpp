@@ -250,6 +250,7 @@ void MDAL::DriverAsciiDat::loadNewFormat( std::ifstream &in,
     else if ( cardType == "TS" && items.size() >= 3 )
     {
       double t = toDouble( items[2] );
+      t = convertTimeDataToHours( t, group->getMetadata( "TIMEUNITS" ) );
 
       if ( faceCentered )
       {
@@ -341,7 +342,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
   size_t faceCount = mesh->facesCount();
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
-  dataset->setTime( t / 3600. ); // TODO read TIMEUNITS
+  dataset->setTime( t );
 
   int *active = dataset->active();
   // only for new format
@@ -413,7 +414,7 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
   size_t faceCount = mesh->facesCount();
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
-  dataset->setTime( t / 3600. );
+  dataset->setTime( t );
   double *values = dataset->values();
   // TODO: hasStatus
   for ( size_t index = 0; index < faceCount; ++index )
@@ -447,4 +448,22 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
 
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );
+}
+
+
+double MDAL::DriverAsciiDat::convertTimeDataToHours( double time, const std::string &originalTimeDataUnit ) const
+{
+  if ( originalTimeDataUnit == "se" || originalTimeDataUnit == "2" || originalTimeDataUnit == "Seconds" )
+  {
+    time /= 3600.0;
+  }
+  else if ( originalTimeDataUnit == "mi" || originalTimeDataUnit == "1" || originalTimeDataUnit == "Minutes" )
+  {
+    time /= 60.0;
+  }
+  else if ( originalTimeDataUnit == "days" )
+  {
+    time *= 24;
+  }
+  return time;
 }

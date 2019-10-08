@@ -143,7 +143,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
   int numcells;
   char groupName[40];
   double referenceTime;
-  int timeUnit;
+  int timeUnit = 0;
   std::string timeUnitStr;
   char istat;
   float time;
@@ -295,6 +295,8 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
         double t = static_cast<double>( time );
+        t = convertTimeDataToHours( t, timeUnit );
+
         if ( readVertexTimestep( mesh, group, groupMax, t, istat, sflg, in ) )
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
@@ -501,4 +503,24 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
   if ( writeRawData( out, reinterpret_cast< const char * >( &CT_ENDDS ), 4 ) ) return true;
 
   return false;
+}
+
+double MDAL::DriverBinaryDat::convertTimeDataToHours( double time, int originalTimeDataUnit )
+{
+  switch ( originalTimeDataUnit )
+  {
+    case 1:
+      time /= 60.0;
+      break;
+    case 2:
+      time /= 3600.0;
+      break;
+    case 4:
+      time *= 24;
+      break;
+    case 0:
+    default:
+      break;
+  }
+  return time;
 }
