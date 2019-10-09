@@ -229,10 +229,7 @@ void MDAL::DriverAsciiDat::loadNewFormat( std::ifstream &in,
     }
     else if ( cardType == "RT_JULIAN" && items.size() >= 2 )
     {
-      size_t quoteIdx1 = line.find( " " );
-      size_t quoteIdx2 = line.size();
-      if ( quoteIdx1 != std::string::npos && quoteIdx2 != std::string::npos )
-        referenceTime = ( line.substr( quoteIdx1 + 1, quoteIdx2 - quoteIdx1 - 1 ) );
+      referenceTime = "JULIAN " + items[1];
     }
     else if ( cardType == "TIMEUNITS" && items.size() >= 2 )
     {
@@ -242,10 +239,7 @@ void MDAL::DriverAsciiDat::loadNewFormat( std::ifstream &in,
         EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
       }
 
-      size_t quoteIdx1 = line.find( " " );
-      size_t quoteIdx2 = line.size();
-      if ( quoteIdx1 != std::string::npos && quoteIdx2 != std::string::npos )
-        group->setMetadata( "TIMEUNITS", line.substr( quoteIdx1 + 1, quoteIdx2 - quoteIdx1 - 1 ) );
+      group->setMetadata( "TIMEUNITS", items[1] );
     }
     else if ( cardType == "TS" && items.size() >= 3 )
     {
@@ -453,7 +447,8 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
 
 double MDAL::DriverAsciiDat::convertTimeDataToHours( double time, const std::string &originalTimeDataUnit ) const
 {
-  if ( originalTimeDataUnit == "se" || originalTimeDataUnit == "2" || originalTimeDataUnit == "Seconds" )
+  if ( originalTimeDataUnit == "se" || originalTimeDataUnit == "2" || originalTimeDataUnit == "Seconds"
+       || originalTimeDataUnit.empty() )
   {
     time /= 3600.0;
   }

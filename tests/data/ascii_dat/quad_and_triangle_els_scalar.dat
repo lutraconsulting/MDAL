@@ -6,7 +6,7 @@ ND 5
 NC 2
 NAME "FaceScalarDataset"
 TIMEUNITS se
-TS 0        0.000000
+TS 0        3600.000000
 1
 2
 ENDDS

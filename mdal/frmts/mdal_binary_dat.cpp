@@ -257,7 +257,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
           EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
 
         referenceTime = static_cast<double>( time );
-        group->setReferenceTime( std::to_string( referenceTime ) );
+        group->setReferenceTime( "JULIAN " + std::to_string( referenceTime ) );
         break;
 
       case CT_TIMEUNITS:
