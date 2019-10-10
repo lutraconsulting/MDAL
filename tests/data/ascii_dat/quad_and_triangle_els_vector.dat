@@ -5,7 +5,7 @@ BEGVEC
 ND 5
 NC 2
 NAME "FaceVectorDataset"
-TIMEUNITS Minutes
+TIMEUNITS 1
 TS 0        60.000000
 1 1
 2 2
