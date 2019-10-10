@@ -146,7 +146,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -187,6 +187,12 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   EXPECT_DOUBLE_EQ( 1, min );
   EXPECT_DOUBLE_EQ( 2, max );
 
+  double time = MDAL_D_time( ds );
+  EXPECT_DOUBLE_EQ( 1, time );
+
+  const char *referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "JULIAN 2433282.500000" ), std::string( referenceTime ) );
+
   MDAL_CloseMesh( m );
 }
 
@@ -204,7 +210,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -252,6 +258,12 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
   EXPECT_DOUBLE_EQ( 1.4142135623730951, min );
   EXPECT_DOUBLE_EQ( 2.8284271247461903, max );
 
+  double time = MDAL_D_time( ds );
+  EXPECT_DOUBLE_EQ( 1, time );
+
+  const char *referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "JULIAN 2433288.500000" ), std::string( referenceTime ) );
+
   MDAL_CloseMesh( m );
 }
 
@@ -268,7 +280,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -370,7 +382,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFileWithTabs )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -419,7 +431,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
