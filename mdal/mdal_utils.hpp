@@ -15,6 +15,8 @@
 #include <stddef.h>
 #include <limits>
 #include <sstream>
+#include <fstream>
+#include <algorithm>
 
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
@@ -122,10 +124,25 @@ namespace MDAL
   // mesh & datasets
   //! Adds bed elevatiom dataset group to mesh
   void addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertices );
-  //! Adds face scalar dataset group to mesh
+  //! Adds altitude dataset group to mesh
   void addFaceScalarDatasetGroup( MDAL::Mesh *mesh, const std::vector<double> &values, const std::string &name );
   //! Loop through all faces and activate those which has all 4 values on vertices valid
   void activateFaces( MDAL::MemoryMesh *mesh, std::shared_ptr<MemoryDataset> dataset );
+
+  //! function used to read all of type of value. Option to change the endianness is provided
+  template<typename T>
+  bool readValue( T &value, std::ifstream &in, bool changeEndianness = false )
+  {
+    char *const p = reinterpret_cast<char *>( &value );
+
+    if ( !in.read( p, sizeof( T ) ) )
+      return false;
+
+    if ( changeEndianness )
+      std::reverse( p, p + sizeof( T ) );
+
+    return true;
+  }
 
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

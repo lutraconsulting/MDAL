@@ -624,3 +624,5 @@ std::string MDAL::doubleToString( double value, int precision )
   oss << value;
   return oss.str();
 }
+
+
