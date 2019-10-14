@@ -145,35 +145,18 @@ std::string MDAL::SerafinStreamReader::read_string_without_length( size_t len )
 double MDAL::SerafinStreamReader::read_double( )
 {
   double ret;
-  unsigned char buffer[8];
 
   if ( mStreamInFloatPrecision )
   {
     float ret_f;
-    if ( mIn.read( reinterpret_cast< char * >( &buffer ), 4 ) )
-      if ( !mIn )
-        throw MDAL_Status::Err_UnknownFormat;
-    if ( mIsNativeLittleEndian )
-    {
-      std::reverse( reinterpret_cast< char * >( &buffer ), reinterpret_cast< char * >( &buffer ) + 4 );
-    }
-    memcpy( reinterpret_cast< char * >( &ret_f ),
-            reinterpret_cast< char * >( &buffer ),
-            4 );
+    if ( !readValue( ret_f, mIn, mIsNativeLittleEndian ) )
+      throw MDAL_Status::Err_UnknownFormat;
     ret = static_cast<double>( ret_f );
   }
   else
   {
-    if ( mIn.read( reinterpret_cast< char * >( &buffer ), 8 ) )
-      if ( !mIn )
-        throw MDAL_Status::Err_UnknownFormat;
-    if ( mIsNativeLittleEndian )
-    {
-      std::reverse( reinterpret_cast< char * >( &buffer ), reinterpret_cast< char * >( &buffer ) + 8 );
-    }
-    memcpy( reinterpret_cast< char * >( &ret ),
-            reinterpret_cast< char * >( &buffer ),
-            8 );
+    if ( !readValue( ret, mIn, mIsNativeLittleEndian ) )
+      throw MDAL_Status::Err_UnknownFormat;
   }
   return ret;
 }

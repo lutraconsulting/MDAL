@@ -72,7 +72,8 @@ SET(TESTS
     test_binary_dat.cpp
     test_mdal_utils.cpp
     test_selafin.cpp
-)
+    test_esri_tin.cpp
+    )
 
 IF(HDF5_FOUND)
   SET(TESTS ${TESTS}
