@@ -23,6 +23,7 @@ You can use MDAL to load the following file formats:
 - [Selafin/Serafin](https://www.gdal.org/drv_selafin.html): Outputs of the TELEMAC 2D hydrodynamic modelling package
 - [HEC-RAS](http://www.hec.usace.army.mil/software/hec-ras/): Outputs of the HEC-RAS modelling package
 - [SWW](http://anuga.anu.edu.au/): Outputs of the ANUGA modelling package
+- [Esri TIN](https://en.wikipedia.org/wiki/Esri_TIN): Format for storing elevation data as a triangulated irregular network
 - [SAGA FLOW**](https://gis.stackexchange.com/a/254942/59405): Rasters in the SAGA flow direction format
 - [ADCIRC***](https://adcirc.org): ADCIRC hydrodynamic model results
 
