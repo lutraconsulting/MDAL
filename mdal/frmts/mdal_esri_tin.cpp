@@ -270,7 +270,7 @@ std::string MDAL::DriverEsriTin::getCrsWkt( const std::string &uri ) const
   std::string crsWkt;
   std::getline( inCRS, crsWkt );
 
-  if ( crsWkt == "{B286C06B-0879-11D2-AACA-00C04FA33C20}" )
+  if ( crsWkt == "{B286C06B-0879-11D2-AACA-00C04FA33C20}" ) //com class id of the esri UnknownCoordinateSystem class
     crsWkt = "";
 
   return crsWkt;
