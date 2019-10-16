@@ -87,7 +87,12 @@ void MDAL::Driver::createDataset( MDAL::DatasetGroup *group, double time, const 
 {
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group );
   dataset->setTime( time );
-  memcpy( dataset->values(), values, sizeof( double ) * dataset->valuesCount() );
+  size_t count = dataset->valuesCount();
+
+  if ( !group->isScalar() )
+    count *= 2;
+
+  memcpy( dataset->values(), values, sizeof( double ) * count );
   if ( active && dataset->active() )
     memcpy( dataset->active(), active, sizeof( int ) * dataset->mesh()->facesCount() );
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );

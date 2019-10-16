@@ -446,74 +446,98 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
 
 bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
 {
-    std::ofstream out( group->uri(), std::ofstream::out );
-    // implementation based on information from:
-    // https://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat
-    if (!out)
-        return true; // Couldn't open the file
+  const bool isScalar = group->isScalar();
+  const bool isOnVerticies = group->isOnVertices();
+  std::string uri = group->uri();
 
-    const bool isScalar = group->isScalar();
-    const bool isOnVerticies = group->isOnVertices();
-    const Mesh *mesh = group->mesh();
-    size_t nodeCount = mesh->verticesCount();
-    size_t elemCount = mesh->facesCount();
+  if ( !MDAL::contains( uri, "_els" ) && isOnVerticies == false )
+  {
+    // Should contain _els in name but it does not
+    uri.insert( uri.size() - 4, "_els" );
+  }
+  else if ( !MDAL::contains( uri, "_vertex" ) && isOnVerticies == true )
+  {
+    // Should contain _vertex in name but it does not
+    uri.insert( uri.size() - 4, "_vertex" );
+  }
 
-    out << "DATASET\n";
-    out << "OBJTYPE \"mesh2d\"\n";
+  std::ofstream out( uri, std::ofstream::out );
 
-    if (isScalar)
-        out << "BEGSCL\n";
-    else
-        out << "BEGVEC\n";
+  // implementation based on information from:
+  // https://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat
+  if ( !out )
+    return true; // Couldn't open the file
 
-    out << "ND " << nodeCount << "\n";
-    out << "NC " << elemCount << "\n";
-    out << "NAME " "\"" << group->name() << "\"" "\n";
-    std::string referenceTimeStr = group->referenceTime();
+  const Mesh *mesh = group->mesh();
+  size_t nodeCount = mesh->verticesCount();
+  size_t elemCount = mesh->facesCount();
 
+  out << "DATASET\n";
+  out << "OBJTYPE \"mesh2d\"\n";
+
+  if ( isScalar )
+    out << "BEGSCL\n";
+  else
+    out << "BEGVEC\n";
+
+  out << "ND " << nodeCount << "\n";
+  out << "NC " << elemCount << "\n";
+  out << "NAME " "\"" << group->name() << "\"" "\n";
+  std::string referenceTimeStr = group->referenceTime();
+
+  if ( !referenceTimeStr.empty() )
+  {
     // Cutting of the JULIAN prefix
     std::vector<std::string> referenceTimeStrWords = split( referenceTimeStr,  ' ' );
 
-    if (referenceTimeStrWords.size() > 1)
-        out << "RT_JULIAN " << referenceTimeStrWords[1] << "\n";
+    if ( referenceTimeStrWords.size() > 1 )
+      out << "RT_JULIAN " << referenceTimeStrWords[1] << "\n";
     else
-        out << "RT_JULIAN " << referenceTimeStr << "\n";
+      out << "RT_JULIAN " << referenceTimeStr << "\n";
+  }
 
-    out << "TIMEUNITS " << 0 << "\n";
+  out << "TIMEUNITS " << 0 << "\n";
 
-    for ( size_t time_index = 0; time_index < group->datasets.size(); ++ time_index )
+  for ( size_t time_index = 0; time_index < group->datasets.size(); ++ time_index )
+  {
+    const std::shared_ptr<MDAL::MemoryDataset> dataset
+      = std::dynamic_pointer_cast<MDAL::MemoryDataset>( group->datasets[time_index] );
+
+
+    out << "TS " << static_cast<bool>( dataset->active() ) << " " << std::to_string( dataset->time() ) << "\n";
+
+    size_t valuesToRead = 0;
+
+    if ( isOnVerticies )
     {
-        const std::shared_ptr<MDAL::MemoryDataset> dataset
-                    = std::dynamic_pointer_cast<MDAL::MemoryDataset>( group->datasets[time_index] );
-
-        out << "TS " << time_index << "        " << std::to_string(dataset->time()) << "\n";
-        size_t valuesToRead = 0;
-        if (isOnVerticies)
-            valuesToRead = nodeCount;
-        else
-            valuesToRead = elemCount;
-
-        for ( size_t i = 0; i < valuesToRead; ++i )
-        {
-            bool active = static_cast<bool>( dataset->active()[i] );
-            out << active << "\n";
-        }
-
-        for ( size_t i = 0; i < valuesToRead; ++i )
-        {
-          // Read values flags
-          if ( isScalar )
-              out << dataset->values()[i] << "\n";
-          else
-          {
-              out << dataset->values()[2 * i] << " " << dataset->values()[2 * i + 1 ]  << "\n";
-          }
-        }
+      valuesToRead = nodeCount;
+      // Fill the active data
+      for ( size_t i = 0; i < valuesToRead; ++i )
+      {
+        int active = dataset->active()[i];
+        out << ( active == 1 ? true : false ) << "\n";
+      }
+    }
+    else
+    {
+      valuesToRead = elemCount;
     }
 
-    out << "ENDDS";
+    for ( size_t i = 0; i < valuesToRead; ++i )
+    {
+      // Read values flags
+      if ( isScalar )
+        out << dataset->values()[i] << "\n";
+      else
+      {
+        out << dataset->values()[2 * i] << " " << dataset->values()[2 * i + 1 ]  << "\n";
+      }
+    }
+  }
 
-    return false;
+  out << "ENDDS";
+
+  return false;
 }
 
 double MDAL::DriverAsciiDat::convertTimeDataToHours( double time, const std::string &originalTimeDataUnit ) const

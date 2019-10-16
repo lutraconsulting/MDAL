@@ -537,7 +537,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorOldFile )
 TEST( MeshAsciiDatTest, WriteScalarTest )
 {
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
-  std::string scalarPath = tmp_file( "/2dm_WriteScalarTest.dat" );
+  std::string scalarPath = tmp_file( "/2dm_WriteScalarTest_vertex.dat" );
   std::vector<double> vals = {1, 2, 3, 4, 5};
   std::vector<int> active = {1, 1};
 
@@ -638,7 +638,7 @@ TEST( MeshAsciiDatTest, WriteScalarTest )
 TEST( MeshAsciiDatTest, WriteVectorTest )
 {
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
-  std::string vectorPath = tmp_file( "/2dm_WriteVectorTest.dat" );
+  std::string vectorPath = tmp_file( "/2dm_WriteVectorTest_vertex.dat" );
   std::vector<double> vals = {1, 1, 2, 2, 3, 3, 4, 4, 5, 5};
   std::vector<int> active = {1, 1};
 
