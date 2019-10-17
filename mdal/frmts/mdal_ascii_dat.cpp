@@ -145,7 +145,7 @@ void MDAL::DriverAsciiDat::loadNewFormat( std::ifstream &in,
   std::string referenceTime;
   // see if it contains face-centered results - supported by BASEMENT
   bool faceCentered = false;
-  if ( contains( groupName, "_els_" ) )
+  if ( contains( groupName, "_els" ) )
     faceCentered = true;
 
   if ( group )
@@ -333,6 +333,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
   std::ifstream &stream ) const
 {
   assert( group );
+  size_t faceCount = mesh->facesCount();
   size_t vertexCount = mesh->verticesCount();
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
@@ -340,7 +341,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
 
   int *active = dataset->active();
   // only for new format
-  for ( size_t i = 0; i < vertexCount; ++i )
+  for ( size_t i = 0; i < faceCount; ++i )
   {
     if ( hasStatus )
     {
@@ -450,15 +451,10 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
   const bool isOnVerticies = group->isOnVertices();
   std::string uri = group->uri();
 
-  if ( !MDAL::contains( uri, "_els_" ) && isOnVerticies == false )
+  if ( !MDAL::contains( uri, "_els" ) && isOnVerticies == false )
   {
     // Should contain _els in name but it does not
-    uri.insert( uri.size() - 4, "_els_" );
-  }
-  else if ( !MDAL::contains( uri, "_vertex" ) && isOnVerticies == true )
-  {
-    // Should contain _vertex in name but it does not
-    uri.insert( uri.size() - 4, "_vertex" );
+    uri.insert( uri.size() - 4, "_els" );
   }
 
   std::ofstream out( uri, std::ofstream::out );
@@ -512,7 +508,7 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
     {
       valuesToRead = nodeCount;
       // Fill the active data
-      for ( size_t i = 0; i < valuesToRead; ++i )
+      for ( size_t i = 0; i < elemCount; ++i )
       {
         int active = dataset->active()[i];
         out << ( active == 1 ? true : false ) << "\n";
