@@ -499,12 +499,12 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
     const std::shared_ptr<MDAL::MemoryDataset> dataset
       = std::dynamic_pointer_cast<MDAL::MemoryDataset>( group->datasets[time_index] );
 
-
-    out << "TS " << static_cast<bool>( dataset->active() ) << " " << std::to_string( dataset->time() ) << "\n";
+    bool hasActiveStatus = isOnVerticies && dataset->active();
+    out << "TS " << hasActiveStatus << " " << std::to_string( dataset->time() ) << "\n";
 
     size_t valuesToRead = 0;
 
-    if ( isOnVerticies )
+    if ( hasActiveStatus )
     {
       valuesToRead = nodeCount;
       // Fill the active data
