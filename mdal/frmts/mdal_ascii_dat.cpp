@@ -448,10 +448,10 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
 bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
 {
   const bool isScalar = group->isScalar();
-  const bool isOnVerticies = group->isOnVertices();
+  const bool isOnVertices = group->isOnVertices();
   std::string uri = group->uri();
 
-  if ( !MDAL::contains( uri, "_els" ) && isOnVerticies == false )
+  if ( !MDAL::contains( uri, "_els" ) && isOnVertices == false )
   {
     // Should contain _els in name but it does not
     uri.insert( uri.size() - 4, "_els" );
@@ -499,14 +499,11 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
     const std::shared_ptr<MDAL::MemoryDataset> dataset
       = std::dynamic_pointer_cast<MDAL::MemoryDataset>( group->datasets[time_index] );
 
-    bool hasActiveStatus = isOnVerticies && dataset->active();
+    bool hasActiveStatus = isOnVertices && dataset->active();
     out << "TS " << hasActiveStatus << " " << std::to_string( dataset->time() ) << "\n";
-
-    size_t valuesToRead = 0;
 
     if ( hasActiveStatus )
     {
-      valuesToRead = nodeCount;
       // Fill the active data
       for ( size_t i = 0; i < elemCount; ++i )
       {
@@ -514,12 +511,10 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
         out << ( active == 1 ? true : false ) << "\n";
       }
     }
-    else
-    {
-      valuesToRead = elemCount;
-    }
 
-    for ( size_t i = 0; i < valuesToRead; ++i )
+    size_t valuesToWrite = isOnVertices ? nodeCount : elemCount;
+
+    for ( size_t i = 0; i < valuesToWrite; ++i )
     {
       // Read values flags
       if ( isScalar )
