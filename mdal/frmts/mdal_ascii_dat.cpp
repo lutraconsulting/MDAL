@@ -28,7 +28,7 @@ MDAL::DriverAsciiDat::DriverAsciiDat( ):
   Driver( "ASCII_DAT",
           "DAT",
           "*.dat",
-          Capability::ReadDatasets
+          Capability::ReadDatasets | Capability::WriteDatasets
         )
 {
 }
@@ -145,7 +145,7 @@ void MDAL::DriverAsciiDat::loadNewFormat( std::ifstream &in,
   std::string referenceTime;
   // see if it contains face-centered results - supported by BASEMENT
   bool faceCentered = false;
-  if ( contains( groupName, "_els_" ) )
+  if ( contains( groupName, "_els" ) )
     faceCentered = true;
 
   if ( group )
@@ -334,6 +334,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
 {
   assert( group );
   size_t faceCount = mesh->facesCount();
+  size_t vertexCount = mesh->verticesCount();
 
   std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
   dataset->setTime( t );
@@ -353,7 +354,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
   const Mesh2dm *m2dm = dynamic_cast<const Mesh2dm *>( mesh );
   double *values = dataset->values();
   size_t meshIdCount = maximumId( mesh ) + 1; // these are native format indexes (IDs). For formats without gaps it equals vertex array index
-  size_t vertexCount = mesh->verticesCount();
+
 
   for ( size_t id = 0; id < meshIdCount; ++id )
   {
@@ -444,6 +445,91 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
   group->datasets.push_back( dataset );
 }
 
+bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
+{
+  const bool isScalar = group->isScalar();
+  const bool isOnVertices = group->isOnVertices();
+  std::string uri = group->uri();
+
+  if ( !MDAL::contains( uri, "_els" ) && isOnVertices == false )
+  {
+    // Should contain _els in name but it does not
+    uri.insert( uri.size() - 4, "_els" );
+  }
+
+  std::ofstream out( uri, std::ofstream::out );
+
+  // implementation based on information from:
+  // https://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat
+  if ( !out )
+    return true; // Couldn't open the file
+
+  const Mesh *mesh = group->mesh();
+  size_t nodeCount = mesh->verticesCount();
+  size_t elemCount = mesh->facesCount();
+
+  out << "DATASET\n";
+  out << "OBJTYPE \"mesh2d\"\n";
+
+  if ( isScalar )
+    out << "BEGSCL\n";
+  else
+    out << "BEGVEC\n";
+
+  out << "ND " << nodeCount << "\n";
+  out << "NC " << elemCount << "\n";
+  out << "NAME " "\"" << group->name() << "\"" "\n";
+  std::string referenceTimeStr = group->referenceTime();
+
+  if ( !referenceTimeStr.empty() )
+  {
+    // Cutting of the JULIAN prefix
+    std::vector<std::string> referenceTimeStrWords = split( referenceTimeStr,  ' ' );
+
+    if ( referenceTimeStrWords.size() > 1 )
+      out << "RT_JULIAN " << referenceTimeStrWords[1] << "\n";
+    else
+      out << "RT_JULIAN " << referenceTimeStr << "\n";
+  }
+
+  out << "TIMEUNITS " << 0 << "\n";
+
+  for ( size_t time_index = 0; time_index < group->datasets.size(); ++ time_index )
+  {
+    const std::shared_ptr<MDAL::MemoryDataset> dataset
+      = std::dynamic_pointer_cast<MDAL::MemoryDataset>( group->datasets[time_index] );
+
+    bool hasActiveStatus = isOnVertices && dataset->active();
+    out << "TS " << hasActiveStatus << " " << std::to_string( dataset->time() ) << "\n";
+
+    if ( hasActiveStatus )
+    {
+      // Fill the active data
+      for ( size_t i = 0; i < elemCount; ++i )
+      {
+        int active = dataset->active()[i];
+        out << ( active == 1 ? true : false ) << "\n";
+      }
+    }
+
+    size_t valuesToWrite = isOnVertices ? nodeCount : elemCount;
+
+    for ( size_t i = 0; i < valuesToWrite; ++i )
+    {
+      // Read values flags
+      if ( isScalar )
+        out << dataset->values()[i] << "\n";
+      else
+      {
+        out << dataset->values()[2 * i] << " " << dataset->values()[2 * i + 1 ]  << "\n";
+      }
+    }
+  }
+
+  out << "ENDDS";
+
+  return false;
+}
 
 double MDAL::DriverAsciiDat::convertTimeDataToHours( double time, const std::string &originalTimeDataUnit ) const
 {
