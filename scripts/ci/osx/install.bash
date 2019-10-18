@@ -11,6 +11,7 @@ brew uninstall --ignore-dependencies proj
 brew uninstall --ignore-dependencies libgeotiff
 brew uninstall --ignore-dependencies libspatialite
 brew uninstall --ignore-dependencies postgresql
+brew uninstall --ignore-dependencies netcdf
 
 echo "install"
 brew install hdf5
