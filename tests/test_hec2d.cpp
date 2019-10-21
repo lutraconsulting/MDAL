@@ -79,8 +79,8 @@ TEST( MeshHec2dTest, simpleArea )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -113,8 +113,8 @@ TEST( MeshHec2dTest, simpleArea )
   scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 41, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 0 );
@@ -187,8 +187,8 @@ TEST( MeshHec2dTest, MultiAreas )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -224,8 +224,8 @@ TEST( MeshHec2dTest, MultiAreas )
   scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 7, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 5 );
@@ -298,8 +298,8 @@ TEST( MeshHec2dTest, model_505 )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -332,8 +332,8 @@ TEST( MeshHec2dTest, model_505 )
   scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 5 );

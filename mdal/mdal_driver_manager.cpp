@@ -26,6 +26,7 @@
 #include "frmts/mdal_ugrid.hpp"
 #include "frmts/mdal_3di.hpp"
 #include "frmts/mdal_sww.hpp"
+#include "frmts/mdal_tuflowfv.hpp"
 #endif
 
 #if defined HAVE_GDAL && defined HAVE_NETCDF
@@ -142,6 +143,7 @@ MDAL::DriverManager::DriverManager()
 #endif
 
 #ifdef HAVE_NETCDF
+  mDrivers.push_back( std::make_shared<MDAL::DriverTuflowFV>() );
   mDrivers.push_back( std::make_shared<MDAL::Driver3Di>() );
   mDrivers.push_back( std::make_shared<MDAL::DriverSWW>() );
   mDrivers.push_back( std::make_shared<MDAL::DriverUgrid>() );

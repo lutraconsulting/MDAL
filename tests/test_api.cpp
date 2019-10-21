@@ -59,7 +59,7 @@ TEST( ApiTest, MeshApi )
   MDAL_M_LoadDatasets( nullptr, nullptr );
   EXPECT_EQ( MDAL_M_datasetGroupCount( nullptr ), 0 );
   EXPECT_EQ( MDAL_M_datasetGroup( nullptr, 0 ), nullptr );
-  EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, true, true, nullptr, nullptr ), nullptr );
+  EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, MDAL_DataLocation::DataOnVertices2D, true, nullptr, nullptr ), nullptr );
   EXPECT_EQ( MDAL_M_driverName( nullptr ), nullptr );
 }
 
@@ -231,7 +231,7 @@ TEST( ApiTest, GroupsApi )
   EXPECT_EQ( MDAL_G_metadataValue( nullptr, 0 ), std::string( "" ) );
   EXPECT_EQ( MDAL_G_name( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_G_hasScalarData( nullptr ), true );
-  EXPECT_EQ( MDAL_G_isOnVertices( nullptr ), true );
+  EXPECT_EQ( MDAL_G_dataLocation( nullptr ), MDAL_DataLocation::DataInvalidLocation );
   double a, b;
   MDAL_G_minimumMaximum( nullptr, &a, &b );
   EXPECT_TRUE( std::isnan( a ) );
@@ -248,6 +248,7 @@ TEST( ApiTest, DatasetsApi )
   EXPECT_EQ( MDAL_D_group( nullptr ), nullptr );
   EXPECT_TRUE( std::isnan( MDAL_D_time( nullptr ) ) );
   EXPECT_EQ( MDAL_D_valueCount( nullptr ), 0 );
+  EXPECT_EQ( MDAL_D_volumesCount( nullptr ), 0 );
   EXPECT_EQ( MDAL_D_isValid( nullptr ), false );
   EXPECT_EQ( MDAL_D_data( nullptr, 0, 0, MDAL_DataType::SCALAR_DOUBLE, nullptr ), 0 );
   double a, b;

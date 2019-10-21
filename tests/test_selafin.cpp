@@ -56,8 +56,8 @@ TEST( MeshSLFTest, MalpassetGeometry )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -133,8 +133,8 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   bool scalar = MDAL_G_hasScalarData( r );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( r );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( r );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( r ) );
   DatasetH ds = MDAL_G_dataset( r, 1 );
@@ -179,8 +179,8 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   scalar = MDAL_G_hasScalarData( r );
   EXPECT_EQ( false, scalar );
 
-  onVertices = MDAL_G_isOnVertices( r );
-  EXPECT_EQ( true, onVertices );
+  dataLocation = MDAL_G_dataLocation( r );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( r ) );
   ds = MDAL_G_dataset( r, 1 );

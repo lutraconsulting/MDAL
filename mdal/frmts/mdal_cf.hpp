@@ -31,6 +31,8 @@ namespace MDAL
         Line1D, //!< Line joining 1D vertices
         Face2DEdge, //!< Edge of 2D Face
         Face2D, //!< 2D (Polygon) Face
+        Volume3D, //!< 3D (stacked) volumes
+        Levels3D, //!< number of levels above 2D Faces
         Time, //!< Time steps
         MaxVerticesInFace //!< Maximum number of vertices in a face
       };
@@ -83,6 +85,7 @@ namespace MDAL
       virtual std::set<std::string> ignoreNetCDFVariables() = 0;
       virtual void parseNetCDFVariableMetadata( int varid, const std::string &variableName,
           std::string &name, bool *is_vector, bool *is_x ) = 0;
+      virtual std::string getTimeVariableName() const = 0;
 
       void setProjection( MDAL::Mesh *m );
       cfdataset_info_map parseDatasetGroupInfo();

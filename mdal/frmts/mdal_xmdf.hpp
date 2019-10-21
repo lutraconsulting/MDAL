@@ -31,7 +31,7 @@ namespace MDAL
    *   2D arrays (time, x) for scalar datasets
    *   2D arrays (time, active) for active flags
    */
-  class XmdfDataset: public Dataset
+  class XmdfDataset: public Dataset2D
   {
     public:
       XmdfDataset( DatasetGroup *grp,

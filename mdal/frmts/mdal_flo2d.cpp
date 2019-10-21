@@ -84,10 +84,10 @@ void MDAL::DriverFlo2D::addStaticDataset(
                                           datFileName,
                                           groupName
                                         );
-  group->setIsOnVertices( false );
+  group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
   group->setIsScalar( true );
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group.get() );
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
   assert( vals.size() == dataset->valuesCount() );
   dataset->setTime( 0.0 );
   double *values = dataset->values();
@@ -158,7 +158,7 @@ void MDAL::DriverFlo2D::parseFPLAINFile( std::vector<double> &elevations,
   }
 }
 
-static void addDatasetToGroup( std::shared_ptr<MDAL::DatasetGroup> group, std::shared_ptr<MDAL::MemoryDataset> dataset )
+static void addDatasetToGroup( std::shared_ptr<MDAL::DatasetGroup> group, std::shared_ptr<MDAL::MemoryDataset2D> dataset )
 {
   if ( group && dataset && dataset->valuesCount() > 0 )
   {
@@ -196,7 +196,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
         datFileName,
         "Depth"
       );
-  depthDsGroup->setIsOnVertices( false );
+  depthDsGroup->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
   depthDsGroup->setIsScalar( true );
 
 
@@ -206,7 +206,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
         datFileName,
         "Water Level"
       );
-  waterLevelDsGroup->setIsOnVertices( false );
+  waterLevelDsGroup->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
   waterLevelDsGroup->setIsScalar( true );
 
   std::shared_ptr<DatasetGroup> flowDsGroup = std::make_shared< DatasetGroup >(
@@ -215,12 +215,12 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
         datFileName,
         "Velocity"
       );
-  flowDsGroup->setIsOnVertices( false );
+  flowDsGroup->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
   flowDsGroup->setIsScalar( false );
 
-  std::shared_ptr<MDAL::MemoryDataset> flowDataset;
-  std::shared_ptr<MDAL::MemoryDataset> depthDataset;
-  std::shared_ptr<MDAL::MemoryDataset> waterLevelDataset;
+  std::shared_ptr<MDAL::MemoryDataset2D> flowDataset;
+  std::shared_ptr<MDAL::MemoryDataset2D> depthDataset;
+  std::shared_ptr<MDAL::MemoryDataset2D> waterLevelDataset;
 
   while ( std::getline( inStream, line ) )
   {
@@ -235,9 +235,9 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
       if ( flowDataset ) addDatasetToGroup( flowDsGroup, flowDataset );
       if ( waterLevelDataset ) addDatasetToGroup( waterLevelDsGroup, waterLevelDataset );
 
-      depthDataset  = std::make_shared< MemoryDataset >( depthDsGroup.get() );
-      flowDataset = std::make_shared< MemoryDataset >( flowDsGroup.get() );
-      waterLevelDataset = std::make_shared< MemoryDataset >( waterLevelDsGroup.get() );
+      depthDataset  = std::make_shared< MemoryDataset2D >( depthDsGroup.get() );
+      flowDataset = std::make_shared< MemoryDataset2D >( flowDsGroup.get() );
+      waterLevelDataset = std::make_shared< MemoryDataset2D >( waterLevelDsGroup.get() );
 
       depthDataset->setTime( time );
       flowDataset->setTime( time );
@@ -566,12 +566,12 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
                                          timedepFileName,
                                          grpName
                                        );
-    ds->setIsOnVertices( false );
+    ds->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
     ds->setIsScalar( !isVector );
 
     for ( size_t ts = 0; ts < timesteps; ++ts )
     {
-      std::shared_ptr< MemoryDataset > output = std::make_shared< MemoryDataset >( ds.get() );
+      std::shared_ptr< MemoryDataset2D > output = std::make_shared< MemoryDataset2D >( ds.get() );
       output->setTime( times[ts] );
 
       if ( isVector )

@@ -135,10 +135,10 @@ void MDAL::Driver3Di::addBedElevation( MemoryMesh *mesh )
                                           "Bed Elevation"
                                         );
 
-  group->setIsOnVertices( false );
+  group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
   group->setIsScalar( true );
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group.get() );
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
   dataset->setTime( 0.0 );
   double *values = dataset->values();
   for ( size_t i = 0; i < faceCount; ++i )
@@ -154,6 +154,11 @@ void MDAL::Driver3Di::addBedElevation( MemoryMesh *mesh )
 std::string MDAL::Driver3Di::getCoordinateSystemVariableName()
 {
   return "projected_coordinate_system";
+}
+
+std::string MDAL::Driver3Di::getTimeVariableName() const
+{
+  return "time";
 }
 
 std::set<std::string> MDAL::Driver3Di::ignoreNetCDFVariables()

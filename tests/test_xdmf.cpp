@@ -36,8 +36,8 @@ TEST( XdmfTest, Basement3HumpsTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 2 );
@@ -82,8 +82,8 @@ TEST( XdmfTest, Basement3HumpsTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( false, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 2 );
@@ -149,8 +149,8 @@ TEST( XdmfTest, Basement3Slopes )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -195,8 +195,8 @@ TEST( XdmfTest, Basement3Slopes )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -241,8 +241,8 @@ TEST( XdmfTest, Basement3Slopes )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -287,8 +287,8 @@ TEST( XdmfTest, Basement3Slopes )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -350,8 +350,8 @@ TEST( XdmfTest, Basement3SimpleChannel )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -413,8 +413,8 @@ TEST( XdmfTest, Basement3SimpleGeometry )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -478,8 +478,8 @@ TEST( XdmfTest, Simple )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 21, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 2 );
@@ -536,8 +536,8 @@ TEST( XdmfTest, Simple )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( false, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 21, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 2 );

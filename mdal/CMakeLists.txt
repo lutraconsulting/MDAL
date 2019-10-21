@@ -62,6 +62,7 @@ IF(NETCDF_FOUND)
     frmts/mdal_ugrid.cpp
     frmts/mdal_netcdf.cpp
     frmts/mdal_sww.cpp
+    frmts/mdal_tuflowfv.cpp
   )
   SET(MDAL_HEADERS ${MDAL_HEADERS}
     frmts/mdal_cf.hpp
@@ -69,6 +70,7 @@ IF(NETCDF_FOUND)
     frmts/mdal_ugrid.hpp
     frmts/mdal_netcdf.hpp
     frmts/mdal_sww.hpp
+    frmts/mdal_tuflowfv.hpp
   )
 ENDIF(NETCDF_FOUND)
 

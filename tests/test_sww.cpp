@@ -83,8 +83,8 @@ TEST( MeshSWWTest, Cairns )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -123,8 +123,8 @@ TEST( MeshSWWTest, Cairns )
   scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 51, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 30 );

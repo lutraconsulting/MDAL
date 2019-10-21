@@ -17,7 +17,7 @@
 MDAL::XmdfDataset::~XmdfDataset() = default;
 
 MDAL::XmdfDataset::XmdfDataset( DatasetGroup *grp, const HdfDataset &valuesDs, const HdfDataset &activeDs, hsize_t timeIndex )
-  : Dataset( grp )
+  : Dataset2D( grp )
   , mHdf5DatasetValues( valuesDs )
   , mHdf5DatasetActive( activeDs )
   , mTimeIndex( timeIndex )
@@ -257,7 +257,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
             groupName
           );
   group->setIsScalar( !isVector );
-  group->setIsOnVertices( true );
+  group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
   group->setMetadata( "TIMEUNITS", timeUnit );
 
   // lazy loading of min and max of the dataset group

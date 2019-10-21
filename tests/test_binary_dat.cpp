@@ -43,8 +43,8 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -94,8 +94,8 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( false, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 50 );
@@ -139,8 +139,8 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -183,7 +183,7 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
-                        true,
+                        MDAL_DataLocation::DataOnVertices2D,
                         true,
                         driver,
                         scalarPath.c_str()
@@ -238,8 +238,8 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( true, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -283,7 +283,7 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "vectorGrp",
-                        true,
+                        MDAL_DataLocation::DataOnVertices2D,
                         false,
                         driver,
                         vectorPath.c_str()
@@ -334,8 +334,8 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( false, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( true, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );

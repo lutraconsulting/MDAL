@@ -105,8 +105,8 @@ void _test_QuadAndTriangleFile( const std::string  &path )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -220,8 +220,8 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( true, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -255,8 +255,8 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );

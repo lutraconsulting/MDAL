@@ -383,6 +383,11 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid, const std::strin
   }
 }
 
+std::string MDAL::DriverUgrid::getTimeVariableName() const
+{
+  return "time";
+}
+
 void MDAL::DriverUgrid::parse2VariablesFromAttribute( const std::string &name, const std::string &attr_name,
     std::string &var1, std::string &var2, bool optional ) const
 {

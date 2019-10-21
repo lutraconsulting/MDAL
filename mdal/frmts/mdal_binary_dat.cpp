@@ -127,9 +127,9 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
   // implementation based on information from:
   // http://www.xmswiki.com/wiki/SMS:Binary_Dataset_Files_*.dat
   if ( !in )
-    EXIT_WITH_ERROR( MDAL_Status::Err_FileNotFound ); // Couldn't open the file
+    EXIT_WITH_ERROR( MDAL_Status::Err_FileNotFound ) // Couldn't open the file
 
-  size_t vertexCount = mesh->verticesCount();
+    size_t vertexCount = mesh->verticesCount();
   size_t elemCount = mesh->facesCount();
 
   int card = 0;
@@ -149,17 +149,17 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
   float time;
 
   if ( read( in, reinterpret_cast< char * >( &version ), 4 ) )
-    EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+    EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
 
-  if ( version != CT_VERSION ) // Version should be 3000
-    EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+    if ( version != CT_VERSION ) // Version should be 3000
+      EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
 
-  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
-                                          name(),
-                                          mesh,
-                                          mDatFile
-                                        ); // DAT datasets
-  group->setIsOnVertices( true );
+      std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
+                                              name(),
+                                              mesh,
+                                              mDatFile
+                                            ); // DAT datasets
+  group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
 
   // in TUFLOW results there could be also a special timestep (99999) with maximums
   // we will put it into a separate dataset
@@ -168,7 +168,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
         mesh,
         mDatFile
       );
-  groupMax->setIsOnVertices( true );
+  groupMax->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
 
   while ( card != CT_ENDDS )
   {
@@ -184,21 +184,21 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
       case CT_OBJTYPE:
         // Object type
         if ( read( in, reinterpret_cast< char * >( &objecttype ), 4 ) || objecttype != CT_2D_MESHES )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        break;
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+          break;
 
       case CT_SFLT:
         // Float size
         if ( read( in, reinterpret_cast< char * >( &sflt ), 4 ) || sflt != CT_FLOAT_SIZE )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        break;
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+          break;
 
       case CT_SFLG:
         // Flag size
         if ( read( in, reinterpret_cast< char * >( &sflg ), 4 ) )
           if ( sflg != CF_FLAG_SIZE && sflg != CF_FLAG_INT_SIZE )
-            EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        break;
+            EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+            break;
 
       case CT_BEGSCL:
         group->setIsScalar( true );
@@ -213,37 +213,37 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
       case CT_VECTYPE:
         // Vector type
         if ( read( in, reinterpret_cast< char * >( &vectype ), 4 ) || vectype != 0 )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        break;
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+          break;
 
       case CT_OBJID:
         // Object id
         if ( read( in, reinterpret_cast< char * >( &objid ), 4 ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        break;
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+          break;
 
       case CT_NUMDATA:
         // Num data
         if ( read( in, reinterpret_cast< char * >( &numdata ), 4 ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        if ( numdata != static_cast< int >( vertexCount ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh );
-        break;
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+          if ( numdata != static_cast< int >( vertexCount ) )
+            EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh )
+            break;
 
       case CT_NUMCELLS:
         // Num data
         if ( read( in, reinterpret_cast< char * >( &numcells ), 4 ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        if ( numcells != static_cast< int >( elemCount ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh );
-        break;
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+          if ( numcells != static_cast< int >( elemCount ) )
+            EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh )
+            break;
 
       case CT_NAME:
         // Name
         if ( read( in, reinterpret_cast< char * >( &groupName ), 40 ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-        if ( groupName[39] != 0 )
-          groupName[39] = 0;
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+          if ( groupName[39] != 0 )
+            groupName[39] = 0;
         group->setName( trim( std::string( groupName ) ) );
         groupMax->setName( group->name() + "/Maximums" );
         break;
@@ -251,62 +251,62 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
       case CT_RT_JULIAN:
         // Reference time
         if ( readIStat( in, sflg, &istat ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
 
-        if ( read( in, reinterpret_cast< char * >( &time ), 8 ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+          if ( read( in, reinterpret_cast< char * >( &time ), 8 ) )
+            EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
 
-        referenceTime = static_cast<double>( time );
+            referenceTime = static_cast<double>( time );
         group->setReferenceTime( "JULIAN " + std::to_string( referenceTime ) );
         break;
 
       case CT_TIMEUNITS:
         // Time unit
         if ( read( in, reinterpret_cast< char * >( &timeUnit ), 4 ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
 
-        switch ( timeUnit )
-        {
-          case 0:
-            timeUnitStr = "hours";
-            break;
-          case 1:
-            timeUnitStr = "minutes";
-            break;
-          case 2:
-            timeUnitStr = "seconds";
-            break;
-          case 4:
-            timeUnitStr = "days";
-            break;
-          default:
-            timeUnitStr = "unknown";
-            break;
-        }
+          switch ( timeUnit )
+          {
+            case 0:
+              timeUnitStr = "hours";
+              break;
+            case 1:
+              timeUnitStr = "minutes";
+              break;
+            case 2:
+              timeUnitStr = "seconds";
+              break;
+            case 4:
+              timeUnitStr = "days";
+              break;
+            default:
+              timeUnitStr = "unknown";
+              break;
+          }
         group->setMetadata( "TIMEUNITS", timeUnitStr );
         break;
 
       case CT_TS:
         // Time step!
         if ( readIStat( in, sflg, &istat ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
 
-        if ( read( in, reinterpret_cast< char * >( &time ), 4 ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+          if ( read( in, reinterpret_cast< char * >( &time ), 4 ) )
+            EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
 
-        double t = static_cast<double>( time );
+            double t = static_cast<double>( time );
         t = convertTimeDataToHours( t, timeUnit );
 
         if ( readVertexTimestep( mesh, group, groupMax, t, istat, sflg, in ) )
-          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
+          EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
 
-        break;
+          break;
     }
   }
 
   if ( !group || group->datasets.size() == 0 )
-    EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat );
-  group->setStatistics( MDAL::calculateStatistics( group ) );
+    EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+    group->setStatistics( MDAL::calculateStatistics( group ) );
   mesh->datasetGroups.push_back( group );
 
   if ( groupMax && groupMax->datasets.size() > 0 )
@@ -330,7 +330,7 @@ bool MDAL::DriverBinaryDat::readVertexTimestep( const MDAL::Mesh *mesh,
   size_t vertexCount = mesh->verticesCount();
   size_t faceCount = mesh->facesCount();
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MDAL::MemoryDataset >( group.get() );
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MDAL::MemoryDataset2D >( group.get() );
 
   int *activeFlags = dataset->active();
   bool active = true;
@@ -412,7 +412,7 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
   size_t nodeCount = mesh->verticesCount();
   size_t elemCount = mesh->facesCount();
 
-  if ( !group->isOnVertices() )
+  if ( group->dataLocation() != MDAL_DataLocation::DataOnVertices2D )
   {
     // Element outputs not supported in the format
     return true;
@@ -465,7 +465,7 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
 
   for ( size_t time_index = 0; time_index < group->datasets.size(); ++ time_index )
   {
-    const std::shared_ptr<MDAL::MemoryDataset> dataset = std::dynamic_pointer_cast<MDAL::MemoryDataset>( group->datasets[time_index] );
+    const std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::dynamic_pointer_cast<MDAL::MemoryDataset2D>( group->datasets[time_index] );
 
     writeRawData( out, reinterpret_cast< const char * >( &CT_TS ), 4 );
     writeRawData( out, reinterpret_cast< const char * >( &istat ), 1 );

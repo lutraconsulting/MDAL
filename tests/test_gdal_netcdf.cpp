@@ -44,8 +44,8 @@ TEST( MeshGdalNetCDFTest, Indonesia )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( true, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
     ASSERT_EQ( 31, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 10 );
