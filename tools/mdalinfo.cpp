@@ -79,7 +79,7 @@ int main( int argc, char *argv[] )
   std::vector<std::string> extraDatasets;
   if ( argc > 2 ) // additional dataset arguments
   {
-    for ( int i = 2; i < argc; ++i )
+    for ( size_t i = 2; i < argc; ++i )
       extraDatasets.push_back( args[i] );
   }
 
@@ -131,9 +131,22 @@ int main( int argc, char *argv[] )
     {
       double min, max;
       MDAL_G_minimumMaximum( group, &min, &max );
-      std::string definedOn = "faces";
-      if ( MDAL_G_isOnVertices( group ) )
-        definedOn = "vertices";
+      std::string definedOn;
+      switch ( MDAL_G_dataLocation( group ) )
+      {
+        case MDAL_DataLocation::DataOnFaces2D:
+          definedOn = "faces";
+          break;
+        case MDAL_DataLocation::DataOnVertices2D:
+          definedOn = "vertices";
+          break;
+        case MDAL_DataLocation::DataOnVolumes3D:
+          definedOn = "volumes";
+          break;
+        default:
+          definedOn = "unknown";
+          break;
+      }
       std::cout << std::endl << "    driver:        " << MDAL_G_driverName( group );
       std::cout << std::endl << "    dataset count: " << MDAL_G_datasetCount( group );
       std::cout << std::endl << "    defined on:    " << definedOn;

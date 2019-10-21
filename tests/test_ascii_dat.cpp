@@ -75,8 +75,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFileWithNumberingGaps )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
@@ -157,8 +157,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
@@ -221,8 +221,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( false, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -291,8 +291,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFile )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -343,8 +343,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarOldFile )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( true, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -393,8 +393,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFileWithTabs )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -442,8 +442,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( false, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -500,8 +500,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorOldFile )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( false, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -556,7 +556,7 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
-                        true,
+                        MDAL_DataLocation::DataOnVertices2D,
                         true,
                         driver,
                         scalarPath.c_str()
@@ -611,8 +611,8 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( true, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -655,7 +655,7 @@ TEST( MeshAsciiDatTest, WriteScalarFaceTest )
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
-                        false,
+                        MDAL_DataLocation::DataOnFaces2D,
                         true,
                         driver,
                         scalarPath.c_str()
@@ -710,8 +710,8 @@ TEST( MeshAsciiDatTest, WriteScalarFaceTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( true, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -755,7 +755,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTest )
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "vectorGrp",
-                        true,
+                        MDAL_DataLocation::DataOnVertices2D,
                         false,
                         driver,
                         vectorPath.c_str()
@@ -806,8 +806,8 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( false, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( true, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -853,7 +853,7 @@ TEST( MeshAsciiDatTest, WriteVectorFaceTest )
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "vectorGrp",
-                        false,
+                        MDAL_DataLocation::DataOnFaces2D,
                         false,
                         driver,
                         vectorPath.c_str()
@@ -904,8 +904,8 @@ TEST( MeshAsciiDatTest, WriteVectorFaceTest )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( false, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -951,7 +951,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTestNoActive )
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "vectorGrp",
-                        true,
+                        MDAL_DataLocation::DataOnVertices2D,
                         false,
                         driver,
                         vectorPath.c_str()
@@ -1002,8 +1002,8 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTestNoActive )
     bool scalar = MDAL_G_hasScalarData( g );
     EXPECT_EQ( false, scalar );
 
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( true, onVertices );
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );

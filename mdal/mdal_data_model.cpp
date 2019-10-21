@@ -24,13 +24,14 @@ std::string MDAL::Dataset::driverName() const
 
 size_t MDAL::Dataset::valuesCount() const
 {
-  if ( group()->isOnVertices() )
+  const MDAL_DataLocation location = group()->dataLocation();
+
+  switch ( location )
   {
-    return mesh()->verticesCount();
-  }
-  else
-  {
-    return mesh()->facesCount();
+    case MDAL_DataLocation::DataOnVertices2D: return mesh()->verticesCount();
+    case MDAL_DataLocation::DataOnFaces2D: return mesh()->facesCount();
+    case MDAL_DataLocation::DataOnVolumes3D: return volumesCount();
+    default: return 0;
   }
 }
 
@@ -64,6 +65,16 @@ void MDAL::Dataset::setTime( double time )
   mTime = time;
 }
 
+size_t MDAL::Dataset::volumesCount() const
+{
+  return mVolumesCount;
+}
+
+void MDAL::Dataset::setVolumesCount( size_t volumes )
+{
+  mVolumesCount = volumes;
+}
+
 bool MDAL::Dataset::isValid() const
 {
   return mIsValid;
@@ -73,6 +84,68 @@ void MDAL::Dataset::setIsValid( bool isValid )
 {
   mIsValid = isValid;
 }
+
+MDAL::Dataset2D::Dataset2D( MDAL::DatasetGroup *parent )
+  : Dataset( parent )
+{
+  setVolumesCount( 0 );
+}
+
+MDAL::Dataset2D::~Dataset2D() = default;
+
+size_t MDAL::Dataset2D::verticalLevelCountData( size_t, size_t, int * )
+{
+  return 0;
+}
+
+size_t MDAL::Dataset2D::verticalLevelData( size_t, size_t, double * )
+{
+  return 0;
+}
+
+size_t MDAL::Dataset2D::faceToVolumeData( size_t, size_t, int * )
+{
+  return 0;
+}
+
+size_t MDAL::Dataset2D::scalarVolumesData( size_t, size_t, double * )
+{
+  return 0;
+}
+
+size_t MDAL::Dataset2D::vectorVolumesData( size_t, size_t, double * )
+{
+  return 0;
+}
+
+size_t MDAL::Dataset2D::activeVolumesData( size_t, size_t, int * )
+{
+  return 0;
+}
+
+MDAL::Dataset3D::Dataset3D( MDAL::DatasetGroup *parent ):
+  Dataset( parent )
+{
+}
+
+MDAL::Dataset3D::~Dataset3D() = default;
+
+size_t MDAL::Dataset3D::scalarData( size_t, size_t, double * )
+{
+  return  0;
+}
+
+size_t MDAL::Dataset3D::vectorData( size_t, size_t count, double * )
+{
+  return 0;
+}
+
+size_t MDAL::Dataset3D::activeData( size_t, size_t count, int * )
+{
+  return 0;
+}
+
+
 
 MDAL::DatasetGroup::DatasetGroup( const std::string &driverName,
                                   MDAL::Mesh *parent,
@@ -185,17 +258,17 @@ void MDAL::DatasetGroup::stopEditing()
   mInEditMode = false;
 }
 
-bool MDAL::DatasetGroup::isOnVertices() const
+MDAL_DataLocation MDAL::DatasetGroup::dataLocation() const
 {
-  return mIsOnVertices;
+  return mDataLocation;
 }
 
-void MDAL::DatasetGroup::setIsOnVertices( bool isOnVertices )
+void MDAL::DatasetGroup::setDataLocation( MDAL_DataLocation dataLocation )
 {
   // datasets are initialized (e.g. values array, active array) based
   // on this property. Do not allow to modify later on.
   assert( datasets.empty() );
-  mIsOnVertices = isOnVertices;
+  mDataLocation = dataLocation;
 }
 
 bool MDAL::DatasetGroup::isScalar() const

@@ -139,6 +139,11 @@ std::string NetCDFFile::getAttrStr( const std::string &attr_name, int varid ) co
   return res;
 }
 
+std::string NetCDFFile::getGlobalAttrStr( const std::string &name )
+{
+  return getAttrStr( name, mNcid );
+}
+
 double NetCDFFile::getFillValue( int varid ) const
 {
   return getAttrDouble( varid, "_FillValue" );

@@ -334,25 +334,33 @@ double MDAL::parseTimeUnits( const std::string &units )
 {
   double divBy = 1;
   // We are trying to parse strings like
+  //
   // "seconds since 2001-05-05 00:00:00"
   // "hours since 1900-01-01 00:00:0.0"
   // "days since 1961-01-01 00:00:00"
+  //
+  // or simply
+  // hours, days, seconds, ...
+
   const std::vector<std::string> units_list = MDAL::split( units, " since " );
+  std::string unit_definition = units;
   if ( units_list.size() == 2 )
   {
-    // Give me hours
-    if ( units_list[0] == "seconds" )
-    {
-      divBy = 3600.0;
-    }
-    else if ( units_list[0] == "minutes" )
-    {
-      divBy = 60.0;
-    }
-    else if ( units_list[0] == "days" )
-    {
-      divBy = 1.0 / 24.0;
-    }
+    unit_definition = units_list[0];
+  }
+
+  // Give me hours
+  if ( units_list[0] == "seconds" )
+  {
+    divBy = 3600.0;
+  }
+  else if ( units_list[0] == "minutes" )
+  {
+    divBy = 60.0;
+  }
+  else if ( units_list[0] == "days" )
+  {
+    divBy = 1.0 / 24.0;
   }
 
   return divBy;
@@ -502,10 +510,10 @@ void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertic
                                           mesh->uri(),
                                           "Bed Elevation"
                                         );
-  group->setIsOnVertices( true );
+  group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
   group->setIsScalar( true );
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group.get() );
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
   dataset->setTime( 0.0 );
   double *vals = dataset->values();
   for ( size_t i = 0; i < vertices.size(); ++i )
@@ -539,10 +547,10 @@ void MDAL::addFaceScalarDatasetGroup( MDAL::Mesh *mesh,
                                           mesh->uri(),
                                           name
                                         );
-  group->setIsOnVertices( false );
+  group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
   group->setIsScalar( true );
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group.get() );
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
   dataset->setTime( 0.0 );
   memcpy( dataset->values(), values.data(), sizeof( double )*values.size() );
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
@@ -551,10 +559,10 @@ void MDAL::addFaceScalarDatasetGroup( MDAL::Mesh *mesh,
   mesh->datasetGroups.push_back( group );
 }
 
-void MDAL::activateFaces( MDAL::MemoryMesh *mesh, std::shared_ptr<MemoryDataset> dataset )
+void MDAL::activateFaces( MDAL::MemoryMesh *mesh, std::shared_ptr<MemoryDataset2D> dataset )
 {
   // only for data on vertices
-  if ( !dataset->group()->isOnVertices() )
+  if ( !( dataset->group()->dataLocation() == MDAL_DataLocation::DataOnVertices2D ) )
     return;
 
   bool isScalar = dataset->group()->isScalar();

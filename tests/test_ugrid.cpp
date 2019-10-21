@@ -125,8 +125,8 @@ TEST( MeshUgridTest, DFlow11Manzese )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -220,8 +220,8 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 13, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -297,8 +297,8 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 45, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -377,8 +377,8 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 23, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -423,8 +423,8 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( false, scalar );
 
-  onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( false, onVertices );
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
   ASSERT_EQ( 23, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 20 );
@@ -515,8 +515,8 @@ TEST( MeshUgridTest, ADCIRC )
   bool scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( true, scalar );
 
-  bool onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -561,8 +561,8 @@ TEST( MeshUgridTest, ADCIRC )
   scalar = MDAL_G_hasScalarData( g );
   EXPECT_EQ( false, scalar );
 
-  onVertices = MDAL_G_isOnVertices( g );
-  EXPECT_EQ( true, onVertices );
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 0 );

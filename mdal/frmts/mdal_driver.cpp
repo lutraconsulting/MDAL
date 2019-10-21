@@ -79,7 +79,7 @@ void MDAL::Driver::save( const std::string &uri, MDAL::Mesh *mesh, MDAL_Status *
   MDAL_UNUSED( status );
 }
 
-void MDAL::Driver::createDatasetGroup( MDAL::Mesh *mesh, const std::string &groupName, bool isOnVertices, bool hasScalarData, const std::string &datasetGroupFile )
+void MDAL::Driver::createDatasetGroup( MDAL::Mesh *mesh, const std::string &groupName, MDAL_DataLocation dataLocation, bool hasScalarData, const std::string &datasetGroupFile )
 {
   std::shared_ptr<MDAL::DatasetGroup> grp(
     new MDAL::DatasetGroup( name(),
@@ -87,7 +87,7 @@ void MDAL::Driver::createDatasetGroup( MDAL::Mesh *mesh, const std::string &grou
                             datasetGroupFile )
   );
   grp->setName( groupName );
-  grp->setIsOnVertices( isOnVertices );
+  grp->setDataLocation( dataLocation );
   grp->setIsScalar( hasScalarData );
   grp->startEditing();
   mesh->datasetGroups.push_back( grp );
@@ -95,7 +95,7 @@ void MDAL::Driver::createDatasetGroup( MDAL::Mesh *mesh, const std::string &grou
 
 void MDAL::Driver::createDataset( MDAL::DatasetGroup *group, double time, const double *values, const int *active )
 {
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared< MemoryDataset >( group );
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group );
   dataset->setTime( time );
   size_t count = dataset->valuesCount();
 

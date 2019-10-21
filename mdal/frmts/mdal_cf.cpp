@@ -166,7 +166,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverCF::createFace2DDataset( std::shared_
   size_t nFaces2D = mDimensions.size( CFDimensions::Face2D );
   size_t nLine1D = mDimensions.size( CFDimensions::Line1D );
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared<MDAL::MemoryDataset>( group.get() );
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared<MDAL::MemoryDataset2D>( group.get() );
 
   for ( size_t i = 0; i < nFaces2D; ++i )
   {
@@ -182,7 +182,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverCF::createFace2DDataset( std::shared_
 
   }
 
-  return dataset;
+  return std::move( dataset );
 }
 
 std::shared_ptr<MDAL::Dataset> MDAL::DriverCF::createVertex2DDataset( std::shared_ptr<MDAL::DatasetGroup> group,
@@ -194,7 +194,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverCF::createVertex2DDataset( std::share
   assert( dsi.outputType == CFDimensions::Vertex2D );
   size_t nVertices2D = mDimensions.size( CFDimensions::Vertex2D );
 
-  std::shared_ptr<MDAL::MemoryDataset> dataset = std::make_shared<MDAL::MemoryDataset>( group.get() );
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared<MDAL::MemoryDataset2D>( group.get() );
 
   for ( size_t i = 0; i < nVertices2D; ++i )
   {
@@ -210,7 +210,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverCF::createVertex2DDataset( std::share
 
   }
 
-  return dataset;
+  return std::move( dataset );
 }
 
 void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<double> &times, const MDAL::cfdataset_info_map &dsinfo_map )
@@ -229,9 +229,9 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<doubl
     group->setIsScalar( !dsi.is_vector );
 
     if ( dsi.outputType == CFDimensions::Vertex2D )
-      group->setIsOnVertices( true );
+      group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
     else if ( dsi.outputType == CFDimensions::Face2D )
-      group->setIsOnVertices( false );
+      group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
     else
     {
       // unsupported
@@ -295,8 +295,9 @@ void MDAL::DriverCF::parseTime( std::vector<double> &times )
     times = std::vector<double>( 1, 0 );
     return;
   }
-  times = mNcFile.readDoubleArr( "time", nTimesteps );
-  std::string units = mNcFile.getAttrStr( "time", "units" );
+  const std::string timeArrName = getTimeVariableName();
+  times = mNcFile.readDoubleArr( timeArrName, nTimesteps );
+  std::string units = mNcFile.getAttrStr( timeArrName, "units" );
   double div_by = MDAL::parseTimeUnits( units );
   for ( size_t i = 0; i < nTimesteps; ++i )
   {
@@ -457,6 +458,7 @@ bool MDAL::CFDimensions::isDatasetType( MDAL::CFDimensions::Type type ) const
            ( type == Vertex2D ) ||
            ( type == Line1D ) ||
            ( type == Face2DEdge ) ||
-           ( type == Face2D )
+           ( type == Face2D ) ||
+           ( type == Volume3D )
          );
 }

@@ -56,7 +56,7 @@ namespace MDAL
       virtual void createDatasetGroup(
         Mesh *mesh,
         const std::string &groupName,
-        bool isOnVertices,
+        MDAL_DataLocation dataLocation,
         bool hasScalarData,
         const std::string &datasetGroupFile );
 

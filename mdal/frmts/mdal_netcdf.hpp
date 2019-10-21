@@ -37,6 +37,10 @@ class NetCDFFile
      */
     std::string getAttrStr( const std::string &name, const std::string &attr_name ) const;
     std::string getAttrStr( const std::string &attr_name, int varid ) const;
+
+    /** Get global attribute with name */
+    std::string getGlobalAttrStr( const std::string &name );
+
     double getFillValue( int varid ) const;
     int getVarId( const std::string &name );
     void getDimension( const std::string &name, size_t *val, int *ncid_val ) const;

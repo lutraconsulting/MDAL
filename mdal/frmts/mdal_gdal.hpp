@@ -88,7 +88,7 @@ namespace MDAL
       bool meshes_equals( const GdalDataset *ds1, const GdalDataset *ds2 ) const;
 
       metadata_hash parseMetadata( GDALMajorObjectH gdalBand, const char *pszDomain = nullptr );
-      void addDataToOutput( GDALRasterBandH raster_band, std::shared_ptr<MemoryDataset> tos, bool is_vector, bool is_x );
+      void addDataToOutput( GDALRasterBandH raster_band, std::shared_ptr<MemoryDataset2D> tos, bool is_vector, bool is_x );
       bool addSrcProj();
       void addDatasetGroups();
       void createMesh();

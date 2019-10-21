@@ -45,11 +45,27 @@ namespace MDAL
       virtual ~Dataset();
 
       std::string driverName() const;
-
       size_t valuesCount() const;
+
+      //! For DataOnVertices2D or DataOnFaces2D
       virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) = 0;
+      //! For DataOnVertices2D or DataOnFaces2D
       virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) = 0;
+      //! For DataOnVertices2D or DataOnFaces2D
       virtual size_t activeData( size_t indexStart, size_t count, int *buffer ) = 0;
+
+      //! For DataOnVolumes3D
+      virtual size_t verticalLevelCountData( size_t indexStart, size_t count, int *buffer ) = 0;
+      //! For DataOnVolumes3D
+      virtual size_t verticalLevelData( size_t indexStart, size_t count, double *buffer ) = 0;
+      //! For DataOnVolumes3D
+      virtual size_t faceToVolumeData( size_t indexStart, size_t count, int *buffer ) = 0;
+      //! For DataOnVolumes3D
+      virtual size_t scalarVolumesData( size_t indexStart, size_t count, double *buffer ) = 0;
+      //! For DataOnVolumes3D
+      virtual size_t vectorVolumesData( size_t indexStart, size_t count, double *buffer ) = 0;
+      //! For DataOnVolumes3D
+      virtual size_t activeVolumesData( size_t indexStart, size_t count, int *buffer ) = 0;
 
       Statistics statistics() const;
       void setStatistics( const Statistics &statistics );
@@ -63,12 +79,42 @@ namespace MDAL
       double time() const;
       void setTime( double time );
 
+      size_t volumesCount() const;
+      void setVolumesCount( size_t volumes );
+
     private:
       double mTime = std::numeric_limits<double>::quiet_NaN();
       bool mIsValid = true;
+      size_t mVolumesCount = 0;
       DatasetGroup *mParent = nullptr;
       Statistics mStatistics;
   };
+
+  class Dataset2D: public Dataset
+  {
+    public:
+      Dataset2D( DatasetGroup *parent );
+      virtual ~Dataset2D() override;
+
+      size_t verticalLevelCountData( size_t indexStart, size_t count, int *buffer ) override;
+      size_t verticalLevelData( size_t indexStart, size_t count, double *buffer ) override;
+      size_t faceToVolumeData( size_t indexStart, size_t count, int *buffer ) override;
+      size_t scalarVolumesData( size_t indexStart, size_t count, double *buffer ) override;
+      size_t vectorVolumesData( size_t indexStart, size_t count, double *buffer ) override;
+      size_t activeVolumesData( size_t indexStart, size_t count, int *buffer ) override;
+  };
+
+  class Dataset3D: public Dataset
+  {
+    public:
+      Dataset3D( DatasetGroup *parent );
+      virtual ~Dataset3D() override;
+
+      virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
+      virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
+      virtual size_t activeData( size_t indexStart, size_t count, int *buffer ) override;
+  };
+
 
   typedef std::vector<std::shared_ptr<Dataset>> Datasets;
 
@@ -101,8 +147,8 @@ namespace MDAL
       bool isScalar() const;
       void setIsScalar( bool isScalar );
 
-      bool isOnVertices() const;
-      void setIsOnVertices( bool isOnVertices );
+      MDAL_DataLocation dataLocation() const;
+      void setDataLocation( MDAL_DataLocation dataLocation );
 
       std::string uri() const;
 
@@ -124,7 +170,7 @@ namespace MDAL
       const std::string mDriverName;
       Mesh *mParent = nullptr;
       bool mIsScalar = true;
-      bool mIsOnVertices = true;
+      MDAL_DataLocation mDataLocation = MDAL_DataLocation::DataOnVertices2D;
       std::string mUri; // file/uri from where it came
       Statistics mStatistics;
       std::string mReferenceTime;
@@ -154,12 +200,14 @@ namespace MDAL
   class Mesh
   {
     public:
+      //! Constructs 2D Mesh
       Mesh( const std::string &driverName,
             size_t verticesCount,
             size_t facesCount,
             size_t faceVerticesMaximumCount,
             BBox extent,
             const std::string &uri );
+
       virtual ~Mesh();
 
       std::string driverName() const;
