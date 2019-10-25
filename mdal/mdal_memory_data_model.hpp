@@ -65,6 +65,7 @@ namespace MDAL
        *   - vertex count * 2 if isOnVertices & isVector
        */
       std::vector<double> mValues;
+
       /**
        * Active flag, whether the face is active or not (disabled)
        * Only make sense for dataset defined on vertices  with size == face count

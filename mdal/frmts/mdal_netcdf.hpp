@@ -22,8 +22,33 @@ class NetCDFFile
     void openFile( const std::string &fileName );
 
     std::vector<int> readIntArr( const std::string &name, size_t dim ) const;
+    /** Reads hyperslap from double variable with 2 dimensions*/
+    std::vector<int> readIntArr( int arr_id,
+                                 size_t start_dim1,
+                                 size_t start_dim2,
+                                 size_t count_dim1,
+                                 size_t count_dim2
+                               ) const;
+
+    /** Reads hyperslap from double variable with 1 dimension */
+    std::vector<int> readIntArr( int arr_id,
+                                 size_t start_dim,
+                                 size_t count_dim
+                               ) const;
+
     std::vector<double> readDoubleArr( const std::string &name, size_t dim ) const;
+
+    /** Reads hyperslap from double variable */
+    std::vector<double> readDoubleArr( int arr_id,
+                                       size_t start_dim1,
+                                       size_t start_dim2,
+                                       size_t count_dim1,
+                                       size_t count_dim2
+                                     ) const;
+
     bool hasArr( const std::string &name ) const;
+    int arrId( const std::string &name ) const;
+
     std::vector<std::string> readArrNames() const;
 
     bool hasAttrInt( const std::string &name, const std::string &attr_name ) const;
@@ -37,9 +62,6 @@ class NetCDFFile
      */
     std::string getAttrStr( const std::string &name, const std::string &attr_name ) const;
     std::string getAttrStr( const std::string &attr_name, int varid ) const;
-
-    /** Get global attribute with name */
-    std::string getGlobalAttrStr( const std::string &name );
 
     double getFillValue( int varid ) const;
     int getVarId( const std::string &name );

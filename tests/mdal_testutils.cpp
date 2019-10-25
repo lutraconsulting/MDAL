@@ -91,6 +91,76 @@ double getValueY( DatasetH dataset, int index )
   return val[1];
 }
 
+int getLevelsCount3D( DatasetH dataset, int index )
+{
+  int count;
+  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, &count );
+  if ( nValuesRead != 1 )
+    return -1;
+
+  return count;
+}
+
+double getLevelZ3D( DatasetH dataset, int index )
+{
+  double z;
+  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, &z );
+  if ( nValuesRead != 1 )
+    return -1;
+
+  return z;
+}
+
+bool getActive3D( DatasetH dataset, int index )
+{
+  int active;
+  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::ACTIVE_VOLUMES_INTEGER, &active );
+  if ( nValuesRead != 1 )
+    return 0;
+
+  return static_cast<bool>( active );
+}
+
+double getValue3D( DatasetH dataset, int index )
+{
+  double val;
+  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::SCALAR_VOLUMES_DOUBLE, &val );
+  if ( nValuesRead != 1 )
+    return 0;
+
+  return val;
+}
+
+double getValue3DX( DatasetH dataset, int index )
+{
+  double val[2];
+  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE, &val );
+  if ( nValuesRead != 1 )
+    return 0;
+
+  return val[0];
+}
+
+double getValue3DY( DatasetH dataset, int index )
+{
+  double val[2];
+  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE, &val );
+  if ( nValuesRead != 1 )
+    return 0;
+
+  return val[1];
+}
+
+int get3DFrom2D( DatasetH dataset, int index )
+{
+  int index3d;
+  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER, &index3d );
+  if ( nValuesRead != 1 )
+    return -1;
+
+  return index3d;
+}
+
 bool compareVectors( const std::vector<int> &a, const std::vector<int> &b )
 {
   if ( a.size() != b.size() )

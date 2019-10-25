@@ -254,6 +254,9 @@ TEST( ApiTest, DatasetsApi )
   double a, b;
   MDAL_D_minimumMaximum( nullptr, &a, &b );
   EXPECT_TRUE( std::isnan( a ) );
+  // do not crash is enough for this
+  MDAL_D_minimumMaximum( nullptr, &a, nullptr );
+  MDAL_D_minimumMaximum( nullptr, nullptr, &b );
 }
 
 int main( int argc, char **argv )

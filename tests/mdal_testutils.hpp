@@ -31,11 +31,21 @@ int getFaceVerticesCountAt( MeshH mesh, int faceIndex );
 int getFaceVerticesIndexAt( MeshH mesh, int faceIndex, int index );
 std::vector<int> faceVertexIndices( MeshH mesh, int faceCount );
 
-// Datasets
+// Datasets 2D
 bool getActive( DatasetH dataset, int index );
 double getValue( DatasetH dataset, int index );
 double getValueX( DatasetH dataset, int index );
 double getValueY( DatasetH dataset, int index );
+int get3DFrom2D( DatasetH dataset, int index );
+
+// Datasets 3D
+int getLevelsCount3D( DatasetH dataset, int index );
+double getLevelZ3D( DatasetH dataset, int index );
+bool getActive3D( DatasetH dataset, int index );
+double getValue3D( DatasetH dataset, int index );
+double getValue3DX( DatasetH dataset, int index );
+double getValue3DY( DatasetH dataset, int index );
+
 
 //! Compare two vectors
 bool compareVectors( const std::vector<double> &a, const std::vector<double> &b );

@@ -15,7 +15,11 @@ NetCDFFile::NetCDFFile(): mNcid( 0 ) {}
 
 NetCDFFile::~NetCDFFile()
 {
-  if ( mNcid != 0 ) nc_close( mNcid );
+  if ( mNcid != 0 )
+  {
+    nc_close( mNcid );
+    mNcid = 0;
+  }
 }
 
 int NetCDFFile::handle() const
@@ -43,6 +47,34 @@ std::vector<int> NetCDFFile::readIntArr( const std::string &name, size_t dim ) c
   return arr_val;
 }
 
+std::vector<int> NetCDFFile::readIntArr( int arr_id, size_t start_dim1, size_t start_dim2, size_t count_dim1, size_t count_dim2 ) const
+{
+  assert( mNcid != 0 );
+
+  const std::vector<size_t> startp = {start_dim1, start_dim2};
+  const std::vector<size_t> countp = {count_dim1, count_dim2};
+  const std::vector<ptrdiff_t> stridep = {1, 1};
+
+  std::vector<int> arr_val( count_dim1 * count_dim2 );
+  int res = nc_get_vars_int( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val.data() );
+  if ( res != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+  return arr_val;
+}
+
+std::vector<int> NetCDFFile::readIntArr( int arr_id, size_t start_dim, size_t count_dim ) const
+{
+  assert( mNcid != 0 );
+
+  const std::vector<size_t> startp = {start_dim};
+  const std::vector<size_t> countp = {count_dim};
+  const std::vector<ptrdiff_t> stridep = {1};
+
+  std::vector<int> arr_val( count_dim );
+  int res = nc_get_vars_int( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val.data() );
+  if ( res != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+  return arr_val;
+}
+
 std::vector<double> NetCDFFile::readDoubleArr( const std::string &name, size_t dim ) const
 {
   assert( mNcid != 0 );
@@ -54,11 +86,37 @@ std::vector<double> NetCDFFile::readDoubleArr( const std::string &name, size_t d
   return arr_val;
 }
 
+std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
+    size_t start_dim1, size_t start_dim2,
+    size_t count_dim1, size_t count_dim2 ) const
+{
+  assert( mNcid != 0 );
+
+  const std::vector<size_t> startp = {start_dim1, start_dim2};
+  const std::vector<size_t> countp = {count_dim1, count_dim2};
+  const std::vector<ptrdiff_t> stridep = {1, 1};
+
+  std::vector<double> arr_val( count_dim1 * count_dim2 );
+  int res = nc_get_vars_double( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val.data() );
+  if ( res != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+  return arr_val;
+}
+
 bool NetCDFFile::hasArr( const std::string &name ) const
 {
   assert( mNcid != 0 );
   int arr_id;
   return nc_inq_varid( mNcid, name.c_str(), &arr_id ) == NC_NOERR;
+}
+
+int NetCDFFile::arrId( const std::string &name ) const
+{
+  int arr_id = -1;
+  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR )
+  {
+    arr_id = -1;
+  }
+  return arr_id;
 }
 
 std::vector<std::string> NetCDFFile::readArrNames() const
@@ -137,11 +195,6 @@ std::string NetCDFFile::getAttrStr( const std::string &attr_name, int varid ) co
   free( string_attr );
 
   return res;
-}
-
-std::string NetCDFFile::getGlobalAttrStr( const std::string &name )
-{
-  return getAttrStr( name, mNcid );
 }
 
 double NetCDFFile::getFillValue( int varid ) const

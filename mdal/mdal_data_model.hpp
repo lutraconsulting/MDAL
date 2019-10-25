@@ -44,7 +44,6 @@ namespace MDAL
       Dataset( DatasetGroup *parent );
       virtual ~Dataset();
 
-      std::string driverName() const;
       size_t valuesCount() const;
 
       //! For DataOnVertices2D or DataOnFaces2D
@@ -67,6 +66,8 @@ namespace MDAL
       //! For DataOnVolumes3D
       virtual size_t activeVolumesData( size_t indexStart, size_t count, int *buffer ) = 0;
 
+      virtual size_t volumesCount() const = 0;
+
       Statistics statistics() const;
       void setStatistics( const Statistics &statistics );
 
@@ -79,13 +80,9 @@ namespace MDAL
       double time() const;
       void setTime( double time );
 
-      size_t volumesCount() const;
-      void setVolumesCount( size_t volumes );
-
     private:
       double mTime = std::numeric_limits<double>::quiet_NaN();
       bool mIsValid = true;
-      size_t mVolumesCount = 0;
       DatasetGroup *mParent = nullptr;
       Statistics mStatistics;
   };
@@ -102,17 +99,23 @@ namespace MDAL
       size_t scalarVolumesData( size_t indexStart, size_t count, double *buffer ) override;
       size_t vectorVolumesData( size_t indexStart, size_t count, double *buffer ) override;
       size_t activeVolumesData( size_t indexStart, size_t count, int *buffer ) override;
+
+      size_t volumesCount() const override;
   };
 
   class Dataset3D: public Dataset
   {
     public:
-      Dataset3D( DatasetGroup *parent );
+      Dataset3D( DatasetGroup *parent, size_t volumes );
       virtual ~Dataset3D() override;
 
       virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
       virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
       virtual size_t activeData( size_t indexStart, size_t count, int *buffer ) override;
+      size_t volumesCount() const override;
+
+    private:
+      size_t mVolumesCount = 0;
   };
 
 
