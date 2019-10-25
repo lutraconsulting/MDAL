@@ -17,11 +17,6 @@ MDAL::Dataset::Dataset( MDAL::DatasetGroup *parent )
   assert( mParent );
 }
 
-std::string MDAL::Dataset::driverName() const
-{
-  return group()->driverName();
-}
-
 size_t MDAL::Dataset::valuesCount() const
 {
   const MDAL_DataLocation location = group()->dataLocation();
@@ -65,16 +60,6 @@ void MDAL::Dataset::setTime( double time )
   mTime = time;
 }
 
-size_t MDAL::Dataset::volumesCount() const
-{
-  return mVolumesCount;
-}
-
-void MDAL::Dataset::setVolumesCount( size_t volumes )
-{
-  mVolumesCount = volumes;
-}
-
 bool MDAL::Dataset::isValid() const
 {
   return mIsValid;
@@ -88,10 +73,15 @@ void MDAL::Dataset::setIsValid( bool isValid )
 MDAL::Dataset2D::Dataset2D( MDAL::DatasetGroup *parent )
   : Dataset( parent )
 {
-  setVolumesCount( 0 );
 }
 
 MDAL::Dataset2D::~Dataset2D() = default;
+
+
+size_t MDAL::Dataset2D::volumesCount() const
+{
+  return 0;
+}
 
 size_t MDAL::Dataset2D::verticalLevelCountData( size_t, size_t, int * )
 {
@@ -123,12 +113,18 @@ size_t MDAL::Dataset2D::activeVolumesData( size_t, size_t, int * )
   return 0;
 }
 
-MDAL::Dataset3D::Dataset3D( MDAL::DatasetGroup *parent ):
-  Dataset( parent )
+MDAL::Dataset3D::Dataset3D( MDAL::DatasetGroup *parent, size_t volumes )
+  : Dataset( parent )
+  , mVolumesCount( volumes )
 {
 }
 
 MDAL::Dataset3D::~Dataset3D() = default;
+
+size_t MDAL::Dataset3D::volumesCount() const
+{
+  return mVolumesCount;
+}
 
 size_t MDAL::Dataset3D::scalarData( size_t, size_t, double * )
 {

@@ -32,7 +32,7 @@ namespace MDAL
         Face2DEdge, //!< Edge of 2D Face
         Face2D, //!< 2D (Polygon) Face
         Volume3D, //!< 3D (stacked) volumes
-        Levels3D, //!< number of levels above 2D Faces
+        StackedFace3D, //! 3D (stacked) Faces
         Time, //!< Time steps
         MaxVerticesInFace //!< Maximum number of vertices in a face
       };
@@ -56,12 +56,44 @@ namespace MDAL
     std::string name; //!< Dataset group name
     CFDimensions::Type outputType;
     bool is_vector;
+    bool time_first_dim;
     size_t nTimesteps;
+    size_t nValues;
     int ncid_x; //!< NetCDF variable id
     int ncid_y; //!< NetCDF variable id
-    size_t arr_size;
   };
   typedef std::map<std::string, CFDatasetGroupInfo> cfdataset_info_map; // name -> DatasetInfo
+
+  class CFDataset2D: public Dataset2D
+  {
+    public:
+      CFDataset2D( DatasetGroup *parent,
+                   double fill_val_x,
+                   double fill_val_y,
+                   int ncid_x,
+                   int ncid_y,
+                   bool time_first_dim,
+                   size_t timesteps,
+                   size_t values,
+                   size_t ts,
+                   std::shared_ptr<NetCDFFile> ncFile
+                 );
+      virtual ~CFDataset2D() override;
+
+      virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
+      virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
+      virtual size_t activeData( size_t indexStart, size_t count, int *buffer ) override;
+    private:
+      double mFillValX;
+      double mFillValY;
+      int mNcidX; //!< NetCDF variable id
+      int mNcidY; //!< NetCDF variable id
+      bool mTimeFirstDim;
+      size_t mTimesteps;
+      size_t mValues;
+      size_t mTs;
+      std::shared_ptr<NetCDFFile> mNcFile;
+  };
 
   //! NetCDF Climate and Forecast (CF) Metadata Conventions
   //! http://cfconventions.org
@@ -73,8 +105,8 @@ namespace MDAL
                 const std::string &longName,
                 const std::string &filters,
                 const int capabilities );
-      virtual ~DriverCF() override = default;
-      bool canReadMesh( const std::string &uri ) override;
+      virtual ~DriverCF() override;
+      bool canRead( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &fileName, MDAL_Status *status ) override;
 
     protected:
@@ -86,33 +118,27 @@ namespace MDAL
       virtual void parseNetCDFVariableMetadata( int varid, const std::string &variableName,
           std::string &name, bool *is_vector, bool *is_x ) = 0;
       virtual std::string getTimeVariableName() const = 0;
+      virtual std::shared_ptr<MDAL::Dataset> create2DDataset(
+        std::shared_ptr<MDAL::DatasetGroup> group,
+        size_t ts,
+        const MDAL::CFDatasetGroupInfo &dsi,
+        double fill_val_x, double fill_val_y );
+
+      virtual std::shared_ptr<MDAL::Dataset> create3DDataset(
+        std::shared_ptr<MDAL::DatasetGroup> group,
+        size_t ts,
+        const MDAL::CFDatasetGroupInfo &dsi,
+        double fill_val_x, double fill_val_y );
 
       void setProjection( MDAL::Mesh *m );
       cfdataset_info_map parseDatasetGroupInfo();
       void parseTime( std::vector<double> &times );
-      std::shared_ptr<MDAL::Dataset> createFace2DDataset(
-        std::shared_ptr<MDAL::DatasetGroup> group,
-        size_t ts,
-        const MDAL::CFDatasetGroupInfo &dsi,
-        const std::vector<double> &vals_x,
-        const std::vector<double> &vals_y,
-        double fill_val_x, double fill_val_y );
-
-      std::shared_ptr<MDAL::Dataset> createVertex2DDataset(
-        std::shared_ptr<MDAL::DatasetGroup> group,
-        size_t ts,
-        const MDAL::CFDatasetGroupInfo &dsi,
-        const std::vector<double> &vals_x,
-        const std::vector<double> &vals_y,
-        double fill_val_x, double fill_val_y );
-
       void addDatasetGroups( Mesh *mesh,
                              const std::vector<double> &times,
                              const cfdataset_info_map &dsinfo_map );
 
-
       std::string mFileName;
-      NetCDFFile mNcFile;
+      std::shared_ptr<NetCDFFile> mNcFile;
       CFDimensions mDimensions;
   };
 

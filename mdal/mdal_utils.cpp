@@ -344,7 +344,7 @@ double MDAL::parseTimeUnits( const std::string &units )
 
   const std::vector<std::string> units_list = MDAL::split( units, " since " );
   std::string unit_definition = units;
-  if ( units_list.size() == 2 )
+  if ( !units_list.empty() )
   {
     unit_definition = units_list[0];
   }
@@ -455,6 +455,7 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
     return ret;
 
   bool isVector = !dataset->group()->isScalar();
+  bool is3D = dataset->group()->dataLocation() == MDAL_DataLocation::DataOnVolumes3D;
   size_t bufLen = 2000;
   std::vector<double> buffer( isVector ? bufLen * 2 : bufLen );
 
@@ -462,13 +463,27 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
   while ( i < dataset->valuesCount() )
   {
     size_t valsRead;
-    if ( isVector )
+    if ( is3D )
     {
-      valsRead = dataset->vectorData( i, bufLen, buffer.data() );
+      if ( isVector )
+      {
+        valsRead = dataset->vectorVolumesData( i, bufLen, buffer.data() );
+      }
+      else
+      {
+        valsRead = dataset->scalarVolumesData( i, bufLen, buffer.data() );
+      }
     }
     else
     {
-      valsRead = dataset->scalarData( i, bufLen, buffer.data() );
+      if ( isVector )
+      {
+        valsRead = dataset->vectorData( i, bufLen, buffer.data() );
+      }
+      else
+      {
+        valsRead = dataset->scalarData( i, bufLen, buffer.data() );
+      }
     }
     if ( valsRead == 0 )
       return ret;

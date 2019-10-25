@@ -8,11 +8,155 @@
 #include "mdal_utils.hpp"
 #include "mdal_netcdf.hpp"
 #include <math.h>
+#include <assert.h>
+#include <cstring>
+
+MDAL::TuflowFVDataset3D::TuflowFVDataset3D( MDAL::DatasetGroup *parent,
+    int ncid_x, int ncid_y, size_t timesteps,
+    size_t volumesCount, size_t facesCount,
+    size_t levelFacesCount, size_t ts,
+    std::shared_ptr<NetCDFFile> ncFile )
+  : MDAL::Dataset3D( parent, volumesCount )
+  , mNcidX( ncid_x )
+  , mNcidY( ncid_y )
+  , mTimesteps( timesteps )
+  , mFacesCount( facesCount )
+  , mLevelFacesCount( levelFacesCount )
+  , mTs( ts )
+  , mNcFile( ncFile )
+{
+  if ( ncFile )
+  {
+    mNcidVerticalLevels = ncFile->arrId( "NL" );
+    mNcidVerticalLevelsZ = ncFile->arrId( "layerface_Z" );
+    mNcidActive2D = ncFile->arrId( "stat" );
+    mNcid3DTo2D = ncFile->arrId( "idx2" );
+    mNcid2DTo3D = ncFile->arrId( "idx3" );
+  }
+}
+
+MDAL::TuflowFVDataset3D::~TuflowFVDataset3D() = default;
+
+size_t MDAL::TuflowFVDataset3D::verticalLevelCountData( size_t indexStart, size_t count, int *buffer )
+{
+  if ( ( count < 1 ) || ( indexStart >= mFacesCount ) )
+    return 0;
+  if ( mNcidVerticalLevels < 0 )
+    return 0;
+
+  size_t copyValues = std::min( mFacesCount - indexStart, count );
+  std::vector<int> vals = mNcFile->readIntArr(
+                            mNcidVerticalLevels,
+                            indexStart,
+                            copyValues
+                          );
+  memcpy( buffer, vals.data(), copyValues * sizeof( int ) );
+  return copyValues;
+}
+
+size_t MDAL::TuflowFVDataset3D::verticalLevelData( size_t indexStart, size_t count, double *buffer )
+{
+  if ( ( count < 1 ) || ( indexStart >= mLevelFacesCount ) )
+    return 0;
+  if ( mTs >= mTimesteps )
+    return 0;
+  if ( mNcidVerticalLevelsZ < 0 )
+    return 0;
+
+  size_t copyValues = std::min( mLevelFacesCount - indexStart, count );
+  std::vector<double> vals = mNcFile->readDoubleArr(
+                               mNcidVerticalLevelsZ,
+                               mTs,
+                               indexStart,
+                               1,
+                               copyValues
+                             );
+  memcpy( buffer, vals.data(), copyValues * sizeof( double ) );
+  return copyValues;
+}
+
+size_t MDAL::TuflowFVDataset3D::faceToVolumeData( size_t indexStart, size_t count, int *buffer )
+{
+  if ( ( count < 1 ) || ( indexStart >= mFacesCount ) )
+    return 0;
+  if ( mNcid2DTo3D < 0 )
+    return 0;
+
+  size_t copyValues = std::min( mFacesCount - indexStart, count );
+  std::vector<int> vals = mNcFile->readIntArr(
+                            mNcid2DTo3D,
+                            indexStart,
+                            copyValues
+                          );
+  memcpy( buffer, vals.data(), copyValues * sizeof( int ) );
+  return copyValues;
+}
+
+size_t MDAL::TuflowFVDataset3D::scalarVolumesData( size_t indexStart, size_t count, double *buffer )
+{
+  if ( ( count < 1 ) || ( indexStart >= volumesCount() ) )
+    return 0;
+  if ( mTs >= mTimesteps )
+    return 0;
+
+  size_t copyValues = std::min( volumesCount() - indexStart, count );
+  std::vector<double> vals = mNcFile->readDoubleArr(
+                               mNcidX,
+                               mTs,
+                               indexStart,
+                               1,
+                               copyValues
+                             );
+  memcpy( buffer, vals.data(), copyValues * sizeof( double ) );
+  return copyValues;
+}
+
+size_t MDAL::TuflowFVDataset3D::vectorVolumesData( size_t indexStart, size_t count, double *buffer )
+{
+  if ( ( count < 1 ) || ( indexStart >= volumesCount() ) )
+    return 0;
+  if ( mTs >= mTimesteps )
+    return 0;
+
+  size_t copyValues = std::min( volumesCount() - indexStart, count );
+  std::vector<double> vals_x = mNcFile->readDoubleArr(
+                                 mNcidX,
+                                 mTs,
+                                 indexStart,
+                                 1,
+                                 copyValues
+                               );
+  std::vector<double> vals_y = mNcFile->readDoubleArr(
+                                 mNcidY,
+                                 mTs,
+                                 indexStart,
+                                 1,
+                                 copyValues
+                               );
+
+  for ( size_t i = 0; i < copyValues; ++i )
+  {
+    buffer[2 * i] = vals_x[i];
+    buffer[2 * i + 1] = vals_y[i];
+  }
+  return copyValues;
+}
+
+size_t MDAL::TuflowFVDataset3D::activeVolumesData( size_t indexStart, size_t count, int *buffer )
+{
+  // TODO
+  MDAL_UNUSED( indexStart )
+  memset( buffer, 1, count * sizeof( int ) );
+  return count;
+}
+
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 MDAL::DriverTuflowFV::DriverTuflowFV():
   DriverCF( "TUFLOWFV",
             "TUFLOW FV",
-            "*.nc"
+            "*.nc",
+            Capability::ReadMesh
           )
 {
 }
@@ -31,25 +175,24 @@ MDAL::CFDimensions MDAL::DriverTuflowFV::populateDimensions( )
   int ncid;
 
   // 2D Mesh
-  mNcFile.getDimension( "NumCells2D", &count, &ncid );
+  mNcFile->getDimension( "NumCells2D", &count, &ncid );
   dims.setDimension( CFDimensions::Face2D, count, ncid );
 
-  mNcFile.getDimension( "MaxNumCellVert", &count, &ncid );
+  mNcFile->getDimension( "MaxNumCellVert", &count, &ncid );
   dims.setDimension( CFDimensions::MaxVerticesInFace, count, ncid );
 
-  mNcFile.getDimension( "NumVert2D", &count, &ncid );
+  mNcFile->getDimension( "NumVert2D", &count, &ncid );
   dims.setDimension( CFDimensions::Vertex2D, count, ncid );
 
-  mNcFile.getDimension( "NumCells3D", &count, &ncid );
+  // 3D Mesh
+  mNcFile->getDimension( "NumCells3D", &count, &ncid );
   dims.setDimension( CFDimensions::Volume3D, count, ncid );
 
-  size_t levels = 1;
-  if ( dims.size( CFDimensions::Face2D ) > 0 )
-    levels = ( dims.size( CFDimensions::Volume3D ) / dims.size( CFDimensions::Face2D ) ) + 1;
-  dims.setDimension( CFDimensions::Levels3D, levels, ncid );
+  mNcFile->getDimension( "NumLayerFaces3D", &count, &ncid );
+  dims.setDimension( CFDimensions::StackedFace3D, count, ncid );
 
   // Time
-  mNcFile.getDimension( "Time", &count, &ncid );
+  mNcFile->getDimension( "Time", &count, &ncid );
   dims.setDimension( CFDimensions::Time, count, ncid );
 
   return dims;
@@ -69,9 +212,9 @@ void MDAL::DriverTuflowFV::populateVertices( MDAL::Vertices &vertices )
   Vertex *vertexPtr = vertices.data();
 
   // Parse 2D Mesh
-  const std::vector<double> vertices2D_x = mNcFile.readDoubleArr( "node_X", vertexCount );
-  const std::vector<double> vertices2D_y = mNcFile.readDoubleArr( "node_Y", vertexCount );
-  const std::vector<double> vertices2D_z = mNcFile.readDoubleArr( "node_Zb", vertexCount );
+  const std::vector<double> vertices2D_x = mNcFile->readDoubleArr( "node_X", vertexCount );
+  const std::vector<double> vertices2D_y = mNcFile->readDoubleArr( "node_Y", vertexCount );
+  const std::vector<double> vertices2D_z = mNcFile->readDoubleArr( "node_Zb", vertexCount );
 
   for ( size_t i = 0; i < vertexCount; ++i, ++vertexPtr )
   {
@@ -89,8 +232,8 @@ void MDAL::DriverTuflowFV::populateFaces( MDAL::Faces &faces )
 
   // Parse 2D Mesh
   size_t verticesInFace = mDimensions.size( CFDimensions::MaxVerticesInFace );
-  std::vector<int> face_nodes_conn = mNcFile.readIntArr( "cell_node", faceCount * verticesInFace );
-  std::vector<int> face_vertex_counts = mNcFile.readIntArr( "cell_Nvert", faceCount );
+  std::vector<int> face_nodes_conn = mNcFile->readIntArr( "cell_node", faceCount * verticesInFace );
+  std::vector<int> face_vertex_counts = mNcFile->readIntArr( "cell_Nvert", faceCount );
 
   for ( size_t i = 0; i < faceCount; ++i )
   {
@@ -122,6 +265,7 @@ std::set<std::string> MDAL::DriverTuflowFV::ignoreNetCDFVariables()
   std::set<std::string> ignore_variables;
 
   ignore_variables.insert( getTimeVariableName() );
+  ignore_variables.insert( "NL" );
   ignore_variables.insert( "cell_Nvert" );
   ignore_variables.insert( "cell_node" );
   ignore_variables.insert( "idx2" );
@@ -144,7 +288,7 @@ void MDAL::DriverTuflowFV::parseNetCDFVariableMetadata( int varid, const std::st
   *is_vector = false;
   *is_x = true;
 
-  std::string long_name = mNcFile.getAttrStr( "long_name", varid );
+  std::string long_name = mNcFile->getAttrStr( "long_name", varid );
   if ( long_name.empty() )
   {
     if ( MDAL::endsWith( variableName, "_x" ) )
@@ -187,3 +331,25 @@ std::string MDAL::DriverTuflowFV::getTimeVariableName() const
 {
   return "ResTime";
 }
+
+std::shared_ptr<MDAL::Dataset> MDAL::DriverTuflowFV::create3DDataset( std::shared_ptr<MDAL::DatasetGroup> group, size_t ts,
+    const MDAL::CFDatasetGroupInfo &dsi,
+    double, double )
+{
+  std::shared_ptr<MDAL::TuflowFVDataset3D> dataset = std::make_shared<MDAL::TuflowFVDataset3D>(
+        group.get(),
+        dsi.ncid_x,
+        dsi.ncid_y,
+        dsi.nTimesteps,
+        mDimensions.size( CFDimensions::Type::Volume3D ),
+        mDimensions.size( CFDimensions::Type::Face2D ),
+        mDimensions.size( CFDimensions::Type::StackedFace3D ),
+        ts,
+        mNcFile
+      );
+
+  // TODO use "Maximums" from file
+  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  return std::move( dataset );
+}
+

@@ -78,6 +78,7 @@ TEST( MdalUtilsTest, TimeParsing )
     { "seconds since 2001-05-05 00:00:00", 3600 },
     { "minutes since 2001-05-05 00:00:00", 60 },
     { "hours since 1900-01-01 00:00:0.0", 1 },
+    { "hours", 1 },
     { "days since 1961-01-01 00:00:00", 1.0 / 24.0 },
     { "invalid format of time", 1 }
   };

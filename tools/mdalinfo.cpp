@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
 {
   std::cout << "mdalinfo " << MDAL_Version() << std::endl;
 
-  std::vector<std::string> args( argc );
+  std::vector<std::string> args( static_cast<size_t>( argc ) );
   for ( int i = 0; i < argc; ++i )
     args[static_cast<size_t>( i )] = argv[i];
 
@@ -79,10 +79,9 @@ int main( int argc, char *argv[] )
   std::vector<std::string> extraDatasets;
   if ( argc > 2 ) // additional dataset arguments
   {
-    for ( size_t i = 2; i < argc; ++i )
-      extraDatasets.push_back( args[i] );
+    for ( int i = 2; i < argc; ++i )
+      extraDatasets.push_back( args[static_cast<size_t>( i )] );
   }
-
 
   // MESH
   std::cout << "Mesh File: " << mesh_file << std::endl;

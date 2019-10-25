@@ -321,9 +321,11 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   EXPECT_DOUBLE_EQ( 2, min );
   EXPECT_DOUBLE_EQ( 12, max );
 
+  // this dataset contains only discrete set of results
+  // Mesh2D_s1:flag_values = "1 2 3 4 5 6 7 8 9 10 11 12" ;
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( -2.0422003887246905e-301, min );
-  EXPECT_DOUBLE_EQ( 560.18823529411759, max );
+  EXPECT_DOUBLE_EQ( 12, max );
 
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 183.5, time );
