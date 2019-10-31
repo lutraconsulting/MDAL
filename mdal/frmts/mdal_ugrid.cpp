@@ -431,8 +431,11 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
   // Global dimensions
   int dimNodeCountId = mNcFile.defineDimension( "nmesh2d_node", mesh->verticesCount() );
   int dimFaceCountId = mNcFile.defineDimension( "nmesh2d_face", mesh->facesCount() );
+  mNcFile.defineDimension( "nmesh2d_edge", 1 ); // no data on edges, cannot be 0, since 0==NC_UNLIMITED
+  int dimTimeId = mNcFile.defineDimension( "time", NC_UNLIMITED );
   int dimMaxNodesPerFaceId = mNcFile.defineDimension( "max_nmesh2d_face_nodes",
                              mesh->faceVerticesMaximumCount() );
+
   // Mesh 2D Definition
   int mesh2dId = mNcFile.defineVar( "mesh2d", NC_INT, 0, nullptr );
   mNcFile.putAttrStr( mesh2dId, "cf_role", "mesh_topology" );
@@ -440,6 +443,7 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
   mNcFile.putAttrInt( mesh2dId, "topology_dimension", 2 );
   mNcFile.putAttrStr( mesh2dId, "node_coordinates", "mesh2d_node_x mesh2d_node_y" );
   mNcFile.putAttrStr( mesh2dId, "node_dimension", "nmesh2d_node" );
+  mNcFile.putAttrStr( mesh2dId, "edge_dimension", "nmesh2d_edge" );
   mNcFile.putAttrStr( mesh2dId, "max_face_nodes_dimension", "max_nmesh2d_face_nodes" );
   mNcFile.putAttrStr( mesh2dId, "face_node_connectivity", "mesh2d_face_nodes" );
   mNcFile.putAttrStr( mesh2dId, "face_dimension", "nmesh2d_face" );
@@ -501,6 +505,9 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
     }
   }
 
+  // Time array
+  int timeId = mNcFile.defineVar( "time", NC_DOUBLE, 1, &dimTimeId );
+  mNcFile.putAttrStr( timeId, "units", "hours since 2000-01-01 00:00:00" );
 
   // Turning off define mode - allows data write
   nc_enddef( mNcFile.handle() );
@@ -544,6 +551,9 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
     faceIterator->next( 1, faceOffsets, faceVerticesMax, vertexIndices.get() );
     mNcFile.putDataArrayInt( mesh2FaceNodesId, i, faceVerticesMax, vertexIndices.get() );
   }
+
+  // Time values (not implemented)
+  mNcFile.putDataDouble( timeId, 0, 0.0 );
 
   // Turning on define mode
   nc_redef( mNcFile.handle() );

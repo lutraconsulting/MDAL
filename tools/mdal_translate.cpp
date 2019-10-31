@@ -17,17 +17,17 @@ void printFormats()
   int dc = MDAL_driverCount();
   std::vector<std::string> driverNames;
 
-  for (int i = 0; i < dc; i++)
+  for ( int i = 0; i < dc; i++ )
   {
-    DriverH d = MDAL_driverFromIndex(i);
-    if (MDAL_DR_SaveMeshCapability(d))
-        std::cout << MDAL_DR_name(d) << std::endl;
+    DriverH d = MDAL_driverFromIndex( i );
+    if ( MDAL_DR_SaveMeshCapability( d ) )
+      std::cout << MDAL_DR_name( d ) << std::endl;
   }
 }
 
 void printHelp()
 {
-  std::cout << "mdal_translate [-h] [-of format] src_mesh dst_mesh" << std::endl;
+  std::cout << "mdal_translate [-h] -of format src_mesh dst_mesh" << std::endl;
   printFormats();
 }
 
@@ -36,7 +36,7 @@ MeshH loadMeshFile( const std::string &meshPath )
   MeshH mesh = MDAL_LoadMesh( meshPath.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   if ( s != MDAL_Status::None )
-    throw std::runtime_error("Loading mesh file failed");
+    throw std::runtime_error( "Loading mesh file failed" );
 
   return mesh;
 }
@@ -46,7 +46,7 @@ void saveMeshAs( MeshH mesh, const std::string &format, const std::string &outpu
   MDAL_SaveMesh( mesh, outputFilePath.c_str(), format.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   if ( s != MDAL_Status::None )
-    throw std::runtime_error("Saving mesh file failed");
+    throw std::runtime_error( "Saving mesh file failed" );
 }
 
 int main( int argc, char *argv[] )
@@ -63,19 +63,23 @@ int main( int argc, char *argv[] )
     return EXIT_SUCCESS;
   }
 
-  if ( args.size() < 4 )
+  if ( args.size() < 5 )
   {
     printHelp();
     return EXIT_FAILURE;
   }
 
+  std::string format = args[2];
+  std::string meshFile = args[3];
+  std::string destFile = args[4];
+
   try
   {
     // Load Mesh
-    MeshH mesh = loadMeshFile( args[1] );
+    MeshH mesh = loadMeshFile( meshFile );
 
     // Save Mesh
-    saveMeshAs( mesh, args[2], args[3] );
+    saveMeshAs( mesh, format, destFile );
   }
   catch ( std::exception &e )
   {
