@@ -43,6 +43,15 @@ class NetCDFFile
     void getDimensions( const std::string &variableName, std::vector<size_t> &dimensionsId, std::vector<int> &dimensionIds );
     bool hasDimension( const std::string &name ) const;
 
+    void createFile( const std::string &fileName );
+    int defineDimension( const std::string &name, size_t size );
+    int defineVar( const std::string &varName, int ncType, int dimensionCount, const int *dimensions );
+    void putAttrStr( int varId, const std::string &attrName, const std::string &value );
+    void putAttrInt( int varId, const std::string &attrName, int value );
+    void putAttrDouble( int varId, const std::string &attrName, double value );
+    void putDataDouble( int varId, const size_t index, const double value );
+    void putDataArrayInt( int varId, size_t line, size_t faceVerticesMax, int *values );
+
   private:
     int mNcid; // C handle to the file
 };

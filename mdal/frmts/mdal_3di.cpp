@@ -11,7 +11,8 @@ MDAL::Driver3Di::Driver3Di()
   : DriverCF(
       "3Di",
       "3Di Results",
-      "results_3di.nc" )
+      "results_3di.nc",
+      Capability::ReadMesh )
 {
 }
 

@@ -13,8 +13,10 @@ MDAL::DriverUgrid::DriverUgrid()
   : DriverCF(
       "Ugrid",
       "UGRID Results",
-      "*.nc" )
+      "*.nc",
+      Capability::ReadMesh | Capability::SaveMesh )
 {
+
 }
 
 MDAL::DriverUgrid *MDAL::DriverUgrid::create()
@@ -400,4 +402,156 @@ void MDAL::DriverUgrid::parse2VariablesFromAttribute( const std::string &name, c
     var1 = chunks[0];
     var2 = chunks[1];
   }
+}
+
+void MDAL::DriverUgrid::save( const std::string &uri, MDAL::Mesh *mesh, MDAL_Status *status )
+{
+  mFileName = uri;
+
+  try
+  {
+    // Create file
+    mNcFile.createFile( mFileName );
+
+    // Write globals
+    writeGlobals( );
+
+    // Write variables
+    writeVariables( mesh );
+  }
+  catch ( MDAL_Status error )
+  {
+    if ( status ) *status = ( error );
+  }
+}
+
+
+void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
+{
+  // Global dimensions
+  int dimNodeCountId = mNcFile.defineDimension( "nmesh2d_node", mesh->verticesCount() );
+  int dimFaceCountId = mNcFile.defineDimension( "nmesh2d_face", mesh->facesCount() );
+  int dimMaxNodesPerFaceId = mNcFile.defineDimension( "max_nmesh2d_face_nodes",
+                             mesh->faceVerticesMaximumCount() );
+  // Mesh 2D Definition
+  int mesh2dId = mNcFile.defineVar( "mesh2d", NC_INT, 0, nullptr );
+  mNcFile.putAttrStr( mesh2dId, "cf_role", "mesh_topology" );
+  mNcFile.putAttrStr( mesh2dId, "long_name", "Topology data of 2D network" );
+  mNcFile.putAttrInt( mesh2dId, "topology_dimension", 2 );
+  mNcFile.putAttrStr( mesh2dId, "node_coordinates", "mesh2d_node_x mesh2d_node_y" );
+  mNcFile.putAttrStr( mesh2dId, "node_dimension", "nmesh2d_node" );
+  mNcFile.putAttrStr( mesh2dId, "max_face_nodes_dimension", "max_nmesh2d_face_nodes" );
+  mNcFile.putAttrStr( mesh2dId, "face_node_connectivity", "mesh2d_face_nodes" );
+  mNcFile.putAttrStr( mesh2dId, "face_dimension", "nmesh2d_face" );
+
+  // Nodes X coordinate
+  int mesh2dNodeXId = mNcFile.defineVar( "mesh2d_node_x", NC_DOUBLE, 1, &dimNodeCountId );
+  mNcFile.putAttrStr( mesh2dNodeXId, "standard_name", "projection_x_coordinate" );
+  mNcFile.putAttrStr( mesh2dNodeXId, "long_name", "x-coordinate of mesh nodes" );
+  mNcFile.putAttrStr( mesh2dNodeXId, "mesh", "mesh2d" );
+  mNcFile.putAttrStr( mesh2dNodeXId, "location", "node" );
+
+  // Nodes Y coordinate
+  int mesh2dNodeYId = mNcFile.defineVar( "mesh2d_node_y", NC_DOUBLE, 1, &dimNodeCountId );
+  mNcFile.putAttrStr( mesh2dNodeYId, "standard_name", "projection_y_coordinate" );
+  mNcFile.putAttrStr( mesh2dNodeYId, "long_name", "y-coordinate of mesh nodes" );
+  mNcFile.putAttrStr( mesh2dNodeYId, "mesh", "mesh2d" );
+  mNcFile.putAttrStr( mesh2dNodeYId, "location", "node" );
+
+  // Nodes Z coordinate
+  int mesh2dNodeZId = mNcFile.defineVar( "mesh2d_node_z", NC_DOUBLE, 1, &dimNodeCountId );
+  mNcFile.putAttrStr( mesh2dNodeZId, "mesh", "mesh2d" );
+  mNcFile.putAttrStr( mesh2dNodeZId, "location", "node" );
+  mNcFile.putAttrStr( mesh2dNodeZId, "coordinates", "mesh2d_node_x mesh2d_node_y" );
+  mNcFile.putAttrStr( mesh2dNodeZId, "standard_name", "altitude" );
+  mNcFile.putAttrStr( mesh2dNodeZId, "long_name", "z-coordinate of mesh nodes" );
+  mNcFile.putAttrStr( mesh2dNodeZId, "grid_mapping", "projected_coordinate_system" );
+  mNcFile.putAttrDouble( mesh2dNodeZId, "_FillValue", -999.0 );
+
+  // Faces 2D Variable
+  int mesh2FaceNodesId_dimIds [] { dimFaceCountId, dimMaxNodesPerFaceId };
+  int mesh2FaceNodesId = mNcFile.defineVar( "mesh2d_face_nodes", NC_INT, 2, mesh2FaceNodesId_dimIds );
+  mNcFile.putAttrStr( mesh2FaceNodesId, "cf_role", "face_node_connectivity" );
+  mNcFile.putAttrStr( mesh2FaceNodesId, "mesh", "mesh2d" );
+  mNcFile.putAttrStr( mesh2FaceNodesId, "location", "face" );
+  mNcFile.putAttrStr( mesh2FaceNodesId, "long_name", "Mapping from every face to its corner nodes (counterclockwise)" );
+  mNcFile.putAttrInt( mesh2FaceNodesId, "start_index", 0 );
+  mNcFile.putAttrInt( mesh2FaceNodesId, "_FillValue", -999 );
+
+  // Projected Coordinate System
+  int pcsId = mNcFile.defineVar( "projected_coordinate_system", NC_INT, 0, nullptr );
+
+  if ( mesh->crs() == "" )
+  {
+    mNcFile.putAttrInt( pcsId, "epsg", 0 );
+    mNcFile.putAttrStr( pcsId, "EPSG_code", "epgs:0" );
+  }
+  else
+  {
+    std::vector<std::string> words = MDAL::split( mesh->crs(), ":" );
+
+    if ( words[0] == "EPSG" && words.size() > 1 )
+    {
+      mNcFile.putAttrInt( pcsId, "epsg", std::stoi( words[1] ) );
+      mNcFile.putAttrStr( pcsId, "EPSG_code", mesh->crs() );
+    }
+    else
+    {
+      mNcFile.putAttrStr( pcsId, "wkt", mesh->crs() );
+    }
+  }
+
+
+  // Turning off define mode - allows data write
+  nc_enddef( mNcFile.handle() );
+
+  // Write vertices
+
+  const size_t maxBufferSize = 1000;
+  const size_t bufferSize = std::min( mesh->verticesCount(), maxBufferSize );
+  const size_t verticesCoordCount = bufferSize * 3;
+
+  std::unique_ptr<double[]> verticesCoordinates( new double[verticesCoordCount] );
+  std::unique_ptr<MDAL::MeshVertexIterator> vertexIterator = mesh->readVertices();
+
+  size_t vertexIndex = 0;
+  size_t vertexFileIndex = 0;
+  while ( vertexIndex < mesh->verticesCount() )
+  {
+    size_t verticesRead = vertexIterator->next( bufferSize, verticesCoordinates.get() );
+    if ( verticesRead == 0 )
+      break;
+
+    for ( size_t i = 0; i < verticesRead; i++ )
+    {
+      mNcFile.putDataDouble( mesh2dNodeXId, vertexFileIndex, verticesCoordinates[3 * i] );
+      mNcFile.putDataDouble( mesh2dNodeYId, vertexFileIndex, verticesCoordinates[3 * i + 1] );
+      mNcFile.putDataDouble( mesh2dNodeZId, vertexFileIndex, verticesCoordinates[3 * i + 2] );
+      vertexFileIndex++;
+    }
+    vertexIndex += verticesRead;
+  }
+
+  // Write faces
+  std::unique_ptr<MDAL::MeshFaceIterator> faceIterator = mesh->readFaces();
+  const size_t faceVerticesMax = mesh->faceVerticesMaximumCount();
+
+  int faceOffsets[1];
+  std::unique_ptr<int[]>vertexIndices( new int[faceVerticesMax] );
+
+  for ( size_t i = 0; i < mesh->facesCount(); ++i )
+  {
+    faceIterator->next( 1, faceOffsets, faceVerticesMax, vertexIndices.get() );
+    mNcFile.putDataArrayInt( mesh2FaceNodesId, i, faceVerticesMax, vertexIndices.get() );
+  }
+
+  // Turning on define mode
+  nc_redef( mNcFile.handle() );
+}
+
+void MDAL::DriverUgrid::writeGlobals()
+{
+  mNcFile.putAttrStr( NC_GLOBAL, "source", "MDAL " + std::string( MDAL_Version() ) );
+  mNcFile.putAttrStr( NC_GLOBAL, "date_created", MDAL::getCurrentTimeStamp() );
+  mNcFile.putAttrStr( NC_GLOBAL, "Conventions", "CF-1.6 UGRID-1.0" );
 }
