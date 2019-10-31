@@ -110,6 +110,8 @@ namespace MDAL
   // time
   //! Returns a delimiter to get time in hours
   MDAL_TEST_EXPORT double parseTimeUnits( const std::string &units );
+  //! Returns current time stamp in YYYY-mm-ddTHH:MM:SSzoneOffset
+  std::string getCurrentTimeStamp();
 
   // statistics
   void combineStatistics( Statistics &main, const Statistics &other );

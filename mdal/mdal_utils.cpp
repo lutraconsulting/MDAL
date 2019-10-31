@@ -14,6 +14,7 @@
 #include <cmath>
 #include <string.h>
 #include <stdio.h>
+#include <ctime>
 
 bool MDAL::fileExists( const std::string &filename )
 {
@@ -357,6 +358,18 @@ double MDAL::parseTimeUnits( const std::string &units )
   return divBy;
 }
 
+std::string MDAL::getCurrentTimeStamp()
+{
+  time_t t ;
+  struct tm *tmp ;
+  char MY_TIME[50];
+  time( &t );
+  tmp = localtime( &t );
+  strftime( MY_TIME, sizeof( MY_TIME ), "%Y-%m-%dT%H:%M:%S%z", tmp );
+  std::string s = MDAL::trim( MY_TIME );
+  return s;
+}
+
 MDAL::Statistics _calculateStatistics( const std::vector<double> &values, size_t count, bool isVector )
 {
   MDAL::Statistics ret;
@@ -624,5 +637,3 @@ std::string MDAL::doubleToString( double value, int precision )
   oss << value;
   return oss.str();
 }
-
-

@@ -307,8 +307,9 @@ void MDAL::DriverCF::parseTime( std::vector<double> &times )
 
 MDAL::DriverCF::DriverCF( const std::string &name,
                           const std::string &longName,
-                          const std::string &filters ):
-  Driver( name, longName, filters, Capability::ReadMesh )
+                          const std::string &filters,
+                          const int capabilities ):
+  Driver( name, longName, filters, capabilities )
 {
 }
 
@@ -394,14 +395,13 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
         name(),
         vertices.size(),
         faces.size(),
-        mDimensions.MaxVerticesInFace,
+        mDimensions.size( mDimensions.MaxVerticesInFace ),
         computeExtent( vertices ),
         mFileName
       )
     );
     mesh->faces = faces;
     mesh->vertices = vertices;
-
     addBedElevation( mesh.get() );
     setProjection( mesh.get() );
 

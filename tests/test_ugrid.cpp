@@ -10,6 +10,84 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 
+TEST( MeshUgridTest, SaveDFlow11Manzese )
+{
+  //test driver capability
+  EXPECT_TRUE( MDAL_DR_SaveMeshCapability( MDAL_driverFromName( "Ugrid" ) ) );
+
+  // Open mesh
+  std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
+  MeshH meshToSave = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( meshToSave, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Save the mesh as UGRID
+  std::string fileNameToSave = tmp_file( "/manzese_1d2d_small_map_saveTest.nc" );
+  std::string fileNameToSave2 = tmp_file( "/manzese_1d2d_small_map_saveTest2.nc" );
+  MDAL_SaveMesh( meshToSave, fileNameToSave.c_str(), "Ugrid" );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Load saved UGRID mesh
+  MeshH savedMesh = MDAL_LoadMesh( fileNameToSave.c_str() );
+  EXPECT_NE( savedMesh, nullptr );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Save again to make sure saved file can be loaded
+  MDAL_SaveMesh( savedMesh, fileNameToSave2.c_str(), "Ugrid" );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Load second saved UGRID mesh
+  MeshH savedMesh2 = MDAL_LoadMesh( fileNameToSave2.c_str() );
+  EXPECT_NE( savedMesh2, nullptr );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Compare second save with the original mesh
+
+  // Vertices
+  int orignal_v_count = MDAL_M_vertexCount( meshToSave );
+  int saved_v_count = MDAL_M_vertexCount( savedMesh2 );
+  EXPECT_EQ( orignal_v_count, saved_v_count );
+
+  // Faces
+  int orignal_f_count = MDAL_M_faceCount( meshToSave );
+  int saved_f_count = MDAL_M_faceCount( savedMesh2 );
+  EXPECT_EQ( orignal_f_count, saved_f_count );
+
+  // Test face 1
+  int orignal_f_v_count = getFaceVerticesCountAt( meshToSave, 1 );
+  int saved_f_v_count = getFaceVerticesCountAt( savedMesh2, 1 );
+  EXPECT_EQ( orignal_f_v_count, saved_f_v_count ); //quad
+
+  // Test verticies
+  int orignal_f_v = getFaceVerticesIndexAt( meshToSave, 1, 0 );
+  int saved_f_v = getFaceVerticesIndexAt( savedMesh2, 1, 0 );
+  EXPECT_EQ( orignal_f_v, saved_f_v );
+
+  orignal_f_v = getFaceVerticesIndexAt( meshToSave, 1, 1 );
+  saved_f_v = getFaceVerticesIndexAt( savedMesh2, 1, 1 );
+  EXPECT_EQ( orignal_f_v, saved_f_v );
+
+  orignal_f_v = getFaceVerticesIndexAt( meshToSave, 1, 2 );
+  saved_f_v = getFaceVerticesIndexAt( savedMesh2, 1, 2 );
+  EXPECT_EQ( orignal_f_v, saved_f_v );
+
+  orignal_f_v = getFaceVerticesIndexAt( meshToSave, 1, 3 );
+  saved_f_v = getFaceVerticesIndexAt( savedMesh2, 1, 3 );
+  EXPECT_EQ( orignal_f_v, saved_f_v );
+
+  // Close meshed and delete all the files
+  MDAL_CloseMesh( meshToSave );
+  MDAL_CloseMesh( savedMesh );
+  MDAL_CloseMesh( savedMesh2 );
+  std::remove( fileNameToSave.c_str() );
+  std::remove( fileNameToSave2.c_str() );
+}
+
 TEST( MeshUgridTest, DFlow11Manzese )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );

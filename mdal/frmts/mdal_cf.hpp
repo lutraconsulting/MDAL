@@ -69,7 +69,8 @@ namespace MDAL
     public:
       DriverCF( const std::string &name,
                 const std::string &longName,
-                const std::string &filters );
+                const std::string &filters,
+                const int capabilities );
       virtual ~DriverCF() override = default;
       bool canRead( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &fileName, MDAL_Status *status ) override;
