@@ -26,6 +26,7 @@ double getVertexYCoordinatesAt( MeshH mesh, int index );
 double getVertexZCoordinatesAt( MeshH mesh, int index );
 int getFaceVerticesCountAt( MeshH mesh, int faceIndex );
 int getFaceVerticesIndexAt( MeshH mesh, int faceIndex, int index );
+std::vector<int> faceVertexIndices( MeshH mesh, int faceCount );
 
 // Datasets
 bool getActive( DatasetH dataset, int index );
@@ -36,5 +37,8 @@ double getValueY( DatasetH dataset, int index );
 //! Compare two vectors
 bool compareVectors( const std::vector<double> &a, const std::vector<double> &b );
 bool compareVectors( const std::vector<int> &a, const std::vector<int> &b );
+
+//! Same vertices (coords), faces and connectivity between them
+bool compareMeshFrames( MeshH meshA, MeshH meshB );
 
 #endif // MDAL_TESTUTILS_HPP
