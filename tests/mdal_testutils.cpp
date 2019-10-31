@@ -93,6 +93,31 @@ bool compareVectors( const std::vector<double> &a, const std::vector<double> &b 
   return true;
 }
 
+bool compareMeshFrames( MeshH meshA, MeshH meshB )
+{
+  // Vertices
+  int orignal_v_count = MDAL_M_vertexCount( meshA );
+  int saved_v_count = MDAL_M_vertexCount( meshB );
+  if ( orignal_v_count != saved_v_count ) return false;
+
+  std::vector<double> coordsA = getCoordinates( meshA, orignal_v_count );
+  std::vector<double> coordsB = getCoordinates( meshB, saved_v_count );
+  if ( !compareVectors( coordsA, coordsB ) )
+    return false;
+
+  // Faces
+  int orignal_f_count = MDAL_M_faceCount( meshA );
+  int saved_f_count = MDAL_M_faceCount( meshB );
+  if ( orignal_f_count != saved_f_count ) return false;
+
+  std::vector<int> verticesA = faceVertexIndices( meshA, orignal_f_count );
+  std::vector<int> verticesB = faceVertexIndices( meshB, saved_f_count );
+  if ( !compareVectors( verticesA, verticesB ) )
+    return false;
+
+  return true;
+}
+
 std::vector<double> getCoordinates( MeshH mesh, int verticesCount )
 {
   MeshVertexIteratorH iterator = MDAL_M_vertexIterator( mesh );
@@ -125,6 +150,19 @@ double getVertexYCoordinatesAt( MeshH mesh, int index )
 double getVertexZCoordinatesAt( MeshH mesh, int index )
 {
   return _getVertexCoordinatesAt( mesh, index, 2 );
+}
+
+std::vector<int> faceVertexIndices( MeshH mesh, int faceCount )
+{
+  MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
+  int faceOffsetsBufferLen = faceCount + 1;
+  int vertexIndicesBufferLen = faceOffsetsBufferLen * MDAL_M_faceVerticesMaximumCount( mesh );
+  std::vector<int> faceOffsetsBuffer( static_cast<size_t>( faceOffsetsBufferLen ) );
+  std::vector<int> vertexIndicesBuffer( static_cast<size_t>( vertexIndicesBufferLen ) );
+  MDAL_FI_next( iterator, faceOffsetsBufferLen, faceOffsetsBuffer.data(),
+                vertexIndicesBufferLen, vertexIndicesBuffer.data() );
+  MDAL_FI_close( iterator );
+  return vertexIndicesBuffer;
 }
 
 int getFaceVerticesCountAt( MeshH mesh, int faceIndex )
