@@ -116,6 +116,19 @@ ENDFOREACH(TESTSRC)
 
 # mdalinfo utility test
 ADD_TEST(NAME mdalinfo_test COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/regular_grid.2dm" "${TESTDATA_DIR}/xmdf/regular_grid.xmdf" )
+SET_TESTS_PROPERTIES(mdalinfo_test PROPERTIES PASS_REGULAR_EXPRESSION "Groups count: 9")
+
 ADD_TEST(NAME mdalinfo_test2 COMMAND $<TARGET_FILE:mdalinfo> "--formats" )
+SET_TESTS_PROPERTIES(mdalinfo_test2 PROPERTIES PASS_REGULAR_EXPRESSION "2DM Mesh File")
+
 ADD_TEST(NAME mdalinfo_test3 COMMAND $<TARGET_FILE:mdalinfo> "-h" )
-ADD_TEST(NAME mdalinfo_test4 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/regular_grid.2dm" "${TESTDATA_DIR}/xmdf/regular_grid.xmdf" "--stats" )
+SET_TESTS_PROPERTIES(mdalinfo_test3 PROPERTIES PASS_REGULAR_EXPRESSION "mdalinfo mesh_file")
+
+ADD_TEST(NAME mdalinfo_test4 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/flo2d/BarnHDF5/BASE.OUT" "--stats" )
+SET_TESTS_PROPERTIES(mdalinfo_test4 PROPERTIES PASS_REGULAR_EXPRESSION "defined on:    faces")
+
+ADD_TEST(NAME mdalinfo_test_err1 COMMAND $<TARGET_FILE:mdalinfo> )
+SET_TESTS_PROPERTIES(mdalinfo_test_err1 PROPERTIES WILL_FAIL TRUE)
+
+
+

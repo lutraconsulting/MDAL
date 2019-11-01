@@ -178,7 +178,10 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
 
     DriverH driver = MDAL_driverFromName( "BINARY_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
+    ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces2D ) );
+    ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVolumes3D ) );
+    ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataInvalidLocation ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
@@ -278,7 +281,7 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
 
     DriverH driver = MDAL_driverFromName( "BINARY_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,

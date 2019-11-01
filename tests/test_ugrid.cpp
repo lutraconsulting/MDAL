@@ -13,7 +13,7 @@
 TEST( MeshUgridTest, SaveDFlow11Manzese )
 {
   //test driver capability
-  EXPECT_TRUE( MDAL_DR_SaveMeshCapability( MDAL_driverFromName( "Ugrid" ) ) );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( "Ugrid" ) ) );
 
   // Open mesh
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
@@ -46,7 +46,7 @@ TEST( MeshUgridTest, SaveDFlow11Manzese )
 TEST( MeshUgridTest, SaveQuadAndTriangle )
 {
   //test driver capability
-  EXPECT_TRUE( MDAL_DR_SaveMeshCapability( MDAL_driverFromName( "Ugrid" ) ) );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( "Ugrid" ) ) );
 
   // Open mesh with both triangle and quad
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );

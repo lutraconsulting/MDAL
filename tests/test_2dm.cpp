@@ -282,7 +282,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
 TEST( Mesh2DMTest, SaveMeshToFile )
 {
   //test driver capability
-  EXPECT_TRUE( MDAL_DR_SaveMeshCapability( MDAL_driverFromName( "2DM" ) ) );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( "2DM" ) ) );
 
   //open a mesh
   std::string pathSource = test_file( "/2dm/quad_and_triangle.2dm" );

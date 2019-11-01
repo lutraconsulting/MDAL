@@ -20,7 +20,7 @@ void printFormats()
   for ( int i = 0; i < dc; i++ )
   {
     DriverH d = MDAL_driverFromIndex( i );
-    if ( MDAL_DR_SaveMeshCapability( d ) )
+    if ( MDAL_DR_saveMeshCapability( d ) )
       std::cout << MDAL_DR_name( d ) << std::endl;
   }
 }

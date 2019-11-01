@@ -28,7 +28,7 @@ MDAL::DriverAsciiDat::DriverAsciiDat( ):
   Driver( "ASCII_DAT",
           "DAT",
           "*.dat",
-          Capability::ReadDatasets | Capability::WriteDatasets
+          Capability::ReadDatasets | Capability::WriteDatasetsOnFaces2D | Capability::WriteDatasetsOnVertices2D
         )
 {
 }
@@ -106,8 +106,10 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
       size_t fileNodeCount = toSizeT( items[1] );
       size_t meshIdCount = maximumId( mesh ) + 1;
       if ( meshIdCount != fileNodeCount )
+      {
         EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh )
       }
+    }
     else if ( cardType == "SCALAR" || cardType == "VECTOR" )
     {
       // just ignore - we know the type from earlier...
@@ -127,9 +129,11 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
   while ( std::getline( in, line ) );
 
   if ( !group || group->datasets.size() == 0 )
+  {
     EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
+  }
 
-    group->setStatistics( MDAL::calculateStatistics( group ) );
+  group->setStatistics( MDAL::calculateStatistics( group ) );
   mesh->datasetGroups.push_back( group );
   group.reset();
 }
@@ -445,9 +449,8 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
 
 bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
 {
-  if ( ( group->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) &&
-       ( group->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) )
-    return true;
+  assert( ( group->dataLocation() == MDAL_DataLocation::DataOnFaces2D ) ||
+          ( group->dataLocation() == MDAL_DataLocation::DataOnVertices2D ) );
 
   const bool isScalar = group->isScalar();
   const bool isOnVertices = group->dataLocation() == MDAL_DataLocation::DataOnVertices2D;

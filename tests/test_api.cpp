@@ -39,7 +39,7 @@ TEST( ApiTest, DriversApi )
   EXPECT_EQ( MDAL_driverFromIndex( MDAL_driverCount() ), nullptr );
   EXPECT_EQ( MDAL_driverFromName( "invaliddrivername" ), nullptr );
   EXPECT_FALSE( MDAL_DR_meshLoadCapability( nullptr ) );
-  EXPECT_FALSE( MDAL_DR_writeDatasetsCapability( nullptr ) );
+  EXPECT_FALSE( MDAL_DR_writeDatasetsCapability( nullptr, MDAL_DataLocation::DataOnVertices2D ) );
   EXPECT_EQ( MDAL_DR_longName( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_DR_name( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_DR_filters( nullptr ), std::string( "" ) );

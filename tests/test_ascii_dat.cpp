@@ -551,7 +551,7 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
@@ -650,7 +650,7 @@ TEST( MeshAsciiDatTest, WriteScalarFaceTest )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces2D ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
@@ -750,7 +750,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTest )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
@@ -848,7 +848,7 @@ TEST( MeshAsciiDatTest, WriteVectorFaceTest )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces2D ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
@@ -946,7 +946,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTestNoActive )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,

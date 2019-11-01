@@ -65,11 +65,6 @@ bool MDAL::Dataset::isValid() const
   return mIsValid;
 }
 
-void MDAL::Dataset::setIsValid( bool isValid )
-{
-  mIsValid = isValid;
-}
-
 MDAL::Dataset2D::Dataset2D( MDAL::DatasetGroup *parent )
   : Dataset( parent )
 {
@@ -78,40 +73,19 @@ MDAL::Dataset2D::Dataset2D( MDAL::DatasetGroup *parent )
 MDAL::Dataset2D::~Dataset2D() = default;
 
 
-size_t MDAL::Dataset2D::volumesCount() const
-{
-  return 0;
-}
+size_t MDAL::Dataset2D::volumesCount() const { return 0; }
 
-size_t MDAL::Dataset2D::verticalLevelCountData( size_t, size_t, int * )
-{
-  return 0;
-}
+size_t MDAL::Dataset2D::verticalLevelCountData( size_t, size_t, int * ) { return 0; }
 
-size_t MDAL::Dataset2D::verticalLevelData( size_t, size_t, double * )
-{
-  return 0;
-}
+size_t MDAL::Dataset2D::verticalLevelData( size_t, size_t, double * ) { return 0; }
 
-size_t MDAL::Dataset2D::faceToVolumeData( size_t, size_t, int * )
-{
-  return 0;
-}
+size_t MDAL::Dataset2D::faceToVolumeData( size_t, size_t, int * ) { return 0; }
 
-size_t MDAL::Dataset2D::scalarVolumesData( size_t, size_t, double * )
-{
-  return 0;
-}
+size_t MDAL::Dataset2D::scalarVolumesData( size_t, size_t, double * ) { return 0; }
 
-size_t MDAL::Dataset2D::vectorVolumesData( size_t, size_t, double * )
-{
-  return 0;
-}
+size_t MDAL::Dataset2D::vectorVolumesData( size_t, size_t, double * ) { return 0; }
 
-size_t MDAL::Dataset2D::activeVolumesData( size_t, size_t, int * )
-{
-  return 0;
-}
+size_t MDAL::Dataset2D::activeVolumesData( size_t, size_t, int * ) { return 0; }
 
 MDAL::Dataset3D::Dataset3D( MDAL::DatasetGroup *parent, size_t volumes )
   : Dataset( parent )
@@ -126,22 +100,11 @@ size_t MDAL::Dataset3D::volumesCount() const
   return mVolumesCount;
 }
 
-size_t MDAL::Dataset3D::scalarData( size_t, size_t, double * )
-{
-  return  0;
-}
+size_t MDAL::Dataset3D::scalarData( size_t, size_t, double * ) { return 0; }
 
-size_t MDAL::Dataset3D::vectorData( size_t, size_t count, double * )
-{
-  return 0;
-}
+size_t MDAL::Dataset3D::vectorData( size_t, size_t count, double * ) { return 0; }
 
-size_t MDAL::Dataset3D::activeData( size_t, size_t count, int * )
-{
-  return 0;
-}
-
-
+size_t MDAL::Dataset3D::activeData( size_t, size_t count, int * ) { return 0; }
 
 MDAL::DatasetGroup::DatasetGroup( const std::string &driverName,
                                   MDAL::Mesh *parent,

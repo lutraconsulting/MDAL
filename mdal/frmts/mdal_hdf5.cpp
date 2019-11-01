@@ -13,10 +13,12 @@ HdfFile::HdfFile( const std::string &path, HdfFile::Mode mode )
   switch ( mode )
   {
     case HdfFile::ReadOnly:
-      d = std::make_shared< Handle >( H5Fopen( path.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT ) );
+      if ( H5Fis_hdf5( mPath.c_str() ) > 0 )
+        d = std::make_shared< Handle >( H5Fopen( path.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT ) );
       break;
     case HdfFile::ReadWrite:
-      d = std::make_shared< Handle >( H5Fopen( path.c_str(), H5F_ACC_RDWR, H5P_DEFAULT ) );
+      if ( H5Fis_hdf5( mPath.c_str() ) > 0 )
+        d = std::make_shared< Handle >( H5Fopen( path.c_str(), H5F_ACC_RDWR, H5P_DEFAULT ) );
       break;
     case HdfFile::Create:
       d = std::make_shared< Handle >( H5Fcreate( path.c_str(), H5F_ACC_EXCL, H5P_DEFAULT, H5P_DEFAULT ) );
@@ -26,7 +28,7 @@ HdfFile::HdfFile( const std::string &path, HdfFile::Mode mode )
 
 HdfFile::~HdfFile() = default;
 
-bool HdfFile::isValid() const { return d->id >= 0; }
+bool HdfFile::isValid() const { return d && ( d->id >= 0 ); }
 
 hid_t HdfFile::id() const { return d->id; }
 

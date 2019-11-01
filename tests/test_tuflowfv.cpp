@@ -12,7 +12,7 @@
 
 TEST( MeshTuflowFVTest, TrapSteady053D )
 {
-  std::string path = test_file( "/tuflowfv/trap_steady_05_3D.nc" );
+  std::string path = test_file( "/tuflowfv/withoutMaxes/trap_steady_05_3D.nc" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();

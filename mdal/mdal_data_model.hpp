@@ -72,7 +72,6 @@ namespace MDAL
       void setStatistics( const Statistics &statistics );
 
       bool isValid() const;
-      void setIsValid( bool isValid );
 
       DatasetGroup *group() const;
       Mesh *mesh() const;
