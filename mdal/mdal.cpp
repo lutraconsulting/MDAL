@@ -81,18 +81,20 @@ bool MDAL_DR_meshLoadCapability( DriverH driver )
   return d->hasCapability( MDAL::Capability::ReadMesh );
 }
 
-bool MDAL_DR_writeDatasetsCapability( DriverH driver )
+bool MDAL_DR_writeDatasetsCapability( DriverH driver, MDAL_DataLocation location )
 {
   if ( !driver )
   {
     sLastStatus = MDAL_Status::Err_MissingDriver;
     return false;
   }
+
+
   MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
-  return d->hasCapability( MDAL::Capability::WriteDatasets );
+  return d->hasWriteDatasetCapability( location );
 }
 
-bool MDAL_DR_SaveMeshCapability( DriverH driver )
+bool MDAL_DR_saveMeshCapability( DriverH driver )
 {
   if ( !driver )
   {
@@ -360,7 +362,7 @@ DatasetGroupH MDAL_M_addDatasetGroup(
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   MDAL::Driver *dr = static_cast< MDAL::Driver * >( driver );
 
-  if ( !dr->hasCapability( MDAL::Capability::WriteDatasets ) )
+  if ( !dr->hasWriteDatasetCapability( dataLocation ) )
   {
     sLastStatus = MDAL_Status::Err_MissingDriverCapability;
     return nullptr;
@@ -664,7 +666,7 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *valu
     return nullptr;
   }
 
-  if ( !dr->hasCapability( MDAL::Capability::WriteDatasets ) )
+  if ( !dr->hasWriteDatasetCapability( g->dataLocation() ) )
   {
     sLastStatus = MDAL_Status::Err_MissingDriverCapability;
     return nullptr;
@@ -718,7 +720,7 @@ void MDAL_G_closeEditMode( DatasetGroupH group )
     return;
   }
 
-  if ( !dr->hasCapability( MDAL::Capability::WriteDatasets ) )
+  if ( !dr->hasWriteDatasetCapability( g->dataLocation() ) )
   {
     sLastStatus = MDAL_Status::Err_MissingDriverCapability;
     return;

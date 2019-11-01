@@ -113,10 +113,10 @@ MDAL_EXPORT DriverH MDAL_driverFromName( const char *name );
 MDAL_EXPORT bool MDAL_DR_meshLoadCapability( DriverH driver );
 
 //! Returns whether driver has capability to write/edit dataset (groups)
-MDAL_EXPORT bool MDAL_DR_writeDatasetsCapability( DriverH driver );
+MDAL_EXPORT bool MDAL_DR_writeDatasetsCapability( DriverH driver, MDAL_DataLocation location );
 
 //! Returns whether driver has capability to save mesh
-MDAL_EXPORT bool MDAL_DR_SaveMeshCapability( DriverH driver );
+MDAL_EXPORT bool MDAL_DR_saveMeshCapability( DriverH driver );
 
 //! Returns name of MDAL driver
 //! not thread-safe and valid only till next call

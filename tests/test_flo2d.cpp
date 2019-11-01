@@ -30,14 +30,17 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
     ASSERT_NE( m, nullptr );
     DriverH driver = MDAL_driverFromName( "FLO2D" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces2D ) );
+    ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
+    ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVolumes3D ) );
+
     ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
     // add scalar group
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
-                        false,
+                        MDAL_DataLocation::DataOnFaces2D,
                         true,
                         driver,
                         newFile.c_str()
@@ -63,7 +66,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
     DatasetGroupH gV = MDAL_M_addDatasetGroup(
                          m,
                          "vectorGrp",
-                         false,
+                         MDAL_DataLocation::DataOnFaces2D,
                          false,
                          driver,
                          newFile.c_str()
@@ -111,8 +114,8 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       bool scalar = MDAL_G_hasScalarData( g );
       EXPECT_EQ( true, scalar );
 
-      bool onVertices = MDAL_G_isOnVertices( g );
-      EXPECT_EQ( false, onVertices );
+      MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
       DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -142,8 +145,8 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       bool scalar = MDAL_G_hasScalarData( g );
       EXPECT_EQ( false, scalar );
 
-      bool onVertices = MDAL_G_isOnVertices( g );
-      EXPECT_EQ( false, onVertices );
+      MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
       DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -201,14 +204,13 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
     ASSERT_NE( m, nullptr );
     DriverH driver = MDAL_driverFromName( "FLO2D" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
     ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
     // add scalar group
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
-                        false,
+                        MDAL_DataLocation::DataOnFaces2D,
                         true,
                         driver,
                         appendedFile.c_str()
@@ -234,7 +236,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
     DatasetGroupH gV = MDAL_M_addDatasetGroup(
                          m,
                          "vectorGrp",
-                         false,
+                         MDAL_DataLocation::DataOnFaces2D,
                          false,
                          driver,
                          appendedFile.c_str()
@@ -280,8 +282,8 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       bool scalar = MDAL_G_hasScalarData( g );
       EXPECT_EQ( true, scalar );
 
-      bool onVertices = MDAL_G_isOnVertices( g );
-      EXPECT_EQ( false, onVertices );
+      MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
       DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -317,8 +319,8 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       bool scalar = MDAL_G_hasScalarData( g );
       EXPECT_EQ( false, scalar );
 
-      bool onVertices = MDAL_G_isOnVertices( g );
-      EXPECT_EQ( false, onVertices );
+      MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
       DatasetH ds = MDAL_G_dataset( g, 0 );

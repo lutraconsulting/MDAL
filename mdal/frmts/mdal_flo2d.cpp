@@ -625,7 +625,7 @@ MDAL::DriverFlo2D::DriverFlo2D()
       "FLO2D",
       "Flo2D",
       "*.nc",
-      Capability::ReadMesh | Capability::ReadDatasets | Capability::WriteDatasets )
+      Capability::ReadMesh | Capability::ReadDatasets | Capability::WriteDatasetsOnFaces2D )
 {
 
 }
@@ -770,11 +770,7 @@ bool MDAL::DriverFlo2D::saveNewHDF5File( DatasetGroup *dsGroup )
 
 bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup, HdfGroup &groupTNOR )
 {
-  if ( dsGroup->isOnVertices() )
-  {
-    MDAL::debug( "flo-2d is only on faces" );
-    return true;
-  }
+  assert( dsGroup->dataLocation() == MDAL_DataLocation::DataOnFaces2D );
 
   HdfDataType dtMaxString = HdfDataType::createString();
   std::string dsGroupName = dsGroup->name();
@@ -875,6 +871,12 @@ bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup,
 
 bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
 {
+  if ( !group || ( group->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) )
+  {
+    MDAL::debug( "flo-2d can store only 2D face datasets" );
+    return true;
+  }
+
   try
   {
     // Return true on error
