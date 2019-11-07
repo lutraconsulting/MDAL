@@ -58,8 +58,8 @@ class HdfFile
   public:
     typedef HdfH<H5I_FILE> Handle;
 
-    HdfFile( const std::string &path );
-
+    HdfFile( const std::string &path, bool writeNew = false );
+    ~HdfFile();
     bool isValid() const;
     hid_t id() const;
 
@@ -79,7 +79,7 @@ class HdfGroup
   public:
     typedef HdfH<H5I_GROUP> Handle;
 
-    HdfGroup( hid_t file, const std::string &path );
+    HdfGroup( hid_t file, const std::string &path, bool writeNew = false );
 
     bool isValid() const;
     hid_t id() const;
@@ -110,14 +110,19 @@ class HdfAttribute
   public:
     typedef HdfH<H5I_ATTR> Handle;
 
-    HdfAttribute( hid_t obj_id, const std::string &attr_name );
-
+    HdfAttribute( hid_t obj_id, const std::string &attr_name, bool writeNew = false );
+    ~HdfAttribute();
     bool isValid() const;
     hid_t id() const;
 
     std::string readString() const;
+    void writeString( hid_t dataspaceId, const std::string &value );
+    void writeInt32( hid_t dataspaceId, int value );
+
   protected:
     std::shared_ptr<Handle> d;
+    hid_t m_objId;
+    std::string m_name;
 };
 
 class HdfDataspace
@@ -125,9 +130,10 @@ class HdfDataspace
   public:
     typedef HdfH<H5I_DATASPACE> Handle;
     //! memory dataspace for simple N-D array
-    HdfDataspace( const std::vector<hsize_t> &dims );
+    HdfDataspace( const std::vector<hsize_t> &dims, bool writeNew = false );
     //! dataspace of the dataset
     HdfDataspace( hid_t dataset );
+    ~HdfDataspace( );
     //! select from 1D array
     void selectHyperslab( hsize_t start, hsize_t count );
     //! select from N-D array
@@ -146,8 +152,8 @@ class HdfDataset
   public:
     typedef HdfH<H5I_DATASET> Handle;
 
-    HdfDataset( hid_t file, const std::string &path );
-
+    HdfDataset( hid_t file, const std::string &path, bool writeNew = false );
+    ~HdfDataset();
     bool isValid() const;
     hid_t id() const;
 
@@ -216,12 +222,25 @@ class HdfDataset
       return data;
     }
 
+    //! Reads float value
     float readFloat() const;
 
+    //! Reads string value
     std::string readString() const;
+
+    //! Writes string dataset and single data
+    void writeString( hid_t fileId, hid_t dataspaceId, const std::string &value );
+
+    //! Writes array of float data
+    void writeFloatArray( hid_t dataspaceId, std::vector<float> &value );
+
+    //! Writes array of double data
+    void writeDoubleArray( hid_t dataspaceId, std::vector<double> &value );
 
   protected:
     std::shared_ptr<Handle> d;
+    hid_t m_fileId;
+    std::string m_path;
 };
 
 inline std::vector<std::string> HdfFile::groups() const { return group( "/" ).groups(); }
