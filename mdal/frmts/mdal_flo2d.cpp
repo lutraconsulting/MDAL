@@ -678,151 +678,230 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &result
 
 void MDAL::DriverFlo2D::addToHDF5File( DatasetGroup *group )
 {
-     // TODO: for testing only
-    saveNewHDF5File(group);
+  // TODO: for testing only
+  saveNewHDF5File( group );
 }
 
 void MDAL::DriverFlo2D::saveNewHDF5File( DatasetGroup *group )
 {
-    // Create file
-    HdfFile file(group->uri(), true);
+  // Create file
+  HdfFile file( group->uri(), true );
 
-    // Create dataspace for dataset File Version
-    std::vector<hsize_t> dimsSingle = {1};
-    HdfDataspace dscFileVersion( dimsSingle, true );
+  // Create dataspace for dataset File Version
+  std::vector<hsize_t> dimsSingle = {1};
+  std::vector<hsize_t> dimsDouble = {1, 1};
+  HdfDataspace dscFileVersion( dimsSingle, true );
 
-    // Create float dataset File Version
-    HdfDataset dsFileVersion( file.id(), "/File Version", true);
-    dsFileVersion.writeFloat(file.id(), dscFileVersion.id(), 99.99f);
+  // Create float dataset File Version
+  HdfDataset dsFileVersion( file.id(), "/File Version", true );
+  dsFileVersion.writeFloat( dscFileVersion.id(), 99.99f );
 
-    // Create dataspace for dataset File Type
-    HdfDataspace dscFileType( dimsSingle, true );
+  // Create dataspace for dataset File Type
+  HdfDataspace dscFileType( dimsSingle, true );
 
-    // Create string dataset File Type
-    HdfDataset dsFileType( file.id(), "/File Type", true);
-    dsFileType.writeString( file.id(), dscFileType.id(), "Xmdf");
+  // Create string dataset File Type
+  HdfDataset dsFileType( file.id(), "/File Type", true );
+  dsFileType.writeString( file.id(), dscFileType.id(), "Xmdf" );
 
-    // Create group TIMDEP NETCDF OUTPUT RESULTS
-    HdfGroup groupTNOR(file.id(), "/TIMDEP NETCDF OUTPUT RESULTS", true);
+  // Create group TIMDEP NETCDF OUTPUT RESULTS
+  HdfGroup groupTNOR( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS", true );
 
-    // Crete dataspace for attribute
-    HdfDataspace dscTNOR ( dimsSingle, true );
+  // Crete dataspace for attribute
+  HdfDataspace dscTNOR( dimsSingle, true );
 
-    // Create attribute
-    HdfAttribute attTNORGrouptype(groupTNOR.id(), "Grouptype", true);
-    // Write string value to attribute
-    attTNORGrouptype.writeString(dscTNOR.id(), "Generic");
+  // Create attribute
+  HdfAttribute attTNORGrouptype( groupTNOR.id(), "Grouptype", true );
+  // Write string value to attribute
+  attTNORGrouptype.writeString( dscTNOR.id(), "Generic" );
 
-    HdfGroup groupFlowDepth(groupTNOR.id(), "/TIMDEP NETCDF OUTPUT RESULTS/FLOW DEPTH", true);
-    HdfDataspace dscFlowDepthDataType(dimsSingle, true);
-    HdfAttribute attFlowDepthDataType(groupFlowDepth.id(), "Data Type", true);
-    attFlowDepthDataType.writeInt32(dscFlowDepthDataType.id(), 0);
+  // Group - Flow Depth
+  HdfGroup groupFlowDepth( groupTNOR.id(), "/TIMDEP NETCDF OUTPUT RESULTS/FLOW DEPTH", true );
+  HdfDataspace dscFlowDepthDataType( dimsSingle, true );
+  HdfAttribute attFlowDepthDataType( groupFlowDepth.id(), "Data Type", true );
+  attFlowDepthDataType.writeInt32( dscFlowDepthDataType.id(), 0 );
 
-    HdfDataspace dscFlowDepthDatasetCompression(dimsSingle, true);
-    HdfAttribute attFlowDepthDatasetCompression(groupFlowDepth.id(), "DatasetCompression", true);
-    attFlowDepthDatasetCompression.writeInt32(dscFlowDepthDatasetCompression.id(), -1);
+  HdfDataspace dscFlowDepthDatasetCompression( dimsSingle, true );
+  HdfAttribute attFlowDepthDatasetCompression( groupFlowDepth.id(), "DatasetCompression", true );
+  attFlowDepthDatasetCompression.writeInt32( dscFlowDepthDatasetCompression.id(), -1 );
 
-    HdfDataspace dscFlowDepthDatasetUnits(dimsSingle, true);
-    HdfAttribute attFlowDepthDatasetUnits(groupFlowDepth.id(), "DatasetUnits", true);
-    attFlowDepthDatasetUnits.writeString(dscFlowDepthDatasetUnits.id(), "ft or m");
+  HdfDataspace dscFlowDepthDatasetUnits( dimsSingle, true );
+  HdfAttribute attFlowDepthDatasetUnits( groupFlowDepth.id(), "DatasetUnits", true );
+  attFlowDepthDatasetUnits.writeString( dscFlowDepthDatasetUnits.id(), "ft or m" );
 
-    HdfDataspace dscFlowDepthGrouptype(dimsSingle, true);
-    HdfAttribute attFlowDepthGrouptype(groupFlowDepth.id(), "Grouptype", true);
-    attFlowDepthGrouptype.writeString(dscFlowDepthGrouptype.id(), "DATASET SCALAR");
+  HdfDataspace dscFlowDepthGrouptype( dimsSingle, true );
+  HdfAttribute attFlowDepthGrouptype( groupFlowDepth.id(), "Grouptype", true );
+  attFlowDepthGrouptype.writeString( dscFlowDepthGrouptype.id(), "DATASET SCALAR" );
 
-    HdfDataspace dscFlowDepthTimeUnits(dimsSingle, true);
-    HdfAttribute attFlowDepthTimeUnits(groupFlowDepth.id(), "TimeUnits", true);
-    attFlowDepthTimeUnits.writeString(dscFlowDepthTimeUnits.id(), "Hours");
+  HdfDataspace dscFlowDepthTimeUnits( dimsSingle, true );
+  HdfAttribute attFlowDepthTimeUnits( groupFlowDepth.id(), "TimeUnits", true );
+  attFlowDepthTimeUnits.writeString( dscFlowDepthTimeUnits.id(), "Hours" );
 
+  std::vector<hsize_t> dimsMaxMinTimes = { 20 };
+  float nullData[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+  double nullDoubleData[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-    HdfGroup groupFWSE(groupTNOR.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Floodplain Water Surface Elevation", true);
-    HdfDataspace dscFWSEDataType(dimsSingle, true);
-    HdfAttribute attFWSEDataType(groupFWSE.id(), "Data Type", true);
-    attFWSEDataType.writeInt32(dscFWSEDataType.id(), 0);
+  float null2DData[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+  std::vector<hsize_t> dimsValues = { 3, 3 };
 
-    HdfDataspace dscFWSEDatasetCompression(dimsSingle, true);
-    HdfAttribute attFWSEDatasetCompression(groupFWSE.id(), "DatasetCompression", true);
-    attFWSEDatasetCompression.writeInt32(dscFWSEDatasetCompression.id(), -1);
+  float null3DData[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+  std::vector<hsize_t> dimsValues3d = { 3, 3, 3 };
 
-    HdfDataspace dscFWSEDatasetUnits(dimsSingle, true);
-    HdfAttribute attFWSEDatasetUnits(groupFWSE.id(), "DatasetUnits", true);
-    attFWSEDatasetUnits.writeString(dscFWSEDatasetUnits.id(), "ft or m");
+  HdfDataspace dscFlowDepthMaxs( dimsMaxMinTimes, true );
+  HdfDataset dsFlowDepthMaxs( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/FLOW DEPTH/Maxs", true );
+  dsFlowDepthMaxs.writeFloatArray( dscFlowDepthMaxs.id(), nullData ); // Replace with data array ?
 
-    HdfDataspace dscFWSEGrouptype(dimsSingle, true);
-    HdfAttribute attFWSEGrouptype(groupFWSE.id(), "Grouptype", true);
-    attFWSEGrouptype.writeString(dscFWSEGrouptype.id(), "DATASET SCALAR");
+  HdfDataspace dscFlowDepthMins( dimsMaxMinTimes, true );
+  HdfDataset dsFlowDepthMins( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/FLOW DEPTH/Mins", true );
+  dsFlowDepthMins.writeFloatArray( dscFlowDepthMins.id(), nullData ); // Replace with data array ?
 
-    HdfDataspace dscFWSETimeUnits(dimsSingle, true);
-    HdfAttribute attFWSETimeUnits(groupFWSE.id(), "TimeUnits", true);
-    attFWSETimeUnits.writeString(dscFWSETimeUnits.id(), "Hours");
+  HdfDataspace dscFlowDepthTimes( dimsMaxMinTimes, true );
+  HdfDataset dsFlowDepthTimes( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/FLOW DEPTH/Times", true );
+  dsFlowDepthTimes.writeDoubleArray( dscFlowDepthTimes.id(), nullDoubleData ); // Replace with data array ?
 
+  HdfDataspace dscFlowDepthValues( dimsValues, true );
+  HdfDataset dsFlowDepthValues( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/FLOW DEPTH/Values", true );
+  dsFlowDepthValues.writeFloatArray( dscFlowDepthValues.id(), null2DData ); // Replace with data array ?
 
-    HdfGroup groupVelocity(groupTNOR.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity", true);
-    HdfDataspace dscVelocityDataType(dimsSingle, true);
-    HdfAttribute attVelocityDataType(groupVelocity.id(), "Data Type", true);
-    attVelocityDataType.writeInt32(dscVelocityDataType.id(), 0);
+  // Group - Floodplain Water Surface Elevation
 
-    HdfDataspace dscVelocityDatasetCompression(dimsSingle, true);
-    HdfAttribute attVelocityDatasetCompression(groupVelocity.id(), "DatasetCompression", true);
-    attVelocityDatasetCompression.writeInt32(dscVelocityDatasetCompression.id(), -1);
+  HdfGroup groupFWSE( groupTNOR.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Floodplain Water Surface Elevation", true );
+  HdfDataspace dscFWSEDataType( dimsSingle, true );
+  HdfAttribute attFWSEDataType( groupFWSE.id(), "Data Type", true );
+  attFWSEDataType.writeInt32( dscFWSEDataType.id(), 0 );
 
-    HdfDataspace dscVelocityDatasetUnits(dimsSingle, true);
-    HdfAttribute attVelocityDatasetUnits(groupVelocity.id(), "DatasetUnits", true);
-    attVelocityDatasetUnits.writeString(dscVelocityDatasetUnits.id(), "fps or mps");
+  HdfDataspace dscFWSEDatasetCompression( dimsSingle, true );
+  HdfAttribute attFWSEDatasetCompression( groupFWSE.id(), "DatasetCompression", true );
+  attFWSEDatasetCompression.writeInt32( dscFWSEDatasetCompression.id(), -1 );
 
-    HdfDataspace dscVelocityGrouptype(dimsSingle, true);
-    HdfAttribute attVelocityGrouptype(groupVelocity.id(), "Grouptype", true);
-    attVelocityGrouptype.writeString(dscVelocityGrouptype.id(), "DATASET VECTOR");
+  HdfDataspace dscFWSEDatasetUnits( dimsSingle, true );
+  HdfAttribute attFWSEDatasetUnits( groupFWSE.id(), "DatasetUnits", true );
+  attFWSEDatasetUnits.writeString( dscFWSEDatasetUnits.id(), "ft or m" );
 
-    HdfDataspace dscVelocityTimeUnits(dimsSingle, true);
-    HdfAttribute attVelocityTimeUnits(groupVelocity.id(), "TimeUnits", true);
-    attVelocityTimeUnits.writeString(dscVelocityTimeUnits.id(), "Hours");
+  HdfDataspace dscFWSEGrouptype( dimsSingle, true );
+  HdfAttribute attFWSEGrouptype( groupFWSE.id(), "Grouptype", true );
+  attFWSEGrouptype.writeString( dscFWSEGrouptype.id(), "DATASET SCALAR" );
 
+  HdfDataspace dscFWSETimeUnits( dimsSingle, true );
+  HdfAttribute attFWSETimeUnits( groupFWSE.id(), "TimeUnits", true );
+  attFWSETimeUnits.writeString( dscFWSETimeUnits.id(), "Hours" );
 
-    HdfGroup groupVelocityMag(groupTNOR.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity MAG", true);
-    HdfDataspace dscVelocityMagDataType(dimsSingle, true);
-    HdfAttribute attVelocityMagDataType(groupVelocityMag.id(), "Data Type", true);
-    attVelocityMagDataType.writeInt32(dscVelocityMagDataType.id(), 0);
+  HdfDataspace dscFWSEMaxs( dimsMaxMinTimes, true );
+  HdfDataset dsFWSEMaxs( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Floodplain Water Surface Elevation/Maxs", true );
+  dsFWSEMaxs.writeFloatArray( dscFWSEMaxs.id(), nullData ); // Replace with data array ?
 
-    HdfDataspace dscVelocityMagDatasetCompression(dimsSingle, true);
-    HdfAttribute attVelocityMagDatasetCompression(groupVelocityMag.id(), "DatasetCompression", true);
-    attVelocityMagDatasetCompression.writeInt32(dscVelocityMagDatasetCompression.id(), -1);
+  HdfDataspace dscFWSEMins( dimsMaxMinTimes, true );
+  HdfDataset dsFWSEMins( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Floodplain Water Surface Elevation/Mins", true );
+  dsFWSEMins.writeFloatArray( dscFWSEMins.id(), nullData ); // Replace with data array ?
 
-    HdfDataspace dscVelocityMagDatasetUnits(dimsSingle, true);
-    HdfAttribute attVelocityMagDatasetUnits(groupVelocityMag.id(), "DatasetUnits", true);
-    attVelocityMagDatasetUnits.writeString(dscVelocityMagDatasetUnits.id(), "ft or m");
+  HdfDataspace dscFWSETimes( dimsMaxMinTimes, true );
+  HdfDataset dsFWSETimes( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Floodplain Water Surface Elevation/Times", true );
+  dsFWSETimes.writeDoubleArray( dscFWSETimes.id(), nullDoubleData ); // Replace with data array ?
 
-    HdfDataspace dscVelocityMagGrouptype(dimsSingle, true);
-    HdfAttribute attVelocityMagGrouptype(groupVelocityMag.id(), "Grouptype", true);
-    attVelocityMagGrouptype.writeString(dscVelocityMagGrouptype.id(), "DATASET SCALAR");
+  HdfDataspace dscFWSEValues( dimsValues, true );
+  HdfDataset dsFWSEValues( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Floodplain Water Surface Elevation/Values", true );
+  dsFWSEValues.writeFloatArray( dscFWSEValues.id(), null2DData ); // Replace with data array ?
 
-    HdfDataspace dscVelocityMagTimeUnits(dimsSingle, true);
-    HdfAttribute attVelocityMagTimeUnits(groupVelocityMag.id(), "TimeUnits", true);
-    attVelocityMagTimeUnits.writeString(dscVelocityMagTimeUnits.id(), "Hours");
+  // Group - Velocity
+
+  HdfGroup groupVelocity( groupTNOR.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity", true );
+  HdfDataspace dscVelocityDataType( dimsSingle, true );
+  HdfAttribute attVelocityDataType( groupVelocity.id(), "Data Type", true );
+  attVelocityDataType.writeInt32( dscVelocityDataType.id(), 0 );
+
+  HdfDataspace dscVelocityDatasetCompression( dimsSingle, true );
+  HdfAttribute attVelocityDatasetCompression( groupVelocity.id(), "DatasetCompression", true );
+  attVelocityDatasetCompression.writeInt32( dscVelocityDatasetCompression.id(), -1 );
+
+  HdfDataspace dscVelocityDatasetUnits( dimsSingle, true );
+  HdfAttribute attVelocityDatasetUnits( groupVelocity.id(), "DatasetUnits", true );
+  attVelocityDatasetUnits.writeString( dscVelocityDatasetUnits.id(), "fps or mps" );
+
+  HdfDataspace dscVelocityGrouptype( dimsSingle, true );
+  HdfAttribute attVelocityGrouptype( groupVelocity.id(), "Grouptype", true );
+  attVelocityGrouptype.writeString( dscVelocityGrouptype.id(), "DATASET VECTOR" );
+
+  HdfDataspace dscVelocityTimeUnits( dimsSingle, true );
+  HdfAttribute attVelocityTimeUnits( groupVelocity.id(), "TimeUnits", true );
+  attVelocityTimeUnits.writeString( dscVelocityTimeUnits.id(), "Hours" );
+
+  HdfDataspace dscVelocityMaxs( dimsMaxMinTimes, true );
+  HdfDataset dsVelocityMaxs( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity/Maxs", true );
+  dsVelocityMaxs.writeFloatArray( dscVelocityMaxs.id(), nullData ); // Replace with data array ?
+
+  HdfDataspace dscVelocityMins( dimsMaxMinTimes, true );
+  HdfDataset dsVelocityMins( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity/Mins", true );
+  dsVelocityMins.writeFloatArray( dscVelocityMins.id(), nullData ); // Replace with data array ?
+
+  HdfDataspace dscVelocityTimes( dimsMaxMinTimes, true );
+  HdfDataset dsVelocityTimes( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity/Times", true );
+  dsVelocityTimes.writeDoubleArray( dscVelocityTimes.id(), nullDoubleData ); // Replace with data array ?
+
+  HdfDataspace dscVelocityValues( dimsValues3d, true );
+  HdfDataset dsVelocityValues( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity/Values", true );
+  dsVelocityValues.writeFloatArray( dscVelocityValues.id(), null3DData ); // Replace with data array ?
+
+  // Group - Velocity MAG
+
+  HdfGroup groupVelocityMag( groupTNOR.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity MAG", true );
+  HdfDataspace dscVelocityMagDataType( dimsSingle, true );
+  HdfAttribute attVelocityMagDataType( groupVelocityMag.id(), "Data Type", true );
+  attVelocityMagDataType.writeInt32( dscVelocityMagDataType.id(), 0 );
+
+  HdfDataspace dscVelocityMagDatasetCompression( dimsSingle, true );
+  HdfAttribute attVelocityMagDatasetCompression( groupVelocityMag.id(), "DatasetCompression", true );
+  attVelocityMagDatasetCompression.writeInt32( dscVelocityMagDatasetCompression.id(), -1 );
+
+  HdfDataspace dscVelocityMagDatasetUnits( dimsSingle, true );
+  HdfAttribute attVelocityMagDatasetUnits( groupVelocityMag.id(), "DatasetUnits", true );
+  attVelocityMagDatasetUnits.writeString( dscVelocityMagDatasetUnits.id(), "ft or m" );
+
+  HdfDataspace dscVelocityMagGrouptype( dimsSingle, true );
+  HdfAttribute attVelocityMagGrouptype( groupVelocityMag.id(), "Grouptype", true );
+  attVelocityMagGrouptype.writeString( dscVelocityMagGrouptype.id(), "DATASET SCALAR" );
+
+  HdfDataspace dscVelocityMagTimeUnits( dimsSingle, true );
+  HdfAttribute attVelocityMagTimeUnits( groupVelocityMag.id(), "TimeUnits", true );
+  attVelocityMagTimeUnits.writeString( dscVelocityMagTimeUnits.id(), "Hours" );
+
+  HdfDataspace dscVelocityMagMaxs( dimsMaxMinTimes, true );
+  HdfDataset dsVelocityMagMaxs( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity MAG/Maxs", true );
+  dsVelocityMagMaxs.writeFloatArray( dscVelocityMagMaxs.id(), nullData ); // Replace with data array ?
+
+  HdfDataspace dscVelocityMagMins( dimsMaxMinTimes, true );
+  HdfDataset dsVelocityMagMins( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity MAG/Mins", true );
+  dsVelocityMagMins.writeFloatArray( dscVelocityMagMins.id(), nullData ); // Replace with data array ?
+
+  HdfDataspace dscVelocityMagTimes( dimsMaxMinTimes, true );
+  HdfDataset dsVelocityMagTimes( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity MAG/Times", true );
+  dsVelocityMagTimes.writeDoubleArray( dscVelocityMagTimes.id(), nullDoubleData ); // Replace with data array ?
+
+  HdfDataspace dscVelocityMagValues( dimsValues, true );
+  HdfDataset dsVelocityMagValues( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity MAG/Values", true );
+  dsVelocityMagValues.writeFloatArray( dscVelocityMagValues.id(), null2DData ); // Replace with data array ?
 
 }
 
 bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
 {
-    try
+  try
+  {
+    // Return true on error
+    const std::string path = group->uri();
+    if ( MDAL::fileExists( path ) )
     {
-        // Return true on error
-        const std::string path = group->uri();
-        if ( MDAL::fileExists( path ) )
-        {
-            // Add dataset to a existing file
-            addToHDF5File(group);
-        }
-        else
-        {
-            // Create new HDF5 file with Flow2D structure
-            saveNewHDF5File(group);
-        }
-        return false;
+      // Add dataset to a existing file
+      addToHDF5File( group );
     }
-    catch ( MDAL_Status error)
+    else
     {
-        return true;
+      // Create new HDF5 file with Flow2D structure
+      saveNewHDF5File( group );
     }
+    return false;
+  }
+  catch ( MDAL_Status error )
+  {
+    return true;
+  }
 
 }

@@ -7,18 +7,18 @@
 #include <cstring>
 
 
-HdfFile::HdfFile( const std::string &path, bool writeNew)
+HdfFile::HdfFile( const std::string &path, bool writeNew )
 {
-    if (writeNew)
-        d = std::make_shared< Handle >( H5Fcreate(path.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT) );
-    else
-        d = std::make_shared< Handle >( H5Fopen( path.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT ) );
+  if ( writeNew )
+    d = std::make_shared< Handle >( H5Fcreate( path.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT ) );
+  else
+    d = std::make_shared< Handle >( H5Fopen( path.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT ) );
 }
 
 HdfFile::~HdfFile()
 {
-    /* Close the file. */
-    H5Fclose(id());
+  /* Close the file. */
+  H5Fclose( id() );
 }
 
 bool HdfFile::isValid() const { return d->id >= 0; }
@@ -26,12 +26,11 @@ bool HdfFile::isValid() const { return d->id >= 0; }
 hid_t HdfFile::id() const { return d->id; }
 
 HdfGroup::HdfGroup( hid_t file, const std::string &path, bool writeNew )
-  : d(  )
 {
-    if (writeNew)
-        d = std::make_shared< Handle >( H5Gcreate2(file, path.c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT) );
-    else
-        d = std::make_shared< Handle >( H5Gopen( file, path.c_str() ) );
+  if ( writeNew )
+    d = std::make_shared< Handle >( H5Gcreate2( file, path.c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) );
+  else
+    d = std::make_shared< Handle >( H5Gopen( file, path.c_str() ) );
 }
 
 bool HdfGroup::isValid() const { return d->id >= 0; }
@@ -74,16 +73,16 @@ std::vector<std::string> HdfGroup::objects( H5G_obj_t type ) const
 }
 
 HdfAttribute::HdfAttribute( hid_t obj_id, const std::string &attr_name, bool writeNew )
-    : m_objId(obj_id), m_name(attr_name)
+  : m_objId( obj_id ), m_name( attr_name )
 {
-    if (!writeNew)
-        d = std::make_shared< Handle >( H5Aopen( obj_id, attr_name.c_str(), H5P_DEFAULT ) );
+  if ( !writeNew )
+    d = std::make_shared< Handle >( H5Aopen( obj_id, attr_name.c_str(), H5P_DEFAULT ) );
 
 }
 
 HdfAttribute::~HdfAttribute()
 {
-    H5Fclose(id());
+  H5Fclose( id() );
 }
 
 bool HdfAttribute::isValid() const { return d->id >= 0; }
@@ -109,38 +108,38 @@ std::string HdfAttribute::readString() const
   return res;
 }
 
-void HdfAttribute::writeString(hid_t dataspaceId, const std::string& value)
+void HdfAttribute::writeString( hid_t dataspaceId, const std::string &value )
 {
-    // Create string attribute
-    hid_t atype = H5Tcopy(H5T_C_S1);
-    H5Tset_size(atype, value.size() + 1);
-    H5Tset_strpad(atype,H5T_STR_NULLTERM);
-    d = std::make_shared< Handle >( H5Acreate2(m_objId, m_name.c_str(), atype, dataspaceId, H5P_DEFAULT, H5P_DEFAULT) );
+  // Create string attribute
+  hid_t atype = H5Tcopy( H5T_C_S1 );
+  H5Tset_size( atype, value.size() + 1 );
+  H5Tset_strpad( atype, H5T_STR_NULLTERM );
+  d = std::make_shared< Handle >( H5Acreate2( m_objId, m_name.c_str(), atype, dataspaceId, H5P_DEFAULT, H5P_DEFAULT ) );
 
-    // Write value
-    hid_t ret = H5Awrite(id(), atype, value.c_str());
-    // TODO: Error handle!
+  // Write value
+  hid_t ret = H5Awrite( id(), atype, value.c_str() );
+  // TODO: Error handle!
 }
 
-void HdfAttribute::writeInt32(hid_t dataspaceId, int value)
+void HdfAttribute::writeInt32( hid_t dataspaceId, int value )
 {
-   // Create int32 attribute
-   d = std::make_shared< Handle >( H5Acreate2 (m_objId, m_name.c_str(), H5T_STD_I32LE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT) );
+  // Create int32 attribute
+  d = std::make_shared< Handle >( H5Acreate2( m_objId, m_name.c_str(), H5T_STD_I32LE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT ) );
 
-   hid_t ret = H5Awrite(id(), H5T_NATIVE_INT, &value);
-   // TODO: Error handle!
+  hid_t ret = H5Awrite( id(), H5T_NATIVE_INT, &value );
+  // TODO: Error handle!
 }
 
 HdfDataset::HdfDataset( hid_t file, const std::string &path, bool writeNew ) :
-    m_path (path)
+  m_fileId( file ), m_path( path )
 {
-    if (!writeNew)
-        d = std::make_shared< Handle >( H5Dopen2( file, path.c_str(), H5P_DEFAULT ) );
+  if ( !writeNew )
+    d = std::make_shared< Handle >( H5Dopen2( file, path.c_str(), H5P_DEFAULT ) );
 }
 
 HdfDataset::~HdfDataset()
 {
-    H5Dclose(id());
+  H5Dclose( id() );
 }
 
 bool HdfDataset::isValid() const { return d->id >= 0; }
@@ -226,13 +225,32 @@ float HdfDataset::readFloat() const
   return value;
 }
 
-void HdfDataset::writeFloat(hid_t fileId, hid_t dataspaceId, float value)
+void HdfDataset::writeFloat( hid_t dataspaceId, float value )
 {
-    /* Create float the dataset. */
-    d = std::make_shared< Handle >(  H5Dcreate2(fileId, m_path.c_str(), H5T_IEEE_F32BE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT) );
+  /* Create float the dataset. */
+  d = std::make_shared< Handle >( H5Dcreate2( m_fileId, m_path.c_str(), H5T_IEEE_F32BE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) );
 
-    /* Write float data the dataset. */
-    herr_t status = H5Dwrite(id(), H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, &value);
+  /* Write float data the dataset. */
+  herr_t status = H5Dwrite( id(), H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, &value );
+}
+
+
+void HdfDataset::writeFloatArray( hid_t dataspaceId, float *value )
+{
+  /* Create float the dataset. */
+  d = std::make_shared< Handle >( H5Dcreate2( m_fileId, m_path.c_str(), H5T_IEEE_F32BE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) );
+
+  /* Write float data the dataset. */
+  herr_t status = H5Dwrite( id(), H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, value );
+}
+
+void HdfDataset::writeDoubleArray( hid_t dataspaceId, double *value )
+{
+  /* Create float the dataset. */
+  d = std::make_shared< Handle >( H5Dcreate2( m_fileId, m_path.c_str(), H5T_IEEE_F64BE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) );
+
+  /* Write float data the dataset. */
+  herr_t status = H5Dwrite( id(), H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, value );
 }
 
 std::string HdfDataset::readString() const
@@ -256,22 +274,27 @@ std::string HdfDataset::readString() const
   return std::string( name );
 }
 
-void HdfDataset::writeString(hid_t fileId, hid_t dataspaceId, std::string value)
+void HdfDataset::writeString( hid_t fileId, hid_t dataspaceId, std::string value )
 {
-    /* Create string the dataset. */
-    d = std::make_shared< Handle >( H5Dcreate2(fileId, m_path.c_str(), H5T_C_S1, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT) );
+  hid_t atype = H5Tcopy( H5T_C_S1 );
+  H5Tset_size( atype, value.size() + 1 );
+
+  /* Create string the dataset. */
+  d = std::make_shared< Handle >( H5Dcreate2( fileId, m_path.c_str(), atype, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) );
+
+  hid_t ret = H5Dwrite( id(), atype, H5S_ALL, H5S_ALL, H5P_DEFAULT, value.c_str() );
 }
 
 HdfDataspace::HdfDataspace( const std::vector<hsize_t> &dims, bool writeNew )
 {
-    if (writeNew)
-        d = std::make_shared< Handle >(H5Screate_simple(1, dims.data(), NULL));
-    else
-        d = std::make_shared< Handle >( H5Screate_simple(
-                                            static_cast<int>( dims.size() ),
-                                            dims.data(),
-                                            dims.data()
-                                          ) );
+  if ( writeNew )
+    d = std::make_shared< Handle >( H5Screate_simple( static_cast<int>( dims.size() ), dims.data(), NULL ) );
+  else
+    d = std::make_shared< Handle >( H5Screate_simple(
+                                      static_cast<int>( dims.size() ),
+                                      dims.data(),
+                                      dims.data()
+                                    ) );
 }
 
 HdfDataspace::HdfDataspace( hid_t dataset )
@@ -281,7 +304,7 @@ HdfDataspace::HdfDataspace( hid_t dataset )
 
 HdfDataspace::~HdfDataspace()
 {
-    H5Dclose(id());
+  H5Dclose( id() );
 }
 
 void HdfDataspace::selectHyperslab( hsize_t start, hsize_t count )

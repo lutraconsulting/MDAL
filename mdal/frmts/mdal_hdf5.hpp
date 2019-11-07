@@ -58,7 +58,7 @@ class HdfFile
   public:
     typedef HdfH<H5I_FILE> Handle;
 
-    HdfFile( const std::string &path, bool writeNew = false);
+    HdfFile( const std::string &path, bool writeNew = false );
     ~HdfFile();
     bool isValid() const;
     hid_t id() const;
@@ -116,8 +116,8 @@ class HdfAttribute
     hid_t id() const;
 
     std::string readString() const;
-    void writeString(hid_t dataspaceId, const std::string& value);
-    void writeInt32(hid_t dataspaceId, int value);
+    void writeString( hid_t dataspaceId, const std::string &value );
+    void writeInt32( hid_t dataspaceId, int value );
 
   protected:
     std::shared_ptr<Handle> d;
@@ -222,19 +222,28 @@ class HdfDataset
       return data;
     }
 
+    //! Reads float value
     float readFloat() const;
 
-    //! Writes float dataset and single data
-    void writeFloat(hid_t fileId, hid_t dataspaceId, float value);
-
+    //! Reads string value
     std::string readString() const;
 
+    //! Writes float dataset and single data
+    void writeFloat( hid_t dataspaceId, float value );
+
+    //! Writes array of float data
+    void writeFloatArray( hid_t dataspaceId, float *value );
+
+    //! Writes array of double data
+    void writeDoubleArray( hid_t dataspaceId, double *value );
+
     //! Writes string dataset and single data
-    void writeString(hid_t fileId, hid_t dataspaceId, std::string value);
+    void writeString( hid_t fileId, hid_t dataspaceId, std::string value );
 
   protected:
     std::shared_ptr<Handle> d;
     std::string m_path;
+    hid_t m_fileId;
 };
 
 inline std::vector<std::string> HdfFile::groups() const { return group( "/" ).groups(); }
