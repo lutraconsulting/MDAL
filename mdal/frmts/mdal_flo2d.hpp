@@ -24,6 +24,7 @@ namespace MDAL
 
       bool canRead( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &resultsFile, MDAL_Status *status ) override;
+      bool persist( DatasetGroup *group ) override;
 
     private:
       struct CellCenter
@@ -48,6 +49,10 @@ namespace MDAL
       void addStaticDataset( std::vector<double> &vals, const std::string &groupName, const std::string &datFileName );
       static MDAL::Vertex createVertex( size_t position, double half_cell_size, const CellCenter &cell );
       static double calcCellSize( const std::vector<CellCenter> &cells );
+
+      void addToHDF5File( DatasetGroup *group );
+      void saveNewHDF5File( DatasetGroup *group );
+
   };
 
 } // namespace MDAL
