@@ -116,9 +116,8 @@ void HdfAttribute::writeString( hid_t dataspaceId, const std::string &value )
   H5Tset_strpad( atype, H5T_STR_NULLTERM );
   d = std::make_shared< Handle >( H5Acreate2( m_objId, m_name.c_str(), atype, dataspaceId, H5P_DEFAULT, H5P_DEFAULT ) );
 
-  // Write value
-  hid_t ret = H5Awrite( id(), atype, value.c_str() );
-  // TODO: Error handle!
+  if ( H5Awrite( id(), atype, value.c_str() ) < 0 )
+    throw MDAL_Status::Err_FailToWriteToDisk;
 }
 
 void HdfAttribute::writeInt32( hid_t dataspaceId, int value )
@@ -126,12 +125,12 @@ void HdfAttribute::writeInt32( hid_t dataspaceId, int value )
   // Create int32 attribute
   d = std::make_shared< Handle >( H5Acreate2( m_objId, m_name.c_str(), H5T_STD_I32LE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT ) );
 
-  hid_t ret = H5Awrite( id(), H5T_NATIVE_INT, &value );
-  // TODO: Error handle!
+  if ( H5Awrite( id(), H5T_NATIVE_INT, &value ) < 0 )
+    throw MDAL_Status::Err_FailToWriteToDisk;
 }
 
 HdfDataset::HdfDataset( hid_t file, const std::string &path, bool writeNew ) :
-  m_fileId( file ), m_path( path )
+  m_fileId( file ),  m_path( path )
 {
   if ( !writeNew )
     d = std::make_shared< Handle >( H5Dopen2( file, path.c_str(), H5P_DEFAULT ) );
@@ -225,32 +224,24 @@ float HdfDataset::readFloat() const
   return value;
 }
 
-void HdfDataset::writeFloat( hid_t dataspaceId, float value )
-{
-  /* Create float the dataset. */
-  d = std::make_shared< Handle >( H5Dcreate2( m_fileId, m_path.c_str(), H5T_IEEE_F32BE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) );
-
-  /* Write float data the dataset. */
-  herr_t status = H5Dwrite( id(), H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, &value );
-}
-
-
 void HdfDataset::writeFloatArray( hid_t dataspaceId, float *value )
 {
-  /* Create float the dataset. */
+  // Create float the dataset.
   d = std::make_shared< Handle >( H5Dcreate2( m_fileId, m_path.c_str(), H5T_IEEE_F32BE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) );
 
-  /* Write float data the dataset. */
-  herr_t status = H5Dwrite( id(), H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, value );
+  // Write float array to dataset
+  if ( H5Dwrite( id(), H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, value ) < 0 )
+    throw MDAL_Status::Err_FailToWriteToDisk;
 }
 
 void HdfDataset::writeDoubleArray( hid_t dataspaceId, double *value )
 {
-  /* Create float the dataset. */
+  // Create float the dataset.
   d = std::make_shared< Handle >( H5Dcreate2( m_fileId, m_path.c_str(), H5T_IEEE_F64BE, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) );
 
-  /* Write float data the dataset. */
-  herr_t status = H5Dwrite( id(), H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, value );
+  // Write double array to dataset.
+  if ( H5Dwrite( id(), H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, value ) < 0 )
+    throw MDAL_Status::Err_FailToWriteToDisk;
 }
 
 std::string HdfDataset::readString() const
@@ -279,10 +270,12 @@ void HdfDataset::writeString( hid_t fileId, hid_t dataspaceId, std::string value
   hid_t atype = H5Tcopy( H5T_C_S1 );
   H5Tset_size( atype, value.size() + 1 );
 
-  /* Create string the dataset. */
+  // Create string the dataset.
   d = std::make_shared< Handle >( H5Dcreate2( fileId, m_path.c_str(), atype, dataspaceId, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) );
 
-  hid_t ret = H5Dwrite( id(), atype, H5S_ALL, H5S_ALL, H5P_DEFAULT, value.c_str() );
+  // Write string to dataset.
+  if ( H5Dwrite( id(), atype, H5S_ALL, H5S_ALL, H5P_DEFAULT, value.c_str() ) < 0 )
+    throw MDAL_Status::Err_FailToWriteToDisk;
 }
 
 HdfDataspace::HdfDataspace( const std::vector<hsize_t> &dims, bool writeNew )

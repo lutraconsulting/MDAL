@@ -689,12 +689,13 @@ void MDAL::DriverFlo2D::saveNewHDF5File( DatasetGroup *group )
 
   // Create dataspace for dataset File Version
   std::vector<hsize_t> dimsSingle = {1};
+  float versionValue[] = {99.99f};
   std::vector<hsize_t> dimsDouble = {1, 1};
   HdfDataspace dscFileVersion( dimsSingle, true );
 
   // Create float dataset File Version
   HdfDataset dsFileVersion( file.id(), "/File Version", true );
-  dsFileVersion.writeFloat( dscFileVersion.id(), 99.99f );
+  dsFileVersion.writeFloatArray( dscFileVersion.id(), versionValue );
 
   // Create dataspace for dataset File Type
   HdfDataspace dscFileType( dimsSingle, true );
@@ -878,7 +879,6 @@ void MDAL::DriverFlo2D::saveNewHDF5File( DatasetGroup *group )
   HdfDataspace dscVelocityMagValues( dimsValues, true );
   HdfDataset dsVelocityMagValues( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS/Velocity MAG/Values", true );
   dsVelocityMagValues.writeFloatArray( dscVelocityMagValues.id(), null2DData ); // Replace with data array ?
-
 }
 
 bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
@@ -901,7 +901,7 @@ bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
   }
   catch ( MDAL_Status error )
   {
+    MDAL::debug( "Error status: " + std::to_string( error ) );
     return true;
   }
-
 }

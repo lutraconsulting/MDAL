@@ -228,8 +228,8 @@ class HdfDataset
     //! Reads string value
     std::string readString() const;
 
-    //! Writes float dataset and single data
-    void writeFloat( hid_t dataspaceId, float value );
+    //! Writes string dataset and single data
+    void writeString( hid_t fileId, hid_t dataspaceId, std::string value );
 
     //! Writes array of float data
     void writeFloatArray( hid_t dataspaceId, float *value );
@@ -237,13 +237,10 @@ class HdfDataset
     //! Writes array of double data
     void writeDoubleArray( hid_t dataspaceId, double *value );
 
-    //! Writes string dataset and single data
-    void writeString( hid_t fileId, hid_t dataspaceId, std::string value );
-
   protected:
     std::shared_ptr<Handle> d;
-    std::string m_path;
     hid_t m_fileId;
+    std::string m_path;
 };
 
 inline std::vector<std::string> HdfFile::groups() const { return group( "/" ).groups(); }
