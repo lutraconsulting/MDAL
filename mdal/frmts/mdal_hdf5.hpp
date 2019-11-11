@@ -229,13 +229,13 @@ class HdfDataset
     std::string readString() const;
 
     //! Writes string dataset and single data
-    void writeString( hid_t fileId, hid_t dataspaceId, std::string value );
+    void writeString( hid_t fileId, hid_t dataspaceId, const std::string &value );
 
     //! Writes array of float data
-    void writeFloatArray( hid_t dataspaceId, float *value );
+    void writeFloatArray( hid_t dataspaceId, std::vector<float> &value );
 
     //! Writes array of double data
-    void writeDoubleArray( hid_t dataspaceId, double *value );
+    void writeDoubleArray( hid_t dataspaceId, std::vector<double> &value );
 
   protected:
     std::shared_ptr<Handle> d;
