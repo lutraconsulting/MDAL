@@ -35,7 +35,7 @@ size_t MDAL::DriverSWW::getVertexCount( const NetCDFFile &ncFile ) const
 }
 
 
-bool MDAL::DriverSWW::canRead( const std::string &uri )
+bool MDAL::DriverSWW::canReadMesh( const std::string &uri )
 {
   NetCDFFile ncFile;
 

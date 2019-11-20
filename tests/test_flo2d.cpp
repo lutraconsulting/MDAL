@@ -10,10 +10,18 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 
-TEST( MeshFlo2dTest, WriteBarnHDF5 )
+TEST( MeshFlo2dTest, WriteBarnHDF5_New )
 {
   std::string path = test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" );
-  std::string scalarPath = tmp_file( "/flow2d_BarnHDF5Test.hdf5" );
+  std::string newFile = tmp_file( "/flow2d_BarnHDF5_New.hdf5" );
+
+  // cleanup from previous run
+  deleteFile( newFile );
+
+  // FLO-2D is only on face datasets
+  size_t f_count = 521;
+  std::vector<double> valsScalar( f_count, 1.1 );
+  std::vector<double> valsVector( 2 * f_count, 2.2 );
 
   // Create a new dat file
   {
@@ -22,23 +30,59 @@ TEST( MeshFlo2dTest, WriteBarnHDF5 )
     DriverH driver = MDAL_driverFromName( "FLO2D" );
     ASSERT_NE( driver, nullptr );
     ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
+    // add scalar group
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
                         false,
                         true,
                         driver,
-                        scalarPath.c_str()
+                        newFile.c_str()
                       );
     ASSERT_NE( g, nullptr );
-
+    MDAL_G_addDataset( g,
+                       0.0,
+                       valsScalar.data(),
+                       nullptr
+                     );
+    MDAL_G_addDataset( g,
+                       1.0,
+                       valsScalar.data(),
+                       nullptr
+                     );
     ASSERT_TRUE( MDAL_G_isInEditMode( g ) );
     MDAL_G_closeEditMode( g );
-    ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+    ASSERT_EQ( 6, MDAL_M_datasetGroupCount( m ) );
     ASSERT_FALSE( MDAL_G_isInEditMode( g ) );
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-    ASSERT_EQ( g, MDAL_D_group( MDAL_G_dataset( g, 0 ) ) );
+
+    // add vector group
+    DatasetGroupH gV = MDAL_M_addDatasetGroup(
+                         m,
+                         "vectorGrp",
+                         false,
+                         false,
+                         driver,
+                         newFile.c_str()
+                       );
+    ASSERT_NE( gV, nullptr );
+    MDAL_G_addDataset( gV,
+                       0.0,
+                       valsVector.data(),
+                       nullptr
+                     );
+    MDAL_G_addDataset( gV,
+                       1.0,
+                       valsVector.data(),
+                       nullptr
+                     );
+    ASSERT_TRUE( MDAL_G_isInEditMode( gV ) );
+    MDAL_G_closeEditMode( gV );
+    ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
+    ASSERT_FALSE( MDAL_G_isInEditMode( gV ) );
+    ASSERT_EQ( 2, MDAL_G_datasetCount( gV ) );
 
     MDAL_CloseMesh( m );
   }
@@ -49,41 +93,234 @@ TEST( MeshFlo2dTest, WriteBarnHDF5 )
   {
     MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
-    MDAL_M_LoadDatasets( m, scalarPath.c_str() );
+    ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+    MDAL_M_LoadDatasets( m, newFile.c_str() );
     MDAL_Status s = MDAL_LastStatus();
     EXPECT_EQ( MDAL_Status::None, s );
-    ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+    ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    // scalar group
+    {
+      DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+      ASSERT_NE( g, nullptr );
+
+      const char *name = MDAL_G_name( g );
+      EXPECT_EQ( std::string( "scalarGrp" ), std::string( name ) );
+
+      bool scalar = MDAL_G_hasScalarData( g );
+      EXPECT_EQ( true, scalar );
+
+      bool onVertices = MDAL_G_isOnVertices( g );
+      EXPECT_EQ( false, onVertices );
+
+      ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+      DatasetH ds = MDAL_G_dataset( g, 0 );
+      ASSERT_NE( ds, nullptr );
+
+      bool valid = MDAL_D_isValid( ds );
+      EXPECT_EQ( true, valid );
+
+      bool active = getActive( ds, 0 );
+      EXPECT_EQ( true, active );
+
+      int count = MDAL_D_valueCount( ds );
+      ASSERT_EQ( f_count, count );
+
+      double value = getValue( ds, 0 );
+      EXPECT_DOUBLE_EQ( 1.1000000238418579, value );
+    }
+
+    // vector group
+    {
+      DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+      ASSERT_NE( g, nullptr );
+
+      const char *name = MDAL_G_name( g );
+      EXPECT_EQ( std::string( "vectorGrp" ), std::string( name ) );
+
+      bool scalar = MDAL_G_hasScalarData( g );
+      EXPECT_EQ( false, scalar );
+
+      bool onVertices = MDAL_G_isOnVertices( g );
+      EXPECT_EQ( false, onVertices );
+
+      ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+      DatasetH ds = MDAL_G_dataset( g, 0 );
+      ASSERT_NE( ds, nullptr );
+
+      bool valid = MDAL_D_isValid( ds );
+      EXPECT_EQ( true, valid );
+
+      bool active = getActive( ds, 0 );
+      EXPECT_EQ( true, active );
+
+      int count = MDAL_D_valueCount( ds );
+      ASSERT_EQ( f_count, count );
+
+      double value = getValueX( ds, 0 );
+      EXPECT_DOUBLE_EQ( 2.2000000476837158, value );
+    }
+
+    MDAL_CloseMesh( m );
+  }
+}
+
+TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
+{
+  std::string pathOrig = test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" );
+  std::string cadtsFile = tmp_file( "/CADPTS.DAT" );
+  std::string fplainFile = tmp_file( "/FPLAIN.DAT" );
+  std::string appendedFile = tmp_file( "/TIMDEP.HDF5" );
+
+  //prepare
+  deleteFile( cadtsFile );
+  deleteFile( fplainFile );
+  deleteFile( appendedFile );
+
+  copy( test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ), appendedFile );
+  copy( test_file( "/flo2d/BarnHDF5/CADPTS.DAT" ), cadtsFile );
+  copy( test_file( "/flo2d/BarnHDF5/FPLAIN.DAT" ), fplainFile );
+
+  // FLO-2D is only on face datasets
+  size_t f_count = 521;
+  std::vector<double> valsScalar( f_count, 1.1 );
+  std::vector<double> valsVector( 2 * f_count, 2.2 );
+
+  // Create a new dat file
+  {
+    MeshH m = MDAL_LoadMesh( pathOrig.c_str() );
+    ASSERT_NE( m, nullptr );
+    DriverH driver = MDAL_driverFromName( "FLO2D" );
+    ASSERT_NE( driver, nullptr );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver ) );
+    ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+
+    // add scalar group
+    DatasetGroupH g = MDAL_M_addDatasetGroup(
+                        m,
+                        "scalarGrp",
+                        false,
+                        true,
+                        driver,
+                        appendedFile.c_str()
+                      );
     ASSERT_NE( g, nullptr );
-
-    int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 2, meta_count );
-
-    const char *name = MDAL_G_name( g );
-    EXPECT_EQ( std::string( "scalarGrp" ), std::string( name ) );
-
-    bool scalar = MDAL_G_hasScalarData( g );
-    EXPECT_EQ( true, scalar );
-
-    bool onVertices = MDAL_G_isOnVertices( g );
-    EXPECT_EQ( false, onVertices );
-
+    MDAL_G_addDataset( g,
+                       0.0,
+                       valsScalar.data(),
+                       nullptr
+                     );
+    MDAL_G_addDataset( g,
+                       1.0,
+                       valsScalar.data(),
+                       nullptr
+                     );
+    ASSERT_TRUE( MDAL_G_isInEditMode( g ) );
+    MDAL_G_closeEditMode( g );
+    ASSERT_EQ( 6, MDAL_M_datasetGroupCount( m ) );
+    ASSERT_FALSE( MDAL_G_isInEditMode( g ) );
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 0 );
-    ASSERT_NE( ds, nullptr );
 
-    bool valid = MDAL_D_isValid( ds );
-    EXPECT_EQ( true, valid );
+    // add vector group
+    DatasetGroupH gV = MDAL_M_addDatasetGroup(
+                         m,
+                         "vectorGrp",
+                         false,
+                         false,
+                         driver,
+                         appendedFile.c_str()
+                       );
+    ASSERT_NE( gV, nullptr );
+    MDAL_G_addDataset( gV,
+                       0.0,
+                       valsVector.data(),
+                       nullptr
+                     );
+    MDAL_G_addDataset( gV,
+                       1.0,
+                       valsVector.data(),
+                       nullptr
+                     );
+    ASSERT_TRUE( MDAL_G_isInEditMode( gV ) );
+    MDAL_G_closeEditMode( gV );
+    ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
+    ASSERT_FALSE( MDAL_G_isInEditMode( gV ) );
+    ASSERT_EQ( 2, MDAL_G_datasetCount( gV ) );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    MDAL_CloseMesh( m );
+  }
 
-    int count = MDAL_D_valueCount( ds );
-    ASSERT_EQ( 2, count );
+  // Ok, now try to load it from the new
+  // file and test the
+  // values are there
+  {
+    MeshH m = MDAL_LoadMesh( appendedFile.c_str() );
+    ASSERT_NE( m, nullptr );
+    MDAL_Status s = MDAL_LastStatus();
+    EXPECT_EQ( MDAL_Status::None, s );
+    ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
-    double value = getValue( ds, 0 );
-    EXPECT_DOUBLE_EQ( 1, value );
+    // scalar group
+    {
+      DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+      ASSERT_NE( g, nullptr );
+
+      const char *name = MDAL_G_name( g );
+      EXPECT_EQ( std::string( "scalarGrp" ), std::string( name ) );
+
+      bool scalar = MDAL_G_hasScalarData( g );
+      EXPECT_EQ( true, scalar );
+
+      bool onVertices = MDAL_G_isOnVertices( g );
+      EXPECT_EQ( false, onVertices );
+
+      ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+      DatasetH ds = MDAL_G_dataset( g, 0 );
+      ASSERT_NE( ds, nullptr );
+
+      bool valid = MDAL_D_isValid( ds );
+      EXPECT_EQ( true, valid );
+
+      bool active = getActive( ds, 0 );
+      EXPECT_EQ( true, active );
+
+      int count = MDAL_D_valueCount( ds );
+      ASSERT_EQ( f_count, count );
+
+      double value = getValue( ds, 0 );
+      EXPECT_DOUBLE_EQ( 1.1000000238418579, value );
+    }
+
+    // vector group
+    {
+      DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+      ASSERT_NE( g, nullptr );
+
+      const char *name = MDAL_G_name( g );
+      EXPECT_EQ( std::string( "vectorGrp" ), std::string( name ) );
+
+      bool scalar = MDAL_G_hasScalarData( g );
+      EXPECT_EQ( false, scalar );
+
+      bool onVertices = MDAL_G_isOnVertices( g );
+      EXPECT_EQ( false, onVertices );
+
+      ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+      DatasetH ds = MDAL_G_dataset( g, 0 );
+      ASSERT_NE( ds, nullptr );
+
+      bool valid = MDAL_D_isValid( ds );
+      EXPECT_EQ( true, valid );
+
+      bool active = getActive( ds, 0 );
+      EXPECT_EQ( true, active );
+
+      int count = MDAL_D_valueCount( ds );
+      ASSERT_EQ( f_count, count );
+
+      double value = getValueX( ds, 0 );
+      EXPECT_DOUBLE_EQ( 2.2000000476837158, value );
+    }
 
     MDAL_CloseMesh( m );
   }

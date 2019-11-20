@@ -98,9 +98,9 @@ MDAL::DriverXmdf *MDAL::DriverXmdf::create()
   return new DriverXmdf();
 }
 
-bool MDAL::DriverXmdf::canRead( const std::string &uri )
+bool MDAL::DriverXmdf::canReadDatasets( const std::string &uri )
 {
-  HdfFile file( uri );
+  HdfFile file( uri, HdfFile::ReadOnly );
   if ( !file.isValid() )
   {
     return false;
@@ -121,7 +121,7 @@ void MDAL::DriverXmdf::load( const std::string &datFile,  MDAL::Mesh *mesh, MDAL
   mMesh = mesh;
   if ( status ) *status = MDAL_Status::None;
 
-  HdfFile file( mDatFile );
+  HdfFile file( mDatFile, HdfFile::ReadOnly );
   if ( !file.isValid() )
   {
     if ( status ) *status = MDAL_Status::Err_UnknownFormat;

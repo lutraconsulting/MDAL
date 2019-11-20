@@ -17,7 +17,7 @@
 
 static HdfFile openHdfFile( const std::string &fileName )
 {
-  HdfFile file( fileName );
+  HdfFile file( fileName, HdfFile::ReadOnly );
   if ( !file.isValid() ) throw MDAL_Status::Err_UnknownFormat;
   return file;
 }
@@ -596,7 +596,7 @@ MDAL::DriverHec2D *MDAL::DriverHec2D::create()
   return new DriverHec2D();
 }
 
-bool MDAL::DriverHec2D::canRead( const std::string &uri )
+bool MDAL::DriverHec2D::canReadMesh( const std::string &uri )
 {
   try
   {

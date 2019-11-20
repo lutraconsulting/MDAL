@@ -36,6 +36,7 @@ template <> inline void hdfClose<H5I_GROUP>( hid_t id ) { H5Gclose( id ); }
 template <> inline void hdfClose<H5I_DATASET>( hid_t id ) { H5Dclose( id ); }
 template <> inline void hdfClose<H5I_ATTR>( hid_t id ) { H5Aclose( id ); }
 template <> inline void hdfClose<H5I_DATASPACE>( hid_t id ) { H5Sclose( id ); }
+template <> inline void hdfClose<H5I_DATATYPE>( hid_t id ) { H5Tclose( id ); }
 
 template <int TYPE>
 class HdfH
@@ -52,13 +53,20 @@ class HdfGroup;
 class HdfDataset;
 class HdfAttribute;
 class HdfDataspace;
+class HdfDataType;
 
 class HdfFile
 {
   public:
+    enum Mode
+    {
+      ReadOnly,
+      ReadWrite,
+      Create
+    };
     typedef HdfH<H5I_FILE> Handle;
 
-    HdfFile( const std::string &path, bool writeNew = false );
+    HdfFile( const std::string &path, HdfFile::Mode mode );
     ~HdfFile();
     bool isValid() const;
     hid_t id() const;
@@ -69,9 +77,28 @@ class HdfFile
     inline HdfDataset dataset( const std::string &path ) const;
     inline HdfAttribute attribute( const std::string &attr_name ) const;
     inline bool pathExists( const std::string &path ) const;
+    std::string filePath() const;
 
   protected:
     std::shared_ptr<Handle> d;
+    std::string mPath;
+};
+
+class HdfDataType
+{
+  public:
+    typedef HdfH<H5I_DATATYPE> Handle;
+    HdfDataType();
+    HdfDataType( hid_t type, bool isNativeType = true );
+    // Creates new string type with size, use HDF_MAX_NAME for maximum length
+    HdfDataType( int size );
+    ~HdfDataType();
+
+    bool isValid() const;
+    hid_t id() const;
+  protected:
+    std::shared_ptr<Handle> d;
+    hid_t mNativeId = -1;
 };
 
 class HdfGroup
@@ -79,7 +106,9 @@ class HdfGroup
   public:
     typedef HdfH<H5I_GROUP> Handle;
 
-    HdfGroup( hid_t file, const std::string &path, bool writeNew = false );
+    static HdfGroup create( hid_t file, const std::string &path );
+    HdfGroup( hid_t file, const std::string &path );
+    HdfGroup( std::shared_ptr<Handle> handle );
 
     bool isValid() const;
     hid_t id() const;
@@ -104,35 +133,43 @@ class HdfGroup
     std::shared_ptr<Handle> d;
 };
 
-
 class HdfAttribute
 {
   public:
     typedef HdfH<H5I_ATTR> Handle;
 
-    HdfAttribute( hid_t obj_id, const std::string &attr_name, bool writeNew = false );
+    //! Create new attribute for writing for 1 item
+    HdfAttribute( hid_t obj_id, const std::string &attr_name, HdfDataType type );
+
+    //! Open existing attribute for reading
+    HdfAttribute( hid_t obj_id, const std::string &attr_name );
     ~HdfAttribute();
     bool isValid() const;
     hid_t id() const;
 
     std::string readString() const;
-    void writeString( hid_t dataspaceId, const std::string &value );
-    void writeInt32( hid_t dataspaceId, int value );
+
+    void write( const std::string &value );
+    void write( int value );
 
   protected:
     std::shared_ptr<Handle> d;
     hid_t m_objId;
     std::string m_name;
+    HdfDataType mType; // when in write mode
 };
+
+
 
 class HdfDataspace
 {
   public:
     typedef HdfH<H5I_DATASPACE> Handle;
+
     //! memory dataspace for simple N-D array
-    HdfDataspace( const std::vector<hsize_t> &dims, bool writeNew = false );
+    HdfDataspace( const std::vector<hsize_t> &dims );
     //! dataspace of the dataset
-    HdfDataspace( hid_t dataset );
+    HdfDataspace( hid_t dataset = -1 );
     ~HdfDataspace( );
     //! select from 1D array
     void selectHyperslab( hsize_t start, hsize_t count );
@@ -152,7 +189,12 @@ class HdfDataset
   public:
     typedef HdfH<H5I_DATASET> Handle;
 
-    HdfDataset( hid_t file, const std::string &path, bool writeNew = false );
+    //! Create new, simple 1 dimensional dataset
+    HdfDataset( hid_t file, const std::string &path, HdfDataType dtype, size_t nItems = 1 );
+    //! Create new dataset with custom dimensions
+    HdfDataset( hid_t file, const std::string &path, HdfDataType dtype, HdfDataspace dataspace );
+    //! Opens dataset for reading
+    HdfDataset( hid_t file, const std::string &path );
     ~HdfDataset();
     bool isValid() const;
     hid_t id() const;
@@ -228,19 +270,22 @@ class HdfDataset
     //! Reads string value
     std::string readString() const;
 
-    //! Writes string dataset and single data
-    void writeString( hid_t fileId, hid_t dataspaceId, const std::string &value );
+    //! Writes string dataset with single entry
+    void write( const std::string &value );
 
     //! Writes array of float data
-    void writeFloatArray( hid_t dataspaceId, std::vector<float> &value );
+    void write( std::vector<float> &value );
+    void write( float value );
 
     //! Writes array of double data
-    void writeDoubleArray( hid_t dataspaceId, std::vector<double> &value );
+    void write( std::vector<double> &value );
 
   protected:
     std::shared_ptr<Handle> d;
     hid_t m_fileId;
     std::string m_path;
+
+    HdfDataType mType; // when in write mode
 };
 
 inline std::vector<std::string> HdfFile::groups() const { return group( "/" ).groups(); }

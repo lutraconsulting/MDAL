@@ -38,7 +38,8 @@ namespace MDAL
       std::string filters() const;
       bool hasCapability( Capability capability ) const;
 
-      virtual bool canRead( const std::string &uri ) = 0;
+      virtual bool canReadMesh( const std::string &uri );
+      virtual bool canReadDatasets( const std::string &uri );
 
       //! returns the maximum vertices per face
       virtual int faceVerticesMaximumCount() const;
