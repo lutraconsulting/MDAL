@@ -40,7 +40,7 @@ MDAL::DriverAsciiDat *MDAL::DriverAsciiDat::create()
 
 MDAL::DriverAsciiDat::~DriverAsciiDat( ) = default;
 
-bool MDAL::DriverAsciiDat::canRead( const std::string &uri )
+bool MDAL::DriverAsciiDat::canReadDatasets( const std::string &uri )
 {
   std::ifstream in( uri, std::ifstream::in );
   std::string line;

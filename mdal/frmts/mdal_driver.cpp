@@ -42,6 +42,16 @@ bool MDAL::Driver::hasCapability( MDAL::Capability capability ) const
   return capability == ( mCapabilityFlags & capability );
 }
 
+bool MDAL::Driver::canReadMesh( const std::string &uri )
+{
+  return false;
+}
+
+bool MDAL::Driver::canReadDatasets( const std::string &uri )
+{
+  return false;
+}
+
 int MDAL::Driver::faceVerticesMaximumCount() const
 {
   return -1;

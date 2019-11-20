@@ -528,7 +528,7 @@ MDAL::DriverGdal::DriverGdal( const std::string &name,
   mPafScanline( nullptr )
 {}
 
-bool MDAL::DriverGdal::canRead( const std::string &uri )
+bool MDAL::DriverGdal::canReadMesh( const std::string &uri )
 {
   try
   {

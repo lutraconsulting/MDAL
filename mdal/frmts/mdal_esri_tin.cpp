@@ -204,7 +204,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverEsriTin::load( const std::string &uri, M
   }
 }
 
-bool MDAL::DriverEsriTin::canRead( const std::string &uri )
+bool MDAL::DriverEsriTin::canReadMesh( const std::string &uri )
 {
 
   std::string zFileName = zFile( uri );

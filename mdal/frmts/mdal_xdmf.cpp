@@ -341,7 +341,7 @@ HdfDataset MDAL::DriverXdmf::parseHdf5Node( const XMLFile &xmfFile, xmlNodePtr n
   std::shared_ptr<HdfFile> hdfFile;
   if ( mHdfFiles.count( hdf5Name ) == 0 )
   {
-    hdfFile = std::make_shared<HdfFile>( hdf5Name );
+    hdfFile = std::make_shared<HdfFile>( hdf5Name, HdfFile::ReadOnly );
     mHdfFiles[hdf5Name] = hdfFile;
   }
   else
@@ -626,7 +626,7 @@ MDAL::DriverXdmf *MDAL::DriverXdmf::create()
   return new DriverXdmf();
 }
 
-bool MDAL::DriverXdmf::canRead( const std::string &uri )
+bool MDAL::DriverXdmf::canReadDatasets( const std::string &uri )
 {
   XMLFile xmfFile;
   try

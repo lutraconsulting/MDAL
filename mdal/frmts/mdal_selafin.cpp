@@ -524,7 +524,7 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names, co
   }
 }
 
-bool MDAL::DriverSelafin::canRead( const std::string &uri )
+bool MDAL::DriverSelafin::canReadMesh( const std::string &uri )
 {
   if ( !MDAL::fileExists( uri ) ) return false;
 

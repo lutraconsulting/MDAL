@@ -73,7 +73,7 @@ namespace MDAL
 
       virtual std::unique_ptr< Mesh > load( const std::string &uri, MDAL_Status *status ) override;
 
-      bool canRead( const std::string &uri ) override;
+      bool canReadMesh( const std::string &uri ) override;
 
     private:
       std::string xyFile( const std::string &uri ) const;

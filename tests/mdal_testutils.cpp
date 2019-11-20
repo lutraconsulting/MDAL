@@ -6,6 +6,8 @@
 #include <vector>
 #include <math.h>
 #include <assert.h>
+#include <fstream>
+#include <stdio.h>
 
 const char *data_path()
 {
@@ -27,6 +29,27 @@ std::string tmp_file( std::string basename )
   return path;
 }
 
+void copy( const std::string &src, const std::string &dest )
+{
+  std::ifstream srcS;
+  std::ofstream dstS;
+
+  srcS.open( src, std::ios::in | std::ios::binary );
+  dstS.open( dest, std::ios::out | std::ios::binary );
+  dstS << srcS.rdbuf();
+}
+
+void deleteFile( const std::string &path )
+{
+  if ( fileExists( path ) )
+    remove( path.c_str() );
+}
+
+bool fileExists( const std::string &filename )
+{
+  std::ifstream in( filename );
+  return in.good();
+}
 
 bool getActive( DatasetH dataset, int index )
 {

@@ -82,7 +82,7 @@ namespace MDAL
       ~DriverXmdf( ) override = default;
       DriverXmdf *create() override;
 
-      bool canRead( const std::string &uri ) override;
+      bool canReadDatasets( const std::string &uri ) override;
       void load( const std::string &datFile, Mesh *mesh, MDAL_Status *status ) override;
 
     private:

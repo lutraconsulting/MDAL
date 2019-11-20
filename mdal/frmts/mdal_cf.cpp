@@ -313,7 +313,7 @@ MDAL::DriverCF::DriverCF( const std::string &name,
 {
 }
 
-bool MDAL::DriverCF::canRead( const std::string &uri )
+bool MDAL::DriverCF::canReadMesh( const std::string &uri )
 {
   try
   {
