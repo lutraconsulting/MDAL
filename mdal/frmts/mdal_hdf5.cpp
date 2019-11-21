@@ -219,7 +219,7 @@ std::vector<std::string> HdfDataset::readArrayString() const
 {
   std::vector<std::string> ret;
 
-  HdfDataType datatype( HDF_MAX_NAME );
+  HdfDataType datatype = HdfDataType::createString();
   std::vector<HdfString> arr = readArray<HdfString>( datatype.id() );
 
   for ( const HdfString &str : arr )
@@ -298,7 +298,7 @@ std::string HdfDataset::readString() const
   }
 
   char name[HDF_MAX_NAME];
-  HdfDataType datatype( HDF_MAX_NAME );
+  HdfDataType datatype = HdfDataType::createString();
   herr_t status = H5Dread( d->id, datatype.id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, name );
   if ( status < 0 )
   {
@@ -371,13 +371,13 @@ HdfDataType::HdfDataType( hid_t type, bool isNativeType )
     d = std::make_shared< Handle >( type );
 }
 
-HdfDataType::HdfDataType( int size )
+HdfDataType HdfDataType::createString( int size )
 {
   assert( size > 0 );
   hid_t atype = H5Tcopy( H5T_C_S1 );
   H5Tset_size( atype, static_cast<size_t>( size ) );
   H5Tset_strpad( atype, H5T_STR_NULLTERM );
-  d = std::make_shared< Handle >( atype );
+  return HdfDataType( atype, false );
 }
 
 HdfDataType::~HdfDataType() = default;

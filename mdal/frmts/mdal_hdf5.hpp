@@ -90,12 +90,14 @@ class HdfDataType
     typedef HdfH<H5I_DATATYPE> Handle;
     HdfDataType();
     HdfDataType( hid_t type, bool isNativeType = true );
-    // Creates new string type with size, use HDF_MAX_NAME for maximum length
-    HdfDataType( int size );
     ~HdfDataType();
 
+    // Creates new string type with size, use HDF_MAX_NAME for maximum length
+    static HdfDataType createString( int size = HDF_MAX_NAME );
     bool isValid() const;
     hid_t id() const;
+
+
   protected:
     std::shared_ptr<Handle> d;
     hid_t mNativeId = -1;
