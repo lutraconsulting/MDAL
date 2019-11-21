@@ -5,6 +5,7 @@
 #include "gtest/gtest.h"
 #include <string>
 #include <vector>
+#include <cmath>
 
 //mdal
 #include "mdal.h"
@@ -126,7 +127,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       int count = MDAL_D_valueCount( ds );
       ASSERT_EQ( f_count, count );
 
-      double value = getValue( ds, 0 );
+      double value = getValue( ds, 2 );
       EXPECT_DOUBLE_EQ( 1.1000000238418579, value );
     }
 
@@ -157,7 +158,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       int count = MDAL_D_valueCount( ds );
       ASSERT_EQ( f_count, count );
 
-      double value = getValueX( ds, 0 );
+      double value = getValueX( ds, 5 );
       EXPECT_DOUBLE_EQ( 2.2000000476837158, value );
     }
 
@@ -183,8 +184,16 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
 
   // FLO-2D is only on face datasets
   size_t f_count = 521;
-  std::vector<double> valsScalar( f_count, 1.1 );
-  std::vector<double> valsVector( 2 * f_count, 2.2 );
+  std::vector<double> valsScalar( f_count );
+  std::vector<double> valsVector( 2 * f_count );
+
+  for ( size_t i = 0; i < f_count; ++i )
+  {
+    double val = static_cast<double>( i );
+    valsScalar[i] = val;
+    valsVector[2 * i] = val;
+    valsVector[2 * i + 1] = 2 * val;
+  }
 
   // Create a new dat file
   {
@@ -288,7 +297,13 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       ASSERT_EQ( f_count, count );
 
       double value = getValue( ds, 0 );
-      EXPECT_DOUBLE_EQ( 1.1000000238418579, value );
+      EXPECT_TRUE( std::isnan( value ) );
+
+      value = getValue( ds, 200 );
+      EXPECT_DOUBLE_EQ( 200.0, value );
+
+      value = getValue( ds, 500 );
+      EXPECT_DOUBLE_EQ( 500.0, value );
     }
 
     // vector group
@@ -319,7 +334,23 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       ASSERT_EQ( f_count, count );
 
       double value = getValueX( ds, 0 );
-      EXPECT_DOUBLE_EQ( 2.2000000476837158, value );
+      EXPECT_TRUE( std::isnan( value ) );
+
+      value = getValueX( ds, 200 );
+      EXPECT_DOUBLE_EQ( 200.0, value );
+
+      value = getValueX( ds, 500 );
+      EXPECT_DOUBLE_EQ( 500.0, value );
+
+      value = getValueY( ds, 0 );
+      EXPECT_TRUE( std::isnan( value ) );
+
+      value = getValueY( ds, 200 );
+      EXPECT_DOUBLE_EQ( 2 * 200.0, value );
+
+      value = getValueY( ds, 500 );
+      EXPECT_DOUBLE_EQ( 2 * 500.0, value );
+
     }
 
     MDAL_CloseMesh( m );
