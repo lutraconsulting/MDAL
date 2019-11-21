@@ -797,9 +797,6 @@ bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup,
   std::vector<hsize_t> timesCountVec = {timesCount};
   HdfDataspace dscTimes( timesCountVec );
 
-  double max = dsGroup->statistics().maximum;
-  double min = dsGroup->statistics().minimum;
-
   std::vector<float> maximums( timesCount );
   std::vector<float> minimums( timesCount );
   std::vector<double> times( timesCount );
