@@ -754,14 +754,14 @@ bool MDAL::DriverFlo2D::saveNewHDF5File( DatasetGroup *dsGroup )
   dsFileVersion.write( 1.0f );
 
   // Create string dataset File Type
-  HdfDataset dsFileType( file.id(), "/File Type", HdfDataType( HDF_MAX_NAME ) );
+  HdfDataset dsFileType( file.id(), "/File Type", HdfDataType::createString() );
   dsFileType.write( "Xmdf" );
 
   // Create group TIMDEP NETCDF OUTPUT RESULTS
   HdfGroup groupTNOR = HdfGroup::create( file.id(), "/TIMDEP NETCDF OUTPUT RESULTS" );
 
   // Create attribute
-  HdfAttribute attTNORGrouptype( groupTNOR.id(), "Grouptype", HdfDataType( HDF_MAX_NAME ) );
+  HdfAttribute attTNORGrouptype( groupTNOR.id(), "Grouptype", HdfDataType::createString() );
   // Write string value to attribute
   attTNORGrouptype.write( "Generic" );
 
@@ -776,7 +776,7 @@ bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup,
     return true;
   }
 
-  HdfDataType dtMaxString( HDF_MAX_NAME );
+  HdfDataType dtMaxString = HdfDataType::createString();
   std::string dsGroupName = dsGroup->name();
   const size_t timesCount = dsGroup->datasets.size();
   const size_t facesCount = dsGroup->mesh()->facesCount();
@@ -840,7 +840,7 @@ bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup,
   HdfAttribute attDataType( group.id(), "Data Type", dtMaxString );
   attDataType.write( 0 );
 
-  HdfAttribute attDatasetCompression( group.id(), "DatasetCompression", true );
+  HdfAttribute attDatasetCompression( group.id(), "DatasetCompression", H5T_NATIVE_INT );
   attDatasetCompression.write( -1 );
 
   /*
