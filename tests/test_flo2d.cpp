@@ -355,6 +355,10 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
 
     MDAL_CloseMesh( m );
   }
+
+  //cleanup
+  deleteFile( cadtsFile );
+  deleteFile( fplainFile );
 }
 
 TEST( MeshFlo2dTest, BarnHDF5 )
