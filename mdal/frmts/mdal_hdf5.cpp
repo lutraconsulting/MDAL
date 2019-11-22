@@ -5,7 +5,7 @@
 
 #include "mdal_hdf5.hpp"
 #include <cstring>
-
+#include <algorithm>
 
 HdfFile::HdfFile( const std::string &path, HdfFile::Mode mode )
   : mPath( path )
@@ -130,7 +130,12 @@ void HdfAttribute::write( const std::string &value )
   if ( !isValid() || !mType.isValid() )
     throw MDAL_Status::Err_FailToWriteToDisk;
 
-  if ( H5Awrite( d->id, mType.id(), value.c_str() ) < 0 )
+  // make sure you do not store more than it is possible
+  std::vector<char> buf( HDF_MAX_NAME, '\0' );
+  size_t size = value.size() < HDF_MAX_NAME - 1  ? value.size() : HDF_MAX_NAME - 1;
+  memcpy( buf.data(), value.c_str(), size );
+
+  if ( H5Awrite( d->id, mType.id(), buf.data() ) < 0 )
     throw MDAL_Status::Err_FailToWriteToDisk;
 }
 
@@ -284,8 +289,13 @@ void HdfDataset::write( const std::string &value )
   if ( !isValid() || !mType.isValid() )
     throw MDAL_Status::Err_FailToWriteToDisk;
 
+  // make sure you do not store more than it is possible
+  std::vector<char> buf( HDF_MAX_NAME, '\0' );
+  size_t size = value.size() < HDF_MAX_NAME - 1  ? value.size() : HDF_MAX_NAME - 1;
+  memcpy( buf.data(), value.c_str(), size );
+
   // Write string to dataset.
-  if ( H5Dwrite( d->id, mType.id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, value.c_str() ) < 0 )
+  if ( H5Dwrite( d->id, mType.id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, buf.data() ) < 0 )
     throw MDAL_Status::Err_FailToWriteToDisk;
 }
 
@@ -374,6 +384,9 @@ HdfDataType::HdfDataType( hid_t type, bool isNativeType )
 HdfDataType HdfDataType::createString( int size )
 {
   assert( size > 0 );
+  if ( size > HDF_MAX_NAME )
+    size = HDF_MAX_NAME;
+
   hid_t atype = H5Tcopy( H5T_C_S1 );
   H5Tset_size( atype, static_cast<size_t>( size ) );
   H5Tset_strpad( atype, H5T_STR_NULLTERM );
