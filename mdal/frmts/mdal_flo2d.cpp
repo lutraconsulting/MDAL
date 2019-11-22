@@ -837,7 +837,7 @@ bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup,
   }
   HdfGroup group = HdfGroup::create( groupTNOR.id(), "/TIMDEP NETCDF OUTPUT RESULTS/" + dsGroupName );
 
-  HdfAttribute attDataType( group.id(), "Data Type", dtMaxString );
+  HdfAttribute attDataType( group.id(), "Data Type", H5T_NATIVE_INT );
   attDataType.write( 0 );
 
   HdfAttribute attDatasetCompression( group.id(), "DatasetCompression", H5T_NATIVE_INT );
