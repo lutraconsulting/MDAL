@@ -131,8 +131,8 @@ void HdfAttribute::write( const std::string &value )
     throw MDAL_Status::Err_FailToWriteToDisk;
 
   // make sure you do not store more than it is possible
-  std::vector<char> buf( HDF_MAX_NAME, '\0' );
-  size_t size = value.size() < HDF_MAX_NAME - 1  ? value.size() : HDF_MAX_NAME - 1;
+  std::vector<char> buf( HDF_MAX_NAME + 1, '\0' );
+  size_t size = value.size() < HDF_MAX_NAME  ? value.size() : HDF_MAX_NAME;
   memcpy( buf.data(), value.c_str(), size );
 
   if ( H5Awrite( d->id, mType.id(), buf.data() ) < 0 )
@@ -290,8 +290,8 @@ void HdfDataset::write( const std::string &value )
     throw MDAL_Status::Err_FailToWriteToDisk;
 
   // make sure you do not store more than it is possible
-  std::vector<char> buf( HDF_MAX_NAME, '\0' );
-  size_t size = value.size() < HDF_MAX_NAME - 1  ? value.size() : HDF_MAX_NAME - 1;
+  std::vector<char> buf( HDF_MAX_NAME + 1, '\0' );
+  size_t size = value.size() < HDF_MAX_NAME  ? value.size() : HDF_MAX_NAME;
   memcpy( buf.data(), value.c_str(), size );
 
   // Write string to dataset.
