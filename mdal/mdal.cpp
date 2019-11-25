@@ -819,6 +819,18 @@ int MDAL_D_volumesCount( DatasetH dataset )
   return len;
 }
 
+int MDAL_D_maximumVerticalLevelCount( DatasetH dataset )
+{
+  if ( !dataset )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return 0;
+  }
+  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
+  int len = static_cast<int>( d->maximumVerticalLevelsCount() );
+  return len;
+}
+
 int MDAL_D_valueCount( DatasetH dataset )
 {
   if ( !dataset )

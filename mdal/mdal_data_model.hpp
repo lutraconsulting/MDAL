@@ -67,6 +67,7 @@ namespace MDAL
       virtual size_t activeVolumesData( size_t indexStart, size_t count, int *buffer ) = 0;
 
       virtual size_t volumesCount() const = 0;
+      virtual size_t maximumVerticalLevelsCount() const = 0;
 
       Statistics statistics() const;
       void setStatistics( const Statistics &statistics );
@@ -100,21 +101,28 @@ namespace MDAL
       size_t activeVolumesData( size_t indexStart, size_t count, int *buffer ) override;
 
       size_t volumesCount() const override;
+      size_t maximumVerticalLevelsCount() const override;
   };
 
   class Dataset3D: public Dataset
   {
     public:
-      Dataset3D( DatasetGroup *parent, size_t volumes );
+      Dataset3D(
+        DatasetGroup *parent,
+        size_t volumes,
+        size_t maxVerticalLevelCount
+      );
       virtual ~Dataset3D() override;
 
       virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
       virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
       virtual size_t activeData( size_t indexStart, size_t count, int *buffer ) override;
       size_t volumesCount() const override;
+      size_t maximumVerticalLevelsCount() const override;
 
     private:
       size_t mVolumesCount = 0;
+      size_t mMaximumVerticalLevelsCount = 0;
   };
 
 

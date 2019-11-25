@@ -11,12 +11,18 @@
 #include <assert.h>
 #include <cstring>
 
-MDAL::TuflowFVDataset3D::TuflowFVDataset3D( MDAL::DatasetGroup *parent,
-    int ncid_x, int ncid_y, size_t timesteps,
-    size_t volumesCount, size_t facesCount,
-    size_t levelFacesCount, size_t ts,
-    std::shared_ptr<NetCDFFile> ncFile )
-  : MDAL::Dataset3D( parent, volumesCount )
+MDAL::TuflowFVDataset3D::TuflowFVDataset3D(
+  MDAL::DatasetGroup *parent,
+  int ncid_x,
+  int ncid_y,
+  size_t timesteps,
+  size_t volumesCount,
+  size_t facesCount,
+  size_t levelFacesCount,
+  size_t ts,
+  size_t maximumLevelsCount,
+  std::shared_ptr<NetCDFFile> ncFile )
+  : MDAL::Dataset3D( parent, volumesCount, maximumLevelsCount )
   , mNcidX( ncid_x )
   , mNcidY( ncid_y )
   , mTimesteps( timesteps )
@@ -250,6 +256,34 @@ void MDAL::DriverTuflowFV::populateFaces( MDAL::Faces &faces )
   }
 }
 
+void MDAL::DriverTuflowFV::calculateMaximumLevelCount()
+{
+  if ( mMaximumLevelsCount < 0 )
+  {
+    mMaximumLevelsCount = 0;
+    int ncidVerticalLevels = mNcFile->arrId( "NL" );
+    if ( ncidVerticalLevels < 0 )
+      return;
+
+    const size_t maxBufferLength = 1000;
+    size_t indexStart = 0;
+    size_t facesCount = mDimensions.size( CFDimensions::Face2D );
+    while ( true )
+    {
+      size_t copyValues = std::min( facesCount - indexStart, maxBufferLength );
+      if ( copyValues <= 0 ) break;
+      std::vector<int> vals = mNcFile->readIntArr(
+                                ncidVerticalLevels,
+                                indexStart,
+                                copyValues
+                              );
+
+      mMaximumLevelsCount = std::max( mMaximumLevelsCount, *std::max_element( vals.begin(), vals.end() ) );
+      indexStart += copyValues;
+    }
+  }
+}
+
 void MDAL::DriverTuflowFV::addBedElevation( MDAL::MemoryMesh *mesh )
 {
   MDAL::addBedElevationDatasetGroup( mesh, mesh->vertices );
@@ -336,6 +370,8 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverTuflowFV::create3DDataset( std::share
     const MDAL::CFDatasetGroupInfo &dsi,
     double, double )
 {
+  calculateMaximumLevelCount();
+
   std::shared_ptr<MDAL::TuflowFVDataset3D> dataset = std::make_shared<MDAL::TuflowFVDataset3D>(
         group.get(),
         dsi.ncid_x,
@@ -345,6 +381,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverTuflowFV::create3DDataset( std::share
         mDimensions.size( CFDimensions::Type::Face2D ),
         mDimensions.size( CFDimensions::Type::StackedFace3D ),
         ts,
+        mMaximumLevelsCount,
         mNcFile
       );
 

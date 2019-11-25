@@ -75,6 +75,8 @@ MDAL::Dataset2D::~Dataset2D() = default;
 
 size_t MDAL::Dataset2D::volumesCount() const { return 0; }
 
+size_t MDAL::Dataset2D::maximumVerticalLevelsCount() const { return 0; }
+
 size_t MDAL::Dataset2D::verticalLevelCountData( size_t, size_t, int * ) { return 0; }
 
 size_t MDAL::Dataset2D::verticalLevelData( size_t, size_t, double * ) { return 0; }
@@ -87,9 +89,10 @@ size_t MDAL::Dataset2D::vectorVolumesData( size_t, size_t, double * ) { return 0
 
 size_t MDAL::Dataset2D::activeVolumesData( size_t, size_t, int * ) { return 0; }
 
-MDAL::Dataset3D::Dataset3D( MDAL::DatasetGroup *parent, size_t volumes )
+MDAL::Dataset3D::Dataset3D( MDAL::DatasetGroup *parent, size_t volumes, size_t maxVerticalLevelCount )
   : Dataset( parent )
   , mVolumesCount( volumes )
+  , mMaximumVerticalLevelsCount( maxVerticalLevelCount )
 {
 }
 
@@ -98,6 +101,11 @@ MDAL::Dataset3D::~Dataset3D() = default;
 size_t MDAL::Dataset3D::volumesCount() const
 {
   return mVolumesCount;
+}
+
+size_t MDAL::Dataset3D::maximumVerticalLevelsCount() const
+{
+  return mMaximumVerticalLevelsCount;
 }
 
 size_t MDAL::Dataset3D::scalarData( size_t, size_t, double * ) { return 0; }

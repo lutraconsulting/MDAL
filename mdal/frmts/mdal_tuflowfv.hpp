@@ -32,6 +32,7 @@ namespace MDAL
         size_t facesCount,
         size_t levelFacesCount,
         size_t ts,
+        size_t maximumLevelsCount,
         std::shared_ptr<NetCDFFile> ncFile
       );
       virtual ~TuflowFVDataset3D() override;
@@ -96,6 +97,9 @@ namespace MDAL
       void addBedElevationDatasetOnFaces();
       void populateVertices( MDAL::Vertices &vertices );
       void populateFaces( MDAL::Faces &faces );
+
+      void calculateMaximumLevelCount();
+      int mMaximumLevelsCount = -1;
   };
 
 } // namespace MDAL
