@@ -123,6 +123,9 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     DatasetH ds = MDAL_G_dataset( g, 3 );
     ASSERT_NE( ds, nullptr );
 
+    int maxLevels = MDAL_D_maximumVerticalLevelCount( ds );
+    EXPECT_EQ( maxLevels, 10 );
+
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 

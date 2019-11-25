@@ -6,12 +6,6 @@
 #ifndef MDAL_H
 #define MDAL_H
 
-/**********************************************************************/
-/**********************************************************************/
-/* API is considered EXPERIMENTAL and can be changed without a notice */
-/**********************************************************************/
-/**********************************************************************/
-
 #ifdef MDAL_STATIC
 #  define MDAL_EXPORT
 #else
@@ -86,6 +80,7 @@ typedef void *MeshFaceIteratorH;
 typedef void *DatasetGroupH;
 typedef void *DatasetH;
 typedef void *DriverH;
+typedef void *AveragingMethodH;
 
 //! Returns MDAL version
 MDAL_EXPORT const char *MDAL_Version();
@@ -337,6 +332,9 @@ MDAL_EXPORT double MDAL_D_time( DatasetH dataset );
 
 //! Returns volumes count for the mesh (for 3D meshes)
 MDAL_EXPORT int MDAL_D_volumesCount( DatasetH dataset );
+
+//! Returns maximum number of vertical levels (for 3D meshes)
+MDAL_EXPORT int MDAL_D_maximumVerticalLevelCount( DatasetH dataset );
 
 /**
  * Returns number of values
