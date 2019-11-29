@@ -7,6 +7,8 @@
 #include <vector>
 #include <assert.h>
 #include <netcdf.h>
+#include <cmath>
+
 #include "mdal_netcdf.hpp"
 #include "mdal.h"
 #include "mdal_utils.hpp"
@@ -82,7 +84,32 @@ std::vector<double> NetCDFFile::readDoubleArr( const std::string &name, size_t d
   int arr_id;
   if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
   std::vector<double> arr_val( dim );
-  if ( nc_get_var_double( mNcid, arr_id, arr_val.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+
+  nc_type typep;
+  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+  if ( nc_inq_vartype( mNcid, arr_id, &typep ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+
+  if ( typep == NC_FLOAT )
+  {
+    std::vector<float> arr_val_f( dim );
+    if ( nc_get_var_float( mNcid, arr_id, arr_val_f.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+    for ( size_t i = 0; i < dim; ++i )
+    {
+      const float val = arr_val_f[i];
+      if ( std::isnan( val ) )
+        arr_val[i] = std::numeric_limits<double>::quiet_NaN();
+      else
+        arr_val[i] = static_cast<double>( val );
+    }
+  }
+  else if ( typep == NC_DOUBLE )
+  {
+    if ( nc_get_var_double( mNcid, arr_id, arr_val.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+  }
+  else
+  {
+    throw MDAL_Status::Err_UnknownFormat;
+  }
   return arr_val;
 }
 
@@ -97,8 +124,44 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   const std::vector<ptrdiff_t> stridep = {1, 1};
 
   std::vector<double> arr_val( count_dim1 * count_dim2 );
-  int res = nc_get_vars_double( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val.data() );
-  if ( res != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+
+  nc_type typep;
+  if ( nc_inq_vartype( mNcid, arr_id, &typep ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+
+  if ( typep == NC_FLOAT )
+  {
+    std::vector<float> arr_val_f( count_dim1 * count_dim2 );
+    if ( nc_get_vars_float( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_f.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+    for ( size_t i = 0; i < count_dim1 * count_dim2; ++i )
+    {
+      const float val = arr_val_f[i];
+      if ( std::isnan( val ) )
+        arr_val[i] = std::numeric_limits<double>::quiet_NaN();
+      else
+        arr_val[i] = static_cast<double>( val );
+    }
+  }
+  else if ( typep == NC_BYTE )
+  {
+    std::vector<unsigned char> arr_val_b( count_dim1 * count_dim2 );
+    if ( nc_get_vars_ubyte( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_b.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+    for ( size_t i = 0; i < count_dim1 * count_dim2; ++i )
+    {
+      const unsigned char val = arr_val_b[i];
+      if ( val == 129 )
+        arr_val[i] = std::numeric_limits<double>::quiet_NaN();
+      else
+        arr_val[i] = double( int( val ) );
+    }
+  }
+  else if ( typep == NC_DOUBLE )
+  {
+    if ( nc_get_vars_double( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+  }
+  else
+  {
+    throw MDAL_Status::Err_UnknownFormat;
+  }
   return arr_val;
 }
 

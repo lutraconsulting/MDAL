@@ -94,6 +94,11 @@ size_t MDAL::TuflowFVDataset3D::faceToVolumeData( size_t indexStart, size_t coun
                             indexStart,
                             copyValues
                           );
+
+  // indexed from 1 in FV, from 0 in MDAL
+  for ( auto &element : vals )
+    element -= 1;
+
   memcpy( buffer, vals.data(), copyValues * sizeof( int ) );
   return copyValues;
 }
@@ -234,6 +239,7 @@ void MDAL::DriverTuflowFV::populateFaces( MDAL::Faces &faces )
 {
   assert( faces.empty() );
   size_t faceCount = mDimensions.size( CFDimensions::Face2D );
+  size_t vertexCount = mDimensions.size( CFDimensions::Vertex2D );
   faces.resize( faceCount );
 
   // Parse 2D Mesh
@@ -249,8 +255,9 @@ void MDAL::DriverTuflowFV::populateFaces( MDAL::Faces &faces )
     for ( size_t j = 0; j < nVertices; ++j )
     {
       size_t idx = verticesInFace * i + j;
-      int val = face_nodes_conn[idx];
-      idxs.push_back( static_cast<size_t>( val ) );
+      size_t val = static_cast<size_t>( face_nodes_conn[idx] - 1 ); //indexed from 1
+      assert( val < vertexCount );
+      idxs.push_back( val );
     }
     faces[i] = idxs;
   }
@@ -325,24 +332,22 @@ void MDAL::DriverTuflowFV::parseNetCDFVariableMetadata( int varid, const std::st
   std::string long_name = mNcFile->getAttrStr( "long_name", varid );
   if ( long_name.empty() )
   {
-    if ( MDAL::endsWith( variableName, "_x" ) )
-    {
-      *is_vector = true;
-      name = MDAL::replace( variableName, "_x", "" );
-    }
-    else if ( MDAL::endsWith( variableName, "_y" ) )
-    {
-      *is_vector = true;
-      *is_x = false;
-      name = MDAL::replace( variableName, "_y", "" );
-    }
-    else
-    {
-      name = variableName;
-    }
+    name = variableName;
   }
   else
   {
+    if ( MDAL::startsWith( long_name, "maximum value of " ) )
+      long_name = MDAL::replace( long_name, "maximum value of ", "" ) + "/Maximums";
+
+    if ( MDAL::startsWith( long_name, "minimum value of " ) )
+      long_name = MDAL::replace( long_name, "minimum value of ", "" ) + "/Minimums";
+
+    if ( MDAL::startsWith( long_name, "time at maximum value of " ) )
+      long_name = MDAL::replace( long_name, "time at maximum value of ", "" ) + "/Time at Maximums";
+
+    if ( MDAL::startsWith( long_name, "time at minimum value of " ) )
+      long_name = MDAL::replace( long_name, "time at minimum value of ", "" ) + "/Time at Minimums";
+
     if ( MDAL::startsWith( long_name, "x_" ) )
     {
       *is_vector = true;
