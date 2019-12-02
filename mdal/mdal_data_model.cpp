@@ -110,9 +110,9 @@ size_t MDAL::Dataset3D::maximumVerticalLevelsCount() const
 
 size_t MDAL::Dataset3D::scalarData( size_t, size_t, double * ) { return 0; }
 
-size_t MDAL::Dataset3D::vectorData( size_t, size_t count, double * ) { return 0; }
+size_t MDAL::Dataset3D::vectorData( size_t, size_t, double * ) { return 0; }
 
-size_t MDAL::Dataset3D::activeData( size_t, size_t count, int * ) { return 0; }
+size_t MDAL::Dataset3D::activeData( size_t, size_t, int * ) { return 0; }
 
 MDAL::DatasetGroup::DatasetGroup( const std::string &driverName,
                                   MDAL::Mesh *parent,
