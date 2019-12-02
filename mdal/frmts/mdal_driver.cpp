@@ -66,7 +66,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::Driver::load( const std::string &, MDAL_Stat
 
 void MDAL::Driver::load( const std::string &, Mesh *, MDAL_Status * ) {}
 
-void MDAL::Driver::save( const std::string &uri, MDAL::Mesh *, MDAL_Status * ) {}
+void MDAL::Driver::save( const std::string &, MDAL::Mesh *, MDAL_Status * ) {}
 
 void MDAL::Driver::createDatasetGroup( MDAL::Mesh *mesh, const std::string &groupName, MDAL_DataLocation dataLocation, bool hasScalarData, const std::string &datasetGroupFile )
 {
