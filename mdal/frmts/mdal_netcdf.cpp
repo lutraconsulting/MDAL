@@ -144,7 +144,7 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   else if ( typep == NC_BYTE )
   {
     std::vector<unsigned char> arr_val_b( count_dim1 * count_dim2 );
-    if ( nc_get_vars_ubyte( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_b.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+    if ( nc_get_vars_uchar( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_b.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
     for ( size_t i = 0; i < count_dim1 * count_dim2; ++i )
     {
       const unsigned char val = arr_val_b[i];

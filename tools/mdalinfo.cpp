@@ -21,8 +21,23 @@ void printDriverInfo( int index )
   std::string longName = MDAL_DR_longName( driver );
   std::string filters = MDAL_DR_filters( driver );
 
+  bool saveMeshCapability = MDAL_DR_saveMeshCapability( driver );
+  bool writeFaceDatasetsCapability = MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces2D );
+  bool writeVerticesDatasetsCapability = MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D );
+  bool writeVolumesDatasetsCapability = MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVolumes3D );
+  std::string writeFlag;
+  if ( saveMeshCapability )
+    writeFlag += " -Wmesh-";
+  if ( writeFaceDatasetsCapability )
+    writeFlag += " -Wface-";
+  if ( writeVerticesDatasetsCapability )
+    writeFlag += " -Wvertex-";
+  if ( writeVolumesDatasetsCapability )
+    writeFlag += " -Wvolume-";
+
   std::cout << name << " "
-            << meshFlag << " (r): "
+            << meshFlag << ""
+            << writeFlag << ": "
             << longName << " "
             << "(" << filters << ")"
             << std::endl;
@@ -31,6 +46,16 @@ void printDriverInfo( int index )
 void printFormats()
 {
   int driverCount = MDAL_driverCount();
+
+  std::cout << std::endl;
+  std::cout << "-mesh-" << " can read mesh frame and datasets " << std::endl
+            << "-data-" << " can read only datasets " << std::endl
+            << "-Wmesh-" << " can write mesh frame" << std::endl
+            << "-Wface-" << " can write datasets defined on faces " << std::endl
+            << "-Wvertex-" << " can write datasets defined on vertices " << std::endl
+            << "-Wvolume-" << " can write datasets defined on volumes " << std::endl
+            << std::endl;
+
   for ( int i = 0; i < driverCount; ++i )
   {
     printDriverInfo( i );
