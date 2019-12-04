@@ -128,6 +128,40 @@ TEST( MeshEsriTinTest, test_Islands_tintriangle )
   EXPECT_TRUE( fabs( y - 45.7859876600764 ) < 0.0000001 );
   EXPECT_TRUE( fabs( z - 146.6611 ) < 0.001 );
 
+  // Bed elevation dataset
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+  {
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "Altitude" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 402, count );
+
+    double value = getValue( ds, 1 );
+    EXPECT_DOUBLE_EQ( 200, value );
+  }
+
   MDAL_CloseMesh( m );
 }
 

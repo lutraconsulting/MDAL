@@ -41,8 +41,8 @@ TEST( MeshGdalGribTest, ScalarFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( false, active );
+  int active = getActive( ds, 0 );
+  EXPECT_EQ( 0, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1683, count );
@@ -84,8 +84,8 @@ TEST( MeshGdalGribTest, VectorFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( false, active );
+  int active = getActive( ds, 0 );
+  EXPECT_EQ( 0, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1683, count );
@@ -133,8 +133,8 @@ TEST( MeshGdalGribTest, WithoutNODATA )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  int active = getActive( ds, 0 );
+  EXPECT_EQ( 1, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 191178, count );
@@ -180,8 +180,9 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_TRUE( MDAL_D_hasActiveFlagCapability( ds ) );
+  int active = getActive( ds, 0 );
+  EXPECT_EQ( 1, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 115680, count );

@@ -22,7 +22,7 @@ static MDAL_Status sLastStatus;
 
 const char *MDAL_Version()
 {
-  return "0.4.90";
+  return "0.4.92";
 }
 
 MDAL_Status MDAL_LastStatus()
@@ -672,6 +672,18 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *valu
     return nullptr;
   }
 
+  if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes3D )
+  {
+    sLastStatus = MDAL_Status::Err_MissingDriverCapability;
+    return nullptr;
+  }
+
+  if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices2D )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return nullptr;
+  }
+
   const size_t index = g->datasets.size();
   dr->createDataset( g,
                      time,
@@ -902,7 +914,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = d->valuesCount();
       break;
     case MDAL_DataType::ACTIVE_INTEGER:
-      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) )
+      if ( !d->supportsActiveFlag() )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
@@ -959,14 +971,6 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       }
       valuesCount = 2 * d->volumesCount();
       break;
-    case MDAL_DataType::ACTIVE_VOLUMES_INTEGER:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
-      {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
-        return 0;
-      }
-      valuesCount = d->volumesCount();
-      break;
   }
 
   // Check that we are not reaching out of values limit
@@ -1010,9 +1014,6 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE:
       writtenValuesCount = d->vectorVolumesData( indexStartSizeT, countSizeT, static_cast<double *>( buffer ) );
       break;
-    case MDAL_DataType::ACTIVE_VOLUMES_INTEGER:
-      writtenValuesCount = d->activeVolumesData( indexStartSizeT, countSizeT, static_cast<int *>( buffer ) );
-      break;
   }
 
   return static_cast<int>( writtenValuesCount );
@@ -1038,4 +1039,16 @@ void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max )
   MDAL::Statistics stats = ds->statistics();
   *min = stats.minimum;
   *max = stats.maximum;
+}
+
+bool MDAL_D_hasActiveFlagCapability( DatasetH dataset )
+{
+  if ( !dataset )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return false;
+  }
+
+  MDAL::Dataset *ds = static_cast< MDAL::Dataset * >( dataset );
+  return ds->supportsActiveFlag();
 }

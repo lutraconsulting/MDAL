@@ -115,8 +115,7 @@ void _test_QuadAndTriangleFile( const std::string  &path )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
@@ -230,8 +229,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 54, count );
@@ -265,8 +263,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 77, count );

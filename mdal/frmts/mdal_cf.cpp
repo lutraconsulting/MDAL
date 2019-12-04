@@ -544,10 +544,3 @@ size_t MDAL::CFDataset2D::vectorData( size_t indexStart, size_t count, double *b
 
   return copyValues;
 }
-
-size_t MDAL::CFDataset2D::activeData( size_t indexStart, size_t count, int *buffer )
-{
-  MDAL_UNUSED( indexStart )
-  memset( buffer, 1, count * sizeof( int ) );
-  return count;
-}

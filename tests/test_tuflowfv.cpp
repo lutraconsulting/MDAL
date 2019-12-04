@@ -78,8 +78,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( -1, getLevelsCount3D( ds, 0 ) );
     EXPECT_EQ( -1, get3DFrom2D( ds, 0 ) );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 369, count );
@@ -194,8 +193,11 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive3D( ds, 0 );
-    EXPECT_EQ( true, active );
+    int active = getActive( ds, 0 );
+    EXPECT_EQ( 0, active ); // edge values is inactive
+
+    active = getActive( ds, 200 );
+    EXPECT_EQ( 1, active ); // middle values is active
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 3200, count );
@@ -248,8 +250,11 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    int active = getActive( ds, 0 );
+    EXPECT_EQ( 0, active );
+
+    active = getActive( ds, 200 );
+    EXPECT_EQ( 1, active );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 320, count );

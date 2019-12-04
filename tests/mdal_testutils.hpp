@@ -32,7 +32,9 @@ int getFaceVerticesIndexAt( MeshH mesh, int faceIndex, int index );
 std::vector<int> faceVertexIndices( MeshH mesh, int faceCount );
 
 // Datasets 2D
-bool getActive( DatasetH dataset, int index );
+
+// < 0 invalid (does not support flag), 0 false, 1 true
+int getActive( DatasetH dataset, int index );
 double getValue( DatasetH dataset, int index );
 double getValueX( DatasetH dataset, int index );
 double getValueY( DatasetH dataset, int index );

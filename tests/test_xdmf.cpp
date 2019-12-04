@@ -46,8 +46,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 18497, count );
@@ -92,8 +91,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 18497, count );
@@ -159,8 +157,7 @@ TEST( XdmfTest, Basement3Slopes )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 21030, count );
@@ -205,8 +202,7 @@ TEST( XdmfTest, Basement3Slopes )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 21030, count );
@@ -251,8 +247,7 @@ TEST( XdmfTest, Basement3Slopes )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 21030, count );
@@ -297,8 +292,7 @@ TEST( XdmfTest, Basement3Slopes )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 21030, count );
@@ -360,8 +354,7 @@ TEST( XdmfTest, Basement3SimpleChannel )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 77, count );
@@ -423,8 +416,7 @@ TEST( XdmfTest, Basement3SimpleGeometry )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 9, count );
@@ -488,8 +480,7 @@ TEST( XdmfTest, Simple )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 5790, count );
@@ -546,8 +537,7 @@ TEST( XdmfTest, Simple )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 5790, count );

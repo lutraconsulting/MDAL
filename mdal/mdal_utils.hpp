@@ -128,8 +128,6 @@ namespace MDAL
   void addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertices );
   //! Adds altitude dataset group to mesh
   void addFaceScalarDatasetGroup( MDAL::Mesh *mesh, const std::vector<double> &values, const std::string &name );
-  //! Loop through all faces and activate those which has all 4 values on vertices valid
-  void activateFaces( MDAL::MemoryMesh *mesh, std::shared_ptr<MemoryDataset2D> dataset );
 
   //! function used to read all of type of value. Option to change the endianness is provided
   template<typename T>

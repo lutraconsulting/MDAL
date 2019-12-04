@@ -51,14 +51,21 @@ bool fileExists( const std::string &filename )
   return in.good();
 }
 
-bool getActive( DatasetH dataset, int index )
+int getActive( DatasetH dataset, int index )
 {
-  int active;
-  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::ACTIVE_INTEGER, &active );
-  if ( nValuesRead != 1 )
-    return 0;
-
-  return static_cast<bool>( active );
+  bool hasFlag = MDAL_D_hasActiveFlagCapability( dataset );
+  if ( hasFlag )
+  {
+    int active;
+    int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::ACTIVE_INTEGER, &active );
+    if ( nValuesRead != 1 )
+      return -2;
+    return static_cast<bool>( active );
+  }
+  else
+  {
+    return -1;
+  }
 }
 
 double getValue( DatasetH dataset, int index )
@@ -109,16 +116,6 @@ double getLevelZ3D( DatasetH dataset, int index )
     return -1;
 
   return z;
-}
-
-bool getActive3D( DatasetH dataset, int index )
-{
-  int active;
-  int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::ACTIVE_VOLUMES_INTEGER, &active );
-  if ( nValuesRead != 1 )
-    return 0;
-
-  return static_cast<bool>( active );
 }
 
 double getValue3D( DatasetH dataset, int index )
