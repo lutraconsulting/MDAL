@@ -84,8 +84,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFileWithNumberingGaps )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
@@ -166,8 +165,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 2, count );
@@ -231,8 +229,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 2, count );
@@ -301,8 +298,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
@@ -353,8 +349,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarOldFile )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 5, count );
@@ -403,8 +398,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFileWithTabs )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
@@ -452,8 +446,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
@@ -510,8 +503,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorOldFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
@@ -539,7 +531,7 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
   std::string scalarPath = tmp_file( "/2dm_WriteScalarTest.dat" );
   std::vector<double> vals = {1, 2, 3, 4, 5};
-  std::vector<int> active = {1, 1};
+  std::vector<int> active = {1, 0};
 
   // Create a new dat file
   {
@@ -621,14 +613,20 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    int active = getActive( ds, 0 );
+    EXPECT_EQ( 1, active );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 5, count );
 
     double value = getValue( ds, 0 );
     EXPECT_DOUBLE_EQ( 1, value );
+
+    ds = MDAL_G_dataset( g, 1 );
+    ASSERT_NE( ds, nullptr );
+
+    active = getActive( ds, 1 );
+    EXPECT_EQ( 0, active );
 
     MDAL_CloseMesh( m );
   }
@@ -720,8 +718,7 @@ TEST( MeshAsciiDatTest, WriteScalarFaceTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 2, count );
@@ -816,8 +813,8 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    int active = getActive( ds, 0 );
+    EXPECT_EQ( 1, active );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 5, count );
@@ -914,8 +911,7 @@ TEST( MeshAsciiDatTest, WriteVectorFaceTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 2, count );
@@ -1012,8 +1008,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTestNoActive )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 5, count );

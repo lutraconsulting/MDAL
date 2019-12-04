@@ -66,8 +66,8 @@ TEST( MeshSLFTest, MalpassetGeometry )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  int active = getActive( ds, 0 );
+  EXPECT_EQ( 1, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 13541, count );
@@ -146,8 +146,8 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 1 );
-  EXPECT_EQ( true, active );
+  int active = getActive( ds, 1 );
+  EXPECT_EQ( 1, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 13541, count );
@@ -190,7 +190,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   EXPECT_EQ( true, valid );
 
   active = getActive( ds, 1 );
-  EXPECT_EQ( true, active );
+  EXPECT_EQ( 1, active );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 13541, count );

@@ -54,8 +54,9 @@ TEST( MeshGdalNetCDFTest, Indonesia )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 50 );
-    EXPECT_EQ( true, active );
+    EXPECT_TRUE( MDAL_D_hasActiveFlagCapability( ds ) );
+    int active = getActive( ds, 50 );
+    EXPECT_EQ( 1, active );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 234, count );

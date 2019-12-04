@@ -60,6 +60,7 @@ TEST( ApiTest, MeshApi )
   EXPECT_EQ( MDAL_M_datasetGroupCount( nullptr ), 0 );
   EXPECT_EQ( MDAL_M_datasetGroup( nullptr, 0 ), nullptr );
   EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, MDAL_DataLocation::DataOnVertices2D, true, nullptr, nullptr ), nullptr );
+  EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, MDAL_DataLocation::DataOnVolumes3D, true, nullptr, nullptr ), nullptr );
   EXPECT_EQ( MDAL_M_driverName( nullptr ), nullptr );
 }
 

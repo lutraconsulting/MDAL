@@ -124,8 +124,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       bool valid = MDAL_D_isValid( ds );
       EXPECT_EQ( true, valid );
 
-      bool active = getActive( ds, 0 );
-      EXPECT_EQ( true, active );
+      EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
       int count = MDAL_D_valueCount( ds );
       ASSERT_EQ( f_count, count );
@@ -155,8 +154,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       bool valid = MDAL_D_isValid( ds );
       EXPECT_EQ( true, valid );
 
-      bool active = getActive( ds, 0 );
-      EXPECT_EQ( true, active );
+      EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
       int count = MDAL_D_valueCount( ds );
       ASSERT_EQ( f_count, count );
@@ -292,8 +290,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       bool valid = MDAL_D_isValid( ds );
       EXPECT_EQ( true, valid );
 
-      bool active = getActive( ds, 0 );
-      EXPECT_EQ( true, active );
+      EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
       int count = MDAL_D_valueCount( ds );
       ASSERT_EQ( f_count, count );
@@ -329,8 +326,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       bool valid = MDAL_D_isValid( ds );
       EXPECT_EQ( true, valid );
 
-      bool active = getActive( ds, 0 );
-      EXPECT_EQ( true, active );
+      EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
       int count = MDAL_D_valueCount( ds );
       ASSERT_EQ( f_count, count );
@@ -435,8 +431,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 521, count );
@@ -478,8 +473,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 1 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 521, count );
@@ -521,8 +515,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 300 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 521, count );
@@ -619,8 +612,7 @@ TEST( MeshFlo2dTest, basic )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 9, count );
@@ -653,8 +645,7 @@ TEST( MeshFlo2dTest, basic )
     valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 9, count );
@@ -699,8 +690,7 @@ TEST( MeshFlo2dTest, basic )
     valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
     count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 9, count );
@@ -770,8 +760,7 @@ TEST( MeshFlo2dTest, basic_required_files_only )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 9, count );
@@ -833,8 +822,7 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5101, count );
@@ -870,8 +858,7 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5101, count );

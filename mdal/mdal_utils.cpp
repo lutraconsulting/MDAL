@@ -530,10 +530,9 @@ void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertic
 
   std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
   dataset->setTime( 0.0 );
-  double *vals = dataset->values();
   for ( size_t i = 0; i < vertices.size(); ++i )
   {
-    vals[i] = vertices[i].z;
+    dataset->setValue( i, vertices[i].z );
   }
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );
@@ -572,48 +571,6 @@ void MDAL::addFaceScalarDatasetGroup( MDAL::Mesh *mesh,
   group->datasets.push_back( dataset );
   group->setStatistics( MDAL::calculateStatistics( group ) );
   mesh->datasetGroups.push_back( group );
-}
-
-void MDAL::activateFaces( MDAL::MemoryMesh *mesh, std::shared_ptr<MemoryDataset2D> dataset )
-{
-  // only for data on vertices
-  if ( !( dataset->group()->dataLocation() == MDAL_DataLocation::DataOnVertices2D ) )
-    return;
-
-  bool isScalar = dataset->group()->isScalar();
-
-  // Activate only Faces that do all Vertex's outputs with some data
-  int *active = dataset->active();
-  const double *values = dataset->constValues();
-  const size_t nFaces = mesh->facesCount();
-
-  for ( unsigned int idx = 0; idx < nFaces; ++idx )
-  {
-    Face elem = mesh->faces.at( idx );
-    for ( size_t i = 0; i < elem.size(); ++i )
-    {
-      const size_t vertexIndex = elem[i];
-      if ( isScalar )
-      {
-        double val = values[vertexIndex];
-        if ( std::isnan( val ) )
-        {
-          active[idx] = 0; //NOT ACTIVE
-          break;
-        }
-      }
-      else
-      {
-        double x = values[2 * vertexIndex];
-        double y = values[2 * vertexIndex + 1];
-        if ( std::isnan( x ) || std::isnan( y ) )
-        {
-          active[idx] = 0; //NOT ACTIVE
-          break;
-        }
-      }
-    }
-  }
 }
 
 bool MDAL::isNativeLittleEndian()

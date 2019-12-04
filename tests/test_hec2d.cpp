@@ -82,6 +82,8 @@ TEST( MeshHec2dTest, simpleArea )
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
 
+
+
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
@@ -89,8 +91,7 @@ TEST( MeshHec2dTest, simpleArea )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 851, count );
@@ -123,8 +124,7 @@ TEST( MeshHec2dTest, simpleArea )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 851, count );
@@ -197,8 +197,7 @@ TEST( MeshHec2dTest, MultiAreas )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 725, count );
@@ -234,8 +233,7 @@ TEST( MeshHec2dTest, MultiAreas )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 725, count );
@@ -308,8 +306,7 @@ TEST( MeshHec2dTest, model_505 )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 73, count );
@@ -342,8 +339,7 @@ TEST( MeshHec2dTest, model_505 )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 73, count );

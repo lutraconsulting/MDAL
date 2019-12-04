@@ -92,8 +92,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 4, count );
@@ -132,8 +131,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 4, count );
@@ -175,8 +173,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
 
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 4, count );

@@ -53,8 +53,8 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( true, active );
+  int active = getActive( ds, 0 );
+  EXPECT_EQ( 1, active );
 
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 0, time );
@@ -104,8 +104,8 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 600 );
-  EXPECT_EQ( false, active );
+  int active = getActive( ds, 600 );
+  EXPECT_EQ( 0, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1976, count );
@@ -149,8 +149,8 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  bool active = getActive( ds, 0 );
-  EXPECT_EQ( false, active );
+  int active = getActive( ds, 0 );
+  EXPECT_EQ( 0, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 1976, count );
@@ -251,8 +251,8 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    int active = getActive( ds, 0 );
+    EXPECT_EQ( 1, active );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 5, count );
@@ -347,8 +347,8 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
     bool valid = MDAL_D_isValid( ds );
     EXPECT_EQ( true, valid );
 
-    bool active = getActive( ds, 0 );
-    EXPECT_EQ( true, active );
+    int active = getActive( ds, 0 );
+    EXPECT_EQ( 1, active );
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 5, count );
