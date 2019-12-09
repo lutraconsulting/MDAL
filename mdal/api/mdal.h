@@ -298,7 +298,7 @@ MDAL_EXPORT void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double
 //! Only for 2D datasets
 //!
 //! \param group parent group handle
-//! \param time time for dataset
+//! \param time time for dataset (hours)
 //! \param values For scalar data on vertices, the size must be vertex count
 //!               For scalar data on faces, the size must be faces count
 //!               For vector data on vertices, the size must be vertex count * 2 (x1, y1, x2, y2, ..., xN, yN)
@@ -332,7 +332,7 @@ MDAL_EXPORT const char *MDAL_G_referenceTime( DatasetGroupH group );
 //! Returns dataset parent group
 MDAL_EXPORT DatasetGroupH MDAL_D_group( DatasetH dataset );
 
-//! Returns dataset time
+//! Returns dataset time (hours)
 MDAL_EXPORT double MDAL_D_time( DatasetH dataset );
 
 //! Returns volumes count for the mesh (for 3D meshes)

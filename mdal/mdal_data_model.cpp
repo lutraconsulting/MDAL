@@ -56,12 +56,17 @@ MDAL::Mesh *MDAL::Dataset::mesh() const
   return mParent->mesh();
 }
 
-double MDAL::Dataset::time() const
+double MDAL::Dataset::time( Duration::Unit unit ) const
 {
-  return mTime;
+  return mTime.value( unit );
 }
 
-void MDAL::Dataset::setTime( double time )
+void MDAL::Dataset::setTime( double time, Duration::Unit unit )
+{
+  mTime = Duration( time, unit );
+}
+
+void MDAL::Dataset::setTime( const MDAL::Duration &time )
 {
   mTime = time;
 }
@@ -207,12 +212,12 @@ void MDAL::DatasetGroup::setStatistics( const Statistics &statistics )
   mStatistics = statistics;
 }
 
-std::string MDAL::DatasetGroup::referenceTime() const
+MDAL::DateTime MDAL::DatasetGroup::referenceTime() const
 {
   return mReferenceTime;
 }
 
-void MDAL::DatasetGroup::setReferenceTime( const std::string &referenceTime )
+void MDAL::DatasetGroup::setReferenceTime( const DateTime &referenceTime )
 {
   mReferenceTime = referenceTime;
 }
@@ -362,3 +367,293 @@ size_t MDAL::Mesh::faceVerticesMaximumCount() const
 MDAL::MeshVertexIterator::~MeshVertexIterator() = default;
 
 MDAL::MeshFaceIterator::~MeshFaceIterator() = default;
+
+
+
+MDAL::DateTime MDAL::DateTime::fromStandartValue( int year, int month, int day, int hours, int minutes, double seconds )
+{
+  DateTime dateTime;
+  if ( month > 0 && day > 0 && hours >= 0 && minutes >= 0 && seconds >= 0 )
+  {
+    dateTime.mValid = true;
+    DateTimeValues values{year, month, day, hours, minutes, seconds};
+    dateTime.setWithGregorianJulianCalendarValues( values );
+  }
+
+  return dateTime;
+}
+
+std::string MDAL::DateTime::toStandartCalendarISO8601() const
+{
+  DateTimeValues value = dateTimeGregorianJulianCalendar();
+  if ( mValid )
+    return toString( value );
+  else
+    return "none";
+}
+
+double MDAL::DateTime::toJulianDay() const
+{
+  return mJulianTime / 24.0 / 3600 / 1000;
+}
+
+MDAL::DateTime &MDAL::DateTime::operator=( const MDAL::DateTime &other )
+{
+  mJulianTime = other.mJulianTime;
+  mValid = other.mValid;
+  return *this;
+}
+
+MDAL::DateTime MDAL::DateTime::operator+( const MDAL::Duration &duration ) const
+{
+  if ( !mValid )
+    return DateTime();
+  return DateTime( mJulianTime + duration.mDuration );
+}
+
+MDAL::DateTime &MDAL::DateTime::operator+=( const MDAL::Duration &duration )
+{
+  if ( !mValid )
+    return *this;
+  mJulianTime += duration.mDuration;
+  return *this;
+}
+
+MDAL::DateTime &MDAL::DateTime::operator-=( const MDAL::Duration &duration )
+{
+  if ( !mValid )
+    return *this;
+  mJulianTime -= duration.mDuration;
+  return *this;
+}
+
+MDAL::DateTime MDAL::DateTime::operator-( const MDAL::Duration &duration ) const
+{
+  if ( !mValid )
+    return DateTime();
+  return DateTime( mJulianTime - duration.mDuration );
+}
+
+bool MDAL::DateTime::operator==( const MDAL::DateTime &other ) const
+{
+  if ( !mValid && !other.mValid )
+    return true;
+
+  return ( mValid && other.mValid ) && ( mJulianTime == other.mJulianTime );
+}
+
+bool MDAL::DateTime::operator!=( const MDAL::DateTime &other ) const
+{
+  if ( !mValid && !other.mValid )
+    return true;
+
+  return !operator==( other );
+}
+
+bool MDAL::DateTime::operator<( const MDAL::DateTime &other ) const
+{
+  if ( !mValid && !other.mValid )
+    return false;
+  return ( mValid && other.mValid ) && ( mJulianTime < other.mJulianTime );
+}
+
+bool MDAL::DateTime::operator>( const MDAL::DateTime &other ) const
+{
+  if ( !mValid && !other.mValid )
+    return false;
+  return ( mValid && other.mValid ) && ( mJulianTime > other.mJulianTime );
+}
+
+bool MDAL::DateTime::operator>=( const MDAL::DateTime &other ) const
+{
+  if ( !mValid && !other.mValid )
+    return true;
+  return ( mValid && other.mValid ) && ( mJulianTime >= other.mJulianTime );
+}
+
+bool MDAL::DateTime::operator<=( const MDAL::DateTime &other ) const
+{
+  if ( !mValid && !other.mValid )
+    return true;
+  return ( mValid && other.mValid ) && ( mJulianTime <= other.mJulianTime );
+}
+
+MDAL::DateTime::DateTime( int64_t julianTime ): mJulianTime( julianTime )
+{}
+
+MDAL::DateTime::DateTimeValues MDAL::DateTime::dateTimeGregorianJulianCalendar() const
+{
+  //https://fr.wikipedia.org/wiki/Jour_julien
+  DateTimeValues values;
+  int Z = int( mJulianTime / 24.0 / 3600 / 1000 + 0.5 ); //integer part of julian days count
+  double F = mJulianTime / 24.0 / 3600 / 1000 + 0.5 - Z; //fractional part of julian days count;
+  int S;
+  if ( Z < 2299161 )
+    S = Z;
+  else
+  {
+    int alpha = int( ( Z - 1867216.25 ) / 36524.25 );
+    S = Z + 1 + alpha - int( alpha / 4 );
+  }
+
+  int B = S + 1524;
+  int C = int( ( B - 122.1 ) / 365.25 );
+  int D = int( 365.25 * C );
+  int E = int( ( B - D ) / 30.6001 );
+
+  values.day = B - D - int( 30.6001 * E );
+  if ( E < 14 )
+    values.month = E - 1;
+  else
+    values.month = E - 13;
+
+  if ( values.month > 2 )
+    values.year = C - 4716;
+  else
+    values.year = C - 4715;
+
+  values.hours = int( F * 24 );
+  F = F / 24 - values.hours;
+  values.minutes = int( F * 60 );
+  F = F / 60 - values.minutes;
+  values.seconds = F * 60;
+
+  return values;
+}
+
+void MDAL::DateTime::setWithGregorianCalendarDate( MDAL::DateTime::DateTimeValues values )
+{
+  //https://quasar.as.utexas.edu/BillInfo/JulianDatesG.html
+  if ( values.month <= 2 )
+  {
+    values.year--;
+    values.month += 12;
+  }
+
+  int A = values.year / 100;
+  int B = A / 4;
+  int C = 2 - A + B;
+  int E = int( 365.25 * ( values.year + 4716 ) );
+  int F = int( 30.6001 * ( values.month + 1 ) );
+  double julianDay = C + values.day + E + F - 1524.5;
+
+  mJulianTime = int64_t( julianDay * 24 * 3600 * 1000 +
+                         ( values.hours ) * 3600 * 1000 + //the formula set the day with hours at 00h
+                         values.minutes * 60 * 1000 +
+                         values.seconds * 1000 );
+}
+
+void MDAL::DateTime::setWithGregorianJulianCalendarValues( MDAL::DateTime::DateTimeValues values )
+{
+  //https://quasar.as.utexas.edu/BillInfo/JulianDatesG.html
+
+  int C = 0;
+  int Y = values.year;
+  int M = values.month;
+  int D = values.day;
+  if ( M <= 2 )
+  {
+    Y--;
+    M += 12;
+  }
+  if ( values.year > 1582 ||
+       ( values.year == 1582 && ( values.month > 10 || ( values.month == 10 && values.day >= 15 ) ) ) ) //gregorian calendar
+  {
+    int A = Y / 100;
+    int B = A / 4;
+    C = 2 - A + B;
+  }
+
+  int E = int( 365.25 * ( Y + 4716 ) );
+  int F = int( 30.6001 * ( M + 1 ) );
+  double julianDay = C + D + E + F - 1524.5;
+
+  mJulianTime = int64_t( julianDay * 24 * 3600 * 1000 +
+                         ( values.hours ) * 3600 * 1000 + //the formula set the day with hours at 00h
+                         values.minutes * 60 * 1000 +
+                         values.seconds * 1000 );
+}
+
+std::string MDAL::DateTime::toString( MDAL::DateTime::DateTimeValues values ) const
+{
+  std::string yearStr = std::to_string( values.year );
+
+  int miliseconds = int( ( values.seconds - int( values.seconds ) ) * 1000 + 0.5 );
+  std::string msStr;
+  if ( miliseconds > 0 )
+  {
+    if ( miliseconds < 10 )
+      msStr = prependZero( std::to_string( miliseconds ), 3 );
+    else if ( miliseconds < 100 )
+      msStr = prependZero( std::to_string( miliseconds ), 2 );
+
+    msStr = std::string( "," ).append( msStr );
+  }
+
+  std::string strDateTime = prependZero( std::to_string( values.year ), 4 ) + "-" +
+                            prependZero( std::to_string( values.month ), 2 ) + "-" +
+                            prependZero( std::to_string( values.day ), 2 ) + "T" +
+                            prependZero( std::to_string( values.hours ), 2 ) + ":" +
+                            prependZero( std::to_string( values.minutes ), 2 ) + ":" +
+                            prependZero( std::to_string( int( values.seconds ) ), 2 ) +
+                            msStr; /// TODO use another way to translate seconds with fraction aprt
+
+  return strDateTime;
+}
+
+MDAL::Duration MDAL::DateTime::operator-( const MDAL::DateTime &other ) const
+{
+  if ( !mValid || !other.mValid )
+    return Duration();
+  return Duration( mJulianTime - other.mJulianTime );
+}
+
+MDAL::Duration::Duration(): mDuration( 0 )
+{}
+
+MDAL::Duration::Duration( double duration, MDAL::Duration::Unit unit )
+{
+  switch ( unit )
+  {
+    case MDAL::Duration::milliseconds:
+      mDuration = int64_t( duration );
+      break;
+    case MDAL::Duration::seconds:
+      mDuration = int64_t( duration * 1000 );
+      break;
+    case MDAL::Duration::minutes:
+      mDuration = int64_t( duration * 60 * 1000 );
+      break;
+    case MDAL::Duration::hours:
+      mDuration = int64_t( duration * 60 * 60 * 1000 );
+      break;
+    case MDAL::Duration::days:
+      mDuration = int64_t( duration * 24 * 60 * 60 * 1000 );
+      break;
+    case MDAL::Duration::weeks:
+      mDuration = int64_t( duration * 7 * 24 * 60 * 60 * 1000 );
+      break;
+  }
+}
+
+double MDAL::Duration::value( MDAL::Duration::Unit unit ) const
+{
+  switch ( unit )
+  {
+    case MDAL::Duration::milliseconds:
+      return double( mDuration );
+    case MDAL::Duration::seconds:
+      return double( mDuration ) / 1000 ;
+    case MDAL::Duration::minutes:
+      return double( mDuration ) / 60 / 1000 ;
+    case MDAL::Duration::hours:
+      return double( mDuration ) / 60 / 60 / 1000 ;
+    case MDAL::Duration::days:
+      return double( mDuration ) / 24 / 60 / 60 / 1000 ;
+    case MDAL::Duration::weeks:
+      return double( mDuration )  / 7 / 24 / 60 / 60 / 1000;
+  }
+}
+
+MDAL::Duration::Duration( int64_t ms ): mDuration( ms )
+{}

@@ -468,7 +468,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   ASSERT_NE( ds, nullptr );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 0.10124753560882101, time );
+  EXPECT_EQ( true, compareDurationInHours( 0.10124753560882101, time ) );
 
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );

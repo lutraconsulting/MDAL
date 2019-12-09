@@ -141,5 +141,8 @@ namespace MDAL
     return true;
   }
 
+  //! Prepend 0 to string to have n char
+  std::string prependZero( std::string str, size_t lengthObjectif );
+
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

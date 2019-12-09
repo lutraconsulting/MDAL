@@ -309,3 +309,8 @@ void init_test()
 void finalize_test()
 {
 }
+
+bool compareDurationInHours( double h1, double h2 )
+{
+  return fabs( h1 - h2 ) < 1.0 / 3600 / 1000;
+}

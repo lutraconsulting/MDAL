@@ -192,7 +192,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   EXPECT_DOUBLE_EQ( 1, time );
 
   const char *referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "JULIAN 2433282.500000" ), std::string( referenceTime ) );
+  EXPECT_EQ( std::string( "1950-01-01T00:00:00" ), std::string( referenceTime ) );
 
   MDAL_CloseMesh( m );
 }
@@ -262,7 +262,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
   EXPECT_DOUBLE_EQ( 1, time );
 
   const char *referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "JULIAN 2433288.500000" ), std::string( referenceTime ) );
+  EXPECT_EQ( std::string( "1950-01-07T00:00:00" ), std::string( referenceTime ) );
 
   MDAL_CloseMesh( m );
 }

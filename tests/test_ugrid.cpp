@@ -452,7 +452,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   MDAL_CloseMesh( m );
 }
 
-TEST( MeshUgridTest, UGRIFFormatWithoutTime )
+TEST( MeshUgridTest, UGRIDFormatWithoutTime )
 {
   std::string path = test_file( "/ugrid/without_time/TINUGRID.tin" );
   MeshH m = MDAL_LoadMesh( path.c_str() );

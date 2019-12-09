@@ -637,3 +637,11 @@ std::string MDAL::doubleToString( double value, int precision )
   oss << value;
   return oss.str();
 }
+
+std::string MDAL::prependZero( std::string str, size_t lengthObjectif )
+{
+  if ( lengthObjectif <= str.size() )
+    return  str;
+
+  return std::string( lengthObjectif - str.size(), '0' ).append( str );
+}

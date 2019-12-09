@@ -56,4 +56,8 @@ bool compareVectors( const std::vector<int> &a, const std::vector<int> &b );
 //! Same vertices (coords), faces and connectivity between them
 bool compareMeshFrames( MeshH meshA, MeshH meshB );
 
+
+//! Compare duration with millisecond precision
+bool compareDurationInHours( double h1, double h2 );
+
 #endif // MDAL_TESTUTILS_HPP

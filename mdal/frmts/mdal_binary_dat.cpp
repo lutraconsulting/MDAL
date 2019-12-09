@@ -78,6 +78,26 @@ static bool readIStat( std::ifstream &in, int sflg, char *flag )
   return false;
 }
 
+static MDAL::Duration convertTimeData( double time, const std::string &originalTimeDataUnit )
+{
+  MDAL::Duration::Unit unit = MDAL::Duration::hours;
+
+  if ( originalTimeDataUnit == "seconds" )
+  {
+    unit = MDAL::Duration::seconds;
+  }
+  else if ( originalTimeDataUnit == "minutes" )
+  {
+    unit = MDAL::Duration::minutes;
+  }
+  else if ( originalTimeDataUnit == "days" )
+  {
+    unit = MDAL::Duration::days;
+  }
+
+  return MDAL::Duration( time, unit );
+}
+
 MDAL::DriverBinaryDat::DriverBinaryDat():
   Driver( "BINARY_DAT",
           "Binary DAT",
@@ -251,7 +271,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "unable to read reference time" );
 
         referenceTime = static_cast<double>( time );
-        group->setReferenceTime( "JULIAN " + std::to_string( referenceTime ) );
+        group->setReferenceTime( DateTime::fromJulianDay( referenceTime ) );
         break;
 
       case CT_TIMEUNITS:
@@ -288,8 +308,8 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
         if ( read( in, reinterpret_cast< char * >( &time ), 4 ) )
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "Invalid time step" );
 
-        double t = static_cast<double>( time );
-        t = convertTimeDataToHours( t, timeUnit );
+        double rawTime = static_cast<double>( time );
+        MDAL::Duration t = convertTimeData( rawTime, timeUnitStr );
 
         if ( readVertexTimestep( mesh, group, groupMax, t, istat, sflg, in ) )
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "Unable to read vertex timestep" );
@@ -315,10 +335,9 @@ bool MDAL::DriverBinaryDat::readVertexTimestep(
   const MDAL::Mesh *mesh,
   std::shared_ptr<DatasetGroup> group,
   std::shared_ptr<DatasetGroup> groupMax,
-  double time,
-  bool hasStatus,
-  int sflg,
-  std::ifstream &in )
+    MDAL::Duration time,
+    int sflg,
+    std::ifstream &in )
 {
   assert( group && groupMax && ( group->isScalar() == groupMax->isScalar() ) );
   bool isScalar = group->isScalar();
@@ -364,7 +383,7 @@ bool MDAL::DriverBinaryDat::readVertexTimestep(
     }
   }
 
-  if ( MDAL::equals( time, 99999.0 ) ) // Special TUFLOW dataset with maximus
+  if ( MDAL::equals( time.value( MDAL::Duration::hours ), 99999.0 ) ) // Special TUFLOW dataset with maximus
   {
     dataset->setTime( time );
     dataset->setStatistics( MDAL::calculateStatistics( dataset ) );

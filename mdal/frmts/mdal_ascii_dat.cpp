@@ -24,6 +24,27 @@
 
 #define EXIT_WITH_ERROR(error)       {  if (status) *status = (error); return; }
 
+static MDAL::Duration convertTimeData( double time, const std::string &originalTimeDataUnit )
+{
+  MDAL::Duration::Unit unit = MDAL::Duration::hours;
+
+  if ( originalTimeDataUnit == "se" || originalTimeDataUnit == "2" || originalTimeDataUnit == "Seconds"
+       || originalTimeDataUnit.empty() )
+  {
+    unit = MDAL::Duration::seconds;
+  }
+  else if ( originalTimeDataUnit == "mi" || originalTimeDataUnit == "1" || originalTimeDataUnit == "Minutes" )
+  {
+    unit = MDAL::Duration::minutes;
+  }
+  else if ( originalTimeDataUnit == "days" )
+  {
+    unit = MDAL::Duration::days;
+  }
+
+  return MDAL::Duration( time, unit );
+}
+
 MDAL::DriverAsciiDat::DriverAsciiDat( ):
   Driver( "ASCII_DAT",
           "DAT",
@@ -116,7 +137,8 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
     }
     else if ( cardType == "TS" && items.size() >=  2 )
     {
-      double t = toDouble( items[ 1 ] );
+      double rawTime = toDouble( items[ 1 ] );
+      MDAL::Duration t( rawTime, MDAL::Duration::hours );
       readVertexTimestep( mesh, group, t, isVector, false, in );
     }
     else
@@ -147,7 +169,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
   std::shared_ptr<DatasetGroup> group; // DAT outputs data
   std::string groupName( MDAL::baseName( mDatFile ) );
   std::string line;
-  std::string referenceTime;
+  MDAL::DateTime referenceTime;
   // see if it contains face-centered results - supported by BASEMENT
   bool faceCentered = false;
   if ( contains( groupName, "_els" ) )
@@ -231,7 +253,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     }
     else if ( cardType == "RT_JULIAN" && items.size() >= 2 )
     {
-      referenceTime = "JULIAN " + items[1];
+      referenceTime = MDAL::DateTime::fromJulianDay( MDAL::toDouble( items[1] ) );
     }
     else if ( cardType == "TIMEUNITS" && items.size() >= 2 )
     {
@@ -245,8 +267,8 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     }
     else if ( cardType == "TS" && items.size() >= 3 )
     {
-      double t = toDouble( items[2] );
-      t = convertTimeDataToHours( t, group->getMetadata( "TIMEUNITS" ) );
+      double rawTime = toDouble( items[2] );
+      MDAL::Duration t = convertTimeData( rawTime, group->getMetadata( "TIMEUNITS" ) );
 
       if ( faceCentered )
       {
@@ -329,7 +351,7 @@ void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh, M
 void MDAL::DriverAsciiDat::readVertexTimestep(
   const MDAL::Mesh *mesh,
   std::shared_ptr<DatasetGroup> group,
-  double t,
+  MDAL::Duration t,
   bool isVector,
   bool hasStatus,
   std::ifstream &stream ) const
@@ -398,7 +420,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
 void MDAL::DriverAsciiDat::readFaceTimestep(
   const MDAL::Mesh *mesh,
   std::shared_ptr<DatasetGroup> group,
-  double t,
+  MDAL::Duration t,
   bool isVector,
   std::ifstream &stream ) const
 {
@@ -477,17 +499,11 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
   out << "ND " << nodeCount << "\n";
   out << "NC " << elemCount << "\n";
   out << "NAME " "\"" << group->name() << "\"" "\n";
-  std::string referenceTimeStr = group->referenceTime();
+  std::string referenceTimeStr = group->referenceTime().toJulianDayString();
 
   if ( !referenceTimeStr.empty() )
   {
-    // Cutting of the JULIAN prefix
-    std::vector<std::string> referenceTimeStrWords = split( referenceTimeStr,  ' ' );
-
-    if ( referenceTimeStrWords.size() > 1 )
-      out << "RT_JULIAN " << referenceTimeStrWords[1] << "\n";
-    else
-      out << "RT_JULIAN " << referenceTimeStr << "\n";
+    out << "RT_JULIAN " << referenceTimeStr << "\n";
   }
 
   out << "TIMEUNITS " << 0 << "\n";
@@ -546,3 +562,4 @@ double MDAL::DriverAsciiDat::convertTimeDataToHours( double time, const std::str
   }
   return time;
 }
+
