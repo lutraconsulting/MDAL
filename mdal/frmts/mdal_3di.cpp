@@ -142,7 +142,7 @@ void MDAL::Driver3Di::addBedElevation( MemoryMesh *mesh )
   dataset->setTime( 0.0 );
   for ( size_t i = 0; i < faceCount; ++i )
   {
-    dataset->setValue( i, MDAL::safeValue( coordZ[i], fillZ ) );
+    dataset->setScalarValue( i, MDAL::safeValue( coordZ[i], fillZ ) );
   }
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->setStatistics( MDAL::calculateStatistics( group ) );

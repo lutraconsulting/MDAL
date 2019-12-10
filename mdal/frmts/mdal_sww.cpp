@@ -303,7 +303,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
       std::vector<double> valuesX = ncFile.readDoubleArr( arrName, nPoints );
       for ( size_t i = 0; i < nPoints; ++i )
       {
-        o->setValue( i, valuesX[i] );
+        o->setScalarValue( i, valuesX[i] );
       }
       o->setStatistics( MDAL::calculateStatistics( o ) );
       mds->datasets.push_back( o );
@@ -381,7 +381,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
       std::vector<double> valuesY = ncFile.readDoubleArr( arrYName, nPoints );
       for ( size_t i = 0; i < nPoints; ++i )
       {
-        o->setValue( i, valuesX[i], valuesY[i] );
+        o->setVectorValue( i, valuesX[i], valuesY[i] );
       }
       o->setStatistics( MDAL::calculateStatistics( o ) );
       mds->datasets.push_back( o );
@@ -406,7 +406,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
 
         for ( size_t i = 0; i < nPoints; ++i )
         {
-          mto->setValue( i, static_cast<double>( valuesX[i] ),  static_cast<double>( valuesY[i] ) );
+          mto->setVectorValue( i, static_cast<double>( valuesX[i] ),  static_cast<double>( valuesY[i] ) );
         }
 
         mto->setStatistics( MDAL::calculateStatistics( mto ) );

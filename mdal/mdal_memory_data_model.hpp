@@ -7,6 +7,7 @@
 #define MDAL_MEMORY_DATA_MODEL_HPP
 
 #include <stddef.h>
+#include <assert.h>
 #include <vector>
 #include <memory>
 #include <map>
@@ -59,16 +60,80 @@ namespace MDAL
        *
        * Dataset must support active flags
        */
-      void setActive( size_t index, int stat );
+      void setActive( size_t index, int stat )
+      {
+        assert( supportsActiveFlag() );
+        assert( mActive.size() > index );
+        mActive[index] = stat;
+      }
+
       void setActive( const int *activeBuffer );
-      int active( size_t index ) const;
 
+      int active( size_t index ) const
+      {
+        assert( supportsActiveFlag() );
+        assert( mActive.size() > index );
+        return mActive[index];
+      }
 
-      void setValue( size_t index, double value );
-      void setValue( size_t index, double x, double y );
-      double value( size_t index ) const;
+      void setScalarValue( size_t index, double value )
+      {
+        assert( mValues.size() > index );
+        assert( group()->isScalar() );
+        mValues[index] = value;
+      }
 
-      double *values();
+      void setVectorValue( size_t index, double x, double y )
+      {
+        assert( mValues.size() > 2 * index + 1 );
+        assert( !group()->isScalar() );
+        mValues[2 * index] = x;
+        mValues[2 * index + 1] = y;
+      }
+
+      void setValueX( size_t index, double x )
+      {
+        assert( mValues.size() > 2 * index );
+        assert( !group()->isScalar() );
+
+        mValues[2 * index] = x;
+      }
+
+      void setValueY( size_t index, double x )
+      {
+        assert( mValues.size() > 2 * index + 1 );
+        assert( !group()->isScalar() );
+        mValues[2 * index + 1] = x;
+      }
+
+      double valueX( size_t index ) const
+      {
+        assert( mValues.size() > 2 * index + 1 );
+        assert( !group()->isScalar() );
+        return mValues[2 * index];
+      }
+
+      double valueY( size_t index ) const
+      {
+        assert( mValues.size() > 2 * index + 1 );
+        assert( !group()->isScalar() );
+        return mValues[2 * index + 1];
+      }
+
+      double scalarValue( size_t index ) const
+      {
+        assert( mValues.size() > index );
+        assert( group()->isScalar() );
+        return mValues[index];
+      }
+
+      //! Returns pointer to internal buffer with values
+      //! Never null, already allocated
+      //! for vector datasets in form x1, y1, ..., xN, yN
+      double *values()
+      {
+        return mValues.data();
+      }
 
     private:
       /**

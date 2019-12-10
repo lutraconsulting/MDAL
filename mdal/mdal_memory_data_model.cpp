@@ -79,49 +79,10 @@ void MDAL::MemoryDataset2D::activateFaces( MDAL::MemoryMesh *mesh )
   }
 }
 
-void MDAL::MemoryDataset2D::setActive( size_t index, int stat )
-{
-  assert( supportsActiveFlag() );
-  assert( mActive.size() > index );
-
-  mActive[index] = stat;
-}
-
 void MDAL::MemoryDataset2D::setActive( const int *activeBuffer )
 {
   assert( supportsActiveFlag() );
   memcpy( mActive.data(), activeBuffer, sizeof( int ) * mesh()->facesCount() );
-}
-
-int MDAL::MemoryDataset2D::active( size_t index ) const
-{
-  assert( supportsActiveFlag() );
-  assert( mActive.size() > index );
-  return mActive[index];
-}
-
-void MDAL::MemoryDataset2D::setValue( size_t index, double value )
-{
-  assert( mValues.size() > index );
-  mValues[index] = value;
-}
-
-void MDAL::MemoryDataset2D::setValue( size_t index, double x, double y )
-{
-  assert( mValues.size() > 2 * index + 1 );
-  mValues[2 * index] = x;
-  mValues[2 * index + 1] = y;
-}
-
-double MDAL::MemoryDataset2D::value( size_t index ) const
-{
-  assert( mValues.size() > index );
-  return mValues[index];
-}
-
-double *MDAL::MemoryDataset2D::values()
-{
-  return mValues.data();
 }
 
 size_t MDAL::MemoryDataset2D::scalarData( size_t indexStart, size_t count, double *buffer )

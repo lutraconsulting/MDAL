@@ -532,7 +532,7 @@ void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertic
   dataset->setTime( 0.0 );
   for ( size_t i = 0; i < vertices.size(); ++i )
   {
-    dataset->setValue( i, vertices[i].z );
+    dataset->setScalarValue( i, vertices[i].z );
   }
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );

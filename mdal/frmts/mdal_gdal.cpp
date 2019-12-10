@@ -378,16 +378,16 @@ void MDAL::DriverGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared
         {
           if ( is_x )
           {
-            tos->setValue( 2 * idx, val );
+            tos->setValueX( idx, val );
           }
           else
           {
-            tos->setValue( 2 * idx + 1, val );
+            tos->setValueY( idx, val );
           }
         }
         else
         {
-          tos->setValue( idx, val );
+          tos->setScalarValue( idx, val );
         }
       }
     }
