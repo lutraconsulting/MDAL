@@ -351,7 +351,7 @@ bool MDAL::DriverBinaryDat::readVertexTimestep(
       if ( read( in, reinterpret_cast< char * >( &y ), 4 ) )
         return true; //error
 
-      dataset->setValue( i, static_cast< double >( x ), static_cast< double >( y ) );
+      dataset->setVectorValue( i, static_cast< double >( x ), static_cast< double >( y ) );
     }
     else
     {
@@ -360,7 +360,7 @@ bool MDAL::DriverBinaryDat::readVertexTimestep(
       if ( read( in, reinterpret_cast< char * >( &scalar ), 4 ) )
         return true; //error
 
-      dataset->setValue( i, static_cast< double >( scalar ) );
+      dataset->setScalarValue( i, static_cast< double >( scalar ) );
     }
   }
 
@@ -476,14 +476,14 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
       // Read values flags
       if ( !group->isScalar() )
       {
-        float x = static_cast<float>( dataset->value( 2 * i ) );
-        float y = static_cast<float>( dataset->value( 2 * i + 1 ) );
+        float x = static_cast<float>( dataset->valueX( i ) );
+        float y = static_cast<float>( dataset->valueY( i ) );
         writeRawData( out, reinterpret_cast< const char * >( &x ), 4 );
         writeRawData( out, reinterpret_cast< const char * >( &y ), 4 );
       }
       else
       {
-        float val = static_cast<float>( dataset->value( i ) );
+        float val = static_cast<float>( dataset->scalarValue( i ) );
         writeRawData( out, reinterpret_cast< const char * >( &val ), 4 );
       }
     }

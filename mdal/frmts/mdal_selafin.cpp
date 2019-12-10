@@ -490,16 +490,16 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names, co
         {
           if ( is_x )
           {
-            dataset->setValue( 2 * nP, val );
+            dataset->setValueX( nP, val );
           }
           else
           {
-            dataset->setValue( 2 * nP + 1, val );
+            dataset->setValueY( nP, val );
           }
         }
         else
         {
-          dataset->setValue( nP, val );
+          dataset->setScalarValue( nP, val );
         }
       }
     }

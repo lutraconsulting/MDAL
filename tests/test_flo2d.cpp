@@ -523,6 +523,9 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   value = getValueX( ds, 234 );
   EXPECT_DOUBLE_EQ( 0.27071857452392578, value );
 
+  value = getValueY( ds, 234 );
+  EXPECT_DOUBLE_EQ( -0.62059682607650757, value );
+
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 0.1241119660936652, min );
   EXPECT_DOUBLE_EQ( 2.847882132344469, max );

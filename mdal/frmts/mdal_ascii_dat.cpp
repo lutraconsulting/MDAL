@@ -373,7 +373,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
     {
       if ( tsItems.size() >= 2 ) // BASEMENT files with vectors have 3 columns
       {
-        dataset->setValue( index, toDouble( tsItems[0] ), toDouble( tsItems[1] ) );
+        dataset->setVectorValue( index, toDouble( tsItems[0] ), toDouble( tsItems[1] ) );
       }
       else
       {
@@ -383,7 +383,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
     else
     {
       if ( tsItems.size() >= 1 )
-        dataset->setValue( index, toDouble( tsItems[0] ) );
+        dataset->setScalarValue( index, toDouble( tsItems[0] ) );
       else
       {
         debug( "invalid timestep line" );
@@ -418,7 +418,7 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
     {
       if ( tsItems.size() >= 2 ) // BASEMENT files with vectors have 3 columns
       {
-        dataset->setValue( index, toDouble( tsItems[0] ), toDouble( tsItems[1] ) );
+        dataset->setVectorValue( index, toDouble( tsItems[0] ), toDouble( tsItems[1] ) );
       }
       else
       {
@@ -428,7 +428,7 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
     else
     {
       if ( tsItems.size() >= 1 )
-        dataset->setValue( index, toDouble( tsItems[0] ) ) ;
+        dataset->setScalarValue( index, toDouble( tsItems[0] ) ) ;
       else
       {
         debug( "invalid timestep line" );
@@ -516,10 +516,10 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
     {
       // Read values flags
       if ( isScalar )
-        out << dataset->value( i ) << "\n";
+        out << dataset->scalarValue( i ) << "\n";
       else
       {
-        out << dataset->value( 2 * i ) << " " << dataset->value( 2 * i + 1 )  << "\n";
+        out << dataset->valueX( i ) << " " << dataset->valueY( i )  << "\n";
       }
     }
   }
