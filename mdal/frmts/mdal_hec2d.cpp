@@ -99,19 +99,6 @@ static std::string getDataTimeUnit( HdfDataset &dsTime )
   return dataTimeUnit;
 }
 
-static void convertTimeDataToHours( std::vector<float> &times, const std::string &originalTimeDataUnit )
-{
-  if ( originalTimeDataUnit != "Hours" )
-  {
-    for ( size_t i = 0; i < times.size(); i++ )
-    {
-      if ( originalTimeDataUnit == "Seconds" ) { times[i] /= 3600.0f; }
-      else if ( originalTimeDataUnit == "Minutes" ) { times[i] /= 60.0f; }
-      else if ( originalTimeDataUnit == "Days" ) { times[i] *= 24; }
-    }
-  }
-}
-
 static std::vector<MDAL::Duration> convertTimeData( std::vector<float> &times, const std::string &originalTimeDataUnit )
 {
   std::vector<MDAL::Duration> convertedTime( times.size() );
@@ -143,7 +130,7 @@ static MDAL::DateTime convertToDateTime( const std::string strDateTime )
 {
   auto data = MDAL::split( strDateTime, " " );
   if ( data.size() < 2 )
-    return MDAL::DateTime::fromDefault();
+    return MDAL::DateTime();
 
   std::string dateStr = data[0];
 
@@ -199,7 +186,7 @@ static MDAL::DateTime convertToDateTime( const std::string strDateTime )
     sec = MDAL::toDouble( timeData[2] );
   }
 
-  return MDAL::DateTime::fromStandartValue( year, month, day, hours, min, sec );
+  return MDAL::DateTime( year, month, day, hours, min, sec );
 }
 
 static std::string readReferenceTime( const HdfFile &hdfFile )
@@ -226,7 +213,7 @@ static MDAL::DateTime readReferenceDateTime( const HdfFile &hdfFile )
   if ( timeStamps.size() > 0 )
     return convertToDateTime( timeStamps[0] );
 
-  return MDAL::DateTime::fromDefault();
+  return MDAL::DateTime();
 }
 
 static std::vector<MDAL::Duration> readTimes( const HdfFile &hdfFile )

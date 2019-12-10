@@ -78,26 +78,6 @@ static bool readIStat( std::ifstream &in, int sflg, char *flag )
   return false;
 }
 
-static MDAL::Duration convertTimeData( double time, const std::string &originalTimeDataUnit )
-{
-  MDAL::Duration::Unit unit = MDAL::Duration::hours;
-
-  if ( originalTimeDataUnit == "seconds" )
-  {
-    unit = MDAL::Duration::seconds;
-  }
-  else if ( originalTimeDataUnit == "minutes" )
-  {
-    unit = MDAL::Duration::minutes;
-  }
-  else if ( originalTimeDataUnit == "days" )
-  {
-    unit = MDAL::Duration::days;
-  }
-
-  return MDAL::Duration( time, unit );
-}
-
 MDAL::DriverBinaryDat::DriverBinaryDat():
   Driver( "BINARY_DAT",
           "Binary DAT",
@@ -271,7 +251,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "unable to read reference time" );
 
         referenceTime = static_cast<double>( time );
-        group->setReferenceTime( DateTime::fromJulianDay( referenceTime ) );
+        group->setReferenceTime( DateTime( referenceTime ) );
         break;
 
       case CT_TIMEUNITS:
@@ -309,7 +289,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "Invalid time step" );
 
         double rawTime = static_cast<double>( time );
-        MDAL::Duration t = convertTimeData( rawTime, timeUnitStr );
+        MDAL::Duration t( rawTime, MDAL::parseUnitTime( timeUnitStr ) );
 
         if ( readVertexTimestep( mesh, group, groupMax, t, istat, sflg, in ) )
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "Unable to read vertex timestep" );
@@ -391,7 +371,7 @@ bool MDAL::DriverBinaryDat::readVertexTimestep(
   }
   else
   {
-    dataset->setTime( time ); // TODO read TIMEUNITS
+    dataset->setTime( time );
     dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
     group->datasets.push_back( dataset );
   }

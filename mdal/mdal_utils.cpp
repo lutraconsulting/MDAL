@@ -638,10 +638,59 @@ std::string MDAL::doubleToString( double value, int precision )
   return oss.str();
 }
 
-std::string MDAL::prependZero( std::string str, size_t lengthObjectif )
+std::string MDAL::prependZero( const std::string &str, size_t length )
 {
-  if ( lengthObjectif <= str.size() )
+  if ( length <= str.size() )
     return  str;
 
-  return std::string( lengthObjectif - str.size(), '0' ).append( str );
+  return std::string( length - str.size(), '0' ).append( str );
+}
+
+MDAL::Duration::Unit MDAL::parseUnitTime( const std::string &timeUnit )
+{
+  MDAL::Duration::Unit unit = MDAL::Duration::hours; //default unit
+
+  if ( timeUnit == "millisec" ||
+       timeUnit == "msec" ||
+       timeUnit == "millisecs" ||
+       timeUnit == "msecs"
+     )
+  {
+    unit = MDAL::Duration::milliseconds;
+  }
+  else if ( timeUnit == "second" ||
+            timeUnit == "seconds" ||
+            timeUnit == "Seconds" ||
+            timeUnit == "sec" ||
+            timeUnit == "secs" ||
+            timeUnit == "s" ||
+            timeUnit == "se" || //ascii_dat format
+            timeUnit == "2" )  //ascii_dat format
+  {
+    unit = MDAL::Duration::seconds;
+  }
+  else if ( timeUnit == "minute" ||
+            timeUnit == "minutes" ||
+            timeUnit == "Minutes" ||
+            timeUnit == "min" ||
+            timeUnit == "mins" ||
+            timeUnit == "mi" || //ascii_dat format
+            timeUnit == "1" ) //ascii_dat format
+  {
+    unit = MDAL::Duration::minutes;
+  }
+  else if ( timeUnit == "day" ||
+            timeUnit == "days" ||
+            timeUnit == "Days" )
+  {
+    unit = MDAL::Duration::days;
+  }
+  else if ( timeUnit == "week" ||
+            timeUnit == "weeks" )
+  {
+    unit = MDAL::Duration::weeks;
+  }
+
+
+  return unit;
 }

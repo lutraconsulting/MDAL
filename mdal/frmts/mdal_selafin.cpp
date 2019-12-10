@@ -293,7 +293,7 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
   if ( params[9] == 1 )
   {
     std::vector<int> datetime = mReader.read_int_arr( 6 );
-    MDAL_UNUSED( datetime )
+    DateTime referenceTime( datetime[0], datetime[1], datetime[2], datetime[3], datetime[4], double( datetime[5] ) );
   }
 
   /* 1 record containing the integers NELEM,NPOIN,NDP,1 (number of
@@ -475,8 +475,9 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names, co
       }
       else
       {
+        dataset = std::make_shared< MemoryDataset2D >( group.get() );
         dataset = std::make_shared< MemoryDataset2D >( group.get(), true );
-        dataset->setTime( it->first );
+        dataset->setTime( it->first, Duration::seconds ); //seems that time unit in this format is only seconds
         group->datasets.push_back( dataset );
       }
       for ( size_t nP = 0; nP < nPoints; nP++ )

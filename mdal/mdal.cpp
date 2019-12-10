@@ -697,8 +697,9 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *valu
   }
 
   const size_t index = g->datasets.size();
+  MDAL::Duration t( time, MDAL::Duration::hours );
   dr->createDataset( g,
-                     time,
+                     t,
                      values,
                      active
                    );

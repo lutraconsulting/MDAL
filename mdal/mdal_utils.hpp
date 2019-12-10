@@ -142,7 +142,9 @@ namespace MDAL
   }
 
   //! Prepend 0 to string to have n char
-  std::string prependZero( std::string str, size_t lengthObjectif );
+  std::string prependZero( const std::string &str, size_t length );
+
+  Duration::Unit parseUnitTime( const std::string &timeUnit );
 
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

@@ -64,7 +64,7 @@ namespace MDAL
 
       // create new dataset from array
       virtual void createDataset( DatasetGroup *group,
-                                  double time,
+                                  Duration time,
                                   const double *values,
                                   const int *active );
 

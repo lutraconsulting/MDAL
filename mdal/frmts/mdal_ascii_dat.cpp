@@ -253,7 +253,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     }
     else if ( cardType == "RT_JULIAN" && items.size() >= 2 )
     {
-      referenceTime = MDAL::DateTime::fromJulianDay( MDAL::toDouble( items[1] ) );
+      referenceTime = MDAL::DateTime( MDAL::toDouble( items[1] ) );
     }
     else if ( cardType == "TIMEUNITS" && items.size() >= 2 )
     {
@@ -268,7 +268,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     else if ( cardType == "TS" && items.size() >= 3 )
     {
       double rawTime = toDouble( items[2] );
-      MDAL::Duration t = convertTimeData( rawTime, group->getMetadata( "TIMEUNITS" ) );
+      MDAL::Duration t( rawTime, MDAL::parseUnitTime( group->getMetadata( "TIMEUNITS" ) ) );
 
       if ( faceCentered )
       {

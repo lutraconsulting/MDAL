@@ -13,6 +13,7 @@
 #include <string>
 #include <limits>
 #include "mdal.h"
+#include "mdal_date_time.hpp"
 
 namespace MDAL
 {
@@ -37,137 +38,6 @@ namespace MDAL
   } Statistics;
 
   typedef std::vector< std::pair< std::string, std::string > > Metadata;
-
-  class DateTime;
-
-  class Duration
-  {
-    public:
-      enum Unit
-      {
-        milliseconds = 0,
-        seconds,
-        minutes,
-        hours,
-        days,
-        weeks
-      };
-
-      Duration();
-
-      ///TODO : implementation of operator, copy constructor, copy assignment, move operation
-
-      Duration( double duration, Unit unit );
-
-      double value( Unit unit ) const;
-
-    private:
-      Duration( int64_t ms );
-      int64_t mDuration; //in ms
-
-      friend class DateTime;
-  };
-
-  class DateTime
-  {
-    public:
-
-      //! Defaul constructor
-      DateTime(): mValid( false )
-      {}
-      //! Copy constructor
-      DateTime( const DateTime &other ): mJulianTime( other.mJulianTime )
-      {}
-
-      //static method returning DateTime
-
-      //! Create an instance from gregorian/julian calendar (or standart)
-      static DateTime fromStandartValue( int year, int month, int day, int hours = 0, int minutes = 0, double seconds = 0 );
-
-      //! Create an instance from julian day
-      static DateTime fromJulianDay( double julianDay )
-      {
-        return DateTime( int64_t( julianDay * 24 * 3600 * 1000 ) );
-      }
-
-      //! Create an default instance
-      static DateTime fromDefault()
-      {
-        return DateTime();
-      }
-
-      //! Returns a string with the date/time expressed in Greogrian/Julian calendar with ISO8601 format (local time zone)
-      std::string toStandartCalendarISO8601() const;
-
-      //! Returns the Julian day value
-      double toJulianDay() const;
-
-      //! Returns the Julain day value expressed with a string
-      std::string toJulianDayString() const
-      {
-        return std::to_string( toJulianDay() ); ///TODO : maybe change the precison
-      }
-
-      //! operators
-      DateTime &operator=( const DateTime &other );
-      Duration operator-( const DateTime &other ) const;
-      DateTime operator+( const Duration &duration ) const;
-      DateTime &operator+=( const Duration &duration );
-      DateTime &operator-=( const Duration &duration );
-      DateTime operator-( const Duration &duration ) const;
-      bool operator==( const DateTime &other ) const;
-      bool operator!=( const DateTime &other ) const;
-      bool operator<( const DateTime &other ) const;
-      bool operator>( const DateTime &other ) const;
-      bool operator>=( const DateTime &other ) const;
-      bool operator<=( const DateTime &other ) const;
-
-    private:
-
-      struct DateTimeValues
-      {
-        int year;
-        int month;
-        int day;
-        int hours;
-        int minutes;
-        double seconds;
-      };
-
-      DateTime( int64_t julianTime );
-
-      DateTimeValues dateTimeGregorianJulianCalendar() const;
-
-      void setWithGregorianCalendarDate( DateTimeValues values );
-      void setWithGregorianJulianCalendarValues( DateTimeValues values );
-      void setWithJulianCalendarDate( DateTimeValues values )
-      {
-        ///TODO
-      }
-      void setWith365dayCalendarDate( DateTimeValues values )
-      {
-        ///TODO
-      }
-      void setWith366dayCalendarDate( DateTimeValues values )
-      {
-        ///TODO
-      }
-      void setWith360dayCalendarDate( DateTimeValues values )
-      {
-        ///TODO
-      }
-      void setWithNonStandartCalendarDate( DateTimeValues values, std::vector<int> month_lengths, int leap_year, int leap_month )
-      {
-        ///TODO
-      }
-
-      std::string toString( DateTimeValues values ) const;
-
-      int64_t mJulianTime; //Julian day in ms
-
-      bool mValid = true;
-  };
-
 
   class Dataset
   {

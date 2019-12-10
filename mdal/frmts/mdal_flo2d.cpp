@@ -89,7 +89,7 @@ void MDAL::DriverFlo2D::addStaticDataset(
 
   std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
   assert( vals.size() == dataset->valuesCount() );
-  dataset->setTime( 0.0 );
+  dataset->setTime( MDAL::Duration() );
   double *values = dataset->values();
   memcpy( values, vals.data(), vals.size() * sizeof( double ) );
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
@@ -187,7 +187,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
   size_t nVertexs = mMesh->verticesCount();
   size_t ntimes = 0;
 
-  double time = 0.0;
+  Duration time = Duration();
   size_t face_idx = 0;
 
   std::shared_ptr<DatasetGroup> depthDsGroup = std::make_shared< DatasetGroup >(
@@ -228,7 +228,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
     std::vector<std::string> lineParts = MDAL::split( line, ' ' );
     if ( lineParts.size() == 1 )
     {
-      time = MDAL::toDouble( line );
+      time = Duration( MDAL::toDouble( line ), Duration::hours );
       ntimes++;
 
       if ( depthDataset ) addDatasetToGroup( depthDsGroup, depthDataset );
@@ -528,8 +528,13 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
     HdfGroup grp = timedataGroup.group( grpName );
     if ( !grp.isValid() ) return true;
 
+    auto g = grp.objects();
+
     HdfAttribute groupType = grp.attribute( "Grouptype" );
     if ( !groupType.isValid() ) return true;
+
+    HdfAttribute timeUnitAttribute = grp.attribute( "TimeUnits" );
+    std::string timeUnitString = timeUnitAttribute.readString();
 
     /* Min and Max arrays in TIMDEP.HDF5 files have dimensions 1xntimesteps .
         HdfDataset minDs = grp.dataset("Mins");
