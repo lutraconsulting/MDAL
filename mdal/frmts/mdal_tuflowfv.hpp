@@ -41,7 +41,7 @@ namespace MDAL
                          int ncidX,
                          int ncidY,
                          int ncidActive,
-                         bool timeFirstDim,
+                         CFDatasetGroupInfo::TimeLocation timeLocation,
                          size_t timesteps,
                          size_t values,
                          size_t ts,
@@ -59,6 +59,7 @@ namespace MDAL
                          int ncidX,
                          int ncidY,
                          int ncidActive,
+                         CFDatasetGroupInfo::TimeLocation timeLocation,
                          size_t timesteps,
                          size_t volumesCount,
                          size_t facesCount,
@@ -83,6 +84,7 @@ namespace MDAL
       size_t mTimesteps;
       size_t mFacesCount;
       size_t mLevelFacesCount;
+      CFDatasetGroupInfo::TimeLocation mTimeLocation;
       size_t mTs;
       std::shared_ptr<NetCDFFile> mNcFile;
 
