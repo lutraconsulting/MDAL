@@ -165,6 +165,46 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   return arr_val;
 }
 
+std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
+    size_t start_dim,
+    size_t count_dim
+                                             ) const
+{
+  assert( mNcid != 0 );
+
+  const std::vector<size_t> startp = {start_dim};
+  const std::vector<size_t> countp = {count_dim};
+  const std::vector<ptrdiff_t> stridep = {1, 1};
+
+  std::vector<double> arr_val( count_dim );
+
+  nc_type typep;
+  if ( nc_inq_vartype( mNcid, arr_id, &typep ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+
+  if ( typep == NC_FLOAT )
+  {
+    std::vector<float> arr_val_f( count_dim );
+    if ( nc_get_vars_float( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_f.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+    for ( size_t i = 0; i < count_dim; ++i )
+    {
+      const float val = arr_val_f[i];
+      if ( std::isnan( val ) )
+        arr_val[i] = std::numeric_limits<double>::quiet_NaN();
+      else
+        arr_val[i] = static_cast<double>( val );
+    }
+  }
+  else if ( typep == NC_DOUBLE )
+  {
+    if ( nc_get_vars_double( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+  }
+  else
+  {
+    throw MDAL_Status::Err_UnknownFormat;
+  }
+  return arr_val;
+}
+
 bool NetCDFFile::hasArr( const std::string &name ) const
 {
   assert( mNcid != 0 );

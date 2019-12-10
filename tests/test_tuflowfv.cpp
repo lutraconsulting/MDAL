@@ -326,12 +326,12 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
 
     double min, max;
     MDAL_D_minimumMaximum( ds, &min, &max );
-    EXPECT_DOUBLE_EQ( 0, min );
-    EXPECT_DOUBLE_EQ( 0, max );
+    EXPECT_DOUBLE_EQ( 4.9999990463256836, min );
+    EXPECT_DOUBLE_EQ( 5.0003223419189453, max );
 
     MDAL_G_minimumMaximum( g, &min, &max );
-    EXPECT_DOUBLE_EQ( 0, min );
-    EXPECT_DOUBLE_EQ( 0, max );
+    EXPECT_DOUBLE_EQ( 4.9999990463256836, min );
+    EXPECT_DOUBLE_EQ( 5.0003223419189453, max );
 
     double time = MDAL_D_time( ds );
     EXPECT_DOUBLE_EQ( 0, time );
