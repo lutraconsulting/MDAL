@@ -6,19 +6,21 @@
 # MDAL
 Mesh Data Abstraction Library
 
-see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119#issuecomment-380018557)
+see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119)
+see [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158)
 
 ## Supported Formats
 
 You can use MDAL to load the following file formats:
+
 - [2DM](https://www.xmswiki.com/wiki/SMS:2D_Mesh_Files_*.2dm): Mesh representation of various various hydrodynamic modelling packages (e.g. BASEMENT, TUFLOW)
 - [NetCDF](https://en.wikipedia.org/wiki/NetCDF): Generic format for scientific data. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
 - [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in meteorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
 - [XMDF*](https://en.wikipedia.org/wiki/XMDF): As an example, hydraulic outputs from TUFLOW modelling package
-- [XDMF](http://xdmf.org/index.php/Main_Page): As an example, hydraulic outputs from BASEMENT 3.x modelling package
+- [XDMF*](http://xdmf.org/index.php/Main_Page): As an example, hydraulic outputs from BASEMENT 3.x modelling package
 - [DAT](http://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat): Outputs of various hydrodynamic modelling packages (e.g. BASEMENT, HYDRO_AS-2D, TUFLOW)
-- [3Di](http://www.3di.nu): 3Di modelling package format based on [CF Conventions](http://cfconventions.org)
-- [UGRID](https://www.deltares.nl/en/): Unstructured Grid format based on [CF Conventions](http://cfconventions.org)
+- [3Di*](http://www.3di.nu): 3Di modelling package format based on [CF Conventions](http://cfconventions.org)
+- [UGRID*](https://www.deltares.nl/en/): Unstructured Grid format based on [CF Conventions](http://cfconventions.org)
 - [FLO-2D](http://www.flo-2d.com/): Outputs of the FLO-2D modelling package
 - [Selafin/Serafin](https://www.gdal.org/drv_selafin.html): Outputs of the TELEMAC 2D hydrodynamic modelling package
 - [HEC-RAS](http://www.hec.usace.army.mil/software/hec-ras/): Outputs of the HEC-RAS modelling package
@@ -32,6 +34,22 @@ You can use MDAL to load the following file formats:
 \*\* Formats can be preprocessed using QGIS [Crayfish](https://plugins.qgis.org/plugins/crayfish/)/Mesh processing algorithm to one of supported formats
 
 \*\*\* Results should pre pre-processed to become [UGRID compliant](https://github.com/lutraconsulting/MDAL/issues/155#issuecomment-530853839)
+
+# Versioning and integration in QGIS
+
+QGIS contains internal copy of MDAL library in following versions:
+| QGIS    | MDAL    |
+|---------|---------|
+| 3.0.2   | N/A     |
+| 3.2.3   | 0.0.3   |
+| 3.4.14  | 0.0.10  |
+| 3.6.3   | 0.3.2   |
+| 3.8.3   | 0.3.3   |
+| 3.10.0  | 0.3.3   |
+| 3.10.1  | 0.4.0   |
+| 3.12.x  | 0.5.x   |
+
+versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
 # Development
 
