@@ -185,6 +185,9 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   EXPECT_DOUBLE_EQ( 1, min );
   EXPECT_DOUBLE_EQ( 2, max );
 
+  EXPECT_EQ( 0, MDAL_D_maximumVerticalLevelCount( ds ) );
+  EXPECT_EQ( 0, MDAL_G_maximumVerticalLevelCount( g ) );
+
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 1, time );
 

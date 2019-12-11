@@ -232,6 +232,7 @@ TEST( ApiTest, GroupsApi )
   EXPECT_EQ( MDAL_G_metadataValue( nullptr, 0 ), std::string( "" ) );
   EXPECT_EQ( MDAL_G_name( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_G_hasScalarData( nullptr ), true );
+  EXPECT_EQ( 0, MDAL_G_maximumVerticalLevelCount( nullptr ) );
   EXPECT_EQ( MDAL_G_dataLocation( nullptr ), MDAL_DataLocation::DataInvalidLocation );
   double a, b;
   MDAL_G_minimumMaximum( nullptr, &a, &b );

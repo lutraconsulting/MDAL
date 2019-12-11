@@ -615,6 +615,18 @@ MDAL_DataLocation MDAL_G_dataLocation( DatasetGroupH group )
   return g->dataLocation();
 }
 
+int MDAL_G_maximumVerticalLevelCount( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return 0;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  int len = static_cast<int>( g->maximumVerticalLevelsCount() );
+  return len;
+}
+
 void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max )
 {
   if ( !min || !max )

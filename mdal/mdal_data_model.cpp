@@ -222,6 +222,18 @@ MDAL::Mesh *MDAL::DatasetGroup::mesh() const
   return mParent;
 }
 
+size_t MDAL::DatasetGroup::maximumVerticalLevelsCount() const
+{
+  size_t maxLevels = 0;
+  for ( const std::shared_ptr<Dataset> &ds : datasets )
+  {
+    const size_t maxDsLevels = ds->maximumVerticalLevelsCount();
+    if ( maxDsLevels > maxLevels )
+      return maxLevels = maxDsLevels;
+  }
+  return maxLevels;
+}
+
 bool MDAL::DatasetGroup::isInEditMode() const
 {
   return mInEditMode;

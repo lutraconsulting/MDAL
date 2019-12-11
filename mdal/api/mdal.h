@@ -280,6 +280,9 @@ MDAL_EXPORT bool MDAL_G_hasScalarData( DatasetGroupH group );
 //! Whether dataset is on vertices
 MDAL_EXPORT MDAL_DataLocation MDAL_G_dataLocation( DatasetGroupH group );
 
+//! Returns maximum number of vertical levels (for 3D meshes)
+MDAL_EXPORT int MDAL_G_maximumVerticalLevelCount( DatasetGroupH group );
+
 //! Returns the minimum and maximum values of the group
 //! Returns NaN on error
 MDAL_EXPORT void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max );

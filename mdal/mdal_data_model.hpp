@@ -171,6 +171,8 @@ namespace MDAL
 
       Mesh *mesh() const;
 
+      size_t maximumVerticalLevelsCount() const;
+
       bool isInEditMode() const;
       void startEditing();
       void stopEditing();

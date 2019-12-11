@@ -99,6 +99,9 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_DOUBLE_EQ( -5.9875001907348633, min );
     EXPECT_DOUBLE_EQ( -1.25, max );
 
+    EXPECT_EQ( 0, MDAL_D_maximumVerticalLevelCount( ds ) );
+    EXPECT_EQ( 0, MDAL_G_maximumVerticalLevelCount( g ) );
+
     double time = MDAL_D_time( ds );
     EXPECT_DOUBLE_EQ( 0.0, time );
   }
@@ -166,6 +169,9 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     MDAL_G_minimumMaximum( g, &min, &max );
     EXPECT_DOUBLE_EQ( 0, min );
     EXPECT_DOUBLE_EQ( 34.741443634033203, max );
+
+    EXPECT_EQ( 10, MDAL_D_maximumVerticalLevelCount( ds ) );
+    EXPECT_EQ( 10, MDAL_G_maximumVerticalLevelCount( g ) );
 
     double time = MDAL_D_time( ds );
     EXPECT_DOUBLE_EQ( 0.502121734619141, time );
