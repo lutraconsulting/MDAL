@@ -9,12 +9,18 @@ sudo apt-get install -y libhdf5-dev libnetcdf-dev
 sudo apt-get install -y libxml2-dev
 
 # MinGW
-sudo apt-get install mingw-w64
+if [ "x${LINUX_MINGW}" = "xtrue" ]; then
+  sudo apt-get install mingw-w64
+fi
 
 # Valgrind
-sudo apt-get install libc6-dbg gdb valgrind
-
+if [ "x${LINUX_MEMCHECK}" = "xtrue" ]; then
+  sudo apt-get install libc6-dbg gdb valgrind
+fi
+ 
 # Code coverage
-sudo apt-get install -y ruby
-sudo apt-get install -y lcov
-sudo gem install coveralls-lcov
+if [ "x${LINUX_COVERAGE}" = "xtrue" ]; then
+  sudo apt-get install -y ruby
+  sudo apt-get install -y lcov
+  sudo gem install coveralls-lcov
+fi
