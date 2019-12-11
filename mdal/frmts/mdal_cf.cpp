@@ -313,10 +313,23 @@ bool MDAL::DriverCF::canReadMesh( const std::string &uri )
 void MDAL::DriverCF::setProjection( MDAL::Mesh *mesh )
 {
   std::string coordinate_system_variable = getCoordinateSystemVariableName();
+  // not present
+  if ( coordinate_system_variable.empty() )
+  {
+    return;
+  }
 
+  // in file
+  if ( MDAL::startsWith( coordinate_system_variable, "file://" ) )
+  {
+    const std::string filename = MDAL::replace( coordinate_system_variable, "file://", "" );
+    mesh->setSourceCrsFromPrjFile( filename );
+    return;
+  }
+
+  // in NetCDF attribute
   try
   {
-
     if ( !coordinate_system_variable.empty() )
     {
       std::string wkt = mNcFile->getAttrStr( coordinate_system_variable, "wkt" );
@@ -335,7 +348,6 @@ void MDAL::DriverCF::setProjection( MDAL::Mesh *mesh )
         {
           mesh->setSourceCrs( epsg_code );
         }
-
       }
       else
       {

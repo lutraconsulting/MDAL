@@ -44,6 +44,7 @@ namespace MDAL
   std::string baseName( const std::string &filename );
   std::string dirName( const std::string &filename );
   std::string pathJoin( const std::string &path1, const std::string &path2 );
+  std::string readFileToString( const std::string &filename );
 
   // strings
   enum ContainsBehaviour

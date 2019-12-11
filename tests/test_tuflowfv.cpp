@@ -18,6 +18,10 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
 
+  const char *projection = MDAL_M_projection( m );
+  std::string proj( projection );
+  EXPECT_TRUE( proj.find( "WGS_1984_UTM_ZONE_60S" ) != std::string::npos );
+
   // ///////////
   // Vertices
   // ///////////
@@ -286,6 +290,9 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
+
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "" ), std::string( projection ) );
 
   // ///////////
   // Vertices

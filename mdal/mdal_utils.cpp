@@ -22,6 +22,17 @@ bool MDAL::fileExists( const std::string &filename )
   return in.good();
 }
 
+std::string MDAL::readFileToString( const std::string &filename )
+{
+  if ( MDAL::fileExists( filename ) )
+  {
+    std::ifstream t( filename );
+    std::stringstream buffer;
+    buffer << t.rdbuf();
+    return buffer.str();
+  }
+  return "";
+}
 
 bool MDAL::startsWith( const std::string &str, const std::string &substr, ContainsBehaviour behaviour )
 {
@@ -273,18 +284,27 @@ std::string MDAL::replace( const std::string &str, const std::string &substr, co
 // http://www.cplusplus.com/faq/sequences/strings/trim/
 std::string MDAL::trim( const std::string &s, const std::string &delimiters )
 {
+  if ( s.empty() )
+    return s;
+
   return ltrim( rtrim( s, delimiters ), delimiters );
 }
 
 // http://www.cplusplus.com/faq/sequences/strings/trim/
 std::string MDAL::ltrim( const std::string &s, const std::string &delimiters )
 {
+  if ( s.empty() )
+    return s;
+
   return s.substr( s.find_first_not_of( delimiters ) );
 }
 
 // http://www.cplusplus.com/faq/sequences/strings/trim/
 std::string MDAL::rtrim( const std::string &s, const std::string &delimiters )
 {
+  if ( s.empty() )
+    return s;
+
   return s.substr( 0, s.find_last_not_of( delimiters ) + 1 );
 }
 
