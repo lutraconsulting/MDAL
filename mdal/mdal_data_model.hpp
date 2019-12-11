@@ -226,6 +226,7 @@ namespace MDAL
       void setSourceCrs( const std::string &str );
       void setSourceCrsFromWKT( const std::string &wkt );
       void setSourceCrsFromEPSG( int code );
+      void setSourceCrsFromPrjFile( const std::string &filename );
 
       virtual std::unique_ptr<MDAL::MeshVertexIterator> readVertices() = 0;
       virtual std::unique_ptr<MDAL::MeshFaceIterator> readFaces() = 0;

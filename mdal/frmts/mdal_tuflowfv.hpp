@@ -103,6 +103,10 @@ namespace MDAL
    *
    * Supports active flag.
    *
+   * There are special datasets for maximum/minimum/time of maximum/time of minimum.
+   * These datasets are not 1-1 with calculated max/min of time-datasets, since
+   * they are calculated with more fine methods directly in TUFLOW solvers
+   *
    * Both mesh and dataset is stored in single file.
    */
   class DriverTuflowFV: public DriverCF
@@ -121,9 +125,6 @@ namespace MDAL
       void parseNetCDFVariableMetadata( int varid, const std::string &variableName,
                                         std::string &name, bool *is_vector, bool *is_x ) override;
       std::string getTimeVariableName() const override;
-
-      // TODO CRS from prj file
-
       std::shared_ptr<MDAL::Dataset> create2DDataset(
         std::shared_ptr<MDAL::DatasetGroup> group,
         size_t ts,

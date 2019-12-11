@@ -424,7 +424,8 @@ void MDAL::DriverTuflowFV::addBedElevation( MDAL::MemoryMesh *mesh )
 
 std::string MDAL::DriverTuflowFV::getCoordinateSystemVariableName()
 {
-  return "";
+  const std::string projFile = MDAL::replace( mFileName, ".nc", ".prj" );
+  return "file://" + projFile;
 }
 
 std::set<std::string> MDAL::DriverTuflowFV::ignoreNetCDFVariables()
@@ -542,7 +543,6 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverTuflowFV::create3DDataset( std::share
         mNcFile
       );
 
-  // TODO use "Maximums" from file
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   return std::move( dataset );
 }

@@ -311,6 +311,12 @@ void MDAL::Mesh::setSourceCrsFromEPSG( int code )
   setSourceCrs( std::string( "EPSG:" ) + std::to_string( code ) );
 }
 
+void MDAL::Mesh::setSourceCrsFromPrjFile( const std::string &filename )
+{
+  const std::string proj = MDAL::readFileToString( filename );
+  setSourceCrs( proj );
+}
+
 size_t MDAL::Mesh::verticesCount() const
 {
   return mVerticesCount;
