@@ -646,7 +646,7 @@ std::string MDAL::prependZero( const std::string &str, size_t length )
   return std::string( length - str.size(), '0' ).append( str );
 }
 
-MDAL::Duration::Unit MDAL::parseUnitTime( const std::string &timeUnit )
+MDAL::Duration::Unit MDAL::parseDurationUnitTime( const std::string &timeUnit )
 {
   MDAL::Duration::Unit unit = MDAL::Duration::hours; //default unit
 
@@ -693,4 +693,82 @@ MDAL::Duration::Unit MDAL::parseUnitTime( const std::string &timeUnit )
 
 
   return unit;
+}
+
+MDAL::Duration::Unit MDAL::parseCFTimeUnit( std::string timeInformation )
+{
+  auto strings = MDAL::split( timeInformation, ' ' );
+  if ( strings.size() < 3 )
+    return MDAL::Duration::hours; //default value
+
+  if ( strings[1] == "since" )
+  {
+    std::string timeUnit = strings[0];
+    if ( timeUnit == "month" ||
+         timeUnit == "months" ||
+         timeUnit == "mon" ||
+         timeUnit == "mons" )
+    {
+      return MDAL::Duration::months_CF;
+    }
+    else if ( timeUnit == "year" ||
+              timeUnit == "years" ||
+              timeUnit == "yr" ||
+              timeUnit == "yrs" )
+    {
+      return MDAL::Duration::exact_years;
+    }
+    return MDAL::parseDurationUnitTime( strings[0] );
+  }
+
+  return MDAL::Duration::hours;//default value
+}
+
+MDAL::DateTime MDAL::parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString )
+{
+  auto strings = MDAL::split( timeInformation, ' ' );
+  if ( strings.size() < 3 )
+    return MDAL::DateTime();
+
+  if ( strings[1] != "since" )
+    return MDAL::DateTime();
+
+  std::string dateString = strings[2];
+
+  auto dateStringValues = MDAL::split( dateString, '-' );
+  if ( dateStringValues.size() != 3 )
+    return MDAL::DateTime();
+
+  int year = MDAL::toInt( dateStringValues[0] );
+  int month = MDAL::toInt( dateStringValues[1] );
+  int day = MDAL::toInt( dateStringValues[2] );
+
+  int hours = 0;
+  int minutes = 0;
+  double seconds = 0;
+
+  if ( strings.size() > 3 )
+  {
+    std::string timeString = strings[3];
+    auto timeStringsValue = MDAL::split( timeString, ":" );
+    if ( timeStringsValue.size() == 3 )
+    {
+      hours = MDAL::toInt( timeStringsValue[0] );
+      minutes = MDAL::toInt( timeStringsValue[0] );
+      seconds = MDAL::toDouble( timeStringsValue[0] );
+    }
+  }
+
+
+  MDAL::DateTime::Calendar calendar;
+  if ( calendarString == "gregorian" || calendarString == "standard" || calendarString.empty() )
+    calendar = MDAL::DateTime::Gregorian;
+  else if ( calendarString == "proleptic_gregorian" )
+    calendar = MDAL::DateTime::Proleptic_Gregorian;
+  else if ( calendarString == "julian" )
+    calendar = MDAL::DateTime::Julian;
+  else
+    return MDAL::DateTime();
+
+  return MDAL::DateTime( year, month, day, hours, minutes, seconds, calendar );
 }

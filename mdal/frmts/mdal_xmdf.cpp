@@ -249,6 +249,12 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
 
   std::vector<double> times = dsTimes.readArrayDouble();
   std::string timeUnit = rootGroup.attribute( "TimeUnits" ).readString();
+  HdfAttribute refTime = rootGroup.attribute( "Reftime" );
+  if ( refTime.isValid() )
+  {
+    std::string referenceTimeJulianDay = rootGroup.attribute( "Reftime" ).readString();
+    group->setReferenceTime( DateTime( MDAL::toDouble( referenceTimeJulianDay ), DateTime::JulianDay ) );
+  }
   convertTimeDataToHours( times, timeUnit );
   // all fine, set group and return
   group = std::make_shared<MDAL::DatasetGroup>(
@@ -272,7 +278,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {
     std::shared_ptr<XmdfDataset> dataset = std::make_shared< XmdfDataset >( group.get(), dsValues, dsActive, i );
-    dataset->setTime( times[i] );
+    dataset->setTime( times[i], MDAL::parseDurationUnitTime( timeUnit ) );
     Statistics stats;
     stats.minimum = static_cast<double>( mins[i] );
     stats.maximum = static_cast<double>( maxs[i] );

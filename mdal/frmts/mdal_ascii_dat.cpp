@@ -24,27 +24,6 @@
 
 #define EXIT_WITH_ERROR(error)       {  if (status) *status = (error); return; }
 
-static MDAL::Duration convertTimeData( double time, const std::string &originalTimeDataUnit )
-{
-  MDAL::Duration::Unit unit = MDAL::Duration::hours;
-
-  if ( originalTimeDataUnit == "se" || originalTimeDataUnit == "2" || originalTimeDataUnit == "Seconds"
-       || originalTimeDataUnit.empty() )
-  {
-    unit = MDAL::Duration::seconds;
-  }
-  else if ( originalTimeDataUnit == "mi" || originalTimeDataUnit == "1" || originalTimeDataUnit == "Minutes" )
-  {
-    unit = MDAL::Duration::minutes;
-  }
-  else if ( originalTimeDataUnit == "days" )
-  {
-    unit = MDAL::Duration::days;
-  }
-
-  return MDAL::Duration( time, unit );
-}
-
 MDAL::DriverAsciiDat::DriverAsciiDat( ):
   Driver( "ASCII_DAT",
           "DAT",
@@ -253,7 +232,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     }
     else if ( cardType == "RT_JULIAN" && items.size() >= 2 )
     {
-      referenceTime = MDAL::DateTime( MDAL::toDouble( items[1] ) );
+      referenceTime = DateTime( MDAL::toDouble( items[1] ), DateTime::JulianDay );
     }
     else if ( cardType == "TIMEUNITS" && items.size() >= 2 )
     {
@@ -268,7 +247,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     else if ( cardType == "TS" && items.size() >= 3 )
     {
       double rawTime = toDouble( items[2] );
-      MDAL::Duration t( rawTime, MDAL::parseUnitTime( group->getMetadata( "TIMEUNITS" ) ) );
+      MDAL::Duration t( rawTime, MDAL::parseDurationUnitTime( group->getMetadata( "TIMEUNITS" ) ) );
 
       if ( faceCentered )
       {

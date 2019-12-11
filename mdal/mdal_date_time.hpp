@@ -1,3 +1,8 @@
+/*
+ MDAL - Mesh Data Abstraction Library (MIT License)
+ Copyright (C) 2019 Vincent Cloarec (vcloarec at gmail dot com)
+*/
+
 #ifndef MDAL_DATE_TIME_HPP
 #define MDAL_DATE_TIME_HPP
 
@@ -57,8 +62,14 @@ namespace MDAL
       enum Calendar
       {
         Gregorian = 0,
-        Gregorian_proleptic,
+        Proleptic_Gregorian,
         Julian,
+      };
+
+      enum Epoch
+      {
+        Unix = 0,
+        JulianDay
       };
 
       //! Defaul constructor
@@ -67,8 +78,8 @@ namespace MDAL
       DateTime( const DateTime &other );
       //! Constructor with date/time value and calendar type
       DateTime( int year, int month, int day, int hours = 0, int minutes = 0, double seconds = 0, Calendar calendar = Gregorian );
-      //! Constructor with Jlian day
-      DateTime( double julianDay );
+      //! Constructor with Julian day
+      DateTime( double value, Epoch epoch );
 
       //! Returns a string with the date/time expressed in Greogrian/Julian calendar with ISO8601 format (local time zone)
       std::string toStandartCalendarISO8601() const;
@@ -92,6 +103,8 @@ namespace MDAL
       bool operator>( const DateTime &other ) const;
       bool operator>=( const DateTime &other ) const;
       bool operator<=( const DateTime &other ) const;
+
+      bool isValid() const;
 
     private:
 

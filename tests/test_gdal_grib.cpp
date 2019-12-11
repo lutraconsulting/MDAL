@@ -48,7 +48,15 @@ TEST( MeshGdalGribTest, ScalarFile )
   ASSERT_EQ( 1683, count );
 
   double value = getValue( ds, 1600 );
-  EXPECT_DOUBLE_EQ( 15.34, value );
+  EXPECT_TRUE( compareDurationInHours( 15.34, value ) );
+
+  const char *referenceTime;
+  referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "2016-03-01T06:00:00" ), std::string( referenceTime ) );
+
+  ds = MDAL_G_dataset( g, 1 );
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 12, time ) );
 
   MDAL_CloseMesh( m );
 }
@@ -95,6 +103,14 @@ TEST( MeshGdalGribTest, VectorFile )
 
   double valueY = getValueY( ds, 1600 );
   EXPECT_DOUBLE_EQ( 2.8200097656250001, valueY );
+
+  const char *referenceTime;
+  referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "2016-03-01T06:00:00" ), std::string( referenceTime ) );
+
+  ds = MDAL_G_dataset( g, 1 );
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 12, time ) );
 
   MDAL_CloseMesh( m );
 }
@@ -144,6 +160,15 @@ TEST( MeshGdalGribTest, WithoutNODATA )
 
   double valueY = getValueY( ds, 1600 );
   EXPECT_DOUBLE_EQ( 1, valueY );
+
+  const char *referenceTime;
+  referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "1970-01-01T00:00:00" ), std::string( referenceTime ) );
+
+  ds = MDAL_G_dataset( g, 0 );
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 0, time ) );
+
   MDAL_CloseMesh( m );
 }
 #endif
@@ -189,6 +214,14 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
 
   double value = getValue( ds, 1600 );
   EXPECT_DOUBLE_EQ( -0.818756103515625, value );
+
+  const char *referenceTime;
+  referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "2018-10-01T00:00:00" ), std::string( referenceTime ) );
+
+  ds = MDAL_G_dataset( g, 1 );
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 24, time ) );
 
   MDAL_CloseMesh( m );
 }

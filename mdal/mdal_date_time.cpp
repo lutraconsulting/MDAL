@@ -20,7 +20,7 @@ constexpr double HOURS_IN_DAY = 24;
 MDAL::DateTime::DateTime(): mValid( false )
 {}
 
-MDAL::DateTime::DateTime( const MDAL::DateTime &other ): mJulianTime( other.mJulianTime )
+MDAL::DateTime::DateTime( const MDAL::DateTime &other ): mJulianTime( other.mJulianTime ), mValid( other.mValid )
 {}
 
 MDAL::DateTime::DateTime( int year, int month, int day, int hours, int minutes, double seconds, MDAL::DateTime::Calendar calendar )
@@ -32,7 +32,7 @@ MDAL::DateTime::DateTime( int year, int month, int day, int hours, int minutes, 
     case MDAL::DateTime::Gregorian:
       setWithGregorianJulianCalendarDate( value );
       break;
-    case MDAL::DateTime::Gregorian_proleptic:
+    case MDAL::DateTime::Proleptic_Gregorian:
       setWithGregorianCalendarDate( value );
       break;
     case MDAL::DateTime::Julian:
@@ -41,10 +41,18 @@ MDAL::DateTime::DateTime( int year, int month, int day, int hours, int minutes, 
   }
 }
 
-MDAL::DateTime::DateTime( double julianDay ):
-  mJulianTime( int64_t( julianDay * MILLISECONDS_IN_DAY ) ),
+MDAL::DateTime::DateTime( double value, Epoch epoch ):
   mValid( true )
 {
+  switch ( epoch )
+  {
+    case MDAL::DateTime::Unix:
+      mJulianTime = ( DateTime( 1970, 01, 01, 0, 0, 0, Gregorian ) + Duration( value, Duration::seconds ) ).mJulianTime;
+      break;
+    case MDAL::DateTime::JulianDay:
+      mJulianTime = int64_t( value * MILLISECONDS_IN_DAY );
+      break;
+  }
 }
 
 std::string MDAL::DateTime::toStandartCalendarISO8601() const
@@ -146,6 +154,8 @@ bool MDAL::DateTime::operator<=( const MDAL::DateTime &other ) const
     return true;
   return ( mValid && other.mValid ) && ( mJulianTime <= other.mJulianTime );
 }
+
+bool MDAL::DateTime::isValid() const {return mValid;}
 
 MDAL::DateTime::DateTime( int64_t julianTime ): mJulianTime( julianTime )
 {}

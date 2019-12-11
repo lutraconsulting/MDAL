@@ -251,7 +251,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "unable to read reference time" );
 
         referenceTime = static_cast<double>( time );
-        group->setReferenceTime( DateTime( referenceTime ) );
+        group->setReferenceTime( DateTime( referenceTime, DateTime::JulianDay ) );
         break;
 
       case CT_TIMEUNITS:
@@ -289,7 +289,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "Invalid time step" );
 
         double rawTime = static_cast<double>( time );
-        MDAL::Duration t( rawTime, MDAL::parseUnitTime( timeUnitStr ) );
+        MDAL::Duration t( rawTime, MDAL::parseDurationUnitTime( timeUnitStr ) );
 
         if ( readVertexTimestep( mesh, group, groupMax, t, istat, sflg, in ) )
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "Unable to read vertex timestep" );

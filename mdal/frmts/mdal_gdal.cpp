@@ -210,11 +210,12 @@ void MDAL::DriverGdal::parseRasterBands( const MDAL::GdalDataset *cfGDALDataset 
     metadata_hash global_metadata = parseMetadata( cfGDALDataset->mHDataset );
     parseGlobals( global_metadata );
 
+
     // Get metadata
     metadata_hash metadata = parseMetadata( gdalBand );
 
     std::string band_name;
-    double time = std::numeric_limits<double>::min();
+    MDAL::Duration time;
     bool is_vector;
     bool is_x;
     if ( parseBandInfo( cfGDALDataset, metadata, band_name, &time, &is_vector, &is_x ) )
@@ -235,7 +236,6 @@ void MDAL::DriverGdal::parseRasterBands( const MDAL::GdalDataset *cfGDALDataset 
       raster_bands[data_index] = gdalBand;
       qMap[time] = raster_bands;
       mBands[band_name] = qMap;
-
     }
     else
     {
@@ -247,7 +247,6 @@ void MDAL::DriverGdal::parseRasterBands( const MDAL::GdalDataset *cfGDALDataset 
         std::vector<GDALRasterBandH> raster_bands( data_count );
         raster_bands[data_index] = gdalBand;
         mBands[band_name][time] = raster_bands;
-
       }
       else
       {
@@ -312,6 +311,8 @@ void MDAL::DriverGdal::fixRasterBands()
     }
   }
 }
+
+MDAL::DateTime MDAL::DriverGdal::referenceTime() const {return MDAL::DateTime();}
 
 void MDAL::DriverGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared_ptr<MemoryDataset2D> tos, bool is_vector, bool is_x )
 {
@@ -429,6 +430,7 @@ void MDAL::DriverGdal::addDatasetGroups()
 
     // TODO use GDALComputeRasterMinMax
     group->setStatistics( MDAL::calculateStatistics( group ) );
+    group->setReferenceTime( referenceTime() );
     mMesh->datasetGroups.push_back( group );
   }
 }

@@ -164,77 +164,6 @@ static void populate_vals( bool is_vector, double *vals, size_t i,
   }
 }
 
-static MDAL::DateTime parseReferenceTime( std::string timeInformation, std::string calendar )
-{
-  auto strings = MDAL::split( timeInformation, ' ' );
-  if ( strings.size() < 3 )
-    return MDAL::DateTime();
-
-  if ( strings[1] != "since" )
-    return MDAL::DateTime();
-
-  std::string dateString = strings[2];
-
-  auto dateStringValues = MDAL::split( dateString, '-' );
-  if ( dateStringValues.size() != 3 )
-    return MDAL::DateTime();
-
-  int year = MDAL::toInt( dateStringValues[0] );
-  int month = MDAL::toInt( dateStringValues[1] );
-  int day = MDAL::toInt( dateStringValues[2] );
-
-  int hours = 0;
-  int minutes = 0;
-  double seconds = 0;
-
-  if ( strings.size() > 3 )
-  {
-    std::string timeString = strings[3];
-    auto timeStringsValue = MDAL::split( timeString, ":" );
-    if ( timeStringsValue.size() == 3 )
-    {
-      hours = MDAL::toInt( timeStringsValue[0] );
-      minutes = MDAL::toInt( timeStringsValue[0] );
-      seconds = MDAL::toDouble( timeStringsValue[0] );
-    }
-  }
-
-  if ( calendar == "gregorian" || calendar == "standard" || calendar.empty() )
-    return MDAL::DateTime( year, month, day, hours, minutes, seconds );
-
-  return MDAL::DateTime();
-
-}
-
-static MDAL::Duration::Unit parseUnitCFTime( std::string timeInformation )
-{
-  auto strings = MDAL::split( timeInformation, ' ' );
-  if ( strings.size() < 3 )
-    return MDAL::Duration::hours; //default value
-
-  if ( strings[1] == "since" )
-  {
-    std::string timeUnit = strings[0];
-    if ( timeUnit == "month" ||
-         timeUnit == "months" ||
-         timeUnit == "mon" ||
-         timeUnit == "mons" )
-    {
-      return MDAL::Duration::months_CF;
-    }
-    else if ( timeUnit == "year" ||
-              timeUnit == "years" ||
-              timeUnit == "yr" ||
-              timeUnit == "yrs" )
-    {
-      return MDAL::Duration::exact_years;
-    }
-    return MDAL::parseUnitTime( strings[0] );
-  }
-
-  return MDAL::Duration::hours;//default value
-}
-
 void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Duration> &times, const MDAL::cfdataset_info_map &dsinfo_map, const MDAL::DateTime &referenceTime )
 {
   /* PHASE 2 - add dataset groups */
@@ -302,6 +231,7 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Durat
     if ( !group->datasets.empty() )
     {
       group->setStatistics( MDAL::calculateStatistics( group ) );
+      group->setReferenceTime( referenceTime );
       mesh->datasetGroups.push_back( group );
     }
   }
@@ -323,8 +253,8 @@ MDAL::DateTime MDAL::DriverCF::parseTime( std::vector<Duration> &times )
 
   std::string timeUnitInformation = mNcFile->getAttrStr( timeArrName, "units" );
   std::string calendar = mNcFile->getAttrStr( timeArrName, "calendar" );
-  MDAL::DateTime referenceTime = parseReferenceTime( timeUnitInformation, calendar );
-  MDAL::Duration::Unit unit = parseUnitCFTime( timeUnitInformation );
+  MDAL::DateTime referenceTime = parseCFReferenceTime( timeUnitInformation, calendar );
+  MDAL::Duration::Unit unit = parseCFTimeUnit( timeUnitInformation );
 
   times = std::vector<Duration>( nTimesteps );
   for ( size_t i = 0; i < nTimesteps; ++i )

@@ -575,7 +575,7 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
     for ( size_t ts = 0; ts < timesteps; ++ts )
     {
       std::shared_ptr< MemoryDataset2D > output = std::make_shared< MemoryDataset2D >( ds.get() );
-      output->setTime( times[ts] );
+      output->setTime( times[ts], parseDurationUnitTime( timeUnitString ) );
 
       if ( isVector )
       {

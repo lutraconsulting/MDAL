@@ -27,12 +27,17 @@ namespace MDAL
       std::string GDALFileName( const std::string &fileName ) override;
       bool parseBandInfo( const MDAL::GdalDataset *cfGDALDataset,
                           const metadata_hash &metadata, std::string &band_name,
-                          double *time, bool *is_vector, bool *is_x
+                          MDAL::Duration *time, bool *is_vector, bool *is_x
                         ) override;
       void parseGlobals( const metadata_hash &metadata ) override;
 
+      MDAL::DateTime referenceTime() const override;
+
       //! delimiter to get time in hours
       double mTimeDiv;
+      Duration::Unit mTimeUnit;
+      //! Take the first reference time parsed
+      DateTime mRefTime;
   };
 
 } // namespace MDAL

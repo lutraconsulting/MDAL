@@ -470,6 +470,10 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 0.10124753560882101, time ) );
 
+  const char *referenceTime;
+  referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "none" ), std::string( referenceTime ) );
+
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
@@ -666,7 +670,11 @@ TEST( MeshFlo2dTest, basic )
     EXPECT_DOUBLE_EQ( 3, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 0.5, time );
+    EXPECT_TRUE( compareDurationInHours( 0.5, time ) );
+
+    const char *referenceTime;
+    referenceTime = MDAL_G_referenceTime( g );
+    EXPECT_EQ( std::string( "none" ), std::string( referenceTime ) );
 
     // ///////////
     // Max Depth
@@ -771,6 +779,10 @@ TEST( MeshFlo2dTest, basic_required_files_only )
   double value = getValue( ds, 0 );
   EXPECT_DOUBLE_EQ( 1.48, value );
 
+  const char *referenceTime;
+  referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "none" ), std::string( referenceTime ) );
+
   MDAL_CloseMesh( m );
 }
 
@@ -856,7 +868,11 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
   ASSERT_NE( ds, nullptr );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 150.0, time );
+  EXPECT_TRUE( compareDurationInHours( 150.0, time ) );
+
+  const char *referenceTime;
+  referenceTime = MDAL_G_referenceTime( g );
+  EXPECT_EQ( std::string( "none" ), std::string( referenceTime ) );
 
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
@@ -868,6 +884,7 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
 
   value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 0.098000000000000004, value );
+
 
   MDAL_CloseMesh( m );
 }

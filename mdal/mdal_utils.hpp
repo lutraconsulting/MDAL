@@ -144,7 +144,11 @@ namespace MDAL
   //! Prepend 0 to string to have n char
   std::string prependZero( const std::string &str, size_t length );
 
-  Duration::Unit parseUnitTime( const std::string &timeUnit );
+  Duration::Unit parseDurationUnitTime( const std::string &timeUnit );
+
+  Duration::Unit parseCFTimeUnit( std::string timeInformation );
+
+  MDAL::DateTime parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
 
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP
