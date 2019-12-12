@@ -370,8 +370,6 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
     if ( zDimsX != zDimsY )
       throw MDAL_Status::Err_UnknownFormat;
 
-    std::vector<double> valuesX( nPoints ), valuesY( nPoints );
-
     if ( zDimsX == 1 )
     {
       // TIME INDEPENDENT
@@ -388,6 +386,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
     }
     else
     {
+      std::vector<double> valuesX( nPoints ), valuesY( nPoints );
       // TIME DEPENDENT
       for ( size_t t = 0; t < times.size(); ++t )
       {

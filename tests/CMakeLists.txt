@@ -132,9 +132,10 @@ SET_TESTS_PROPERTIES(mdalinfo_test_err1 PROPERTIES WILL_FAIL TRUE)
 SET(UNITTESTS_SRC
     unittests/mdal_unittests.cpp
     unittests/test_mdal_utils.cpp
+    mdal_testutils.hpp
+    mdal_testutils.cpp
 )
 
 ADD_EXECUTABLE(mdal_unittests ${UNITTESTS_SRC} $<TARGET_OBJECTS:mdaltestutils>)
 TARGET_LINK_LIBRARIES(mdal_unittests gtest gmock ${CMAKE_THREAD_LIBS_INIT} mdal_a)
-TARGET_COMPILE_DEFINITIONS(mdal_unittests PUBLIC MDAL_STATIC)
 ADD_TEST(mdal_unittests ${CMAKE_CURRENT_BINARY_DIR}/mdal_unittests)
