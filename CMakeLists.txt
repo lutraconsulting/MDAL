@@ -4,7 +4,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 PROJECT(MDAL)
 
-CMAKE_POLICY(SET CMP0079 NEW)
 IF(MSVC)
   # FindHDF5 still uses incompatible HDF5_ROOT
   CMAKE_POLICY(SET CMP0074 OLD)
@@ -23,7 +22,7 @@ SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that require HDF5 (e.g. XMDF, XD
 SET (WITH_GDAL TRUE CACHE BOOL "Build providers that require GDAL (e.g. GRIB)")
 SET (WITH_NETCDF TRUE CACHE BOOL "Build providers that require NETCDF (e.g. 3Di)")
 SET (WITH_XML TRUE CACHE BOOL "Build providers that require LIBXML2 (e.g. XDMF)")
-SET (BUILD_STATIC FALSE CACHE BOOL "Build static mdal library instead of shared" )
+SET (BUILD_STATIC FALSE CACHE BOOL "Build static mdal library" )
 SET (BUILD_SHARED TRUE CACHE BOOL "Build shared mdal library" )
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables")
 
