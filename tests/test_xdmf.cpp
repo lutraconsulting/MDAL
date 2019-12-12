@@ -64,7 +64,11 @@ TEST( XdmfTest, Basement3HumpsTest )
     EXPECT_DOUBLE_EQ( 2.9100000000000001, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 20, time );
+    EXPECT_TRUE( compareDurationInHours( 20, time ) );
+
+    const char *referenceTime;
+    referenceTime = MDAL_G_referenceTime( g );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
   }
 
   // FUNCTION: JOIN($0, $1, 0*$1) dataset
@@ -112,7 +116,11 @@ TEST( XdmfTest, Basement3HumpsTest )
     EXPECT_DOUBLE_EQ( 4.9994493491047303, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 20, time );
+    EXPECT_TRUE( compareDurationInHours( 20, time ) );
+
+    const char *referenceTime;
+    referenceTime = MDAL_G_referenceTime( g );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
   }
 
   MDAL_CloseMesh( m );
@@ -175,7 +183,11 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_DOUBLE_EQ( 494.816927222965329, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 1, time );
+    EXPECT_TRUE( compareDurationInHours( 1, time ) );
+
+    const char *referenceTime;
+    referenceTime = MDAL_G_referenceTime( g );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
   }
 
   // FUNCTION: $1 - $0
@@ -220,7 +232,11 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_DOUBLE_EQ( 0.0030000000000001137, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 1, time );
+    EXPECT_TRUE( compareDurationInHours( 1, time ) );
+
+    const char *referenceTime;
+    referenceTime = MDAL_G_referenceTime( g );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
   }
 
   // FUNCTION: $0 - $1
@@ -372,7 +388,11 @@ TEST( XdmfTest, Basement3SimpleChannel )
     EXPECT_DOUBLE_EQ( 0.48486232713374577, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 30, time );
+    EXPECT_TRUE( compareDurationInHours( 30, time ) );
+
+    const char *referenceTime;
+    referenceTime = MDAL_G_referenceTime( g );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
   }
 
   MDAL_CloseMesh( m );
@@ -564,7 +584,7 @@ TEST( XdmfTest, Simple )
     EXPECT_DOUBLE_EQ( 3.5179872000733399, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 100.895, time );
+    EXPECT_TRUE( compareDurationInHours( 100.895, time ) );
 
     // lets try another timestep too
     ds = MDAL_G_dataset( g, 10 );
@@ -575,6 +595,10 @@ TEST( XdmfTest, Simple )
 
     valueY = getValueY( ds, 196 );
     EXPECT_DOUBLE_EQ( 0, valueY );
+
+    const char *referenceTime;
+    referenceTime = MDAL_G_referenceTime( g );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
   }
 
   MDAL_CloseMesh( m );

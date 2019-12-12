@@ -232,7 +232,8 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
                                      std::vector<size_t> &ikle,
                                      std::vector<double> &x,
                                      std::vector<double> &y,
-                                     std::vector<timestep_map> &data, DateTime &referenceTime )
+                                     std::vector<timestep_map> &data,
+                                     DateTime &referenceTime )
 {
 
   /* 1 record containing the title of the study (72 characters) and a 8 characters
@@ -411,7 +412,10 @@ void MDAL::DriverSelafin::createMesh(
   mMesh->vertices = nodes;
 }
 
-void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names, const std::vector<timestep_map> &data, size_t nPoints, const DateTime &referenceTime )
+void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names,
+                                   const std::vector<timestep_map> &data,
+                                   size_t nPoints,
+                                   const DateTime &referenceTime )
 {
   for ( size_t nName = 0; nName < var_names.size(); ++nName )
   {
@@ -477,7 +481,6 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names, co
       }
       else
       {
-        dataset = std::make_shared< MemoryDataset2D >( group.get() );
         dataset = std::make_shared< MemoryDataset2D >( group.get(), true );
         dataset->setTime( it->first, Duration::seconds ); //seems that time unit in this format is only seconds
         group->datasets.push_back( dataset );

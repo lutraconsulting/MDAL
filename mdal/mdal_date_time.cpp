@@ -1,3 +1,7 @@
+/*
+ MDAL - Mesh Data Abstraction Library (MIT License)
+ Copyright (C) 2019 Vincent Cloarec (vcloarec at gmail dot com)
+*/
 #include "mdal_date_time.hpp"
 #include "mdal_utils.hpp"
 
@@ -61,7 +65,7 @@ std::string MDAL::DateTime::toStandartCalendarISO8601() const
   if ( mValid )
     return toString( value );
   else
-    return "none";
+    return "";
 }
 
 double MDAL::DateTime::toJulianDay() const
@@ -303,25 +307,25 @@ MDAL::Duration::Duration( double duration, MDAL::Duration::Unit unit )
       mDuration = int64_t( duration );
       break;
     case MDAL::Duration::seconds:
-      mDuration = int64_t( duration * MILLISECONDS_IN_SECOND );
+      mDuration = int64_t( duration * MILLISECONDS_IN_SECOND + 0.5 );
       break;
     case MDAL::Duration::minutes:
-      mDuration = int64_t( duration * MILLISECONDS_IN_MINUTE );
+      mDuration = int64_t( duration * MILLISECONDS_IN_MINUTE + 0.5 );
       break;
     case MDAL::Duration::hours:
-      mDuration = int64_t( duration * MILLISECONDS_IN_HOUR );
+      mDuration = int64_t( duration * MILLISECONDS_IN_HOUR + 0.5 );
       break;
     case MDAL::Duration::days:
-      mDuration = int64_t( duration * MILLISECONDS_IN_DAY );
+      mDuration = int64_t( duration * MILLISECONDS_IN_DAY + 0.5 );
       break;
     case MDAL::Duration::weeks:
-      mDuration = int64_t( duration * MILLISECONDS_IN_WEEK );
+      mDuration = int64_t( duration * MILLISECONDS_IN_WEEK + 0.5 );
       break;
     case MDAL::Duration::months_CF:
-      mDuration = int64_t( duration * MILLISECONDS_IN_MONTH_CF );
+      mDuration = int64_t( duration * MILLISECONDS_IN_MONTH_CF + 0.5 );
       break;
     case MDAL::Duration::exact_years:
-      mDuration = int64_t( duration * MILLISECONDS_IN_EXACT_YEAR );
+      mDuration = int64_t( duration * MILLISECONDS_IN_EXACT_YEAR + 0.5 );
       break;
   }
 }
@@ -352,6 +356,8 @@ double MDAL::Duration::value( MDAL::Duration::Unit unit ) const
     case MDAL::Duration::exact_years:
       return double( mDuration )  / MILLISECONDS_IN_EXACT_YEAR;
   }
+
+  return 0;
 }
 
 MDAL::Duration &MDAL::Duration::operator=( const MDAL::Duration &other )

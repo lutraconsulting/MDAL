@@ -93,7 +93,6 @@ MDAL::Dataset2D::Dataset2D( MDAL::DatasetGroup *parent )
 
 MDAL::Dataset2D::~Dataset2D() = default;
 
-
 size_t MDAL::Dataset2D::volumesCount() const { return 0; }
 
 size_t MDAL::Dataset2D::maximumVerticalLevelsCount() const { return 0; }

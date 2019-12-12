@@ -103,7 +103,7 @@ static std::vector<MDAL::Duration> convertTimeData( std::vector<float> &times, c
 {
   std::vector<MDAL::Duration> convertedTime( times.size() );
 
-  MDAL::Duration::Unit unit = MDAL::parseDurationUnitTime( originalTimeDataUnit );
+  MDAL::Duration::Unit unit = MDAL::parseDurationTimeUnit( originalTimeDataUnit );
 
   for ( size_t i = 0; i < times.size(); i++ )
   {

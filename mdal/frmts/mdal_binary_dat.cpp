@@ -289,7 +289,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "Invalid time step" );
 
         double rawTime = static_cast<double>( time );
-        MDAL::Duration t( rawTime, MDAL::parseDurationUnitTime( timeUnitStr ) );
+        MDAL::Duration t( rawTime, MDAL::parseDurationTimeUnit( timeUnitStr ) );
 
         if ( readVertexTimestep( mesh, group, groupMax, t, istat, sflg, in ) )
           return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "Unable to read vertex timestep" );
@@ -315,9 +315,10 @@ bool MDAL::DriverBinaryDat::readVertexTimestep(
   const MDAL::Mesh *mesh,
   std::shared_ptr<DatasetGroup> group,
   std::shared_ptr<DatasetGroup> groupMax,
-    MDAL::Duration time,
-    int sflg,
-    std::ifstream &in )
+  MDAL::Duration time,
+  bool hasStatus,
+  int sflg,
+  std::ifstream &in )
 {
   assert( group && groupMax && ( group->isScalar() == groupMax->isScalar() ) );
   bool isScalar = group->isScalar();
@@ -491,24 +492,4 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
   if ( writeRawData( out, reinterpret_cast< const char * >( &CT_ENDDS ), 4 ) ) return true;
 
   return false;
-}
-
-double MDAL::DriverBinaryDat::convertTimeDataToHours( double time, int originalTimeDataUnit )
-{
-  switch ( originalTimeDataUnit )
-  {
-    case 1:
-      time /= 60.0;
-      break;
-    case 2:
-      time /= 3600.0;
-      break;
-    case 4:
-      time *= 24;
-      break;
-    case 0:
-    default:
-      break;
-  }
-  return time;
 }

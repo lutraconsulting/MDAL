@@ -321,8 +321,7 @@ MDAL_EXPORT bool MDAL_G_isInEditMode( DatasetGroupH group );
 //! When closed, minimum and maximum dataset group values are automatically calculated
 MDAL_EXPORT void MDAL_G_closeEditMode( DatasetGroupH group );
 
-//! Returns reference time for dataset group
-//! If returned value begins with word JULIAN, following number represents date in Julian format
+//! Returns reference time for dataset group expressed in date with ISO8601 format, return "" if reference time is not defined
 MDAL_EXPORT const char *MDAL_G_referenceTime( DatasetGroupH group );
 
 ///////////////////////////////////////////////////////////////////////////////////////

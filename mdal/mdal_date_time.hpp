@@ -6,13 +6,19 @@
 #ifndef MDAL_DATE_TIME_HPP
 #define MDAL_DATE_TIME_HPP
 
+// Macro for exporting symbols
+// for unit tests (on windows)
+#define MDAL_TEST_EXPORT MDAL_EXPORT
+
 #include <string>
 #include <vector>
+
+#include "mdal.h"
 
 namespace MDAL
 {
 
-  class Duration
+  class MDAL_TEST_EXPORT Duration
   {
     public:
       enum Unit
@@ -55,7 +61,7 @@ namespace MDAL
       friend class DateTime;
   };
 
-  class DateTime
+  class MDAL_TEST_EXPORT DateTime
   {
     public:
 
@@ -125,23 +131,6 @@ namespace MDAL
       void setWithGregorianCalendarDate( DateTimeValues values );
       void setWithJulianCalendarDate( DateTimeValues values );
       void setWithGregorianJulianCalendarDate( DateTimeValues values );//Uses the adapted formula depending of the date (< or > 1582-10-15)
-
-      void setWith365dayCalendarDate( DateTimeValues values )
-      {
-        ///TODO
-      }
-      void setWith366dayCalendarDate( DateTimeValues values )
-      {
-        ///TODO
-      }
-      void setWith360dayCalendarDate( DateTimeValues values )
-      {
-        ///TODO
-      }
-      void setWithNonStandartCalendarDate( DateTimeValues values, std::vector<int> month_lengths, int leap_year, int leap_month )
-      {
-        ///TODO
-      }
 
       std::string toString( DateTimeValues values ) const;
 

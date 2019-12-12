@@ -646,7 +646,7 @@ std::string MDAL::prependZero( const std::string &str, size_t length )
   return std::string( length - str.size(), '0' ).append( str );
 }
 
-MDAL::Duration::Unit MDAL::parseDurationUnitTime( const std::string &timeUnit )
+MDAL::Duration::Unit MDAL::parseDurationTimeUnit( const std::string &timeUnit )
 {
   MDAL::Duration::Unit unit = MDAL::Duration::hours; //default unit
 
@@ -718,7 +718,7 @@ MDAL::Duration::Unit MDAL::parseCFTimeUnit( std::string timeInformation )
     {
       return MDAL::Duration::exact_years;
     }
-    return MDAL::parseDurationUnitTime( strings[0] );
+    return MDAL::parseDurationTimeUnit( strings[0] );
   }
 
   return MDAL::Duration::hours;//default value
@@ -754,8 +754,8 @@ MDAL::DateTime MDAL::parseCFReferenceTime( const std::string &timeInformation, c
     if ( timeStringsValue.size() == 3 )
     {
       hours = MDAL::toInt( timeStringsValue[0] );
-      minutes = MDAL::toInt( timeStringsValue[0] );
-      seconds = MDAL::toDouble( timeStringsValue[0] );
+      minutes = MDAL::toInt( timeStringsValue[1] );
+      seconds = MDAL::toDouble( timeStringsValue[2] );
     }
   }
 

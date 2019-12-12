@@ -66,6 +66,7 @@ SET(TESTS
     test_api.cpp
     test_ascii_dat.cpp
     test_binary_dat.cpp
+    test_mdal_date_time.cpp
     test_selafin.cpp
     test_esri_tin.cpp
     )

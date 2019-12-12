@@ -61,7 +61,7 @@ namespace MDAL
       XdmfDataset( DatasetGroup *grp,
                    const HyperSlab &slab,
                    const HdfDataset &valuesDs,
-                   double time
+                   MDAL::Duration time
                  );
       ~XdmfDataset() override;
 
@@ -111,12 +111,12 @@ namespace MDAL
       XdmfFunctionDataset(
         DatasetGroup *grp,
         FunctionType type,
-        double time
+        MDAL::Duration time
       );
       ~XdmfFunctionDataset() override;
 
       //! Adds reference XMDF dataset
-      void addReferenceDataset( const HyperSlab &slab, const HdfDataset &hdfDataset, double time );
+      void addReferenceDataset( const HyperSlab &slab, const HdfDataset &hdfDataset, Duration time );
       //! Swaps first and second reference dataset
       void swap();
 

@@ -178,7 +178,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
 
     const char *referenceTime;
     referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "none" ), std::string( referenceTime ) );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
 
   }
 
@@ -240,7 +240,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
 
     const char *referenceTime;
     referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "none" ), std::string( referenceTime ) );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
   }
 
   // /////////////////////////////////
@@ -295,9 +295,8 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
 
     const char *referenceTime;
     referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "none" ), std::string( referenceTime ) );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
   }
-
 
   // Close mesh
   MDAL_CloseMesh( m );
@@ -365,7 +364,7 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
 
     const char *referenceTime;
     referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "none" ), std::string( referenceTime ) );
+    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
   }
 
 

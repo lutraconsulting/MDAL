@@ -140,7 +140,6 @@ void MDAL::Driver3Di::addBedElevation( MemoryMesh *mesh )
 
   std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
   dataset->setTime( MDAL::Duration() );
-  double *values = dataset->values();
   for ( size_t i = 0; i < faceCount; ++i )
   {
     dataset->setScalarValue( i, MDAL::safeValue( coordZ[i], fillZ ) );

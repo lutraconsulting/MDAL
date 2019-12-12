@@ -528,8 +528,6 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
     HdfGroup grp = timedataGroup.group( grpName );
     if ( !grp.isValid() ) return true;
 
-    auto g = grp.objects();
-
     HdfAttribute groupType = grp.attribute( "Grouptype" );
     if ( !groupType.isValid() ) return true;
 
@@ -575,7 +573,7 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
     for ( size_t ts = 0; ts < timesteps; ++ts )
     {
       std::shared_ptr< MemoryDataset2D > output = std::make_shared< MemoryDataset2D >( ds.get() );
-      output->setTime( times[ts], parseDurationUnitTime( timeUnitString ) );
+      output->setTime( times[ts], parseDurationTimeUnit( timeUnitString ) );
 
       if ( isVector )
       {

@@ -829,7 +829,6 @@ double MDAL_D_time( DatasetH dataset )
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   return d->time();
-
 }
 
 int MDAL_D_volumesCount( DatasetH dataset )
@@ -1065,3 +1064,4 @@ bool MDAL_D_hasActiveFlagCapability( DatasetH dataset )
   MDAL::Dataset *ds = static_cast< MDAL::Dataset * >( dataset );
   return ds->supportsActiveFlag();
 }
+

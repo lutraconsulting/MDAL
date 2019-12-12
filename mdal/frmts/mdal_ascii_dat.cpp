@@ -247,7 +247,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     else if ( cardType == "TS" && items.size() >= 3 )
     {
       double rawTime = toDouble( items[2] );
-      MDAL::Duration t( rawTime, MDAL::parseDurationUnitTime( group->getMetadata( "TIMEUNITS" ) ) );
+      MDAL::Duration t( rawTime, MDAL::parseDurationTimeUnit( group->getMetadata( "TIMEUNITS" ) ) );
 
       if ( faceCentered )
       {
@@ -523,22 +523,3 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
 
   return false;
 }
-
-double MDAL::DriverAsciiDat::convertTimeDataToHours( double time, const std::string &originalTimeDataUnit ) const
-{
-  if ( originalTimeDataUnit == "se" || originalTimeDataUnit == "2" || originalTimeDataUnit == "Seconds"
-       || originalTimeDataUnit.empty() )
-  {
-    time /= 3600.0;
-  }
-  else if ( originalTimeDataUnit == "mi" || originalTimeDataUnit == "1" || originalTimeDataUnit == "Minutes" )
-  {
-    time /= 60.0;
-  }
-  else if ( originalTimeDataUnit == "days" )
-  {
-    time *= 24;
-  }
-  return time;
-}
-

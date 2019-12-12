@@ -151,7 +151,7 @@ TEST( MeshSWWTest, Cairns )
 
   const char *referenceTime;
   referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "none" ), std::string( referenceTime ) );
+  EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( time, 0.083333333333 ) );
