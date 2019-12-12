@@ -66,7 +66,6 @@ SET(TESTS
     test_api.cpp
     test_ascii_dat.cpp
     test_binary_dat.cpp
-    test_mdal_date_time.cpp
     test_selafin.cpp
     test_esri_tin.cpp
     )
@@ -133,6 +132,7 @@ SET_TESTS_PROPERTIES(mdalinfo_test_err1 PROPERTIES WILL_FAIL TRUE)
 SET(UNITTESTS_SRC
     unittests/mdal_unittests.cpp
     unittests/test_mdal_utils.cpp
+    unittests/test_mdal_datetime.cpp
     mdal_testutils.hpp
     mdal_testutils.cpp
 )

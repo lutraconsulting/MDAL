@@ -148,11 +148,11 @@ namespace MDAL
 
   //! parse the time unit in the CF convention string format "XXXX since 2019-01-01 00:00:00"
   //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
-  Duration::Unit MDAL_TEST_EXPORT parseCFTimeUnit( std::string timeInformation );
+  Duration::Unit parseCFTimeUnit( std::string timeInformation );
 
   //! parse the reference time in the CF convention string format "XXXX since 2019-01-01 00:00:00"
   //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
-  MDAL::DateTime MDAL_TEST_EXPORT parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
+  MDAL::DateTime parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
 
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

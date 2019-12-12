@@ -7,9 +7,11 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <fstream>
 
 //mdal
 #include "mdal.h"
+#include "mdal_utils.hpp"
 #include "mdal_testutils.hpp"
 #include "mdal_datetime.hpp"
 
@@ -83,12 +85,12 @@ TEST( MdalDateTimeTest, DateTime )
     { MDAL::DateTime(), "" },
     { MDAL::DateTime( 2019, 02, 28, 10, 2, 1, MDAL::DateTime::Gregorian ), "2019-02-28T10:02:01" },
     { MDAL::DateTime( 2457125.5, MDAL::DateTime::JulianDay ), "2015-04-13T00:00:00" },
-    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), "1424-12-24T12:00:00" },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), "1425-01-02T12:00:00" },
     {
       MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::Duration( 26, MDAL::Duration::hours )
-      + MDAL::Duration( 20, MDAL::Duration::minutes ) + MDAL::Duration( 25, MDAL::Duration::seconds ), "1424-12-25T14:20:25"
+      + MDAL::Duration( 20, MDAL::Duration::minutes ) + MDAL::Duration( 25, MDAL::Duration::seconds ), "1425-01-03T14:20:25"
     },
-    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) - MDAL::Duration( 240, MDAL::Duration::minutes ), "1424-12-24T08:00:00" },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) - MDAL::Duration( 240, MDAL::Duration::minutes ), "1425-01-02T08:00:00" },
   };
 
   for ( const std::pair<MDAL::DateTime, std::string> &test : dateStringTests )
@@ -97,14 +99,28 @@ TEST( MdalDateTimeTest, DateTime )
   }
 }
 
-
-
-int main( int argc, char **argv )
+TEST( MdalDateTimeTest, ConvertJulianDay )
 {
-  testing::InitGoogleTest( &argc, argv );
-  init_test();
-  int ret =  RUN_ALL_TESTS();
-  finalize_test();
-  return ret;
+  std::string path = test_file( "/datetime/julianDay.txt" );
+  std::ifstream stream( path, std::ifstream::in );
+
+  EXPECT_TRUE( stream.is_open() );
+
+  while ( !stream.eof() )
+  {
+    std::string line;
+    std::getline( stream, line );
+
+    std::vector<std::string> dates = MDAL::split( line, ' ' );
+
+    if ( dates.size() != 2 )
+      continue;
+    std::string stringDate = dates[0];
+    double julianDay = MDAL::toDouble( dates[1] );
+
+    MDAL::DateTime dateTime( julianDay, MDAL::DateTime::JulianDay );
+
+    EXPECT_EQ( stringDate, dateTime.toStandartCalendarISO8601() );
+  }
 }
 

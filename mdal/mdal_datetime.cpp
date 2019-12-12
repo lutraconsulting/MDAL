@@ -16,10 +16,6 @@ constexpr double MILLISECONDS_IN_WEEK = 1000 * 60 * 60 * 24 * 7;
 constexpr double MILLISECONDS_IN_EXACT_YEAR = 3.15569259747e10; //CF Compliant
 constexpr double MILLISECONDS_IN_MONTH_CF = MILLISECONDS_IN_EXACT_YEAR / 12; //CF Compliant
 
-constexpr double SECONDS_IN_DAY = 60 * 60 * 24;
-constexpr double MINUTES_IN_DAY = 60 * 24;
-constexpr double HOURS_IN_DAY = 24;
-
 
 MDAL::DateTime::DateTime(): mValid( false )
 {}
@@ -54,15 +50,15 @@ MDAL::DateTime::DateTime( double value, Epoch epoch ):
       mJulianTime = ( DateTime( 1970, 01, 01, 0, 0, 0, Gregorian ) + Duration( value, Duration::seconds ) ).mJulianTime;
       break;
     case MDAL::DateTime::JulianDay:
-      mJulianTime = int64_t( value * MILLISECONDS_IN_DAY );
+      mJulianTime = int64_t( value * MILLISECONDS_IN_DAY + 0.5 );
       break;
   }
 }
 
 std::string MDAL::DateTime::toStandartCalendarISO8601() const
 {
-  DateTimeValues value = dateTimeGregorianJulianCalendar();
-  if ( mValid )
+  DateTimeValues value = dateTimeGregorianProleptic();
+  if ( mValid || value.year > 0 ) //Do not supoprt negative year
     return toString( value );
   else
     return "";
@@ -168,8 +164,8 @@ MDAL::DateTime::DateTimeValues MDAL::DateTime::dateTimeGregorianJulianCalendar()
 {
   //https://fr.wikipedia.org/wiki/Jour_julien
   DateTimeValues values;
-  int Z = int( mJulianTime / MILLISECONDS_IN_DAY  + 0.5 ); //integer part of julian days count
-  double F = mJulianTime / MILLISECONDS_IN_DAY + 0.5 - Z; //fractional part of julian days count;
+  int Z = int( mJulianTime / MILLISECONDS_IN_DAY + 0.5 ); //integer part of julian days count
+  double F = ( mJulianTime - MILLISECONDS_IN_DAY * ( Z - 0.5 ) ) / MILLISECONDS_IN_DAY; //fractional part of julian days count;
   int S;
   if ( Z < 2299161 )
     S = Z;
@@ -195,14 +191,50 @@ MDAL::DateTime::DateTimeValues MDAL::DateTime::dateTimeGregorianJulianCalendar()
   else
     values.year = C - 4715;
 
-  values.hours = int( F * HOURS_IN_DAY );
-  F = F - values.hours / HOURS_IN_DAY;
-  values.minutes = int( F * MINUTES_IN_DAY );
-  F = F  - values.minutes / MINUTES_IN_DAY;
-  values.seconds = F * SECONDS_IN_DAY;
+  values.hours = int( F / MILLISECONDS_IN_HOUR );
+  F = int( F - values.hours * MILLISECONDS_IN_HOUR );
+  values.minutes = int( F / MILLISECONDS_IN_MINUTE );
+  F = int( F  - values.minutes * MILLISECONDS_IN_MINUTE );
+  values.seconds = int( F / MILLISECONDS_IN_SECOND );
 
   return values;
 }
+
+MDAL::DateTime::DateTimeValues MDAL::DateTime::dateTimeGregorianProleptic() const
+{
+  //https://fr.wikipedia.org/wiki/Jour_julien
+  DateTimeValues values;
+  int Z = int( mJulianTime / MILLISECONDS_IN_DAY + 0.5 ); //integer part of julian days count
+  int F = int( mJulianTime - MILLISECONDS_IN_DAY * ( Z - 0.5 ) ) ; //fractional part of julian days count in ms;
+
+  int alpha = int( ( Z - 1867216.25 ) / 36524.25 );
+  int S = Z + 1 + alpha - int( alpha / 4 );
+
+  int B = S + 1524;
+  int C = int( ( B - 122.1 ) / 365.25 );
+  int D = int( 365.25 * C );
+  int E = int( ( B - D ) / 30.6001 );
+
+  values.day = B - D - int( 30.6001 * E );
+  if ( E < 14 )
+    values.month = E - 1;
+  else
+    values.month = E - 13;
+
+  if ( values.month > 2 )
+    values.year = C - 4716;
+  else
+    values.year = C - 4715;
+
+  values.hours = int( F / MILLISECONDS_IN_HOUR );
+  F = int( F - values.hours * MILLISECONDS_IN_HOUR );
+  values.minutes = int( F / MILLISECONDS_IN_MINUTE );
+  F = int( F  - values.minutes * MILLISECONDS_IN_MINUTE );
+  values.seconds = int( F / MILLISECONDS_IN_SECOND );
+
+  return values;
+}
+
 
 void MDAL::DateTime::setWithGregorianCalendarDate( MDAL::DateTime::DateTimeValues values )
 {
@@ -264,8 +296,6 @@ void MDAL::DateTime::setWithGregorianJulianCalendarDate( MDAL::DateTime::DateTim
 
 std::string MDAL::DateTime::toString( MDAL::DateTime::DateTimeValues values ) const
 {
-  std::string yearStr = std::to_string( values.year );
-
   int miliseconds = int( ( values.seconds - int( values.seconds ) ) * 1000 + 0.5 );
   std::string msStr;
   if ( miliseconds > 0 )
@@ -274,6 +304,8 @@ std::string MDAL::DateTime::toString( MDAL::DateTime::DateTimeValues values ) co
       msStr = prependZero( std::to_string( miliseconds ), 3 );
     else if ( miliseconds < 100 )
       msStr = prependZero( std::to_string( miliseconds ), 2 );
+    else if ( miliseconds < 1000 )
+      msStr = std::to_string( miliseconds );
 
     msStr = std::string( "," ).append( msStr );
   }

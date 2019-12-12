@@ -6,10 +6,6 @@
 #ifndef MDAL_DATE_TIME_HPP
 #define MDAL_DATE_TIME_HPP
 
-// Macro for exporting symbols
-// for unit tests (on windows)
-#define MDAL_TEST_EXPORT MDAL_EXPORT
-
 #include <string>
 #include <vector>
 
@@ -18,7 +14,7 @@
 namespace MDAL
 {
 
-  class MDAL_TEST_EXPORT Duration
+  class Duration
   {
     public:
       enum Unit
@@ -58,7 +54,7 @@ namespace MDAL
       friend class DateTime;
   };
 
-  class MDAL_TEST_EXPORT DateTime
+  class DateTime
   {
     public:
 
@@ -82,7 +78,8 @@ namespace MDAL
       //! Constructor with Julian day
       DateTime( double value, Epoch epoch );
 
-      //! Returns a string with the date/time expressed in Greogrian/Julian calendar with ISO8601 format (local time zone)
+      //! Returns a string with the date/time expressed in Greogrian proleptic calendar with ISO8601 format (local time zone)
+      //! Do not support negative year
       std::string toStandartCalendarISO8601() const;
 
       //! Returns the Julian day value
@@ -122,6 +119,7 @@ namespace MDAL
       DateTime( int64_t julianTime );
 
       DateTimeValues dateTimeGregorianJulianCalendar() const;
+      DateTimeValues dateTimeGregorianProleptic() const;
 
       void setWithGregorianCalendarDate( DateTimeValues values );
       void setWithJulianCalendarDate( DateTimeValues values );

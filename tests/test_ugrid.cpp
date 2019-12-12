@@ -155,8 +155,6 @@ TEST( MeshUgridTest, DFlow11Manzese )
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 0.0, time ) );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
   EXPECT_TRUE( compareReferenceTime( g, "2017-01-01T00:00:00" ) );
 
   MDAL_CloseMesh( m );
