@@ -11,7 +11,7 @@
 //mdal
 #include "mdal.h"
 #include "mdal_testutils.hpp"
-#include "mdal_date_time.hpp"
+#include "mdal_datetime.hpp"
 
 
 TEST( MdalDateTimeTest, Duration )
@@ -28,7 +28,7 @@ TEST( MdalDateTimeTest, Duration )
     { MDAL::Duration( 8, MDAL::Duration::days ), MDAL::Duration( 1, MDAL::Duration::weeks ) + MDAL::Duration( 24, MDAL::Duration::hours )},
     { MDAL::Duration( 6, MDAL::Duration::days ), MDAL::Duration( 1, MDAL::Duration::weeks ) - MDAL::Duration( 24, MDAL::Duration::hours )}
   };
-  for ( const auto &test : tests )
+  for ( const std::pair<MDAL::Duration, MDAL::Duration> &test : tests )
   {
     EXPECT_EQ( test.first, test.second );
     EXPECT_DOUBLE_EQ( test.first.value( MDAL::Duration::milliseconds ), test.second.value( MDAL::Duration::milliseconds ) );
@@ -49,23 +49,22 @@ TEST( MdalDateTimeTest, Duration )
   }
 }
 
-
 TEST( MdalDateTimeTest, DateTime )
 {
   std::vector<std::pair<MDAL::DateTime, MDAL::DateTime>> dateTests =
   {
-    {MDAL::DateTime(), MDAL::DateTime()},
-    {MDAL::DateTime( 2019, 02, 28, 10, 2, 1, MDAL::DateTime::Gregorian ), MDAL::DateTime( 1551348121, MDAL::DateTime::Unix )},
-    {MDAL::DateTime( 2019, 02, 28, 10, 0, 0, MDAL::DateTime::Gregorian ), MDAL::DateTime( 2458542.916666666667, MDAL::DateTime::JulianDay )},
-    {MDAL::DateTime( 2457125.5, MDAL::DateTime::JulianDay ), MDAL::DateTime( 2015, 04, 13, 00, 0, 0, MDAL::DateTime::Gregorian )},
-    {MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), MDAL::DateTime( 1425, 01, 02, 12, 0, 0, MDAL::DateTime::Proleptic_Gregorian )},
-    {MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), MDAL::DateTime( 1424, 12, 24, 12, 0, 0, MDAL::DateTime::Julian )},
-    {MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), MDAL::DateTime( 1424, 12, 24, 12, 0, 0, MDAL::DateTime::Gregorian )},
-    {MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::Duration( 24, MDAL::Duration::hours ), MDAL::DateTime( 1424, 12, 25, 12, 0, 0, MDAL::DateTime::Gregorian )},
-    {MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::Duration( 240, MDAL::Duration::minutes ), MDAL::DateTime( 1424, 12, 24, 16, 0, 0, MDAL::DateTime::Gregorian )},
+    { MDAL::DateTime(), MDAL::DateTime()},
+    { MDAL::DateTime( 2019, 02, 28, 10, 2, 1, MDAL::DateTime::Gregorian ), MDAL::DateTime( 1551348121, MDAL::DateTime::Unix ) },
+    { MDAL::DateTime( 2019, 02, 28, 10, 0, 0, MDAL::DateTime::Gregorian ), MDAL::DateTime( 2458542.916666666667, MDAL::DateTime::JulianDay ) },
+    { MDAL::DateTime( 2457125.5, MDAL::DateTime::JulianDay ), MDAL::DateTime( 2015, 04, 13, 00, 0, 0, MDAL::DateTime::Gregorian ) },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), MDAL::DateTime( 1425, 01, 02, 12, 0, 0, MDAL::DateTime::ProlepticGregorian ) },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), MDAL::DateTime( 1424, 12, 24, 12, 0, 0, MDAL::DateTime::Julian ) },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), MDAL::DateTime( 1424, 12, 24, 12, 0, 0, MDAL::DateTime::Gregorian ) },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::Duration( 24, MDAL::Duration::hours ), MDAL::DateTime( 1424, 12, 25, 12, 0, 0, MDAL::DateTime::Gregorian ) },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::Duration( 240, MDAL::Duration::minutes ), MDAL::DateTime( 1424, 12, 24, 16, 0, 0, MDAL::DateTime::Gregorian ) },
   };
 
-  for ( const auto &test : dateTests )
+  for ( const std::pair<MDAL::DateTime, MDAL::DateTime> &test : dateTests )
   {
     EXPECT_EQ( test.first, test.second );
 
@@ -81,18 +80,18 @@ TEST( MdalDateTimeTest, DateTime )
 
   std::vector<std::pair<MDAL::DateTime, std::string>> dateStringTests =
   {
-    {MDAL::DateTime(), ""},
-    {MDAL::DateTime( 2019, 02, 28, 10, 2, 1, MDAL::DateTime::Gregorian ), "2019-02-28T10:02:01"},
-    {MDAL::DateTime( 2457125.5, MDAL::DateTime::JulianDay ), "2015-04-13T00:00:00"},
-    {MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), "1424-12-24T12:00:00"},
+    { MDAL::DateTime(), "" },
+    { MDAL::DateTime( 2019, 02, 28, 10, 2, 1, MDAL::DateTime::Gregorian ), "2019-02-28T10:02:01" },
+    { MDAL::DateTime( 2457125.5, MDAL::DateTime::JulianDay ), "2015-04-13T00:00:00" },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), "1424-12-24T12:00:00" },
     {
       MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::Duration( 26, MDAL::Duration::hours )
       + MDAL::Duration( 20, MDAL::Duration::minutes ) + MDAL::Duration( 25, MDAL::Duration::seconds ), "1424-12-25T14:20:25"
     },
-    {MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) - MDAL::Duration( 240, MDAL::Duration::minutes ), "1424-12-24T08:00:00"},
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) - MDAL::Duration( 240, MDAL::Duration::minutes ), "1424-12-24T08:00:00" },
   };
 
-  for ( const auto &test : dateStringTests )
+  for ( const std::pair<MDAL::DateTime, std::string> &test : dateStringTests )
   {
     EXPECT_EQ( test.first.toStandartCalendarISO8601(), test.second );
   }

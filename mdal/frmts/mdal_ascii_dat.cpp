@@ -493,7 +493,7 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
       = std::dynamic_pointer_cast<MDAL::MemoryDataset2D>( group->datasets[time_index] );
 
     bool hasActiveStatus = isOnVertices && dataset->supportsActiveFlag();
-    out << "TS " << hasActiveStatus << " " << std::to_string( dataset->time() ) << "\n";
+    out << "TS " << hasActiveStatus << " " << std::to_string( dataset->time( Duration::hours ) ) << "\n";
 
     if ( hasActiveStatus )
     {

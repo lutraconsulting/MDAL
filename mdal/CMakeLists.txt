@@ -6,7 +6,7 @@ SET(MDAL_SOURCES
   mdal_utils.cpp
   mdal_driver_manager.cpp
   mdal_data_model.cpp
-  mdal_date_time.cpp
+  mdal_datetime.cpp
   mdal_memory_data_model.cpp
   frmts/mdal_driver.cpp
   frmts/mdal_2dm.cpp
@@ -21,7 +21,7 @@ SET(MDAL_HEADERS
   mdal_utils.hpp
   mdal_driver_manager.hpp
   mdal_data_model.hpp
-  mdal_date_time.hpp
+  mdal_datetime.hpp
   mdal_memory_data_model.hpp
   frmts/mdal_driver.hpp
   frmts/mdal_2dm.hpp

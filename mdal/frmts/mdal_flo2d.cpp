@@ -822,7 +822,7 @@ bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup,
     const Statistics st = dataset->statistics();
     maximums[i] = static_cast<float>( st.maximum );
     minimums[i] = static_cast<float>( st.minimum );
-    times.push_back( dataset->time() );
+    times.push_back( dataset->time( Duration::hours ) );
   }
 
   // store data

@@ -276,7 +276,6 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
   grpStats.maximum = static_cast<double>( *std::max_element( maxs.begin(), maxs.end() ) );
   group->setStatistics( grpStats );
 
-
   for ( hsize_t i = 0; i < nTimeSteps; ++i )
   {
     std::shared_ptr<XmdfDataset> dataset = std::make_shared< XmdfDataset >( group.get(), dsValues, dsActive, i );

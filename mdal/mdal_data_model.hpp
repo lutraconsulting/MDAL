@@ -13,7 +13,7 @@
 #include <string>
 #include <limits>
 #include "mdal.h"
-#include "mdal_date_time.hpp"
+#include "mdal_datetime.hpp"
 
 namespace MDAL
 {
@@ -76,7 +76,7 @@ namespace MDAL
       DatasetGroup *group() const;
       Mesh *mesh() const;
 
-      double time( Duration::Unit unit = Duration::hours ) const;
+      double time( Duration::Unit unit ) const;
       void setTime( double time, Duration::Unit unit = Duration::hours );
       void setTime( const Duration &time );
 

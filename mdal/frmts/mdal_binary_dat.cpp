@@ -458,7 +458,7 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
 
     writeRawData( out, reinterpret_cast< const char * >( &CT_TS ), 4 );
     writeRawData( out, reinterpret_cast< const char * >( &istat ), 1 );
-    float ftime = static_cast<float>( dataset->time() );
+    float ftime = static_cast<float>( dataset->time( Duration::hours ) );
     writeRawData( out, reinterpret_cast< const char * >( &ftime ), 4 );
 
     if ( istat )

@@ -58,4 +58,7 @@ bool MDAL::DriverGdalGrib::parseBandInfo( const MDAL::GdalDataset *cfGDALDataset
   return false; // success
 }
 
-MDAL::DateTime MDAL::DriverGdalGrib::referenceTime() const {return mRefTime;}
+MDAL::DateTime MDAL::DriverGdalGrib::referenceTime() const
+{
+  return mRefTime;
+}

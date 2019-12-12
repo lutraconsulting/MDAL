@@ -12,7 +12,6 @@ MDAL::DriverGdalNetCDF::DriverGdalNetCDF()
       "GDAL NetCDF",
       "*.nc"
       , "GRIB" )
-  , mTimeDiv( 1.0 )
 {
 }
 

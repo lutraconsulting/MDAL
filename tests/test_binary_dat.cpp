@@ -113,9 +113,7 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   double value = getValueX( ds, 1000 );
   EXPECT_DOUBLE_EQ( 0, value );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( time, 4.1666666666 ) );

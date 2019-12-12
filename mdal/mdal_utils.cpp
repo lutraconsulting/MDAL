@@ -664,8 +664,8 @@ MDAL::Duration::Unit MDAL::parseDurationTimeUnit( const std::string &timeUnit )
             timeUnit == "sec" ||
             timeUnit == "secs" ||
             timeUnit == "s" ||
-            timeUnit == "se" || //ascii_dat format
-            timeUnit == "2" )  //ascii_dat format
+            timeUnit == "se" || // ascii_dat format
+            timeUnit == "2" )  // ascii_dat format
   {
     unit = MDAL::Duration::seconds;
   }
@@ -674,8 +674,8 @@ MDAL::Duration::Unit MDAL::parseDurationTimeUnit( const std::string &timeUnit )
             timeUnit == "Minutes" ||
             timeUnit == "min" ||
             timeUnit == "mins" ||
-            timeUnit == "mi" || //ascii_dat format
-            timeUnit == "1" ) //ascii_dat format
+            timeUnit == "mi" || // ascii_dat format
+            timeUnit == "1" ) // ascii_dat format
   {
     unit = MDAL::Duration::minutes;
   }
@@ -718,6 +718,7 @@ MDAL::Duration::Unit MDAL::parseCFTimeUnit( std::string timeInformation )
     {
       return MDAL::Duration::exact_years;
     }
+
     return MDAL::parseDurationTimeUnit( strings[0] );
   }
 
@@ -759,12 +760,11 @@ MDAL::DateTime MDAL::parseCFReferenceTime( const std::string &timeInformation, c
     }
   }
 
-
   MDAL::DateTime::Calendar calendar;
   if ( calendarString == "gregorian" || calendarString == "standard" || calendarString.empty() )
     calendar = MDAL::DateTime::Gregorian;
   else if ( calendarString == "proleptic_gregorian" )
-    calendar = MDAL::DateTime::Proleptic_Gregorian;
+    calendar = MDAL::DateTime::ProlepticGregorian;
   else if ( calendarString == "julian" )
     calendar = MDAL::DateTime::Julian;
   else

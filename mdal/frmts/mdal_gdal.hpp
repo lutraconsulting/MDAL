@@ -70,8 +70,7 @@ namespace MDAL
       virtual std::string GDALFileName( const std::string &fileName ); /* some formats require e.g. adding driver name at the beginning */
       virtual std::vector<std::string> parseDatasetNames( const std::string &fileName );
       virtual void parseGlobals( const metadata_hash &metadata ) {MDAL_UNUSED( metadata );}
-      virtual
-      void parseBandIsVector( std::string &band_name, bool *is_vector, bool *is_x );
+      virtual void parseBandIsVector( std::string &band_name, bool *is_vector, bool *is_x );
 
     private:
       typedef std::map<MDAL::Duration, std::vector<GDALRasterBandH> > timestep_map; //TIME (sorted), [X, Y]

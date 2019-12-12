@@ -33,8 +33,6 @@ namespace MDAL
 
       MDAL::DateTime referenceTime() const override;
 
-      //! delimiter to get time in hours
-      double mTimeDiv;
       Duration::Unit mTimeUnit;
       //! Take the first reference time parsed
       DateTime mRefTime;

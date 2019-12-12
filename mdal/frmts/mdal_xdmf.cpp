@@ -20,7 +20,10 @@
 #include "mdal_data_model.hpp"
 #include "mdal_xml.hpp"
 
-MDAL::XdmfDataset::XdmfDataset( MDAL::DatasetGroup *grp, const MDAL::HyperSlab &slab, const HdfDataset &valuesDs, Duration time )
+MDAL::XdmfDataset::XdmfDataset( MDAL::DatasetGroup *grp,
+                                const MDAL::HyperSlab &slab,
+                                const HdfDataset &valuesDs,
+                                Duration time )
   : MDAL::Dataset2D( grp )
   , mHdf5DatasetValues( valuesDs )
   , mHyperSlab( slab )
@@ -106,9 +109,10 @@ size_t MDAL::XdmfDataset::vectorData( size_t indexStart, size_t count, double *b
 // //////////////////////////////////////////////////////////////////////////////
 
 
-MDAL::XdmfFunctionDataset::XdmfFunctionDataset( MDAL::DatasetGroup *grp,
-    MDAL::XdmfFunctionDataset::FunctionType type,
-    Duration time )
+MDAL::XdmfFunctionDataset::XdmfFunctionDataset(
+  MDAL::DatasetGroup *grp,
+  MDAL::XdmfFunctionDataset::FunctionType type,
+  const Duration &time )
   : MDAL::Dataset2D( grp )
   , mType( type )
   , mBaseReferenceGroup( "XDMF", grp->mesh(), grp->uri() )
@@ -121,7 +125,10 @@ MDAL::XdmfFunctionDataset::XdmfFunctionDataset( MDAL::DatasetGroup *grp,
 
 MDAL::XdmfFunctionDataset::~XdmfFunctionDataset() = default;
 
-void MDAL::XdmfFunctionDataset::addReferenceDataset( const HyperSlab &slab, const HdfDataset &hdfDataset, MDAL::Duration time )
+void MDAL::XdmfFunctionDataset::addReferenceDataset(
+  const HyperSlab &slab,
+  const HdfDataset &hdfDataset,
+  const MDAL::Duration &time )
 {
   std::shared_ptr<MDAL::XdmfDataset> xdmfDataset = std::make_shared<MDAL::XdmfDataset>(
         &mBaseReferenceGroup,
@@ -434,7 +441,7 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
   {
     ++nTimesteps;
     xmlNodePtr timeNod = xmfFile.getCheckChild( gridNod, "Time" );
-    Duration time( xmfFile.queryDoubleAttribute( timeNod, "Value" ), Duration::hours ); //units, hours ?
+    Duration time( xmfFile.queryDoubleAttribute( timeNod, "Value" ), Duration::hours ); //units, supposed to be hours
     xmlNodePtr scalarNod = xmfFile.getCheckChild( gridNod, "Attribute" );
 
     for ( ;

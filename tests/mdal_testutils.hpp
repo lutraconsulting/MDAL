@@ -7,6 +7,7 @@
 #define MDAL_TESTUTILS_HPP
 
 #include <string>
+#include <cstring>
 #include <vector>
 
 #include "mdal.h"
@@ -59,5 +60,11 @@ bool compareMeshFrames( MeshH meshA, MeshH meshB );
 
 //! Compare duration with millisecond precision
 bool compareDurationInHours( double h1, double h2 );
+
+//! test if reference time is defined
+bool hasReferenceTime( DatasetGroupH group );
+
+//! Compare the reference time with the string
+bool compareReferenceTime( DatasetGroupH group, const char *referenceTime );
 
 #endif // MDAL_TESTUTILS_HPP

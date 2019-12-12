@@ -110,9 +110,7 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 4.166666666666, time ) );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
 
   MDAL_CloseMesh( m );
 }
@@ -193,9 +191,7 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 0.38855308294296265, max );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
 
   MDAL_CloseMesh( m );
 }
@@ -270,9 +266,7 @@ TEST( MeshXmdfTest, CustomGroupsDataset )
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 0.083333333333, time ) );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
 
   MDAL_CloseMesh( m );
 }

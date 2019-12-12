@@ -108,15 +108,14 @@ namespace MDAL
         Flow, //!< scalar: flow velocity (abs) = sqrt($0/($2-$3)*$0/($2-$3) + $1/($2-$3)*$1/($2-$3))
       };
 
-      XdmfFunctionDataset(
-        DatasetGroup *grp,
-        FunctionType type,
-        MDAL::Duration time
-      );
+      XdmfFunctionDataset( DatasetGroup *grp,
+                           FunctionType type,
+                           const Duration &time
+                         );
       ~XdmfFunctionDataset() override;
 
       //! Adds reference XMDF dataset
-      void addReferenceDataset( const HyperSlab &slab, const HdfDataset &hdfDataset, Duration time );
+      void addReferenceDataset( const HyperSlab &slab, const HdfDataset &hdfDataset, const Duration &time );
       //! Swaps first and second reference dataset
       void swap();
 

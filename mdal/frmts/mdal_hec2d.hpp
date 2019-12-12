@@ -49,6 +49,9 @@ namespace MDAL
       std::unique_ptr< MDAL::MemoryMesh > mMesh;
       std::string mFileName;
 
+      std::vector<MDAL::Duration> mTimes ;
+      DateTime mReferenceTime;
+
       // Pre 5.0.5 format
       bool canReadOldFormat( const std::string &fileType ) const;
       std::vector<std::string> read2DFlowAreasNamesOld( HdfGroup gGeom2DFlowAreas ) const;

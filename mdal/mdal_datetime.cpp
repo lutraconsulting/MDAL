@@ -2,7 +2,7 @@
  MDAL - Mesh Data Abstraction Library (MIT License)
  Copyright (C) 2019 Vincent Cloarec (vcloarec at gmail dot com)
 */
-#include "mdal_date_time.hpp"
+#include "mdal_datetime.hpp"
 #include "mdal_utils.hpp"
 
 
@@ -36,7 +36,7 @@ MDAL::DateTime::DateTime( int year, int month, int day, int hours, int minutes, 
     case MDAL::DateTime::Gregorian:
       setWithGregorianJulianCalendarDate( value );
       break;
-    case MDAL::DateTime::Proleptic_Gregorian:
+    case MDAL::DateTime::ProlepticGregorian:
       setWithGregorianCalendarDate( value );
       break;
     case MDAL::DateTime::Julian:
@@ -358,12 +358,6 @@ double MDAL::Duration::value( MDAL::Duration::Unit unit ) const
   }
 
   return 0;
-}
-
-MDAL::Duration &MDAL::Duration::operator=( const MDAL::Duration &other )
-{
-  mDuration = other.mDuration;
-  return *this;
 }
 
 MDAL::Duration MDAL::Duration::operator-( const MDAL::Duration &other ) const

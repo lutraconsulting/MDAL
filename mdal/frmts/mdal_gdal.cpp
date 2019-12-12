@@ -210,7 +210,6 @@ void MDAL::DriverGdal::parseRasterBands( const MDAL::GdalDataset *cfGDALDataset 
     metadata_hash global_metadata = parseMetadata( cfGDALDataset->mHDataset );
     parseGlobals( global_metadata );
 
-
     // Get metadata
     metadata_hash metadata = parseMetadata( gdalBand );
 
@@ -312,7 +311,10 @@ void MDAL::DriverGdal::fixRasterBands()
   }
 }
 
-MDAL::DateTime MDAL::DriverGdal::referenceTime() const {return MDAL::DateTime();}
+MDAL::DateTime MDAL::DriverGdal::referenceTime() const
+{
+  return MDAL::DateTime();
+}
 
 void MDAL::DriverGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared_ptr<MemoryDataset2D> tos, bool is_vector, bool is_x )
 {

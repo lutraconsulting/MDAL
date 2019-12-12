@@ -66,9 +66,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 20, time ) );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   // FUNCTION: JOIN($0, $1, 0*$1) dataset
@@ -118,9 +116,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 20, time ) );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   MDAL_CloseMesh( m );
@@ -185,9 +181,7 @@ TEST( XdmfTest, Basement3Slopes )
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 1, time ) );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   // FUNCTION: $1 - $0
@@ -234,9 +228,7 @@ TEST( XdmfTest, Basement3Slopes )
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 1, time ) );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   // FUNCTION: $0 - $1
@@ -390,9 +382,7 @@ TEST( XdmfTest, Basement3SimpleChannel )
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 30, time ) );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   MDAL_CloseMesh( m );
@@ -596,9 +586,7 @@ TEST( XdmfTest, Simple )
     valueY = getValueY( ds, 196 );
     EXPECT_DOUBLE_EQ( 0, valueY );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   MDAL_CloseMesh( m );

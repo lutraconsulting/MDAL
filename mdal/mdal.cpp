@@ -828,7 +828,7 @@ double MDAL_D_time( DatasetH dataset )
     return NODATA;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  return d->time();
+  return d->time( MDAL::Duration::hours );
 }
 
 int MDAL_D_volumesCount( DatasetH dataset )

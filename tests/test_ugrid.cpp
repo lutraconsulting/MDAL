@@ -157,7 +157,7 @@ TEST( MeshUgridTest, DFlow11Manzese )
 
   const char *referenceTime;
   referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "2017-01-01T00:00:00" ), std::string( referenceTime ) );
+  EXPECT_TRUE( compareReferenceTime( g, "2017-01-01T00:00:00" ) );
 
   MDAL_CloseMesh( m );
 }
@@ -253,9 +253,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( .0097222222222222224, time ) );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "2001-05-05T00:00:00" ), std::string( referenceTime ) );
+  EXPECT_TRUE( compareReferenceTime( g, "2001-05-05T00:00:00" ) );
 
   MDAL_CloseMesh( m );
 }
@@ -335,9 +333,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 183.5, time ) );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "2002-10-15T00:00:00" ), std::string( referenceTime ) );
+  EXPECT_TRUE( compareReferenceTime( g, "2002-10-15T00:00:00" ) );
 
   std::string crs = MDAL_M_projection( m );
   EXPECT_EQ( "EPSG:28992", crs );
@@ -458,9 +454,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 0.66413616798770714, max );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "2002-10-15T00:00:00" ), std::string( referenceTime ) );
+  EXPECT_TRUE( compareReferenceTime( g, "2002-10-15T00:00:00" ) );
 
   std::string crs = MDAL_M_projection( m );
   EXPECT_EQ( "EPSG:28992", crs );
@@ -598,9 +592,7 @@ TEST( MeshUgridTest, ADCIRC )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 1.3282330120641679, max );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "1970-01-01T00:00:00" ), std::string( referenceTime ) );
+  EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
 
   MDAL_CloseMesh( m );
 }

@@ -314,7 +314,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
       for ( size_t t = 0; t < times.size(); ++t )
       {
         std::shared_ptr<MDAL::MemoryDataset2D> mto = std::make_shared<MDAL::MemoryDataset2D>( mds.get() );
-        mto->setTime( static_cast<double>( times[t] ), Duration::seconds ); //time is always in seconds
+        mto->setTime( static_cast<double>( times[t] ), Duration::seconds ); // Time is always in seconds
         double *values = mto->values();
 
         // fetching data for one timestep

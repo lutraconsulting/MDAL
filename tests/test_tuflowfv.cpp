@@ -176,9 +176,8 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 0.502121734619141, time ) );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
+
 
   }
 
@@ -238,9 +237,8 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 0.667265041139391, time ) );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
+
   }
 
   // /////////////////////////////////
@@ -293,9 +291,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 1.16755709277259, time ) );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   // Close mesh
@@ -362,9 +358,7 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
     double time = MDAL_D_time( ds );
     EXPECT_DOUBLE_EQ( 0, time );
 
-    const char *referenceTime;
-    referenceTime = MDAL_G_referenceTime( g );
-    EXPECT_EQ( std::string( "" ), std::string( referenceTime ) );
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
 

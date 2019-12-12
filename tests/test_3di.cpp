@@ -185,9 +185,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 8.4487915942199819e-14, max );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "2014-01-01T00:00:00" ), std::string( referenceTime ) );
+  EXPECT_TRUE( compareReferenceTime( g, "2014-01-01T00:00:00" ) );
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( time, 0.22222222222 ) );
@@ -220,9 +218,7 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
-  const char *referenceTime;
-  referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "2014-01-01T00:00:00" ), std::string( referenceTime ) );
+  EXPECT_TRUE( compareReferenceTime( g, "2014-01-01T00:00:00" ) );
 
   ds = MDAL_G_dataset( g, 6 );
   double time = MDAL_D_time( ds );

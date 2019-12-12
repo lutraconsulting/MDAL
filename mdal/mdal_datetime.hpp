@@ -35,14 +35,11 @@ namespace MDAL
 
       Duration();
 
-      ///TODO :  move operation
-
       Duration( double duration, Unit unit );
       Duration( const Duration &other );
 
       double value( Unit unit ) const;
 
-      Duration &operator=( const Duration &other );
       Duration operator-( const Duration &other ) const;
       Duration operator+( const Duration &other ) const;
       Duration &operator+=( const Duration &other );
@@ -68,7 +65,7 @@ namespace MDAL
       enum Calendar
       {
         Gregorian = 0,
-        Proleptic_Gregorian,
+        ProlepticGregorian,
         Julian,
       };
 
@@ -78,9 +75,7 @@ namespace MDAL
         JulianDay
       };
 
-      //! Defaul constructor
       DateTime();
-      //! Copy constructor
       DateTime( const DateTime &other );
       //! Constructor with date/time value and calendar type
       DateTime( int year, int month, int day, int hours = 0, int minutes = 0, double seconds = 0, Calendar calendar = Gregorian );
