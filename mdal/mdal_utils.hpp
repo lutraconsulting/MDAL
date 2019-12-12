@@ -6,10 +6,6 @@
 #ifndef MDAL_UTILS_HPP
 #define MDAL_UTILS_HPP
 
-// Macro for exporting symbols
-// for unit tests (on windows)
-#define MDAL_TEST_EXPORT MDAL_EXPORT
-
 #include <string>
 #include <vector>
 #include <stddef.h>
@@ -83,10 +79,10 @@ namespace MDAL
    * Splits by deliminer and skips empty parts.
    * Faster than version with std::string
    */
-  MDAL_TEST_EXPORT std::vector<std::string> split( const std::string &str, const char delimiter );
+  std::vector<std::string> split( const std::string &str, const char delimiter );
 
   //! Splits by deliminer and skips empty parts
-  MDAL_TEST_EXPORT std::vector<std::string> split( const std::string &str, const std::string &delimiter );
+  std::vector<std::string> split( const std::string &str, const std::string &delimiter );
 
   std::string join( const std::vector<std::string> parts, const std::string &delimiter );
 
@@ -110,7 +106,7 @@ namespace MDAL
 
   // time
   //! Returns a delimiter to get time in hours
-  MDAL_TEST_EXPORT double parseTimeUnits( const std::string &units );
+  double parseTimeUnits( const std::string &units );
   //! Returns current time stamp in YYYY-mm-ddTHH:MM:SSzoneOffset
   std::string getCurrentTimeStamp();
 
