@@ -273,7 +273,7 @@ MDAL::HyperSlab MDAL::DriverXdmf::parseHyperSlab( const std::string &str, size_t
   }
 
   // sort
-  if ( ( countX < countY ) && ( countY = ! 3 ) )
+  if ( ( countX < countY ) && ( countY != 3 ) )
   {
     std::swap( countX, countY );
     slab.countInFirstColumn = false;

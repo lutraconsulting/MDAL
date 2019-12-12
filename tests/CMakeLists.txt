@@ -23,15 +23,11 @@ IF (NOT GTEST_FOUND)
     ADD_SUBDIRECTORY("${CMAKE_BINARY_DIR}/googletest-src"
                      "${CMAKE_BINARY_DIR}/googletest-build"
                      EXCLUDE_FROM_ALL)
-    # The gtest/gmock targets carry header search path
-    # dependencies automatically when using CMake 2.8.11 or
-    # later. Otherwise we have to add them here ourselves.
-    if(CMAKE_VERSION VERSION_LESS 2.8.11)
-        include_directories("${gtest_SOURCE_DIR}/include"
-                            "${gmock_SOURCE_DIR}/include")
-    endif()
+
+    INCLUDE_DIRECTORIES("${gtest_SOURCE_DIR}/include"
+                        "${gmock_SOURCE_DIR}/include")
 ELSE(NOT GTEST_FOUND)
-    include_directories(${GTEST_INCLUDE_DIR})
+    INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIR})
 ENDIF(NOT GTEST_FOUND)
 
 
@@ -70,7 +66,6 @@ SET(TESTS
     test_api.cpp
     test_ascii_dat.cpp
     test_binary_dat.cpp
-    test_mdal_utils.cpp
     test_selafin.cpp
     test_esri_tin.cpp
     )
@@ -130,5 +125,17 @@ SET_TESTS_PROPERTIES(mdalinfo_test4 PROPERTIES PASS_REGULAR_EXPRESSION "defined 
 ADD_TEST(NAME mdalinfo_test_err1 COMMAND $<TARGET_FILE:mdalinfo> )
 SET_TESTS_PROPERTIES(mdalinfo_test_err1 PROPERTIES WILL_FAIL TRUE)
 
+#########################################################################
+# UNITTESTING
+#########################################################################
 
+SET(UNITTESTS_SRC
+    unittests/mdal_unittests.cpp
+    unittests/test_mdal_utils.cpp
+    mdal_testutils.hpp
+    mdal_testutils.cpp
+)
 
+ADD_EXECUTABLE(mdal_unittests ${UNITTESTS_SRC})
+TARGET_LINK_LIBRARIES(mdal_unittests gtest gmock ${CMAKE_THREAD_LIBS_INIT} mdal_a)
+ADD_TEST(mdal_unittests ${CMAKE_CURRENT_BINARY_DIR}/mdal_unittests)

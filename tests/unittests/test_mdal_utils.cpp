@@ -87,14 +87,3 @@ TEST( MdalUtilsTest, TimeParsing )
     EXPECT_EQ( test.second, MDAL::parseTimeUnits( test.first ) );
   }
 }
-
-
-int main( int argc, char **argv )
-{
-  testing::InitGoogleTest( &argc, argv );
-  init_test();
-  int ret =  RUN_ALL_TESTS();
-  finalize_test();
-  return ret;
-}
-
