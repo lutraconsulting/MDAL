@@ -136,4 +136,5 @@ SET(UNITTESTS_SRC
 
 ADD_EXECUTABLE(mdal_unittests ${UNITTESTS_SRC} $<TARGET_OBJECTS:mdaltestutils>)
 TARGET_LINK_LIBRARIES(mdal_unittests gtest gmock ${CMAKE_THREAD_LIBS_INIT} mdal_a)
+TARGET_COMPILE_DEFINITIONS(mdal_unittests PUBLIC MDAL_STATIC)
 ADD_TEST(mdal_unittests ${CMAKE_CURRENT_BINARY_DIR}/mdal_unittests)
