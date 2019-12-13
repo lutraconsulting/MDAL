@@ -38,8 +38,9 @@ You can use MDAL to load the following file formats:
 # Versioning and integration in QGIS
 
 QGIS contains internal copy of MDAL library in following versions:
+
 | QGIS    | MDAL    |
-|---------|---------|
+| ------- | ------- |
 | 3.0.2   | N/A     |
 | 3.2.3   | 0.0.3   |
 | 3.4.14  | 0.0.10  |
