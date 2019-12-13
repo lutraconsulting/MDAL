@@ -29,7 +29,7 @@ namespace MDAL
         exact_years
       };
 
-      RelativeTimestamp() = default;
+      RelativeTimestamp();
       RelativeTimestamp( double duration, Unit unit );
 
       double value( Unit unit ) const;
@@ -61,7 +61,7 @@ namespace MDAL
         JulianDay
       };
 
-      DateTime() = default;
+      DateTime();
       //! Constructor with date/time values and calendar type
       DateTime( int year, int month, int day, int hours = 0, int minutes = 0, double seconds = 0, Calendar calendar = Gregorian );
       //! Constructor with Julian day or Unix Epoch
