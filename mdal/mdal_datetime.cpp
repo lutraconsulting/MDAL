@@ -16,6 +16,8 @@ constexpr double MILLISECONDS_IN_WEEK = 1000 * 60 * 60 * 24 * 7;
 constexpr double MILLISECONDS_IN_EXACT_YEAR = 3.15569259747e10; //CF Compliant
 constexpr double MILLISECONDS_IN_MONTH_CF = MILLISECONDS_IN_EXACT_YEAR / 12.0; //CF Compliant
 
+MDAL::DateTime::DateTime() = default;
+
 MDAL::DateTime::DateTime( int year, int month, int day, int hours, int minutes, double seconds, MDAL::DateTime::Calendar calendar )
 {
   DateTimeValues value{year, month, day, hours, minutes, seconds};
@@ -274,6 +276,8 @@ MDAL::RelativeTimestamp MDAL::DateTime::operator-( const MDAL::DateTime &other )
   return RelativeTimestamp( mJulianTime - other.mJulianTime );
 }
 
+
+MDAL::RelativeTimestamp::RelativeTimestamp() = default;
 
 MDAL::RelativeTimestamp::RelativeTimestamp( double duration, MDAL::RelativeTimestamp::Unit unit )
 {
