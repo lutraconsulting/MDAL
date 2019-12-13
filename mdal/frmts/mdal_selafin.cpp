@@ -483,7 +483,7 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names,
       {
         dataset = std::make_shared< MemoryDataset2D >( group.get(), true );
         // see https://github.com/lutraconsulting/MDAL/issues/185
-        dataset->setTime( it->first, RelativeTimestamp::hours );
+        dataset->setTime( it->first, RelativeTimestamp::seconds );
         group->datasets.push_back( dataset );
       }
       for ( size_t nP = 0; nP < nPoints; nP++ )

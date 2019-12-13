@@ -16,6 +16,7 @@
 
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
+#include "mdal_datetime.hpp"
 
 // avoid unused variable warnings
 #define MDAL_UNUSED(x) (void)x;
