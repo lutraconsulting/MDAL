@@ -141,7 +141,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_NE( ds, nullptr );
 
   double time = MDAL_D_time( ds );
-  EXPECT_TRUE( compareDurationInHours( 1.111111111, time ) );
+  EXPECT_TRUE( compareDurationInHours( 4000, time ) );
 
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
