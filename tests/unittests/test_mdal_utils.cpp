@@ -90,16 +90,16 @@ TEST( MdalUtilsTest, TimeParsing )
 
 TEST( MdalUtilsTest, CF_TimeUnitParsing )
 {
-  std::vector<std::pair<std::string, MDAL::Duration::Unit>> tests =
+  std::vector<std::pair<std::string, MDAL::RelativeTimestamp::Unit>> tests =
   {
-    { "seconds since 2001-05-05 00:00:00", MDAL::Duration::seconds },
-    { "minutes since 2001-05-05 00:00:00", MDAL::Duration::minutes },
-    { "hours since 1900-01-01 00:00:0.0", MDAL::Duration::hours },
-    { "days since 1961-01-01 00:00:00", MDAL::Duration::days },
-    { "weeks since 1961-01-01 00:00:00", MDAL::Duration::weeks },
-    { "month since 1961-01-01 00:00:00", MDAL::Duration::months_CF },
-    { "months since 1961-01-01 00:00:00", MDAL::Duration::months_CF },
-    { "year since 1961-01-01 00:00:00", MDAL::Duration::exact_years },
+    { "seconds since 2001-05-05 00:00:00", MDAL::RelativeTimestamp::seconds },
+    { "minutes since 2001-05-05 00:00:00", MDAL::RelativeTimestamp::minutes },
+    { "hours since 1900-01-01 00:00:0.0", MDAL::RelativeTimestamp::hours },
+    { "days since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::days },
+    { "weeks since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::weeks },
+    { "month since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::months_CF },
+    { "months since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::months_CF },
+    { "year since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::exact_years },
   };
   for ( const auto &test : tests )
   {

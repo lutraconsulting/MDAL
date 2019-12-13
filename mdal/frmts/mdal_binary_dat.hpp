@@ -35,7 +35,7 @@ namespace MDAL
       bool readVertexTimestep( const Mesh *mesh,
                                std::shared_ptr<DatasetGroup> group,
                                std::shared_ptr<DatasetGroup> groupMax,
-                               Duration time,
+                               RelativeTimestamp time,
                                bool hasStatus,
                                int sflg,
                                std::ifstream &in );

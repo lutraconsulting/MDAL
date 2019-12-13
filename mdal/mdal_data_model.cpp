@@ -56,17 +56,17 @@ MDAL::Mesh *MDAL::Dataset::mesh() const
   return mParent->mesh();
 }
 
-double MDAL::Dataset::time( Duration::Unit unit ) const
+double MDAL::Dataset::time( RelativeTimestamp::Unit unit ) const
 {
   return mTime.value( unit );
 }
 
-void MDAL::Dataset::setTime( double time, Duration::Unit unit )
+void MDAL::Dataset::setTime( double time, RelativeTimestamp::Unit unit )
 {
-  mTime = Duration( time, unit );
+  mTime = RelativeTimestamp( time, unit );
 }
 
-void MDAL::Dataset::setTime( const MDAL::Duration &time )
+void MDAL::Dataset::setTime( const MDAL::RelativeTimestamp &time )
 {
   mTime = time;
 }

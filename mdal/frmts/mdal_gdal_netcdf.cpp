@@ -32,7 +32,7 @@ std::string MDAL::DriverGdalNetCDF::GDALFileName( const std::string &fileName )
 #endif
 }
 
-bool MDAL::DriverGdalNetCDF::parseBandInfo( const MDAL::GdalDataset *cfGDALDataset, const MDAL::DriverGdal::metadata_hash &metadata, std::string &band_name, Duration *time, bool *is_vector, bool *is_x )
+bool MDAL::DriverGdalNetCDF::parseBandInfo( const MDAL::GdalDataset *cfGDALDataset, const MDAL::DriverGdal::metadata_hash &metadata, std::string &band_name, RelativeTimestamp *time, bool *is_vector, bool *is_x )
 {
   MDAL_UNUSED( cfGDALDataset );
 
@@ -40,7 +40,7 @@ bool MDAL::DriverGdalNetCDF::parseBandInfo( const MDAL::GdalDataset *cfGDALDatas
 
   iter = metadata.find( "netcdf_dim_time" );
   if ( iter == metadata.end() ) return true; //FAILURE, skip no-time bands
-  *time = MDAL::Duration( parseMetadataTime( iter->second ), mTimeUnit );
+  *time = MDAL::RelativeTimestamp( parseMetadataTime( iter->second ), mTimeUnit );
 
   // NAME
   iter = metadata.find( "long_name" );

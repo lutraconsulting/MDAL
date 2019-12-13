@@ -214,7 +214,7 @@ void MDAL::DriverGdal::parseRasterBands( const MDAL::GdalDataset *cfGDALDataset 
     metadata_hash metadata = parseMetadata( gdalBand );
 
     std::string band_name;
-    MDAL::Duration time;
+    MDAL::RelativeTimestamp time;
     bool is_vector;
     bool is_x;
     if ( parseBandInfo( cfGDALDataset, metadata, band_name, &time, &is_vector, &is_x ) )

@@ -72,14 +72,14 @@ namespace MDAL
 
       void readVertexTimestep( const Mesh *mesh,
                                std::shared_ptr<DatasetGroup> group,
-                               Duration t,
+                               RelativeTimestamp t,
                                bool isVector,
                                bool hasStatus,
                                std::ifstream &stream ) const;
 
       void readFaceTimestep( const Mesh *mesh,
                              std::shared_ptr<DatasetGroup> group,
-                             Duration t,
+                             RelativeTimestamp t,
                              bool isVector,
                              std::ifstream &stream ) const;
 

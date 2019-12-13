@@ -144,11 +144,11 @@ namespace MDAL
   //! Prepend 0 to string to have n char
   std::string prependZero( const std::string &str, size_t length );
 
-  Duration::Unit parseDurationTimeUnit( const std::string &timeUnit );
+  RelativeTimestamp::Unit parseDurationTimeUnit( const std::string &timeUnit );
 
   //! parse the time unit in the CF convention string format "XXXX since 2019-01-01 00:00:00"
   //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
-  Duration::Unit parseCFTimeUnit( std::string timeInformation );
+  RelativeTimestamp::Unit parseCFTimeUnit( std::string timeInformation );
 
   //! parse the reference time in the CF convention string format "XXXX since 2019-01-01 00:00:00"
   //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html

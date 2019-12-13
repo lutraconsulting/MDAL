@@ -76,15 +76,15 @@ namespace MDAL
       DatasetGroup *group() const;
       Mesh *mesh() const;
 
-      double time( Duration::Unit unit ) const;
-      void setTime( double time, Duration::Unit unit = Duration::hours );
-      void setTime( const Duration &time );
+      double time( RelativeTimestamp::Unit unit ) const;
+      void setTime( double time, RelativeTimestamp::Unit unit = RelativeTimestamp::hours );
+      void setTime( const RelativeTimestamp &time );
 
       bool supportsActiveFlag() const;
       void setSupportsActiveFlag( bool value );
 
     private:
-      Duration mTime;
+      RelativeTimestamp mTime;
       bool mIsValid = true;
       bool mSupportsActiveFlag = false;
       DatasetGroup *mParent = nullptr;

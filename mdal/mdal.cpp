@@ -697,7 +697,7 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *valu
   }
 
   const size_t index = g->datasets.size();
-  MDAL::Duration t( time, MDAL::Duration::hours );
+  MDAL::RelativeTimestamp t( time, MDAL::RelativeTimestamp::hours );
   dr->createDataset( g,
                      t,
                      values,
@@ -828,7 +828,7 @@ double MDAL_D_time( DatasetH dataset )
     return NODATA;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
-  return d->time( MDAL::Duration::hours );
+  return d->time( MDAL::RelativeTimestamp::hours );
 }
 
 int MDAL_D_volumesCount( DatasetH dataset )

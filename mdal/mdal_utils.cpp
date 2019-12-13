@@ -646,9 +646,9 @@ std::string MDAL::prependZero( const std::string &str, size_t length )
   return std::string( length - str.size(), '0' ).append( str );
 }
 
-MDAL::Duration::Unit MDAL::parseDurationTimeUnit( const std::string &timeUnit )
+MDAL::RelativeTimestamp::Unit MDAL::parseDurationTimeUnit( const std::string &timeUnit )
 {
-  MDAL::Duration::Unit unit = MDAL::Duration::hours; //default unit
+  MDAL::RelativeTimestamp::Unit unit = MDAL::RelativeTimestamp::hours; //default unit
 
   if ( timeUnit == "millisec" ||
        timeUnit == "msec" ||
@@ -656,7 +656,7 @@ MDAL::Duration::Unit MDAL::parseDurationTimeUnit( const std::string &timeUnit )
        timeUnit == "msecs"
      )
   {
-    unit = MDAL::Duration::milliseconds;
+    unit = MDAL::RelativeTimestamp::milliseconds;
   }
   else if ( timeUnit == "second" ||
             timeUnit == "seconds" ||
@@ -667,7 +667,7 @@ MDAL::Duration::Unit MDAL::parseDurationTimeUnit( const std::string &timeUnit )
             timeUnit == "se" || // ascii_dat format
             timeUnit == "2" )  // ascii_dat format
   {
-    unit = MDAL::Duration::seconds;
+    unit = MDAL::RelativeTimestamp::seconds;
   }
   else if ( timeUnit == "minute" ||
             timeUnit == "minutes" ||
@@ -677,29 +677,29 @@ MDAL::Duration::Unit MDAL::parseDurationTimeUnit( const std::string &timeUnit )
             timeUnit == "mi" || // ascii_dat format
             timeUnit == "1" ) // ascii_dat format
   {
-    unit = MDAL::Duration::minutes;
+    unit = MDAL::RelativeTimestamp::minutes;
   }
   else if ( timeUnit == "day" ||
             timeUnit == "days" ||
             timeUnit == "Days" )
   {
-    unit = MDAL::Duration::days;
+    unit = MDAL::RelativeTimestamp::days;
   }
   else if ( timeUnit == "week" ||
             timeUnit == "weeks" )
   {
-    unit = MDAL::Duration::weeks;
+    unit = MDAL::RelativeTimestamp::weeks;
   }
 
 
   return unit;
 }
 
-MDAL::Duration::Unit MDAL::parseCFTimeUnit( std::string timeInformation )
+MDAL::RelativeTimestamp::Unit MDAL::parseCFTimeUnit( std::string timeInformation )
 {
   auto strings = MDAL::split( timeInformation, ' ' );
   if ( strings.size() < 3 )
-    return MDAL::Duration::hours; //default value
+    return MDAL::RelativeTimestamp::hours; //default value
 
   if ( strings[1] == "since" )
   {
@@ -709,20 +709,20 @@ MDAL::Duration::Unit MDAL::parseCFTimeUnit( std::string timeInformation )
          timeUnit == "mon" ||
          timeUnit == "mons" )
     {
-      return MDAL::Duration::months_CF;
+      return MDAL::RelativeTimestamp::months_CF;
     }
     else if ( timeUnit == "year" ||
               timeUnit == "years" ||
               timeUnit == "yr" ||
               timeUnit == "yrs" )
     {
-      return MDAL::Duration::exact_years;
+      return MDAL::RelativeTimestamp::exact_years;
     }
 
     return MDAL::parseDurationTimeUnit( strings[0] );
   }
 
-  return MDAL::Duration::hours;//default value
+  return MDAL::RelativeTimestamp::hours;//default value
 }
 
 MDAL::DateTime MDAL::parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString )

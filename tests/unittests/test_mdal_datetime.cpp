@@ -18,36 +18,27 @@
 
 TEST( MdalDateTimeTest, Duration )
 {
-  std::vector<std::pair<MDAL::Duration, MDAL::Duration>> tests =
+  std::vector<std::pair<MDAL::RelativeTimestamp, MDAL::RelativeTimestamp>> tests =
   {
-    { MDAL::Duration( 2, MDAL::Duration::minutes ), MDAL::Duration( 120, MDAL::Duration::seconds ) },
-    { MDAL::Duration( 90, MDAL::Duration::minutes ), MDAL::Duration( 1.5, MDAL::Duration::hours ) },
-    { MDAL::Duration( 2, MDAL::Duration::weeks ), MDAL::Duration( 336, MDAL::Duration::hours ) },
-    { MDAL::Duration( 90, MDAL::Duration::seconds ), MDAL::Duration( 1.5, MDAL::Duration::minutes ) },
-    { MDAL::Duration( 36, MDAL::Duration::hours ), MDAL::Duration( 1.5, MDAL::Duration::days ) },
-
-    { MDAL::Duration( 150, MDAL::Duration::minutes ), MDAL::Duration( 1.5, MDAL::Duration::hours ) + MDAL::Duration( 1, MDAL::Duration::hours )},
-    { MDAL::Duration( 8, MDAL::Duration::days ), MDAL::Duration( 1, MDAL::Duration::weeks ) + MDAL::Duration( 24, MDAL::Duration::hours )},
-    { MDAL::Duration( 6, MDAL::Duration::days ), MDAL::Duration( 1, MDAL::Duration::weeks ) - MDAL::Duration( 24, MDAL::Duration::hours )}
+    { MDAL::RelativeTimestamp( 2, MDAL::RelativeTimestamp::minutes ), MDAL::RelativeTimestamp( 120, MDAL::RelativeTimestamp::seconds ) },
+    { MDAL::RelativeTimestamp( 90, MDAL::RelativeTimestamp::minutes ), MDAL::RelativeTimestamp( 1.5, MDAL::RelativeTimestamp::hours ) },
+    { MDAL::RelativeTimestamp( 2, MDAL::RelativeTimestamp::weeks ), MDAL::RelativeTimestamp( 336, MDAL::RelativeTimestamp::hours ) },
+    { MDAL::RelativeTimestamp( 90, MDAL::RelativeTimestamp::seconds ), MDAL::RelativeTimestamp( 1.5, MDAL::RelativeTimestamp::minutes ) },
+    { MDAL::RelativeTimestamp( 36, MDAL::RelativeTimestamp::hours ), MDAL::RelativeTimestamp( 1.5, MDAL::RelativeTimestamp::days ) },
   };
-  for ( const std::pair<MDAL::Duration, MDAL::Duration> &test : tests )
+  for ( const std::pair<MDAL::RelativeTimestamp, MDAL::RelativeTimestamp> &test : tests )
   {
     EXPECT_EQ( test.first, test.second );
-    EXPECT_DOUBLE_EQ( test.first.value( MDAL::Duration::milliseconds ), test.second.value( MDAL::Duration::milliseconds ) );
-    EXPECT_DOUBLE_EQ( test.first.value( MDAL::Duration::seconds ), test.second.value( MDAL::Duration::seconds ) );
-    EXPECT_DOUBLE_EQ( test.first.value( MDAL::Duration::minutes ), test.second.value( MDAL::Duration::minutes ) );
-    EXPECT_DOUBLE_EQ( test.first.value( MDAL::Duration::hours ), test.second.value( MDAL::Duration::hours ) );
-    EXPECT_DOUBLE_EQ( test.first.value( MDAL::Duration::days ), test.second.value( MDAL::Duration::days ) );
-    EXPECT_DOUBLE_EQ( test.first.value( MDAL::Duration::weeks ), test.second.value( MDAL::Duration::weeks ) );
-    EXPECT_DOUBLE_EQ( test.first.value( MDAL::Duration::months_CF ), test.second.value( MDAL::Duration::months_CF ) );
-    EXPECT_DOUBLE_EQ( test.first.value( MDAL::Duration::exact_years ), test.second.value( MDAL::Duration::exact_years ) );
+    EXPECT_DOUBLE_EQ( test.first.value( MDAL::RelativeTimestamp::milliseconds ), test.second.value( MDAL::RelativeTimestamp::milliseconds ) );
+    EXPECT_DOUBLE_EQ( test.first.value( MDAL::RelativeTimestamp::seconds ), test.second.value( MDAL::RelativeTimestamp::seconds ) );
+    EXPECT_DOUBLE_EQ( test.first.value( MDAL::RelativeTimestamp::minutes ), test.second.value( MDAL::RelativeTimestamp::minutes ) );
+    EXPECT_DOUBLE_EQ( test.first.value( MDAL::RelativeTimestamp::hours ), test.second.value( MDAL::RelativeTimestamp::hours ) );
+    EXPECT_DOUBLE_EQ( test.first.value( MDAL::RelativeTimestamp::days ), test.second.value( MDAL::RelativeTimestamp::days ) );
+    EXPECT_DOUBLE_EQ( test.first.value( MDAL::RelativeTimestamp::weeks ), test.second.value( MDAL::RelativeTimestamp::weeks ) );
+    EXPECT_DOUBLE_EQ( test.first.value( MDAL::RelativeTimestamp::months_CF ), test.second.value( MDAL::RelativeTimestamp::months_CF ) );
+    EXPECT_DOUBLE_EQ( test.first.value( MDAL::RelativeTimestamp::exact_years ), test.second.value( MDAL::RelativeTimestamp::exact_years ) );
 
     EXPECT_TRUE( test.first == test.second ) ;
-    EXPECT_TRUE( test.first != test.second + MDAL::Duration( 1, MDAL::Duration::seconds ) );
-    EXPECT_TRUE( test.first < test.second + MDAL::Duration( 1, MDAL::Duration::seconds ) );
-    EXPECT_TRUE( test.first <= test.second + MDAL::Duration( 1, MDAL::Duration::seconds ) );
-    EXPECT_TRUE( test.first + MDAL::Duration( 1, MDAL::Duration::seconds ) > test.second );
-    EXPECT_TRUE( test.first + MDAL::Duration( 1, MDAL::Duration::seconds ) >= test.second );
   }
 }
 
@@ -62,8 +53,8 @@ TEST( MdalDateTimeTest, DateTime )
     { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), MDAL::DateTime( 1425, 01, 02, 12, 0, 0, MDAL::DateTime::ProlepticGregorian ) },
     { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), MDAL::DateTime( 1424, 12, 24, 12, 0, 0, MDAL::DateTime::Julian ) },
     { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), MDAL::DateTime( 1424, 12, 24, 12, 0, 0, MDAL::DateTime::Gregorian ) },
-    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::Duration( 24, MDAL::Duration::hours ), MDAL::DateTime( 1424, 12, 25, 12, 0, 0, MDAL::DateTime::Gregorian ) },
-    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::Duration( 240, MDAL::Duration::minutes ), MDAL::DateTime( 1424, 12, 24, 16, 0, 0, MDAL::DateTime::Gregorian ) },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::RelativeTimestamp( 24, MDAL::RelativeTimestamp::hours ), MDAL::DateTime( 1424, 12, 25, 12, 0, 0, MDAL::DateTime::Gregorian ) },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::RelativeTimestamp( 240, MDAL::RelativeTimestamp::minutes ), MDAL::DateTime( 1424, 12, 24, 16, 0, 0, MDAL::DateTime::Gregorian ) },
   };
 
   for ( const std::pair<MDAL::DateTime, MDAL::DateTime> &test : dateTests )
@@ -72,10 +63,7 @@ TEST( MdalDateTimeTest, DateTime )
 
     if ( test.first.isValid() && test.second.isValid() )
     {
-      EXPECT_TRUE( test.first < test.second + MDAL::Duration( 2, MDAL::Duration::hours ) );
-      EXPECT_TRUE( test.first <= test.second + MDAL::Duration( 2, MDAL::Duration::hours ) );
-      EXPECT_TRUE( test.first + MDAL::Duration( 2, MDAL::Duration::hours ) > test.second );
-      EXPECT_TRUE( test.first + MDAL::Duration( 2, MDAL::Duration::hours ) >= test.second );
+      EXPECT_TRUE( test.first < test.second + MDAL::RelativeTimestamp( 2, MDAL::RelativeTimestamp::hours ) );
     }
 
   }
@@ -87,10 +75,10 @@ TEST( MdalDateTimeTest, DateTime )
     { MDAL::DateTime( 2457125.5, MDAL::DateTime::JulianDay ), "2015-04-13T00:00:00" },
     { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ), "1425-01-02T12:00:00" },
     {
-      MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::Duration( 26, MDAL::Duration::hours )
-      + MDAL::Duration( 20, MDAL::Duration::minutes ) + MDAL::Duration( 25, MDAL::Duration::seconds ), "1425-01-03T14:20:25"
+      MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) + MDAL::RelativeTimestamp( 26, MDAL::RelativeTimestamp::hours )
+      + MDAL::RelativeTimestamp( 20, MDAL::RelativeTimestamp::minutes ) + MDAL::RelativeTimestamp( 25, MDAL::RelativeTimestamp::seconds ), "1425-01-03T14:20:25"
     },
-    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) - MDAL::Duration( 240, MDAL::Duration::minutes ), "1425-01-02T08:00:00" },
+    { MDAL::DateTime( 2241532, MDAL::DateTime::JulianDay ) - MDAL::RelativeTimestamp( 240, MDAL::RelativeTimestamp::minutes ), "1425-01-02T08:00:00" },
   };
 
   for ( const std::pair<MDAL::DateTime, std::string> &test : dateStringTests )

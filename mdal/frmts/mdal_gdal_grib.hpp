@@ -26,7 +26,7 @@ namespace MDAL
     private:
       bool parseBandInfo( const MDAL::GdalDataset *cfGDALDataset,
                           const metadata_hash &metadata, std::string &band_name,
-                          Duration *time, bool *is_vector, bool *is_x
+                          RelativeTimestamp *time, bool *is_vector, bool *is_x
                         ) override;
 
       MDAL::DateTime referenceTime() const override;

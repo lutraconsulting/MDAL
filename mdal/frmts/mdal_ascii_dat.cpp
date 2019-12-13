@@ -117,7 +117,7 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
     else if ( cardType == "TS" && items.size() >=  2 )
     {
       double rawTime = toDouble( items[ 1 ] );
-      MDAL::Duration t( rawTime, MDAL::Duration::hours );
+      MDAL::RelativeTimestamp t( rawTime, MDAL::RelativeTimestamp::hours );
       readVertexTimestep( mesh, group, t, isVector, false, in );
     }
     else
@@ -247,7 +247,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     else if ( cardType == "TS" && items.size() >= 3 )
     {
       double rawTime = toDouble( items[2] );
-      MDAL::Duration t( rawTime, MDAL::parseDurationTimeUnit( group->getMetadata( "TIMEUNITS" ) ) );
+      MDAL::RelativeTimestamp t( rawTime, MDAL::parseDurationTimeUnit( group->getMetadata( "TIMEUNITS" ) ) );
 
       if ( faceCentered )
       {
@@ -330,7 +330,7 @@ void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh, M
 void MDAL::DriverAsciiDat::readVertexTimestep(
   const MDAL::Mesh *mesh,
   std::shared_ptr<DatasetGroup> group,
-  MDAL::Duration t,
+  MDAL::RelativeTimestamp t,
   bool isVector,
   bool hasStatus,
   std::ifstream &stream ) const
@@ -399,7 +399,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
 void MDAL::DriverAsciiDat::readFaceTimestep(
   const MDAL::Mesh *mesh,
   std::shared_ptr<DatasetGroup> group,
-  MDAL::Duration t,
+  MDAL::RelativeTimestamp t,
   bool isVector,
   std::ifstream &stream ) const
 {
@@ -493,7 +493,7 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
       = std::dynamic_pointer_cast<MDAL::MemoryDataset2D>( group->datasets[time_index] );
 
     bool hasActiveStatus = isOnVertices && dataset->supportsActiveFlag();
-    out << "TS " << hasActiveStatus << " " << std::to_string( dataset->time( Duration::hours ) ) << "\n";
+    out << "TS " << hasActiveStatus << " " << std::to_string( dataset->time( RelativeTimestamp::hours ) ) << "\n";
 
     if ( hasActiveStatus )
     {

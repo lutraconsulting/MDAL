@@ -49,7 +49,7 @@ namespace MDAL
       std::unique_ptr< MDAL::MemoryMesh > mMesh;
       std::string mFileName;
 
-      std::vector<MDAL::Duration> mTimes ;
+      std::vector<MDAL::RelativeTimestamp> mTimes ;
       DateTime mReferenceTime;
 
       // Pre 5.0.5 format
@@ -67,7 +67,7 @@ namespace MDAL
                            const std::vector<std::string> &flowAreaNames,
                            const std::string rawDatasetName,
                            const std::string datasetName,
-                           const std::vector<MDAL::Duration> &times,
+                           const std::vector<MDAL::RelativeTimestamp> &times,
                            const DateTime &referenceTime );
 
       void readFaceResults( const HdfFile &hdfFile,
@@ -80,7 +80,7 @@ namespace MDAL
         const std::vector<std::string> &flowAreaNames,
         const std::string rawDatasetName,
         const std::string datasetName,
-        const std::vector<MDAL::Duration> &times,
+        const std::vector<MDAL::RelativeTimestamp> &times,
         std::shared_ptr<MDAL::MemoryDataset2D> bed_elevation,
         const DateTime &referenceTime );
 

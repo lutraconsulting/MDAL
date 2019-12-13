@@ -14,7 +14,7 @@
 namespace MDAL
 {
 
-  class Duration
+  class RelativeTimestamp
   {
     public:
       enum Unit
@@ -29,27 +29,17 @@ namespace MDAL
         exact_years
       };
 
-      Duration();
-
-      Duration( double duration, Unit unit );
-      Duration( const Duration &other );
+      RelativeTimestamp() = default;
+      RelativeTimestamp( double duration, Unit unit );
 
       double value( Unit unit ) const;
 
-      Duration operator-( const Duration &other ) const;
-      Duration operator+( const Duration &other ) const;
-      Duration &operator+=( const Duration &other );
-      Duration &operator-=( const Duration &other );
-      bool operator==( const Duration &other ) const;
-      bool operator!=( const Duration &other ) const;
-      bool operator<( const Duration &other ) const;
-      bool operator>( const Duration &other ) const;
-      bool operator>=( const Duration &other ) const;
-      bool operator<=( const Duration &other ) const;
+      bool operator==( const RelativeTimestamp &other ) const;
+      bool operator<( const RelativeTimestamp &other ) const;
 
     private:
-      Duration( int64_t ms );
-      int64_t mDuration; //in ms
+      RelativeTimestamp( int64_t ms );
+      int64_t mDuration = 0; //in ms
 
       friend class DateTime;
   };
@@ -71,11 +61,10 @@ namespace MDAL
         JulianDay
       };
 
-      DateTime();
-      DateTime( const DateTime &other );
-      //! Constructor with date/time value and calendar type
+      DateTime() = default;
+      //! Constructor with date/time values and calendar type
       DateTime( int year, int month, int day, int hours = 0, int minutes = 0, double seconds = 0, Calendar calendar = Gregorian );
-      //! Constructor with Julian day
+      //! Constructor with Julian day or Unix Epoch
       DateTime( double value, Epoch epoch );
 
       //! Returns a string with the date/time expressed in Greogrian proleptic calendar with ISO8601 format (local time zone)
@@ -89,18 +78,11 @@ namespace MDAL
       std::string toJulianDayString() const;
 
       //! operators
-      DateTime &operator=( const DateTime &other );
-      Duration operator-( const DateTime &other ) const;
-      DateTime operator+( const Duration &duration ) const;
-      DateTime &operator+=( const Duration &duration );
-      DateTime &operator-=( const Duration &duration );
-      DateTime operator-( const Duration &duration ) const;
+      RelativeTimestamp operator-( const DateTime &other ) const;
+      DateTime operator+( const RelativeTimestamp &duration ) const;
+      DateTime operator-( const RelativeTimestamp &duration ) const;
       bool operator==( const DateTime &other ) const;
-      bool operator!=( const DateTime &other ) const;
       bool operator<( const DateTime &other ) const;
-      bool operator>( const DateTime &other ) const;
-      bool operator>=( const DateTime &other ) const;
-      bool operator<=( const DateTime &other ) const;
 
       bool isValid() const;
 
@@ -129,7 +111,7 @@ namespace MDAL
 
       int64_t mJulianTime = 0; //Julian day in ms
 
-      bool mValid = true;
+      bool mValid = false;
   };
 }
 

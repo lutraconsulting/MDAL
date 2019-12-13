@@ -65,7 +65,7 @@ namespace MDAL
 
       /* return true on failure */
       virtual bool parseBandInfo( const GdalDataset *cfGDALDataset,
-                                  const metadata_hash &metadata, std::string &band_name, MDAL::Duration *time, bool *is_vector, bool *is_x ) = 0;
+                                  const metadata_hash &metadata, std::string &band_name, MDAL::RelativeTimestamp *time, bool *is_vector, bool *is_x ) = 0;
       virtual double parseMetadataTime( const std::string &time_s );
       virtual std::string GDALFileName( const std::string &fileName ); /* some formats require e.g. adding driver name at the beginning */
       virtual std::vector<std::string> parseDatasetNames( const std::string &fileName );
@@ -73,7 +73,7 @@ namespace MDAL
       virtual void parseBandIsVector( std::string &band_name, bool *is_vector, bool *is_x );
 
     private:
-      typedef std::map<MDAL::Duration, std::vector<GDALRasterBandH> > timestep_map; //TIME (sorted), [X, Y]
+      typedef std::map<MDAL::RelativeTimestamp, std::vector<GDALRasterBandH> > timestep_map; //TIME (sorted), [X, Y]
       typedef std::map<std::string, timestep_map > data_hash; //Data Type, TIME (sorted), [X, Y]
       typedef std::vector<std::shared_ptr<GdalDataset>> gdal_datasets_vector; //GDAL (Sub)Datasets,
 

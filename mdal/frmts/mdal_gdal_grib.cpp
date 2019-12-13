@@ -27,7 +27,7 @@ MDAL::DriverGdalGrib::~DriverGdalGrib() = default;
 
 bool MDAL::DriverGdalGrib::parseBandInfo( const MDAL::GdalDataset *cfGDALDataset,
     const metadata_hash &metadata, std::string &band_name,
-    MDAL::Duration *time, bool *is_vector, bool *is_x
+    MDAL::RelativeTimestamp *time, bool *is_vector, bool *is_x
                                         )
 {
   MDAL_UNUSED( cfGDALDataset );

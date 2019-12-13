@@ -249,7 +249,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
 
   std::vector<double> times = dsTimes.readArrayDouble();
   std::string timeUnitString = rootGroup.attribute( "TimeUnits" ).readString();
-  MDAL::Duration::Unit timeUnit = parseDurationTimeUnit( timeUnitString );
+  MDAL::RelativeTimestamp::Unit timeUnit = parseDurationTimeUnit( timeUnitString );
   HdfAttribute refTime = rootGroup.attribute( "Reftime" );
   if ( refTime.isValid() )
   {

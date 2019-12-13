@@ -299,7 +299,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
     {
       // TIME INDEPENDENT
       std::shared_ptr<MDAL::MemoryDataset2D> o = std::make_shared<MDAL::MemoryDataset2D>( mds.get() );
-      o->setTime( Duration() );
+      o->setTime( RelativeTimestamp() );
       std::vector<double> valuesX = ncFile.readDoubleArr( arrName, nPoints );
       for ( size_t i = 0; i < nPoints; ++i )
       {
@@ -314,7 +314,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
       for ( size_t t = 0; t < times.size(); ++t )
       {
         std::shared_ptr<MDAL::MemoryDataset2D> mto = std::make_shared<MDAL::MemoryDataset2D>( mds.get() );
-        mto->setTime( static_cast<double>( times[t] ), Duration::seconds ); // Time is always in seconds
+        mto->setTime( static_cast<double>( times[t] ), RelativeTimestamp::seconds ); // Time is always in seconds
         double *values = mto->values();
 
         // fetching data for one timestep

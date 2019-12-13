@@ -482,7 +482,7 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names,
       else
       {
         dataset = std::make_shared< MemoryDataset2D >( group.get(), true );
-        dataset->setTime( it->first, Duration::seconds ); // Seems that time unit in this format is only seconds
+        dataset->setTime( it->first, RelativeTimestamp::seconds ); // Seems that time unit in this format is only seconds
         group->datasets.push_back( dataset );
       }
       for ( size_t nP = 0; nP < nPoints; nP++ )

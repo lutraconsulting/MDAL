@@ -164,7 +164,7 @@ static void populate_vals( bool is_vector, double *vals, size_t i,
   }
 }
 
-void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Duration> &times, const MDAL::cfdataset_info_map &dsinfo_map, const MDAL::DateTime &referenceTime )
+void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<RelativeTimestamp> &times, const MDAL::cfdataset_info_map &dsinfo_map, const MDAL::DateTime &referenceTime )
 {
   /* PHASE 2 - add dataset groups */
   for ( const auto &it : dsinfo_map )
@@ -237,7 +237,7 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Durat
   }
 }
 
-MDAL::DateTime MDAL::DriverCF::parseTime( std::vector<Duration> &times )
+MDAL::DateTime MDAL::DriverCF::parseTime( std::vector<RelativeTimestamp> &times )
 {
 
   size_t nTimesteps = mDimensions.size( CFDimensions::Time );
@@ -245,7 +245,7 @@ MDAL::DateTime MDAL::DriverCF::parseTime( std::vector<Duration> &times )
   {
     //if no time dimension is present creates only one time step to store the potential time-independent variable
     nTimesteps = 1;
-    times = std::vector<Duration>( 1, Duration() );
+    times = std::vector<RelativeTimestamp>( 1, RelativeTimestamp() );
     return MDAL::DateTime();
   }
   const std::string timeArrName = getTimeVariableName();
@@ -254,12 +254,12 @@ MDAL::DateTime MDAL::DriverCF::parseTime( std::vector<Duration> &times )
   std::string timeUnitInformation = mNcFile->getAttrStr( timeArrName, "units" );
   std::string calendar = mNcFile->getAttrStr( timeArrName, "calendar" );
   MDAL::DateTime referenceTime = parseCFReferenceTime( timeUnitInformation, calendar );
-  MDAL::Duration::Unit unit = parseCFTimeUnit( timeUnitInformation );
+  MDAL::RelativeTimestamp::Unit unit = parseCFTimeUnit( timeUnitInformation );
 
-  times = std::vector<Duration>( nTimesteps );
+  times = std::vector<RelativeTimestamp>( nTimesteps );
   for ( size_t i = 0; i < nTimesteps; ++i )
   {
-    times[i] = Duration( rawTimes[i], unit );
+    times[i] = RelativeTimestamp( rawTimes[i], unit );
   }
 
   return referenceTime;
@@ -378,7 +378,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
   if ( status ) *status = MDAL_Status::None;
 
   //Dimensions dims;
-  std::vector<MDAL::Duration> times;
+  std::vector<MDAL::RelativeTimestamp> times;
 
   try
   {

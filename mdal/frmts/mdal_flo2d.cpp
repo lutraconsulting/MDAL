@@ -89,7 +89,7 @@ void MDAL::DriverFlo2D::addStaticDataset(
 
   std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
   assert( vals.size() == dataset->valuesCount() );
-  dataset->setTime( MDAL::Duration() );
+  dataset->setTime( MDAL::RelativeTimestamp() );
   double *values = dataset->values();
   memcpy( values, vals.data(), vals.size() * sizeof( double ) );
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
@@ -187,7 +187,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
   size_t nVertexs = mMesh->verticesCount();
   size_t ntimes = 0;
 
-  Duration time = Duration();
+  RelativeTimestamp time = RelativeTimestamp();
   size_t face_idx = 0;
 
   std::shared_ptr<DatasetGroup> depthDsGroup = std::make_shared< DatasetGroup >(
@@ -228,7 +228,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
     std::vector<std::string> lineParts = MDAL::split( line, ' ' );
     if ( lineParts.size() == 1 )
     {
-      time = Duration( MDAL::toDouble( line ), Duration::hours );
+      time = RelativeTimestamp( MDAL::toDouble( line ), RelativeTimestamp::hours );
       ntimes++;
 
       if ( depthDataset ) addDatasetToGroup( depthDsGroup, depthDataset );
@@ -822,7 +822,7 @@ bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup,
     const Statistics st = dataset->statistics();
     maximums[i] = static_cast<float>( st.maximum );
     minimums[i] = static_cast<float>( st.minimum );
-    times.push_back( dataset->time( Duration::hours ) );
+    times.push_back( dataset->time( RelativeTimestamp::hours ) );
   }
 
   // store data

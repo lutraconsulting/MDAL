@@ -99,15 +99,15 @@ static std::string getDataTimeUnit( HdfDataset &dsTime )
   return dataTimeUnit;
 }
 
-static std::vector<MDAL::Duration> convertTimeData( std::vector<float> &times, const std::string &originalTimeDataUnit )
+static std::vector<MDAL::RelativeTimestamp> convertTimeData( std::vector<float> &times, const std::string &originalTimeDataUnit )
 {
-  std::vector<MDAL::Duration> convertedTime( times.size() );
+  std::vector<MDAL::RelativeTimestamp> convertedTime( times.size() );
 
-  MDAL::Duration::Unit unit = MDAL::parseDurationTimeUnit( originalTimeDataUnit );
+  MDAL::RelativeTimestamp::Unit unit = MDAL::parseDurationTimeUnit( originalTimeDataUnit );
 
   for ( size_t i = 0; i < times.size(); i++ )
   {
-    convertedTime[i] = MDAL::Duration( double( times[i] ), unit );
+    convertedTime[i] = MDAL::RelativeTimestamp( double( times[i] ), unit );
   }
   return convertedTime;
 }
@@ -133,7 +133,6 @@ static MDAL::DateTime convertToDateTime( const std::string strDateTime )
     std::string monthStr = dateStr.substr( 2, 3 );
     year = MDAL::toInt( dateStr.substr( 5, 4 ) );
 
-    ///TODO : verify if month name are always in English language
     if ( monthStr == "JAN" )
       month = 1;
     else if ( monthStr == "FEB" )
@@ -192,7 +191,7 @@ static MDAL::DateTime readReferenceDateTime( const HdfFile &hdfFile )
   return MDAL::DateTime();
 }
 
-static std::vector<MDAL::Duration> readTimes( const HdfFile &hdfFile )
+static std::vector<MDAL::RelativeTimestamp> readTimes( const HdfFile &hdfFile )
 {
   HdfGroup gBaseO = getBaseOutputGroup( hdfFile );
   HdfGroup gUnsteadTS = openHdfGroup( gBaseO, "Unsteady Time Series" );
@@ -223,7 +222,7 @@ void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
                                         const std::vector<std::string> &flowAreaNames,
                                         const std::string rawDatasetName,
                                         const std::string datasetName,
-                                        const std::vector<Duration> &times,
+                                        const std::vector<RelativeTimestamp> &times,
                                         const DateTime &referenceTime )
 {
   double eps = std::numeric_limits<double>::min();
@@ -307,7 +306,7 @@ void MDAL::DriverHec2D::readFaceResults( const HdfFile &hdfFile,
 
   // SUMMARY
   flowGroup = get2DFlowAreasGroup( hdfFile, "Summary Output" );
-  std::vector<MDAL::Duration> dummyTimes( 1, MDAL::Duration() );
+  std::vector<MDAL::RelativeTimestamp> dummyTimes( 1, MDAL::RelativeTimestamp() );
 
   readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Maximum Face Shear Stress", "Face Shear Stress/Maximums", dummyTimes, referenceDateTime );
   readFaceOutput( hdfFile, flowGroup, areaElemStartIndex, flowAreaNames, "Maximum Face Velocity", "Face Velocity/Maximums", dummyTimes, referenceDateTime );
@@ -319,7 +318,7 @@ std::shared_ptr<MDAL::MemoryDataset2D> MDAL::DriverHec2D::readElemOutput( const 
     const std::vector<std::string> &flowAreaNames,
     const std::string rawDatasetName,
     const std::string datasetName,
-    const std::vector<Duration> &times,
+    const std::vector<RelativeTimestamp> &times,
     std::shared_ptr<MDAL::MemoryDataset2D> bed_elevation,
     const DateTime &referenceTime )
 {
@@ -410,7 +409,7 @@ std::shared_ptr<MDAL::MemoryDataset2D> MDAL::DriverHec2D::readBedElevation(
   const std::vector<size_t> &areaElemStartIndex,
   const std::vector<std::string> &flowAreaNames )
 {
-  std::vector<MDAL::Duration> times( 1 );
+  std::vector<MDAL::RelativeTimestamp> times( 1 );
   DateTime referenceTime;
 
   return readElemOutput(
@@ -456,7 +455,7 @@ void MDAL::DriverHec2D::readElemResults(
   // SUMMARY
   flowGroup = get2DFlowAreasGroup( hdfFile, "Summary Output" );
 
-  std::vector<Duration> dummyTimes( 1, MDAL::Duration() );
+  std::vector<RelativeTimestamp> dummyTimes( 1, MDAL::RelativeTimestamp() );
 
   readElemOutput(
     flowGroup,
