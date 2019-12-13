@@ -185,6 +185,11 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 8.4487915942199819e-14, max );
 
+  EXPECT_TRUE( compareReferenceTime( g, "2014-01-01T00:00:00" ) );
+
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( time, 0.22222222222 ) );
+
   MDAL_CloseMesh( m );
 }
 
@@ -212,6 +217,13 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
   ASSERT_EQ( 7, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
+
+  EXPECT_TRUE( compareReferenceTime( g, "2014-01-01T00:00:00" ) );
+
+  ds = MDAL_G_dataset( g, 6 );
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( time, 0.01666666667 ) );
+
   MDAL_CloseMesh( m );
 }
 

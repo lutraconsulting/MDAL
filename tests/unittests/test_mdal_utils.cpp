@@ -87,3 +87,38 @@ TEST( MdalUtilsTest, TimeParsing )
     EXPECT_EQ( test.second, MDAL::parseTimeUnits( test.first ) );
   }
 }
+
+TEST( MdalUtilsTest, CF_TimeUnitParsing )
+{
+  std::vector<std::pair<std::string, MDAL::RelativeTimestamp::Unit>> tests =
+  {
+    { "seconds since 2001-05-05 00:00:00", MDAL::RelativeTimestamp::seconds },
+    { "minutes since 2001-05-05 00:00:00", MDAL::RelativeTimestamp::minutes },
+    { "hours since 1900-01-01 00:00:0.0", MDAL::RelativeTimestamp::hours },
+    { "days since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::days },
+    { "weeks since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::weeks },
+    { "month since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::months_CF },
+    { "months since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::months_CF },
+    { "year since 1961-01-01 00:00:00", MDAL::RelativeTimestamp::exact_years },
+  };
+  for ( const auto &test : tests )
+  {
+    EXPECT_EQ( test.second, MDAL::parseCFTimeUnit( test.first ) );
+  }
+}
+
+TEST( MdalUtilsTest, CF_ReferenceTimePArsing )
+{
+  std::vector<std::pair<std::string, MDAL::DateTime>> tests =
+  {
+    { "seconds since 2001-05-05 00:00:00", MDAL::DateTime( 2001, 5, 5, 00, 00, 00 ) },
+    { "hours since 1900-05-05 10:00:0.0", MDAL::DateTime( 1900, 5, 5, 10, 00, 00 ) },
+    { "days since 1200-05-05 00:05:00", MDAL::DateTime( 1200, 5, 5, 00, 5, 00 ) },
+    { "weeks since 1961-05-05 00:01:10", MDAL::DateTime( 1961, 5, 5, 00, 1, 10 ) },
+  };
+  for ( const auto &test : tests )
+  {
+    EXPECT_EQ( test.second, MDAL::parseCFReferenceTime( test.first, "gregorian" ) );
+  }
+}
+

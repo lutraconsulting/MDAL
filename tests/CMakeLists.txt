@@ -132,6 +132,7 @@ SET_TESTS_PROPERTIES(mdalinfo_test_err1 PROPERTIES WILL_FAIL TRUE)
 SET(UNITTESTS_SRC
     unittests/mdal_unittests.cpp
     unittests/test_mdal_utils.cpp
+    unittests/test_mdal_datetime.cpp
     mdal_testutils.hpp
     mdal_testutils.cpp
 )

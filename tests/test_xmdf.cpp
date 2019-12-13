@@ -107,6 +107,11 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 1.0765361785888672, max );
 
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 4.166666666666, time ) );
+
+  EXPECT_FALSE( hasReferenceTime( g ) );
+
   MDAL_CloseMesh( m );
 }
 
@@ -185,6 +190,9 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 0.38855308294296265, max );
+
+  EXPECT_FALSE( hasReferenceTime( g ) );
+
   MDAL_CloseMesh( m );
 }
 
@@ -253,6 +261,12 @@ TEST( MeshXmdfTest, CustomGroupsDataset )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 180, max );
   EXPECT_DOUBLE_EQ( -179.99665832519531, min );
+
+  ds = MDAL_G_dataset( g, 1 );
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 0.083333333333, time ) );
+
+  EXPECT_FALSE( hasReferenceTime( g ) );
 
   MDAL_CloseMesh( m );
 }

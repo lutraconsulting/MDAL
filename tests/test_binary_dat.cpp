@@ -113,6 +113,11 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   double value = getValueX( ds, 1000 );
   EXPECT_DOUBLE_EQ( 0, value );
 
+  EXPECT_FALSE( hasReferenceTime( g ) );
+
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( time, 4.1666666666 ) );
+
   MDAL_CloseMesh( m );
 }
 

@@ -144,6 +144,10 @@ TEST( MeshHec2dTest, simpleArea )
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 0.0, time );
 
+  EXPECT_TRUE( compareDurationInHours( 0, time ) );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1899-12-30T00:00:00" ) );
+
   MDAL_CloseMesh( m );
 }
 
@@ -254,7 +258,9 @@ TEST( MeshHec2dTest, MultiAreas )
   EXPECT_DOUBLE_EQ( 706.2740478515625, max );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 60, time );
+  EXPECT_TRUE( compareDurationInHours( 60, time ) );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1999-01-01T12:00:00" ) );
 
   MDAL_CloseMesh( m );
 }
@@ -357,10 +363,9 @@ TEST( MeshHec2dTest, model_505 )
   EXPECT_DOUBLE_EQ( 43.28509521484375, max );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 0.083333335816860199, time );
+  EXPECT_TRUE( compareDurationInHours( 0.083333335816860199, time ) );
 
-  const char *referenceTime = MDAL_G_referenceTime( g );
-  EXPECT_EQ( std::string( "01JAN2018 00:00:00" ), std::string( referenceTime ) );
+  EXPECT_TRUE( compareReferenceTime( g, "2018-01-01T00:00:00" ) );
 
   MDAL_CloseMesh( m );
 }

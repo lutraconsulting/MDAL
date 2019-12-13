@@ -64,6 +64,12 @@ TEST( MeshGdalNetCDFTest, Indonesia )
     double value = getValue( ds, 50 );
     EXPECT_DOUBLE_EQ( 0.99988487698798889, value );
 
+    EXPECT_TRUE( compareReferenceTime( g, "1900-01-01T00:00:00" ) );
+
+    ds = MDAL_G_dataset( g, 0 );
+    double time = MDAL_D_time( ds );
+    EXPECT_TRUE( compareDurationInHours( 1008072, time ) );
+
     MDAL_CloseMesh( m );
   }
 }

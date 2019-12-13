@@ -153,7 +153,9 @@ TEST( MeshUgridTest, DFlow11Manzese )
   EXPECT_DOUBLE_EQ( 15.907056943512494, max );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 0.0, time );
+  EXPECT_TRUE( compareDurationInHours( 0.0, time ) );
+
+  EXPECT_TRUE( compareReferenceTime( g, "2017-01-01T00:00:00" ) );
 
   MDAL_CloseMesh( m );
 }
@@ -247,7 +249,9 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   EXPECT_DOUBLE_EQ( 6.3681219945588952, max );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 0.0097222222222222224, time );
+  EXPECT_TRUE( compareDurationInHours( .0097222222222222224, time ) );
+
+  EXPECT_TRUE( compareReferenceTime( g, "2001-05-05T00:00:00" ) );
 
   MDAL_CloseMesh( m );
 }
@@ -325,7 +329,9 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   EXPECT_DOUBLE_EQ( 12, max );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 183.5, time );
+  EXPECT_TRUE( compareDurationInHours( 183.5, time ) );
+
+  EXPECT_TRUE( compareReferenceTime( g, "2002-10-15T00:00:00" ) );
 
   std::string crs = MDAL_M_projection( m );
   EXPECT_EQ( "EPSG:28992", crs );
@@ -446,13 +452,15 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 0.66413616798770714, max );
 
+  EXPECT_TRUE( compareReferenceTime( g, "2002-10-15T00:00:00" ) );
+
   std::string crs = MDAL_M_projection( m );
   EXPECT_EQ( "EPSG:28992", crs );
 
   MDAL_CloseMesh( m );
 }
 
-TEST( MeshUgridTest, UGRIFFormatWithoutTime )
+TEST( MeshUgridTest, UGRIDFormatWithoutTime )
 {
   std::string path = test_file( "/ugrid/without_time/TINUGRID.tin" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
@@ -581,6 +589,8 @@ TEST( MeshUgridTest, ADCIRC )
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 1.3282330120641679, max );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
 
   MDAL_CloseMesh( m );
 }

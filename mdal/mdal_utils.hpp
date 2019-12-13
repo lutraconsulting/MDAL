@@ -141,5 +141,18 @@ namespace MDAL
     return true;
   }
 
+  //! Prepend 0 to string to have n char
+  std::string prependZero( const std::string &str, size_t length );
+
+  RelativeTimestamp::Unit parseDurationTimeUnit( const std::string &timeUnit );
+
+  //! parse the time unit in the CF convention string format "XXXX since 2019-01-01 00:00:00"
+  //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
+  RelativeTimestamp::Unit parseCFTimeUnit( std::string timeInformation );
+
+  //! parse the reference time in the CF convention string format "XXXX since 2019-01-01 00:00:00"
+  //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
+  MDAL::DateTime parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
+
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

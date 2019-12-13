@@ -141,7 +141,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_NE( ds, nullptr );
 
   double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 4000, time );
+  EXPECT_TRUE( compareDurationInHours( 1.111111111, time ) );
 
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
@@ -203,6 +203,8 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 2.3694833011052991e-12, min );
   EXPECT_DOUBLE_EQ( 7.5673562379016834, max );
+
+  EXPECT_TRUE( compareReferenceTime( r, "1900-01-01T00:00:00" ) );
 
   MDAL_CloseMesh( m );
 }

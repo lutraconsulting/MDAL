@@ -309,3 +309,18 @@ void init_test()
 void finalize_test()
 {
 }
+
+bool compareDurationInHours( double h1, double h2 )
+{
+  return fabs( h1 - h2 ) < 1.0 / 3600 / 1000;
+}
+
+bool hasReferenceTime( DatasetGroupH group )
+{
+  return std::strcmp( MDAL_G_referenceTime( group ), "" ) != 0;
+}
+
+bool compareReferenceTime( DatasetGroupH group, const char *referenceTime )
+{
+  return std::strcmp( MDAL_G_referenceTime( group ), referenceTime ) == 0;
+}

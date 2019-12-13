@@ -149,6 +149,11 @@ TEST( MeshSWWTest, Cairns )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 6.7305092811584473, max );
 
+  EXPECT_FALSE( hasReferenceTime( g ) );
+
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( time, 0.083333333333 ) );
+
   MDAL_CloseMesh( m );
 }
 

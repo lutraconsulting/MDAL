@@ -174,7 +174,11 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( 10, MDAL_G_maximumVerticalLevelCount( g ) );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 0.502121734619141, time );
+    EXPECT_TRUE( compareDurationInHours( 0.502121734619141, time ) );
+
+    EXPECT_FALSE( hasReferenceTime( g ) );
+
+
   }
 
   // /////////////////////////////////
@@ -231,7 +235,10 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_DOUBLE_EQ( 1.7670363355554111, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 0.667265041139391, time );
+    EXPECT_TRUE( compareDurationInHours( 0.667265041139391, time ) );
+
+    EXPECT_FALSE( hasReferenceTime( g ) );
+
   }
 
   // /////////////////////////////////
@@ -282,7 +289,9 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_DOUBLE_EQ( 2.488835334777832, max );
 
     double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 1.16755709277259, time );
+    EXPECT_TRUE( compareDurationInHours( 1.16755709277259, time ) );
+
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   // Close mesh
@@ -348,7 +357,10 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
 
     double time = MDAL_D_time( ds );
     EXPECT_DOUBLE_EQ( 0, time );
+
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
+
 
   // Close mesh
   MDAL_CloseMesh( m );
