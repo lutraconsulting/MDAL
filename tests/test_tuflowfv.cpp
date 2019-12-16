@@ -114,7 +114,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "temperature" ), std::string( name ) );
@@ -173,6 +173,8 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( 10, MDAL_D_maximumVerticalLevelCount( ds ) );
     EXPECT_EQ( 10, MDAL_G_maximumVerticalLevelCount( g ) );
 
+    EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 0.502121734619141, time ) );
 
@@ -189,7 +191,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "velocity" ), std::string( name ) );
@@ -234,6 +236,8 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_DOUBLE_EQ( 0, min );
     EXPECT_DOUBLE_EQ( 1.7670363355554111, max );
 
+    EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 0.667265041139391, time ) );
 
@@ -249,7 +253,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "water depth" ), std::string( name ) );
@@ -287,6 +291,8 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     MDAL_G_minimumMaximum( g, &min, &max );
     EXPECT_DOUBLE_EQ( 1.1920928955078125e-07, min );
     EXPECT_DOUBLE_EQ( 2.488835334777832, max );
+
+    EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 1.16755709277259, time ) );
@@ -331,7 +337,7 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "temperature/Maximums" ), std::string( name ) );

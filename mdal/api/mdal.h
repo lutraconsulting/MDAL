@@ -324,6 +324,9 @@ MDAL_EXPORT void MDAL_G_closeEditMode( DatasetGroupH group );
 //! Returns reference time for dataset group expressed in date with ISO8601 format, return "" if reference time is not defined
 MDAL_EXPORT const char *MDAL_G_referenceTime( DatasetGroupH group );
 
+//! Returns the time native time unit of the group
+MDAL_EXPORT const char *MDAL_G_TimeUnit( DatasetGroupH group );
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -333,6 +336,9 @@ MDAL_EXPORT DatasetGroupH MDAL_D_group( DatasetH dataset );
 
 //! Returns dataset time (hours)
 MDAL_EXPORT double MDAL_D_time( DatasetH dataset );
+
+//! Returns dataset time when time unit is unknown
+MDAL_EXPORT double MDAL_D_timeUnknownUnit( DatasetH dataset );
 
 //! Returns volumes count for the mesh (for 3D meshes)
 MDAL_EXPORT int MDAL_D_volumesCount( DatasetH dataset );

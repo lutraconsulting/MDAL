@@ -266,7 +266,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
           );
   group->setIsScalar( !isVector );
   group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
-  group->setMetadata( "TIMEUNITS", timeUnitString );
+  group->setTimeUnit( timeUnit );
 
   // lazy loading of min and max of the dataset group
   std::vector<float> mins = dsMins.readArray();

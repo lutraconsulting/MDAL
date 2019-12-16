@@ -315,6 +315,11 @@ bool compareDurationInHours( double h1, double h2 )
   return fabs( h1 - h2 ) < 1.0 / 3600 / 1000;
 }
 
+bool compareDurationInUnknown( double h1, double h2 )
+{
+  return fabs( h1 - h2 ) < 1.0 / 1000000;
+}
+
 bool hasReferenceTime( DatasetGroupH group )
 {
   return std::strcmp( MDAL_G_referenceTime( group ), "" ) != 0;

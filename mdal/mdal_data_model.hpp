@@ -151,6 +151,44 @@ namespace MDAL
       std::string getMetadata( const std::string &key );
       void setMetadata( const std::string &key, const std::string &val );
 
+      void setTimeUnit( const MDAL::RelativeTimestamp::Unit unit )
+      {
+        std::string stringUnit;
+
+        switch ( unit )
+        {
+          case MDAL::RelativeTimestamp::milliseconds:
+            stringUnit = "milliseconds";
+            break;
+          case MDAL::RelativeTimestamp::seconds:
+            stringUnit = "seconds";
+            break;
+          case MDAL::RelativeTimestamp::minutes:
+            stringUnit = "minutes";
+            break;
+          case MDAL::RelativeTimestamp::hours:
+            stringUnit = "hours";
+            break;
+          case MDAL::RelativeTimestamp::days:
+            stringUnit = "days";
+            break;
+          case MDAL::RelativeTimestamp::weeks:
+            stringUnit = "weeks";
+            break;
+          case MDAL::RelativeTimestamp::months_CF:
+            stringUnit = "months_CF";
+            break;
+          case MDAL::RelativeTimestamp::exact_years:
+            stringUnit = "exact_year";
+            break;
+          case MDAL::RelativeTimestamp::unknown:
+            stringUnit = "unknown";
+            break;
+        }
+
+        setMetadata( "TIMEUNITS", stringUnit );
+      }
+
       std::string name();
       void setName( const std::string &name );
 
@@ -189,6 +227,7 @@ namespace MDAL
       std::string mUri; // file/uri from where it came
       Statistics mStatistics;
       DateTime mReferenceTime;
+      RelativeTimestamp::Unit timeUnit = RelativeTimestamp::hours;
   };
 
   typedef std::vector<std::shared_ptr<DatasetGroup>> DatasetGroups;

@@ -51,6 +51,7 @@ namespace MDAL
 
       std::vector<MDAL::RelativeTimestamp> mTimes ;
       DateTime mReferenceTime;
+      RelativeTimestamp::Unit mTimeUnit;
 
       // Pre 5.0.5 format
       bool canReadOldFormat( const std::string &fileType ) const;
@@ -68,21 +69,22 @@ namespace MDAL
                            const std::string rawDatasetName,
                            const std::string datasetName,
                            const std::vector<MDAL::RelativeTimestamp> &times,
-                           const DateTime &referenceTime );
+                           const DateTime &referenceTime,
+                           const RelativeTimestamp::Unit &timeUnit );
 
       void readFaceResults( const HdfFile &hdfFile,
                             const std::vector<size_t> &areaElemStartIndex,
                             const std::vector<std::string> &flowAreaNames );
 
-      std::shared_ptr<MDAL::MemoryDataset2D> readElemOutput(
-        const HdfGroup &rootGroup,
-        const std::vector<size_t> &areaElemStartIndex,
-        const std::vector<std::string> &flowAreaNames,
-        const std::string rawDatasetName,
-        const std::string datasetName,
-        const std::vector<MDAL::RelativeTimestamp> &times,
-        std::shared_ptr<MDAL::MemoryDataset2D> bed_elevation,
-        const DateTime &referenceTime );
+      std::shared_ptr<MDAL::MemoryDataset2D> readElemOutput( const HdfGroup &rootGroup,
+          const std::vector<size_t> &areaElemStartIndex,
+          const std::vector<std::string> &flowAreaNames,
+          const std::string rawDatasetName,
+          const std::string datasetName,
+          const std::vector<MDAL::RelativeTimestamp> &times,
+          std::shared_ptr<MDAL::MemoryDataset2D> bed_elevation,
+          const DateTime &referenceTime,
+          const RelativeTimestamp::Unit &timeUnit );
 
       std::shared_ptr<MDAL::MemoryDataset2D> readBedElevation(
         const HdfGroup &gGeom2DFlowAreas,

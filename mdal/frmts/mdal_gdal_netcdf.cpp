@@ -93,3 +93,8 @@ void MDAL::DriverGdalNetCDF::parseGlobals( const MDAL::DriverGdal::metadata_hash
 }
 
 MDAL::DateTime MDAL::DriverGdalNetCDF::referenceTime() const {return mRefTime;}
+
+MDAL::RelativeTimestamp::Unit MDAL::DriverGdalNetCDF::timeUnit() const
+{
+  return mTimeUnit;
+}

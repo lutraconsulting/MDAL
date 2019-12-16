@@ -452,7 +452,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "FLOW DEPTH" ), std::string( name ) );
@@ -466,6 +466,8 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   ASSERT_EQ( 20, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
+
+  EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 0.10124753560882101, time ) );
@@ -499,7 +501,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Velocity" ), std::string( name ) );
@@ -531,6 +533,8 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 0.1241119660936652, min );
   EXPECT_DOUBLE_EQ( 2.847882132344469, max );
+
+  EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   MDAL_CloseMesh( m );
 }
@@ -632,7 +636,7 @@ TEST( MeshFlo2dTest, basic )
     ASSERT_NE( g, nullptr );
 
     meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "Depth" ), std::string( name ) );
@@ -666,6 +670,8 @@ TEST( MeshFlo2dTest, basic )
     MDAL_G_minimumMaximum( g, &min, &max );
     EXPECT_DOUBLE_EQ( 1, min );
     EXPECT_DOUBLE_EQ( 3, max );
+
+    EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 0.5, time ) );
@@ -846,7 +852,7 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Depth" ), std::string( name ) );
@@ -860,6 +866,8 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
   ASSERT_EQ( 4, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 2 );
   ASSERT_NE( ds, nullptr );
+
+  EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 150.0, time ) );

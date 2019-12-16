@@ -30,6 +30,7 @@ namespace MDAL
                         ) override;
 
       MDAL::DateTime referenceTime() const override;
+      MDAL::RelativeTimestamp::Unit timeUnit() const override;
 
       /**
        * ref time (UTC sec)

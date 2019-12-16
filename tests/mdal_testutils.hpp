@@ -61,6 +61,9 @@ bool compareMeshFrames( MeshH meshA, MeshH meshB );
 //! Compare duration with millisecond precision
 bool compareDurationInHours( double h1, double h2 );
 
+//! Compare duration with millisecond precision
+bool compareDurationInUnknown( double h1, double h2 );
+
 //! test if reference time is defined
 bool hasReferenceTime( DatasetGroupH group );
 

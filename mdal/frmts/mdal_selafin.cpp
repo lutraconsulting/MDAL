@@ -527,6 +527,7 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names,
 
     MDAL::Statistics stats = MDAL::calculateStatistics( group );
     group->setStatistics( stats );
+    group->setTimeUnit( RelativeTimestamp::seconds );
   }
 }
 

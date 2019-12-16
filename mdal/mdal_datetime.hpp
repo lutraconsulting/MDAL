@@ -26,7 +26,8 @@ namespace MDAL
         days,
         weeks,
         months_CF,
-        exact_years
+        exact_years,
+        unknown
       };
 
       RelativeTimestamp();

@@ -64,7 +64,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFileWithNumberingGaps )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -188,6 +188,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   EXPECT_EQ( 0, MDAL_D_maximumVerticalLevelCount( ds ) );
   EXPECT_EQ( 0, MDAL_G_maximumVerticalLevelCount( g ) );
 
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) );
+
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 1, time );
 
@@ -256,6 +258,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 1.4142135623730951, min );
   EXPECT_DOUBLE_EQ( 2.8284271247461903, max );
+
+  EXPECT_EQ( std::string( "minutes" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 1, time );
@@ -329,7 +333,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarOldFile )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *key = MDAL_G_metadataKey( g, 0 );
     EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -452,6 +456,8 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
 
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 0, time );
 
@@ -483,7 +489,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorOldFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *key = MDAL_G_metadataKey( g, 0 );
   EXPECT_EQ( std::string( "name" ), std::string( key ) );
@@ -509,8 +515,10 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorOldFile )
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
 
-  double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 0, time );
+  EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) );
+
+  double time = MDAL_D_timeUnknownUnit( ds );
+  EXPECT_TRUE( compareDurationInUnknown( 0, time ) );
 
   double value = getValueX( ds, 0 );
   EXPECT_DOUBLE_EQ( 1, value );

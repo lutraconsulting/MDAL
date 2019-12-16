@@ -117,7 +117,7 @@ TEST( MeshUgridTest, DFlow11Manzese )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Total bed shear stress" ), std::string( name ) );
@@ -151,6 +151,8 @@ TEST( MeshUgridTest, DFlow11Manzese )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 15.907056943512494, max );
+
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 0.0, time ) );
@@ -213,7 +215,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "water depth at pressure points" ), std::string( name ) );
@@ -247,6 +249,8 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 2.1346136585097848, min );
   EXPECT_DOUBLE_EQ( 6.3681219945588952, max );
+
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( .0097222222222222224, time ) );
@@ -291,7 +295,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water level" ), std::string( name ) );
@@ -327,6 +331,8 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 2, min );
   EXPECT_DOUBLE_EQ( 12, max );
+
+  EXPECT_EQ( std::string( "hors" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 183.5, time ) );
@@ -374,7 +380,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water level" ), std::string( name ) );
@@ -419,7 +425,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Flow element center velocity vector" ), std::string( name ) );
@@ -451,6 +457,8 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 0.66413616798770714, max );
+
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   EXPECT_TRUE( compareReferenceTime( g, "2002-10-15T00:00:00" ) );
 
@@ -512,7 +520,7 @@ TEST( MeshUgridTest, ADCIRC )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "sea surface height" ), std::string( name ) );
@@ -557,7 +565,7 @@ TEST( MeshUgridTest, ADCIRC )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "barotropic current" ), std::string( name ) );
@@ -589,6 +597,8 @@ TEST( MeshUgridTest, ADCIRC )
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 1.3282330120641679, max );
+
+  EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
 

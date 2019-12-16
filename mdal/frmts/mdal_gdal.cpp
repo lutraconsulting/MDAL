@@ -316,6 +316,11 @@ MDAL::DateTime MDAL::DriverGdal::referenceTime() const
   return MDAL::DateTime();
 }
 
+MDAL::RelativeTimestamp::Unit MDAL::DriverGdal::timeUnit() const
+{
+  return MDAL::RelativeTimestamp::unknown;
+}
+
 void MDAL::DriverGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared_ptr<MemoryDataset2D> tos, bool is_vector, bool is_x )
 {
   assert( raster_band );
@@ -433,6 +438,7 @@ void MDAL::DriverGdal::addDatasetGroups()
     // TODO use GDALComputeRasterMinMax
     group->setStatistics( MDAL::calculateStatistics( group ) );
     group->setReferenceTime( referenceTime() );
+    group->setTimeUnit( timeUnit() );
     mMesh->datasetGroups.push_back( group );
   }
 }

@@ -648,15 +648,25 @@ std::string MDAL::prependZero( const std::string &str, size_t length )
 
 MDAL::RelativeTimestamp::Unit MDAL::parseDurationTimeUnit( const std::string &timeUnit )
 {
-  MDAL::RelativeTimestamp::Unit unit = MDAL::RelativeTimestamp::hours; //default unit
 
-  if ( timeUnit == "millisec" ||
-       timeUnit == "msec" ||
-       timeUnit == "millisecs" ||
-       timeUnit == "msecs"
+  if ( timeUnit == "hour" ||
+       timeUnit == "hours" ||
+       timeUnit == "Hour" ||
+       timeUnit == "Hours" ||
+       timeUnit == "h"  ||
+       timeUnit == "ho"  ||
+       timeUnit == "0"
      )
   {
-    unit = MDAL::RelativeTimestamp::milliseconds;
+    return MDAL::RelativeTimestamp::hours;
+  }
+  else if ( timeUnit == "millisec" ||
+            timeUnit == "msec" ||
+            timeUnit == "millisecs" ||
+            timeUnit == "msecs"
+          )
+  {
+    return MDAL::RelativeTimestamp::milliseconds;
   }
   else if ( timeUnit == "second" ||
             timeUnit == "seconds" ||
@@ -667,7 +677,7 @@ MDAL::RelativeTimestamp::Unit MDAL::parseDurationTimeUnit( const std::string &ti
             timeUnit == "se" || // ascii_dat format
             timeUnit == "2" )  // ascii_dat format
   {
-    unit = MDAL::RelativeTimestamp::seconds;
+    return MDAL::RelativeTimestamp::seconds;
   }
   else if ( timeUnit == "minute" ||
             timeUnit == "minutes" ||
@@ -677,29 +687,31 @@ MDAL::RelativeTimestamp::Unit MDAL::parseDurationTimeUnit( const std::string &ti
             timeUnit == "mi" || // ascii_dat format
             timeUnit == "1" ) // ascii_dat format
   {
-    unit = MDAL::RelativeTimestamp::minutes;
+    return MDAL::RelativeTimestamp::minutes;
   }
   else if ( timeUnit == "day" ||
             timeUnit == "days" ||
             timeUnit == "Days" )
   {
-    unit = MDAL::RelativeTimestamp::days;
+    return MDAL::RelativeTimestamp::days;
   }
   else if ( timeUnit == "week" ||
             timeUnit == "weeks" )
   {
-    unit = MDAL::RelativeTimestamp::weeks;
+    return MDAL::RelativeTimestamp::weeks;
   }
-
-
-  return unit;
+  else
+  {
+    std::cout << "********************************************* : unknown";
+    return MDAL::RelativeTimestamp::unknown;
+  }
 }
 
 MDAL::RelativeTimestamp::Unit MDAL::parseCFTimeUnit( std::string timeInformation )
 {
   auto strings = MDAL::split( timeInformation, ' ' );
-  if ( strings.size() < 3 )
-    return MDAL::RelativeTimestamp::hours; //default value
+  if ( strings.size() < 3 ) //No Cf compliant --> try to parse entire timeInformation string
+    return parseDurationTimeUnit( timeInformation ); //default value
 
   if ( strings[1] == "since" )
   {

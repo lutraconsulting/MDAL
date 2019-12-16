@@ -441,7 +441,8 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
   {
     ++nTimesteps;
     xmlNodePtr timeNod = xmfFile.getCheckChild( gridNod, "Time" );
-    RelativeTimestamp time( xmfFile.queryDoubleAttribute( timeNod, "Value" ), RelativeTimestamp::hours ); //units, supposed to be hours
+    //xdmf generic format doesn't require time unit
+    RelativeTimestamp time( xmfFile.queryDoubleAttribute( timeNod, "Value" ), RelativeTimestamp::unknown );
     xmlNodePtr scalarNod = xmfFile.getCheckChild( gridNod, "Attribute" );
 
     for ( ;
@@ -564,6 +565,7 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
 
     const MDAL::Statistics stats = MDAL::calculateStatistics( grp );
     grp->setStatistics( stats );
+    grp->setTimeUnit( RelativeTimestamp::unknown );
     // verify the integrity of the dataset
     if ( !std::isnan( stats.minimum ) )
       ret.push_back( grp );

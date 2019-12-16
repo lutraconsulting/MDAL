@@ -35,7 +35,7 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water Depth (m)" ), std::string( name ) );
@@ -56,8 +56,10 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
   int active = getActive( ds, 0 );
   EXPECT_EQ( 1, active );
 
-  double time = MDAL_D_time( ds );
-  EXPECT_DOUBLE_EQ( 0, time );
+  EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
+  double time = MDAL_D_timeUnknownUnit( ds );
+  EXPECT_TRUE( compareDurationInUnknown( 0, time ) );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 5, count );
@@ -114,6 +116,8 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   EXPECT_DOUBLE_EQ( 0, value );
 
   EXPECT_FALSE( hasReferenceTime( g ) );
+
+  EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( time, 4.1666666666 ) );
@@ -238,7 +242,7 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "scalarGrp" ), std::string( name ) );
@@ -334,7 +338,7 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "vectorGrp" ), std::string( name ) );

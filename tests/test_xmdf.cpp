@@ -107,6 +107,8 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   EXPECT_DOUBLE_EQ( 0, min );
   EXPECT_DOUBLE_EQ( 1.0765361785888672, max );
 
+  EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 4.166666666666, time ) );
 
@@ -261,6 +263,8 @@ TEST( MeshXmdfTest, CustomGroupsDataset )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 180, max );
   EXPECT_DOUBLE_EQ( -179.99665832519531, min );
+
+  EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   ds = MDAL_G_dataset( g, 1 );
   double time = MDAL_D_time( ds );

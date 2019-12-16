@@ -48,7 +48,7 @@ TEST( MeshSLFTest, MalpassetGeometry )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "bottom" ), std::string( name ) );
@@ -125,7 +125,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_NE( r, nullptr );
 
   int meta_count = MDAL_G_metadataCount( r );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( r );
   EXPECT_EQ( std::string( "surface libre   m" ), std::string( name ) );
@@ -139,6 +139,8 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_EQ( 2, MDAL_G_datasetCount( r ) );
   DatasetH ds = MDAL_G_dataset( r, 1 );
   ASSERT_NE( ds, nullptr );
+
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( r ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 1.111111111, time ) );
@@ -171,7 +173,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   ASSERT_NE( r, nullptr );
 
   meta_count = MDAL_G_metadataCount( r );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( r );
   EXPECT_EQ( std::string( "vitesse       ms" ), std::string( name ) );
@@ -203,6 +205,8 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 2.3694833011052991e-12, min );
   EXPECT_DOUBLE_EQ( 7.5673562379016834, max );
+
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( r ) ) ) ;
 
   EXPECT_TRUE( compareReferenceTime( r, "1900-01-01T00:00:00" ) );
 

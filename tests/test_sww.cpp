@@ -114,7 +114,7 @@ TEST( MeshSWWTest, Cairns )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "stage" ), std::string( name ) );
@@ -150,6 +150,8 @@ TEST( MeshSWWTest, Cairns )
   EXPECT_DOUBLE_EQ( 6.7305092811584473, max );
 
   EXPECT_FALSE( hasReferenceTime( g ) );
+
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( time, 0.083333333333 ) );

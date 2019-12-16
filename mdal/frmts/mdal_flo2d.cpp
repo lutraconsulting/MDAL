@@ -276,6 +276,9 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
   depthDsGroup->setStatistics( MDAL::calculateStatistics( depthDsGroup ) );
   flowDsGroup->setStatistics( MDAL::calculateStatistics( flowDsGroup ) );
   waterLevelDsGroup->setStatistics( MDAL::calculateStatistics( waterLevelDsGroup ) );
+  depthDsGroup->setTimeUnit( MDAL::RelativeTimestamp::hours );
+  waterLevelDsGroup->setTimeUnit( MDAL::RelativeTimestamp::hours );
+  flowDsGroup->setTimeUnit( MDAL::RelativeTimestamp::hours );
 
   mMesh->datasetGroups.push_back( depthDsGroup );
   mMesh->datasetGroups.push_back( flowDsGroup );
@@ -533,6 +536,7 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
 
     HdfAttribute timeUnitAttribute = grp.attribute( "TimeUnits" );
     std::string timeUnitString = timeUnitAttribute.readString();
+    MDAL::RelativeTimestamp::Unit timeUnit = parseDurationTimeUnit( timeUnitString );
 
     /* Min and Max arrays in TIMDEP.HDF5 files have dimensions 1xntimesteps .
         HdfDataset minDs = grp.dataset("Mins");
@@ -573,7 +577,7 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
     for ( size_t ts = 0; ts < timesteps; ++ts )
     {
       std::shared_ptr< MemoryDataset2D > output = std::make_shared< MemoryDataset2D >( ds.get() );
-      output->setTime( times[ts], parseDurationTimeUnit( timeUnitString ) );
+      output->setTime( times[ts], timeUnit );
 
       if ( isVector )
       {
@@ -601,6 +605,7 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
 
     // TODO use mins & maxs arrays
     ds->setStatistics( MDAL::calculateStatistics( ds ) );
+    ds->setTimeUnit( timeUnit );
     mesh->datasetGroups.push_back( ds );
 
   }

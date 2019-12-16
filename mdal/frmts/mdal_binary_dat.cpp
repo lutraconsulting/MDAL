@@ -277,7 +277,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
             timeUnitStr = "unknown";
             break;
         }
-        group->setMetadata( "TIMEUNITS", timeUnitStr );
+        group->setTimeUnit( parseDurationTimeUnit( timeUnitStr ) );
         break;
 
       case CT_TS:
@@ -302,6 +302,10 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
     return exit_with_error( status, MDAL_Status::Err_UnknownFormat, "No datasets" );
 
   group->setStatistics( MDAL::calculateStatistics( group ) );
+
+  if ( group->getMetadata( "TIMEUNITS" ) == "" )
+    group->setTimeUnit( MDAL::RelativeTimestamp::unknown );
+
   mesh->datasetGroups.push_back( group );
 
   if ( groupMax && groupMax->datasets.size() > 0 )

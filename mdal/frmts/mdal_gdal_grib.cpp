@@ -62,3 +62,8 @@ MDAL::DateTime MDAL::DriverGdalGrib::referenceTime() const
 {
   return mRefTime;
 }
+
+MDAL::RelativeTimestamp::Unit MDAL::DriverGdalGrib::timeUnit() const
+{
+  return MDAL::RelativeTimestamp::seconds;
+}

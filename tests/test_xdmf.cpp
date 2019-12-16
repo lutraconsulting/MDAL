@@ -28,7 +28,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "water_surface" ), std::string( name ) );
@@ -63,8 +63,10 @@ TEST( XdmfTest, Basement3HumpsTest )
     EXPECT_DOUBLE_EQ( 0.0, min );
     EXPECT_DOUBLE_EQ( 2.9100000000000001, max );
 
-    double time = MDAL_D_time( ds );
-    EXPECT_TRUE( compareDurationInHours( 20, time ) );
+    EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
+    double time = MDAL_D_timeUnknownUnit( ds );
+    EXPECT_TRUE( compareDurationInUnknown( 20, time ) );
 
     EXPECT_FALSE( hasReferenceTime( g ) );
   }
@@ -75,7 +77,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "spec_discharge" ), std::string( name ) );
@@ -113,8 +115,10 @@ TEST( XdmfTest, Basement3HumpsTest )
     EXPECT_DOUBLE_EQ( 0.0, min );
     EXPECT_DOUBLE_EQ( 4.9994493491047303, max );
 
-    double time = MDAL_D_time( ds );
-    EXPECT_TRUE( compareDurationInHours( 20, time ) );
+    EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
+    double time = MDAL_D_timeUnknownUnit( ds );
+    EXPECT_TRUE( compareDurationInUnknown( 20, time ) );
 
     EXPECT_FALSE( hasReferenceTime( g ) );
   }
@@ -143,7 +147,7 @@ TEST( XdmfTest, Basement3Slopes )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "friction_chezy" ), std::string( name ) );
@@ -178,8 +182,10 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_DOUBLE_EQ( 0.0, min );
     EXPECT_DOUBLE_EQ( 494.816927222965329, max );
 
-    double time = MDAL_D_time( ds );
-    EXPECT_TRUE( compareDurationInHours( 1, time ) );
+    EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
+    double time = MDAL_D_timeUnknownUnit( ds );
+    EXPECT_TRUE( compareDurationInUnknown( 1, time ) );
 
     EXPECT_FALSE( hasReferenceTime( g ) );
   }
@@ -190,7 +196,7 @@ TEST( XdmfTest, Basement3Slopes )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "delta_z" ), std::string( name ) );
@@ -225,8 +231,10 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_DOUBLE_EQ( -8.3107706316809526e-05, min );
     EXPECT_DOUBLE_EQ( 0.0030000000000001137, max );
 
-    double time = MDAL_D_time( ds );
-    EXPECT_TRUE( compareDurationInHours( 1, time ) );
+    EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
+    double time = MDAL_D_timeUnknownUnit( ds );
+    EXPECT_TRUE( compareDurationInUnknown( 1, time ) );
 
     EXPECT_FALSE( hasReferenceTime( g ) );
   }
@@ -237,7 +245,7 @@ TEST( XdmfTest, Basement3Slopes )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "water_depth" ), std::string( name ) );
@@ -272,8 +280,12 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_DOUBLE_EQ( 1.0093761225415925, min );
     EXPECT_DOUBLE_EQ( 3.0788896191491268, max );
 
-    double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 1, time );
+    EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
+    double time = MDAL_D_timeUnknownUnit( ds );
+    EXPECT_TRUE( compareDurationInUnknown( 1, time ) );
+
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   // FUNCTION: sqrt($0/($2-$3)*$0/($2-$3) + $1/($2-$3)*$1/($2-$3))
@@ -282,7 +294,7 @@ TEST( XdmfTest, Basement3Slopes )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "flow_velocity_abs" ), std::string( name ) );
@@ -317,8 +329,12 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_DOUBLE_EQ( 1.4142135623730951, min );
     EXPECT_DOUBLE_EQ( 18.579443815111134, max );
 
-    double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 1, time );
+    EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
+    double time = MDAL_D_timeUnknownUnit( ds );
+    EXPECT_TRUE( compareDurationInUnknown( 1, time ) );
+
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   MDAL_CloseMesh( m );
@@ -344,7 +360,7 @@ TEST( XdmfTest, Basement3SimpleChannel )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "water_surface" ), std::string( name ) );
@@ -379,8 +395,10 @@ TEST( XdmfTest, Basement3SimpleChannel )
     EXPECT_DOUBLE_EQ( 0.0040000000000000001, min );
     EXPECT_DOUBLE_EQ( 0.48486232713374577, max );
 
-    double time = MDAL_D_time( ds );
-    EXPECT_TRUE( compareDurationInHours( 30, time ) );
+    EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
+    double time = MDAL_D_timeUnknownUnit( ds );
+    EXPECT_TRUE( compareDurationInUnknown( 30, time ) );
 
     EXPECT_FALSE( hasReferenceTime( g ) );
   }
@@ -408,7 +426,7 @@ TEST( XdmfTest, Basement3SimpleGeometry )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "water_surface" ), std::string( name ) );
@@ -443,8 +461,12 @@ TEST( XdmfTest, Basement3SimpleGeometry )
     EXPECT_DOUBLE_EQ( 1.8713530882459224, min );
     EXPECT_DOUBLE_EQ( 2.1451217674360481, max );
 
-    double time = MDAL_D_time( ds );
-    EXPECT_DOUBLE_EQ( 6, time );
+    EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
+    double time = MDAL_D_timeUnknownUnit( ds );
+    EXPECT_TRUE( compareDurationInUnknown( 6, time ) );
+
+    EXPECT_FALSE( hasReferenceTime( g ) );
   }
 
   MDAL_CloseMesh( m );
@@ -585,6 +607,8 @@ TEST( XdmfTest, Simple )
 
     valueY = getValueY( ds, 196 );
     EXPECT_DOUBLE_EQ( 0, valueY );
+
+    EXPECT_EQ( std::string( "unknown" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
     EXPECT_FALSE( hasReferenceTime( g ) );
   }

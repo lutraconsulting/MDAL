@@ -4,6 +4,7 @@
 */
 
 #include <string>
+#include <cstring>
 #include <stddef.h>
 #include <limits>
 #include <assert.h>
@@ -769,6 +770,18 @@ const char *MDAL_G_referenceTime( DatasetGroupH group )
   return _return_str( g->referenceTime().toStandartCalendarISO8601() );
 }
 
+//! Returns reference time for dataset group expressed in date with ISO8601 format, return "" if reference time is not defined
+MDAL_EXPORT const char *MDAL_G_TimeUnit( DatasetGroupH group )
+{
+  if ( !group )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return EMPTY_STR;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  return _return_str( g->getMetadata( "TIMEUNITS" ) ); ///TODO create a getTimeUnit() method
+}
+
 void MDAL_G_setMetadata( DatasetGroupH group, const char *key, const char *val )
 {
   if ( !group )
@@ -829,6 +842,19 @@ double MDAL_D_time( DatasetH dataset )
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
   return d->time( MDAL::RelativeTimestamp::hours );
+}
+
+
+
+double MDAL_D_timeUnknownUnit( DatasetH dataset )
+{
+  if ( !dataset )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    return NODATA;
+  }
+  MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
+  return d->time( MDAL::RelativeTimestamp::unknown );
 }
 
 int MDAL_D_volumesCount( DatasetH dataset )

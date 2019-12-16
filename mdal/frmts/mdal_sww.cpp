@@ -228,7 +228,10 @@ void MDAL::DriverSWW::readDatasetGroups(
         parsedVariableNames.insert( name );
       }
       if ( grp )
+      {
+        grp->setTimeUnit( RelativeTimestamp::seconds );
         mesh->datasetGroups.push_back( grp );
+      }
     }
   }
 }

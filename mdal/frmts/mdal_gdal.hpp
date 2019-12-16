@@ -95,6 +95,7 @@ namespace MDAL
       void fixRasterBands();
 
       virtual MDAL::DateTime referenceTime() const;
+      virtual MDAL::RelativeTimestamp::Unit timeUnit() const;
 
       std::string mFileName;
       const std::string mGdalDriverName; /* GDAL driver name */

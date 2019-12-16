@@ -71,7 +71,7 @@ TEST( MeshHec2dTest, simpleArea )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
@@ -106,7 +106,7 @@ TEST( MeshHec2dTest, simpleArea )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water Surface" ), std::string( name ) );
@@ -143,6 +143,8 @@ TEST( MeshHec2dTest, simpleArea )
 
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 0.0, time );
+
+  EXPECT_EQ( std::string( "days" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   EXPECT_TRUE( compareDurationInHours( 0, time ) );
 
@@ -183,7 +185,7 @@ TEST( MeshHec2dTest, MultiAreas )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
@@ -219,7 +221,7 @@ TEST( MeshHec2dTest, MultiAreas )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water Surface" ), std::string( name ) );
@@ -256,6 +258,8 @@ TEST( MeshHec2dTest, MultiAreas )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 576.4375, min );
   EXPECT_DOUBLE_EQ( 706.2740478515625, max );
+
+  EXPECT_EQ( std::string( "days" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 60, time ) );
@@ -294,7 +298,7 @@ TEST( MeshHec2dTest, model_505 )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
@@ -327,7 +331,7 @@ TEST( MeshHec2dTest, model_505 )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water Surface" ), std::string( name ) );
@@ -361,6 +365,8 @@ TEST( MeshHec2dTest, model_505 )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_DOUBLE_EQ( 32, min );
   EXPECT_DOUBLE_EQ( 43.28509521484375, max );
+
+  EXPECT_EQ( std::string( "days" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( 0.083333335816860199, time ) );

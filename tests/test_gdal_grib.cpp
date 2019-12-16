@@ -23,7 +23,7 @@ TEST( MeshGdalGribTest, ScalarFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Primary wave mean period [s]" ), std::string( name ) );
@@ -50,6 +50,8 @@ TEST( MeshGdalGribTest, ScalarFile )
   double value = getValue( ds, 1600 );
   EXPECT_TRUE( compareDurationInHours( 15.34, value ) );
 
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
   EXPECT_TRUE( compareReferenceTime( g, "2016-03-01T06:00:00" ) );
 
   ds = MDAL_G_dataset( g, 1 );
@@ -72,7 +74,7 @@ TEST( MeshGdalGribTest, VectorFile )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "wind [m/s]" ), std::string( name ) );
@@ -102,6 +104,8 @@ TEST( MeshGdalGribTest, VectorFile )
   double valueY = getValueY( ds, 1600 );
   EXPECT_DOUBLE_EQ( 2.8200097656250001, valueY );
 
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
   EXPECT_TRUE( compareReferenceTime( g, "2016-03-01T06:00:00" ) );
 
   ds = MDAL_G_dataset( g, 1 );
@@ -127,7 +131,7 @@ TEST( MeshGdalGribTest, WithoutNODATA )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "flow" ), std::string( name ) );
@@ -157,6 +161,8 @@ TEST( MeshGdalGribTest, WithoutNODATA )
   double valueY = getValueY( ds, 1600 );
   EXPECT_DOUBLE_EQ( 1, valueY );
 
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
+
   EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
 
   ds = MDAL_G_dataset( g, 0 );
@@ -181,7 +187,7 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "10 metre wind [m/s]" ), std::string( name ) );
@@ -208,6 +214,8 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
 
   double value = getValue( ds, 1600 );
   EXPECT_DOUBLE_EQ( -0.818756103515625, value );
+
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   EXPECT_TRUE( compareReferenceTime( g, "2018-10-01T00:00:00" ) );
 

@@ -36,7 +36,7 @@ TEST( MeshGdalNetCDFTest, Indonesia )
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
-    ASSERT_EQ( 1, meta_count );
+    ASSERT_EQ( 2, meta_count );
 
     const char *name = MDAL_G_name( g );
     EXPECT_EQ( std::string( "Total cloud cover" ), std::string( name ) );
@@ -63,6 +63,8 @@ TEST( MeshGdalNetCDFTest, Indonesia )
 
     double value = getValue( ds, 50 );
     EXPECT_DOUBLE_EQ( 0.99988487698798889, value );
+
+    EXPECT_EQ( std::string( "hours" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
     EXPECT_TRUE( compareReferenceTime( g, "1900-01-01T00:00:00" ) );
 

@@ -113,7 +113,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "waterlevel" ), std::string( name ) );
@@ -155,7 +155,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "flow velocity in cell centre" ), std::string( name ) );
@@ -186,6 +186,8 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   EXPECT_DOUBLE_EQ( 8.4487915942199819e-14, max );
 
   EXPECT_TRUE( compareReferenceTime( g, "2014-01-01T00:00:00" ) );
+
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   double time = MDAL_D_time( ds );
   EXPECT_TRUE( compareDurationInHours( time, 0.22222222222 ) );
@@ -219,6 +221,8 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
   ASSERT_NE( ds, nullptr );
 
   EXPECT_TRUE( compareReferenceTime( g, "2014-01-01T00:00:00" ) );
+
+  EXPECT_EQ( std::string( "seconds" ), std::string( MDAL_G_TimeUnit( g ) ) ) ;
 
   ds = MDAL_G_dataset( g, 6 );
   double time = MDAL_D_time( ds );

@@ -32,6 +32,7 @@ namespace MDAL
       void parseGlobals( const metadata_hash &metadata ) override;
 
       MDAL::DateTime referenceTime() const override;
+      MDAL::RelativeTimestamp::Unit timeUnit() const override;
 
       RelativeTimestamp::Unit mTimeUnit;
       //! Take the first reference time parsed

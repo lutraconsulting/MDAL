@@ -135,6 +135,8 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
   }
 
   group->setStatistics( MDAL::calculateStatistics( group ) );
+  if ( group->getMetadata( "TIMEUNITS" ) == "" )
+    group->setTimeUnit( MDAL::RelativeTimestamp::unknown );
   mesh->datasetGroups.push_back( group );
   group.reset();
 }
@@ -214,6 +216,8 @@ void MDAL::DriverAsciiDat::loadNewFormat(
         EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
       }
       group->setStatistics( MDAL::calculateStatistics( group ) );
+      if ( group->getMetadata( "TIMEUNITS" ) == "" )
+        group->setTimeUnit( MDAL::RelativeTimestamp::unknown );
       mesh->datasetGroups.push_back( group );
       group.reset();
     }
@@ -242,7 +246,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
         EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat )
       }
 
-      group->setMetadata( "TIMEUNITS", items[1] );
+      group->setTimeUnit( MDAL::parseDurationTimeUnit( items[1] ) );
     }
     else if ( cardType == "TS" && items.size() >= 3 )
     {
@@ -258,7 +262,6 @@ void MDAL::DriverAsciiDat::loadNewFormat(
         bool hasStatus = ( toBool( items[1] ) );
         readVertexTimestep( mesh, group, t, isVector, hasStatus, in );
       }
-
     }
     else
     {
@@ -267,6 +270,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
       debug( str.str() );
     }
   }
+
 }
 
 size_t MDAL::DriverAsciiDat::maximumId( const MDAL::Mesh *mesh ) const
