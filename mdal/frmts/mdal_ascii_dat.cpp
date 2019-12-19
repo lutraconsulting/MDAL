@@ -44,7 +44,7 @@ bool MDAL::DriverAsciiDat::canReadDatasets( const std::string &uri )
 {
   std::ifstream in( uri, std::ifstream::in );
   std::string line;
-  if ( !std::getline( in, line ) )
+  if ( !MDAL::getHeaderLine( in, line ) )
   {
     return false;
   }
