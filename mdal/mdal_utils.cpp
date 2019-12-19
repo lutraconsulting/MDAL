@@ -772,3 +772,12 @@ MDAL::DateTime MDAL::parseCFReferenceTime( const std::string &timeInformation, c
 
   return MDAL::DateTime( year, month, day, hours, minutes, seconds, calendar );
 }
+
+bool MDAL::getHeaderLine( std::ifstream &stream, std::string &line )
+{
+  if ( !stream.is_open() ) return false;
+  char b[100] = "";
+  if ( ! stream.get( b, sizeof( b ) - 1, '\n' ) ) return false;
+  line = std::string( b );
+  return true;
+}
