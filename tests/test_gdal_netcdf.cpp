@@ -10,6 +10,72 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 
+TEST( MeshGdalNetCDFTest, OceanCurrents )
+{
+  std::string path = test_file( std::string( "/netcdf/Copernicus Ocean Currents Forecast Model/cmems_global-analysis-forecast-phy-001-024.nc" ) );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  double minX, maxX, minY, maxY;
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+  EXPECT_DOUBLE_EQ( -51, minX );
+  EXPECT_DOUBLE_EQ( -31, maxX );
+  EXPECT_DOUBLE_EQ( -30, minY );
+  EXPECT_DOUBLE_EQ( -15, maxY );
+
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Eulerian velocity (Navier-Stokes current)_depth:0.49402499" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+
+  ASSERT_EQ( 3, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 1 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_TRUE( MDAL_D_hasActiveFlagCapability( ds ) );
+  int active = getActive( ds, 144 );
+  EXPECT_EQ( 1, active );
+
+  active = getActive( ds, 143 );
+  EXPECT_EQ( 0, active );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 43621, count );
+
+  double value = getValueX( ds, 144 );
+  EXPECT_DOUBLE_EQ( -0.4306640625, value );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 0.0009765625, min );
+  EXPECT_DOUBLE_EQ( 0.86543495488269506, max );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1950-01-01T00:00:00" ) );
+
+  ds = MDAL_G_dataset( g, 0 );
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 613752.5, time ) );
+
+  MDAL_CloseMesh( m );
+}
+
 TEST( MeshGdalNetCDFTest, Indonesia )
 {
   std::vector<std::string> files;
