@@ -57,7 +57,8 @@ bool MDAL::DriverAsciiDat::canReadOldFormat( const std::string &line ) const
 {
   return MDAL::contains( line, "SCALAR" ) ||
          MDAL::contains( line, "VECTOR" ) ||
-         MDAL::contains( line, "TS" );
+         MDAL::contains( line, "TS" ) ||
+         MDAL::contains( line, "TIMEUNITS" );
 }
 
 bool MDAL::DriverAsciiDat::canReadNewFormat( const std::string &line ) const
@@ -85,7 +86,7 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
           );
   group->setIsScalar( !isVector );
   group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
-
+  MDAL::RelativeTimestamp::Unit timeUnits = MDAL::RelativeTimestamp::hours;
   do
   {
     // Replace tabs by spaces,
@@ -114,10 +115,14 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
     {
       // just ignore - we know the type from earlier...
     }
+    else if ( cardType == "TIMEUNITS" && items.size() >= 2 )
+    {
+      timeUnits = MDAL::parseDurationTimeUnit( items[1] );
+    }
     else if ( cardType == "TS" && items.size() >=  2 )
     {
       double rawTime = toDouble( items[ 1 ] );
-      MDAL::RelativeTimestamp t( rawTime, MDAL::RelativeTimestamp::hours );
+      MDAL::RelativeTimestamp t( rawTime, timeUnits );
       readVertexTimestep( mesh, group, t, isVector, false, in );
     }
     else

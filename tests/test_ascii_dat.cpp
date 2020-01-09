@@ -315,7 +315,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFile )
 
 TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarOldFile )
 {
-  for ( int i = 0; i < 3; ++i )
+  for ( int i = 0; i < 4; ++i )
   {
     std::string name = "quad_and_triangle_vertex_scalar_old" + std::to_string( i );
     MeshH m = mesh();
@@ -360,6 +360,19 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarOldFile )
 
     value = getValue( ds, 1 );
     EXPECT_DOUBLE_EQ( 2, value );
+
+    ds = MDAL_G_dataset( g, 1 );
+    double time = MDAL_D_time( ds );
+    if ( i == 3 )
+    {
+      // With timeunits
+      EXPECT_DOUBLE_EQ( time, 1.0 );
+    }
+    else
+    {
+      // default timeunits
+      EXPECT_DOUBLE_EQ( time, 3600.0 );
+    }
 
     MDAL_CloseMesh( m );
   }
