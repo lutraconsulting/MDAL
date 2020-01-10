@@ -48,9 +48,14 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.8.3   | 0.3.3   |
 | 3.10.0  | 0.3.3   |
 | 3.10.1  | 0.4.0   |
-| 3.12.x  | 0.5.x   |
+| 3.10.2  | 0.4.1   |
+| 3.12.0  | 0.5.0   |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
+
+# Backporting 
+
+We maintain the version of MDAL used in current QGIS LTR version. For any CRITICAL bugfixes (e.g. crashes, coredumps, regressions, data corruption) we want to backport the code to MDAL LTR version. To do this, label your pull request with label "backport release-XXX". Once pull request is merged, mdal-bot will automatically create a pull request to specified branch. Note that the pull request must be squashed to 1 commit for automatic backport.
 
 # Development
 
