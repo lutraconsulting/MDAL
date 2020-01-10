@@ -101,7 +101,7 @@ run ctest command in build directory `ctest -VV`
 format code:
 ```
 cd scripts
-./mdal_astyle.sh `find .. -name \*.h* -print -o -name \*.c* -print`
+./check_all.sh
 ```
 
 or use git pre-commit hook
