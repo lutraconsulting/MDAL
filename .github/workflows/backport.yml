@@ -15,6 +15,6 @@ jobs:
         uses: Gaurav0/backport@v1.0.24
         with:
           bot_username: mdal-bot
-          bot_token: 54-58-55-07-00-50-55-52-0c-57-54-02-0d-52-5f-00-51-04-56-56-52-04-0b-03-51-5e-05-50-53-01-0a-56-5a-01-53-06-57-53-05-03
+          bot_token: d3c50fedc8b2d960e4ff94b1a759a1ad31a6ea33
           bot_token_key: d9fa6c4c5c745af2ced27f8bef06f92ab3b6f1f6 
           github_token: ${{ secrets.GITHUB_TOKEN }}
