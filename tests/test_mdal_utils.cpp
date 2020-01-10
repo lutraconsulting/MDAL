@@ -71,6 +71,26 @@ TEST( MdalUtilsTest, SplitChar )
   }
 }
 
+TEST( MdalUtilsTest, TrimString )
+{
+  std::vector<SplitTestData> tests =
+  {
+    SplitTestData( "", {"", "", ""} ),
+    SplitTestData( " ", {"", "", ""} ),
+    SplitTestData( " a", {"a", " a", "a"} ),
+    SplitTestData( "a ", {"a", "a", "a "} ),
+    SplitTestData( " a ", {"a", " a", "a "} ),
+    SplitTestData( " a b ", {"a b", " a b", "a b "} ),
+    SplitTestData( "\na b ", {"a b", "\na b", "a b "} )
+  };
+  for ( const auto &test : tests )
+  {
+    EXPECT_EQ( test.mExpectedResult[0], MDAL::trim( test.mInput ) );
+    EXPECT_EQ( test.mExpectedResult[1], MDAL::rtrim( test.mInput ) );
+    EXPECT_EQ( test.mExpectedResult[2], MDAL::ltrim( test.mInput ) );
+  }
+}
+
 TEST( MdalUtilsTest, TimeParsing )
 {
   std::vector<std::pair<std::string, double>> tests =
