@@ -175,10 +175,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
 
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 0.502121734619141, time ) );
-
-    EXPECT_FALSE( hasReferenceTime( g ) );
-
-
+    EXPECT_TRUE( compareReferenceTime( g, "1990-01-01T00:00:00" ) );
   }
 
   // /////////////////////////////////
@@ -236,9 +233,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
 
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 0.667265041139391, time ) );
-
-    EXPECT_FALSE( hasReferenceTime( g ) );
-
+    EXPECT_TRUE( compareReferenceTime( g, "1990-01-01T00:00:00" ) );
   }
 
   // /////////////////////////////////
@@ -290,8 +285,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
 
     double time = MDAL_D_time( ds );
     EXPECT_TRUE( compareDurationInHours( 1.16755709277259, time ) );
-
-    EXPECT_FALSE( hasReferenceTime( g ) );
+    EXPECT_TRUE( compareReferenceTime( g, "1990-01-01T00:00:00" ) );
   }
 
   // Close mesh
@@ -357,8 +351,7 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
 
     double time = MDAL_D_time( ds );
     EXPECT_DOUBLE_EQ( 0, time );
-
-    EXPECT_FALSE( hasReferenceTime( g ) );
+    EXPECT_TRUE( compareReferenceTime( g, "1990-01-01T00:00:00" ) );
   }
 
 
