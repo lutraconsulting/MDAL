@@ -82,11 +82,16 @@ typedef void *DatasetH;
 typedef void *DriverH;
 typedef void *AveragingMethodH;
 
+typedef void ( *MDAL_LoggerCallback )( MDAL_Status status, const char* message );
+
 //! Returns MDAL version
 MDAL_EXPORT const char *MDAL_Version();
 
 //! Returns last status message
 MDAL_EXPORT MDAL_Status MDAL_LastStatus();
+
+//! Set callback for logging output
+MDAL_EXPORT void MDAL_SetLoggerCallback( MDAL_LoggerCallback callback );
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DRIVERS

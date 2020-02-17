@@ -7,6 +7,7 @@ SET(MDAL_SOURCES
   mdal_driver_manager.cpp
   mdal_data_model.cpp
   mdal_datetime.cpp
+  mdal_logger.cpp
   mdal_memory_data_model.cpp
   frmts/mdal_driver.cpp
   frmts/mdal_2dm.cpp
@@ -22,6 +23,7 @@ SET(MDAL_HEADERS
   mdal_driver_manager.hpp
   mdal_data_model.hpp
   mdal_datetime.hpp
+  mdal_logger.hpp
   mdal_memory_data_model.hpp
   frmts/mdal_driver.hpp
   frmts/mdal_2dm.hpp
