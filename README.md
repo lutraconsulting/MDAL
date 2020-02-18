@@ -6,9 +6,9 @@
 # MDAL
 Mesh Data Abstraction Library
 
-see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119)
-see [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158)
-see [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164)
+- see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119)
+- see [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158)
+- see [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164)
 
 ## Supported Formats
 
