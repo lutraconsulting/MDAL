@@ -448,6 +448,7 @@ void MDAL::DriverGdal::createMesh()
   mMesh.reset( new MemoryMesh(
                  name(),
                  vertices.size(),
+                 0,
                  faces.size(),
                  4, //maximum quads
                  computeExtent( vertices ),

@@ -436,6 +436,48 @@ void MDAL_VI_close( MeshVertexIteratorH iterator )
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
+/// MESH EDGES
+///////////////////////////////////////////////////////////////////////////////////////
+
+MeshEdgeIteratorH MDAL_M_edgeIterator( MeshH mesh )
+{
+  if ( !mesh )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return nullptr;
+  }
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  std::unique_ptr<MDAL::MeshEdgeIterator> it = m->readEdges();
+  return static_cast< MeshEdgeIteratorH >( it.release() );
+}
+
+int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIndices, int *endVertexIndices )
+{
+  if ( !iterator )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return 0;
+  }
+  MDAL::MeshEdgeIterator *it = static_cast< MDAL::MeshEdgeIterator * >( iterator );
+  size_t size = static_cast<size_t>( edgesCount );
+  if ( size == 0 )
+  {
+    return 0;
+  }
+  size_t ret = it->next( size, startVertexIndices, endVertexIndices );
+  return static_cast<int>( ret );
+}
+
+void MDAL_EI_close( MeshEdgeIteratorH iterator )
+{
+  if ( iterator )
+  {
+    MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
+    delete it;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
 /// MESH FACES
 ///////////////////////////////////////////////////////////////////////////////////////
 

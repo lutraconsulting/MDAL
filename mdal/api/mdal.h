@@ -76,6 +76,7 @@ enum MDAL_DataLocation
 
 typedef void *MeshH;
 typedef void *MeshVertexIteratorH;
+typedef void *MeshEdgeIteratorH;
 typedef void *MeshFaceIteratorH;
 typedef void *DatasetGroupH;
 typedef void *DatasetH;
@@ -207,6 +208,25 @@ MDAL_EXPORT int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, d
 
 //! Closes mesh data iterator, frees the memory
 MDAL_EXPORT void MDAL_VI_close( MeshVertexIteratorH iterator );
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// MESH EDGES
+///////////////////////////////////////////////////////////////////////////////////////
+
+//! Returns iterator to the mesh edges
+//! For some formats this may effectively load all edges in-memory until iterator is closed
+MDAL_EXPORT MeshEdgeIteratorH MDAL_M_edgeIterator( MeshH mesh );
+
+//! Returns edges from iterator for the mesh
+//! \param iterator mesh data iterator
+//! \param edgesCount maximum number or edges to be written to buffer
+//! \param startVertexIndices must be allocated to edgesCount items to store start vertex indices for edges
+//! \param endVertexIndices must be allocated to edgesCount items to store end vertex indices for edges
+//! \returns number of vertices written in the buffer
+MDAL_EXPORT int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIndices, int *endVertexIndices );
+
+//! Closes mesh data iterator, frees the memory
+MDAL_EXPORT void MDAL_EI_close( MeshEdgeIteratorH iterator );
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// MESH FACES

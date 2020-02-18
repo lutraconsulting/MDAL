@@ -402,6 +402,7 @@ void MDAL::DriverSelafin::createMesh(
     new MemoryMesh(
       "SELAFIN",
       nodes.size(),
+      0,
       elements.size(),
       3, //Triangles
       computeExtent( nodes ),

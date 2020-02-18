@@ -631,6 +631,7 @@ void MDAL::DriverHec2D::parseMesh(
     new MemoryMesh(
       name(),
       vertices.size(),
+      0,
       faces.size(),
       maxVerticesInFace,
       computeExtent( vertices ),

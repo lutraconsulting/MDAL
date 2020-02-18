@@ -29,6 +29,7 @@ MDAL::Mesh2dm::Mesh2dm( size_t verticesCount,
                         const std::map<size_t, size_t> vertexIDtoIndex )
   : MemoryMesh( DRIVER_NAME,
                 verticesCount,
+                0,
                 facesCount,
                 faceVerticesMaximumCount,
                 extent,

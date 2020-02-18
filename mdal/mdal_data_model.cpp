@@ -279,15 +279,16 @@ void MDAL::DatasetGroup::setIsScalar( bool isScalar )
   mIsScalar = isScalar;
 }
 
-MDAL::Mesh::Mesh(
-  const std::string &driverName,
-  size_t verticesCount,
-  size_t facesCount,
-  size_t faceVerticesMaximumCount,
-  MDAL::BBox extent,
-  const std::string &uri )
+MDAL::Mesh::Mesh( const std::string &driverName,
+                  size_t verticesCount,
+                  size_t edgesCount,
+                  size_t facesCount,
+                  size_t faceVerticesMaximumCount,
+                  MDAL::BBox extent,
+                  const std::string &uri )
   : mDriverName( driverName )
   , mVerticesCount( verticesCount )
+  , mEdgesCount( edgesCount )
   , mFacesCount( facesCount )
   , mFaceVerticesMaximumCount( faceVerticesMaximumCount )
   , mExtent( extent )
@@ -338,6 +339,11 @@ size_t MDAL::Mesh::verticesCount() const
   return mVerticesCount;
 }
 
+size_t MDAL::Mesh::edgesCount() const
+{
+  return mEdgesCount;
+}
+
 size_t MDAL::Mesh::facesCount() const
 {
   return mFacesCount;
@@ -366,3 +372,5 @@ size_t MDAL::Mesh::faceVerticesMaximumCount() const
 MDAL::MeshVertexIterator::~MeshVertexIterator() = default;
 
 MDAL::MeshFaceIterator::~MeshFaceIterator() = default;
+
+MDAL::MeshEdgeIterator::~MeshEdgeIterator() = default;

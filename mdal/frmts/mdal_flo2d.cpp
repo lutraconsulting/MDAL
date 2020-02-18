@@ -498,6 +498,7 @@ void MDAL::DriverFlo2D::createMesh( const std::vector<CellCenter> &cells, double
     new MemoryMesh(
       name(),
       vertices.size(),
+      0,
       faces.size(),
       4, //maximum quads
       computeExtent( vertices ),

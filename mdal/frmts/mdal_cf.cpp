@@ -405,6 +405,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
       new MemoryMesh(
         name(),
         vertices.size(),
+        0,
         faces.size(),
         mDimensions.size( mDimensions.MaxVerticesInFace ),
         computeExtent( vertices ),

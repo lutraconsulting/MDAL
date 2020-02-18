@@ -115,12 +115,14 @@ size_t MDAL::MemoryDataset2D::vectorData( size_t indexStart, size_t count, doubl
 
 MDAL::MemoryMesh::MemoryMesh( const std::string &driverName,
                               size_t verticesCount,
+                              size_t edgesCount,
                               size_t facesCount,
                               size_t faceVerticesMaximumCount,
                               MDAL::BBox extent,
                               const std::string &uri )
   : MDAL::Mesh( driverName,
                 verticesCount,
+                edgesCount,
                 facesCount,
                 faceVerticesMaximumCount,
                 extent,
@@ -131,6 +133,12 @@ MDAL::MemoryMesh::MemoryMesh( const std::string &driverName,
 std::unique_ptr<MDAL::MeshVertexIterator> MDAL::MemoryMesh::readVertices()
 {
   std::unique_ptr<MDAL::MeshVertexIterator> it( new MemoryMeshVertexIterator( this ) );
+  return it;
+}
+
+std::unique_ptr<MDAL::MeshEdgeIterator> MDAL::MemoryMesh::readEdges()
+{
+  std::unique_ptr<MDAL::MeshEdgeIterator> it( new MemoryMeshEdgeIterator( this ) );
   return it;
 }
 
@@ -145,7 +153,6 @@ MDAL::MemoryMesh::~MemoryMesh() = default;
 MDAL::MemoryMeshVertexIterator::MemoryMeshVertexIterator( const MDAL::MemoryMesh *mesh )
   : mMemoryMesh( mesh )
 {
-
 }
 
 MDAL::MemoryMeshVertexIterator::~MemoryMeshVertexIterator() = default;
@@ -182,6 +189,50 @@ size_t MDAL::MemoryMeshVertexIterator::next( size_t vertexCount, double *coordin
   }
 
   mLastVertexIndex += i;
+  return i;
+}
+
+MDAL::MemoryMeshEdgeIterator::MemoryMeshEdgeIterator( const MDAL::MemoryMesh *mesh )
+  : mMemoryMesh( mesh )
+{
+}
+
+MDAL::MemoryMeshEdgeIterator::~MemoryMeshEdgeIterator() = default;
+
+size_t MDAL::MemoryMeshEdgeIterator::next( size_t edgeCount,
+    int *startVertexIndices,
+    int *endVertexIndices )
+{
+  assert( mMemoryMesh );
+  assert( startVertexIndices );
+  assert( endVertexIndices );
+
+  size_t maxEdges = mMemoryMesh->edgesCount();
+
+  if ( edgeCount > maxEdges )
+    return 0;
+
+  if ( mLastEdgeIndex >= maxEdges )
+    return 0;
+
+  size_t i = 0;
+
+  while ( true )
+  {
+    if ( mLastEdgeIndex + i >= maxEdges )
+      break;
+
+    if ( i >= edgeCount )
+      break;
+
+    const Edge e = mMemoryMesh->edges[mLastEdgeIndex + i];
+    startVertexIndices[i] = e.startVertex;
+    endVertexIndices[i] = e.endVertex;
+
+    ++i;
+  }
+
+  mLastEdgeIndex += i;
   return i;
 }
 

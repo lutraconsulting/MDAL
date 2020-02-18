@@ -443,6 +443,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSWW::load(
       new MemoryMesh(
         name(),
         vertices.size(),
+        0,
         faces.size(),
         3, // triangles
         computeExtent( vertices ),
