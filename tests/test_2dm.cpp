@@ -26,6 +26,24 @@ TEST( Mesh2DMTest, WrongFile )
   EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
 }
 
+TEST( Mesh2DMTest, UnsuportedElements )
+{
+  std::string path = test_file( "/2dm/unsupported_elements.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_EQ( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
+}
+
+TEST( Mesh2DMTest, Mixed1D3D )
+{
+  std::string path = test_file( "/2dm/quad_and_line.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_EQ( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
+}
+
 TEST( Mesh2DMTest, MeshWithNumberingGaps )
 {
   //https://github.com/lutraconsulting/MDAL/issues/51
@@ -48,8 +66,9 @@ TEST( Mesh2DMTest, MeshWithUnorderedIds )
   EXPECT_EQ( m, nullptr );
 }
 
-void _test_QuadAndTriangleFile( const std::string  &path )
+TEST( Mesh2DMTest, QuadAndTriangleFile )
 {
+  std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -126,11 +145,81 @@ void _test_QuadAndTriangleFile( const std::string  &path )
   MDAL_CloseMesh( m );
 }
 
-TEST( Mesh2DMTest, QuadAndTriangleFile )
+TEST( Mesh2DMTest, LinesFile )
 {
-  std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
+  std::string path = test_file( "/2dm/lines.2dm" );
 
-  _test_QuadAndTriangleFile( path );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "2DM" );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 4 );
+  double x = getVertexXCoordinatesAt( m, 0 );
+  double y = getVertexYCoordinatesAt( m, 0 );
+  double z = getVertexZCoordinatesAt( m, 0 );
+  EXPECT_DOUBLE_EQ( 1000.0, x );
+  EXPECT_DOUBLE_EQ( 2000.0, y );
+  EXPECT_DOUBLE_EQ( 20.0, z );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 0, f_count );
+
+  int e_count = MDAL_M_edgeCount( m );
+  EXPECT_EQ( 3, e_count );
+
+  double minX, maxX, minY, maxY;
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+  EXPECT_DOUBLE_EQ( 1000, minX );
+  EXPECT_DOUBLE_EQ( 3000, maxX );
+  EXPECT_DOUBLE_EQ( 2000, minY );
+  EXPECT_DOUBLE_EQ( 3000, maxY );
+
+  std::vector<int> expectedStartVertexIndices = {1, 2, 3};
+  std::vector<int> expectedEndVertexIndices = {2, 3, 4};
+
+  std::vector<int> startVertexIndices;
+  std::vector<int> endVertexIndices;
+  getEdgeVertexIndices( m, e_count, startVertexIndices, endVertexIndices );
+
+  // Bed elevation dataset
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 4, count );
+
+  double value = getValue( ds, 1 );
+  EXPECT_DOUBLE_EQ( 30, value );
+
+  MDAL_CloseMesh( m );
 }
 
 TEST( Mesh2DMTest, RegularGridFile )
@@ -276,27 +365,23 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
 }
 
 
-TEST( Mesh2DMTest, SaveMeshToFile )
+TEST( Mesh2DMTest, Save2DMeshToFile )
 {
-  //test driver capability
-  EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( "2DM" ) ) );
-
-  //open a mesh
-  std::string pathSource = test_file( "/2dm/quad_and_triangle.2dm" );
-  MeshH meshToSave = MDAL_LoadMesh( pathSource.c_str() );
-
-  //save the mesh
-  std::string fileNameToSave = tmp_file( "/quad_and_triangle_saveTest.2dm" );
-  MDAL_SaveMesh( meshToSave, fileNameToSave.c_str(), "2DM" );
-
-  MDAL_CloseMesh( meshToSave );
-
-  //open the saved mesh and test it (same as QuadAndTriangleFile test)
-  _test_QuadAndTriangleFile( fileNameToSave );
-
-  std::remove( fileNameToSave.c_str() );
+  saveAndCompareMesh(
+    test_file( "/2dm/quad_and_triangle.2dm" ),
+    tmp_file( "/quad_and_triangle_saved.2dm" ),
+    "2DM"
+  );
 }
 
+TEST( Mesh2DMTest, Save1DMeshToFile )
+{
+  saveAndCompareMesh(
+    test_file( "/2dm/lines.2dm" ),
+    tmp_file( "/lines_saved.2dm" ),
+    "2DM"
+  );
+}
 
 int main( int argc, char **argv )
 {

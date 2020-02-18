@@ -246,6 +246,20 @@ int MDAL_M_vertexCount( MeshH mesh )
   return len;
 }
 
+
+int MDAL_M_edgeCount( MeshH mesh )
+{
+  if ( !mesh )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return 0;
+  }
+
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  int len = static_cast<int>( m->edgesCount() );
+  return len;
+}\
+
 int MDAL_M_faceCount( MeshH mesh )
 {
   if ( !mesh )

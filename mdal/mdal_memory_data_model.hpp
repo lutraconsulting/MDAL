@@ -29,8 +29,8 @@ namespace MDAL
 
   typedef struct
   {
-    int startVertex;
-    int endVertex;
+    size_t startVertex;
+    size_t endVertex;
   } Edge;
 
   typedef std::vector<size_t> Face;

@@ -116,6 +116,7 @@ int main( int argc, char *argv[] )
     std::cout << "Mesh loaded: OK" << std::endl;
     std::cout << "  Driver: " << MDAL_M_driverName( m ) <<  std::endl;
     std::cout << "  Vertex count: " << MDAL_M_vertexCount( m ) <<  std::endl;
+    std::cout << "  Edge count: " << MDAL_M_edgeCount( m ) <<  std::endl;
     std::cout << "  Face count: " << MDAL_M_faceCount( m ) << std::endl;
     std::string projection = MDAL_M_projection( m );
     if ( projection.empty() )

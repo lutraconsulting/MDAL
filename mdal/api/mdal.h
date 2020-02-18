@@ -150,6 +150,8 @@ MDAL_EXPORT const char *MDAL_M_projection( MeshH mesh );
 MDAL_EXPORT void MDAL_M_extent( MeshH mesh, double *minX, double *maxX, double *minY, double *maxY );
 //! Returns vertex count for the mesh
 MDAL_EXPORT int MDAL_M_vertexCount( MeshH mesh );
+//! Returns edge count for the mesh
+MDAL_EXPORT int MDAL_M_edgeCount( MeshH mesh );
 //! Returns face count for the mesh
 MDAL_EXPORT int MDAL_M_faceCount( MeshH mesh );
 //! Returns maximum number of vertices face can consist of, e.g. 4 for regular quad mesh

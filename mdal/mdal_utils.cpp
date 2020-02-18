@@ -553,7 +553,7 @@ void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertic
   if ( !mesh )
     return;
 
-  if ( 0 == mesh->facesCount() )
+  if ( 0 == mesh->verticesCount() )
     return;
 
   std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
