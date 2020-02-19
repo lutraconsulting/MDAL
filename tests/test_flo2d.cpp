@@ -373,18 +373,21 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 571 );
 
+  // the vertices are shifted by cell 1/2 size
+  // from numbers that are present in CADPTS.DAT
+  // file
   std::vector<double> expectedCoords =
   {
-    0.000,        0.000, 0.000,
-    100.000,       0.000, 0.000,
-    200.000,        0.000, 0.000,
-    300.000,      0.000, 0.000
+     50.0, -50.0, 0.000,
+     50.0,  50.0, 0.000,
+    -50.0,  50.0, 0.000,
+    -50.0, -50.0, 0.000
   };
   EXPECT_EQ( expectedCoords.size(), 4 * 3 );
 
   std::vector<double> coordinates = getCoordinates( m, 4 );
 
-  compareVectors( expectedCoords, coordinates );
+  EXPECT_TRUE( compareVectors( expectedCoords, coordinates ) );
 
   // ///////////
   // Faces
@@ -556,21 +559,15 @@ TEST( MeshFlo2dTest, basic )
 
     std::vector<double> expectedCoords =
     {
-      1.59, 3.00, 0.00,
-      2.59,  3.00, 0.00,
-      3.59,  3.00, 0.00,
-      1.59,  2.00, 0.00,
-      2.59,  2.00, 0.00,
-      3.59,  2.00, 0.00,
-      1.59, 1.00, 0.00,
-      2.59,  1.00, 0.00,
-      3.59, 1.00, 0.00
+      2.09, 2.50, 0.00,
+      2.09, 3.50, 0.00,
+      1.09, 3.50, 0.00,
     };
-    EXPECT_EQ( expectedCoords.size(), 9 * 3 );
+    EXPECT_EQ( expectedCoords.size(), 3 * 3 );
 
-    std::vector<double> coordinates = getCoordinates( m, 9 );
+    std::vector<double> coordinates = getCoordinates( m, 3 );
 
-    compareVectors( expectedCoords, coordinates );
+    EXPECT_TRUE( compareVectors( expectedCoords, coordinates ) );
 
     // ///////////
     // Faces

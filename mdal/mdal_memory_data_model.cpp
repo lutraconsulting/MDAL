@@ -165,7 +165,7 @@ size_t MDAL::MemoryMeshVertexIterator::next( size_t vertexCount, double *coordin
   size_t maxVertices = mMemoryMesh->verticesCount();
 
   if ( vertexCount > maxVertices )
-    return 0;
+    vertexCount = maxVertices;
 
   if ( mLastVertexIndex >= maxVertices )
     return 0;
@@ -210,7 +210,7 @@ size_t MDAL::MemoryMeshEdgeIterator::next( size_t edgeCount,
   size_t maxEdges = mMemoryMesh->edgesCount();
 
   if ( edgeCount > maxEdges )
-    return 0;
+    edgeCount = maxEdges;
 
   if ( mLastEdgeIndex >= maxEdges )
     return 0;

@@ -181,6 +181,13 @@ TEST( Mesh2DMTest, LinesFile )
   int e_count = MDAL_M_edgeCount( m );
   EXPECT_EQ( 3, e_count );
 
+  std::vector<int> startVertices;
+  std::vector<int> endVertices;
+  getEdgeVertexIndices( m, e_count, startVertices, endVertices );
+  EXPECT_TRUE( compareVectors( startVertices, {0, 1, 2} ) );
+  EXPECT_TRUE( compareVectors( endVertices, {1, 2, 3} ) );
+
+
   double minX, maxX, minY, maxY;
   MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
   EXPECT_DOUBLE_EQ( 1000, minX );

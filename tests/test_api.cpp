@@ -121,7 +121,7 @@ TEST( ApiTest, FacesApi )
                     static_cast<size_t>( MDAL_M_faceVerticesMaximumCount( m ) )
                   );
 
-    compareVectors( refIndices, indices );
+    EXPECT_TRUE( compareVectors( refIndices, indices ) );
   }
 
   {
@@ -132,7 +132,7 @@ TEST( ApiTest, FacesApi )
                     4 * 13
                   );
 
-    compareVectors( refIndices, indices );
+    EXPECT_TRUE( compareVectors( refIndices, indices ) );
   }
 
   {
@@ -143,7 +143,7 @@ TEST( ApiTest, FacesApi )
                     1000
                   );
 
-    compareVectors( refIndices, indices );
+    EXPECT_TRUE( compareVectors( refIndices, indices ) );
   }
   MDAL_CloseMesh( m );
 
@@ -203,7 +203,7 @@ TEST( ApiTest, VerticesApi )
                        13
                      );
 
-    compareVectors( refCoors, coords );
+    EXPECT_TRUE( compareVectors( refCoors, coords ) );
   }
 
   {
@@ -213,7 +213,7 @@ TEST( ApiTest, VerticesApi )
                        10000
                      );
 
-    compareVectors( refCoors, coords );
+    EXPECT_TRUE( compareVectors( refCoors, coords ) );
   }
   MDAL_CloseMesh( m );
 

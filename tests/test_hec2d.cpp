@@ -28,21 +28,16 @@ TEST( MeshHec2dTest, simpleArea )
 
   std::vector<double> expectedCoords =
   {
-    1.59, 3.00, 0.00,
-    2.59,  3.00, 0.00,
-    3.59,  3.00, 0.00,
-    1.59,  2.00, 0.00,
-    2.59,  2.00, 0.00,
-    3.59,  2.00, 0.00,
-    1.59, 1.00, 0.00,
-    2.59,  1.00, 0.00,
-    3.59, 1.00, 0.00
+    -5.5731e-06, 90.0, 0.00,
+    9.999988, 90.00000297, 0.00,
+    9.999988, 99.962230818, 0.00,
+    19.999988, 90.00000297, 0.00
   };
-  EXPECT_EQ( expectedCoords.size(), 9 * 3 );
+  EXPECT_EQ( expectedCoords.size(), 4 * 3 );
 
-  std::vector<double> coordinates = getCoordinates( m, 9 );
+  std::vector<double> coordinates = getCoordinates( m, 4 );
 
-  compareVectors( expectedCoords, coordinates );
+  EXPECT_TRUE( compareVectors( expectedCoords, coordinates ) );
 
   // ///////////
   // Faces

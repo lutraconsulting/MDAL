@@ -45,7 +45,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
 
   std::vector<double> coordinates = getCoordinates( m, 9 );
 
-  compareVectors( expectedCoords, coordinates );
+  EXPECT_TRUE( compareVectors( expectedCoords, coordinates ) );
 
   // ///////////
   // Faces
