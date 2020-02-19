@@ -5,7 +5,18 @@ matrix:
   include:
   - os: linux
     dist: xenial
+    env: LINUX_NATIVE=true
+  - os: linux
+    dist: xenial
+    env: LINUX_MEMCHECK=true
+  - os: linux
+    dist: xenial
+    env: LINUX_MINGW=true
+  - os: linux
+    dist: xenial
+    env: LINUX_COVERAGE=true
   - os: osx
+    osx_image: xcode11
   - os: windows
 
 env:

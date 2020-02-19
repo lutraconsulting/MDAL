@@ -20,4 +20,4 @@ make
 
 
 # https://github.com/lutraconsulting/MDAL/issues/35
-# ctest -VV --exclude-regex "mdal_gdal_netcdf_test"
+ctest -VV
