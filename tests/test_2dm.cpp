@@ -39,9 +39,18 @@ TEST( Mesh2DMTest, Mixed1D3D )
 {
   std::string path = test_file( "/2dm/quad_and_line.2dm" );
   MeshH m = MDAL_LoadMesh( path.c_str() );
-  EXPECT_EQ( m, nullptr );
+  EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
-  EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 5 );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 1, f_count );
+
+  int e_count = MDAL_M_edgeCount( m );
+  EXPECT_EQ( 1, e_count );
 }
 
 TEST( Mesh2DMTest, MeshWithNumberingGaps )

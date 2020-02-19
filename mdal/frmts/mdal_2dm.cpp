@@ -151,13 +151,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
     }
   }
 
-  if ( ( faceCount > 0 ) && ( edgesCount > 0 ) )
-  {
-    // we do not support mixed 1d and 2d meshes
-    if ( status ) *status = MDAL_Status::Err_InvalidData;
-    return nullptr;
-  }
-
   // Allocate memory
   Vertices vertices( vertexCount );
   Edges edges( edgesCount );

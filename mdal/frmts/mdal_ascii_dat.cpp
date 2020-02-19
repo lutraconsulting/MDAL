@@ -28,7 +28,8 @@ MDAL::DriverAsciiDat::DriverAsciiDat( ):
   Driver( "ASCII_DAT",
           "DAT",
           "*.dat",
-          Capability::ReadDatasets | Capability::WriteDatasetsOnFaces2D | Capability::WriteDatasetsOnVertices2D
+          Capability::ReadDatasets | Capability::WriteDatasetsOnFaces2D |
+          Capability::WriteDatasetsOnVertices2D | Capability::WriteDatasetsOnEdges
         )
 {
 }
@@ -150,14 +151,26 @@ void MDAL::DriverAsciiDat::loadNewFormat(
   MDAL_Status *status ) const
 {
   bool isVector = false;
+  MDAL_DataLocation dataLocation = MDAL_DataLocation::DataOnVertices2D;
   std::shared_ptr<DatasetGroup> group; // DAT outputs data
   std::string groupName( MDAL::baseName( mDatFile ) );
   std::string line;
   MDAL::DateTime referenceTime;
   // see if it contains face-centered results - supported by BASEMENT
-  bool faceCentered = false;
+  // or results defined on edges
   if ( contains( groupName, "_els" ) )
-    faceCentered = true;
+  {
+    if ( ( mesh->facesCount() > 0 ) && ( mesh->edgesCount() > 0 ) )
+    {
+      // unable to read for mixed 1D, 2D mesh
+      EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh )
+    }
+
+    if ( mesh->facesCount() > 0 )
+      dataLocation = MDAL_DataLocation::DataOnFaces2D;
+    else
+      dataLocation = MDAL_DataLocation::DataOnEdges;
+  }
 
   while ( std::getline( in, line ) )
   {
@@ -184,7 +197,8 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     else if ( cardType == "NC" && items.size() >= 2 )
     {
       size_t fileElemCount = toSizeT( items[1] );
-      if ( mesh->facesCount() != fileElemCount )
+      size_t elemCount = mesh->facesCount() + mesh->edgesCount();
+      if ( elemCount != fileElemCount )
         EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh )
       }
     else if ( cardType == "OBJTYPE" )
@@ -208,7 +222,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
                 groupName
               );
       group->setIsScalar( !isVector );
-      group->setDataLocation( faceCentered ? MDAL_DataLocation::DataOnFaces2D : MDAL_DataLocation::DataOnVertices2D );
+      group->setDataLocation( dataLocation );
       group->setReferenceTime( referenceTime );
     }
     else if ( cardType == "ENDDS" )
@@ -254,9 +268,9 @@ void MDAL::DriverAsciiDat::loadNewFormat(
       double rawTime = toDouble( items[2] );
       MDAL::RelativeTimestamp t( rawTime, MDAL::parseDurationTimeUnit( group->getMetadata( "TIMEUNITS" ) ) );
 
-      if ( faceCentered )
+      if ( dataLocation != MDAL_DataLocation::DataOnVertices2D )
       {
-        readFaceTimestep( mesh, group, t, isVector, in );
+        readElementTimestep( mesh, group, t, isVector, in );
       }
       else
       {
@@ -401,7 +415,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
   group->datasets.push_back( dataset );
 }
 
-void MDAL::DriverAsciiDat::readFaceTimestep(
+void MDAL::DriverAsciiDat::readElementTimestep(
   const MDAL::Mesh *mesh,
   std::shared_ptr<DatasetGroup> group,
   MDAL::RelativeTimestamp t,
@@ -410,11 +424,11 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
 {
   assert( group );
 
-  size_t faceCount = mesh->facesCount();
-
+  // element is either edge of face, mixed meshes are not supported
+  size_t elementCount = mesh->edgesCount() + mesh->facesCount();
   std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MDAL::MemoryDataset2D >( group.get() );
   dataset->setTime( t );
-  for ( size_t index = 0; index < faceCount; ++index )
+  for ( size_t index = 0; index < elementCount; ++index )
   {
     std::string line;
     std::getline( stream, line );
@@ -449,16 +463,23 @@ void MDAL::DriverAsciiDat::readFaceTimestep(
 bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
 {
   assert( ( group->dataLocation() == MDAL_DataLocation::DataOnFaces2D ) ||
-          ( group->dataLocation() == MDAL_DataLocation::DataOnVertices2D ) );
+          ( group->dataLocation() == MDAL_DataLocation::DataOnVertices2D ) ||
+          ( group->dataLocation() == MDAL_DataLocation::DataOnEdges ) );
 
+  const Mesh *mesh = group->mesh();
   const bool isScalar = group->isScalar();
-  const bool isOnVertices = group->dataLocation() == MDAL_DataLocation::DataOnVertices2D;
   std::string uri = group->uri();
 
-  if ( !MDAL::contains( uri, "_els" ) && isOnVertices == false )
+  if ( !MDAL::contains( uri, "_els" ) && group->dataLocation() != MDAL_DataLocation::DataOnVertices2D )
   {
-    // Should contain _els in name but it does not
+    // Should contain _els in name for edges/faces dataset but it does not
     uri.insert( uri.size() - 4, "_els" );
+  }
+
+  if ( ( mesh->facesCount() > 0 ) && ( mesh->edgesCount() > 0 ) )
+  {
+    // not possible to use for mixed 1D and 2D meshes
+    return true;
   }
 
   std::ofstream out( uri, std::ofstream::out );
@@ -468,9 +489,9 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
   if ( !out )
     return true; // Couldn't open the file
 
-  const Mesh *mesh = group->mesh();
+
   size_t nodeCount = mesh->verticesCount();
-  size_t elemCount = mesh->facesCount();
+  size_t elemCount = mesh->facesCount() + mesh->edgesCount();
 
   out << "DATASET\n";
   out << "OBJTYPE \"mesh2d\"\n";
@@ -497,7 +518,7 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
     const std::shared_ptr<MDAL::MemoryDataset2D> dataset
       = std::dynamic_pointer_cast<MDAL::MemoryDataset2D>( group->datasets[time_index] );
 
-    bool hasActiveStatus = isOnVertices && dataset->supportsActiveFlag();
+    bool hasActiveStatus = ( group->dataLocation() == MDAL_DataLocation::DataOnVertices2D ) && dataset->supportsActiveFlag();
     out << "TS " << hasActiveStatus << " " << std::to_string( dataset->time( RelativeTimestamp::hours ) ) << "\n";
 
     if ( hasActiveStatus )
@@ -510,7 +531,7 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
       }
     }
 
-    size_t valuesToWrite = isOnVertices ? nodeCount : elemCount;
+    size_t valuesToWrite = ( group->dataLocation() == MDAL_DataLocation::DataOnVertices2D ) ? nodeCount : elemCount;
 
     for ( size_t i = 0; i < valuesToWrite; ++i )
     {

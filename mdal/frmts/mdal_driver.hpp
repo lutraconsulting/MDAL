@@ -21,6 +21,7 @@ namespace MDAL
     WriteDatasetsOnVertices2D = 1 << 3, //! Can write datasets (groups) on MDAL_DataLocation::DataOnVertices2D
     WriteDatasetsOnFaces2D    = 1 << 4, //! Can write datasets (groups) on MDAL_DataLocation::DataOnFaces2D
     WriteDatasetsOnVolumes3D  = 1 << 5, //! Can write datasets (groups) on MDAL_DataLocation::DataOnVolumes3D
+    WriteDatasetsOnEdges      = 1 << 6, //! Can write datasets (groups) on MDAL_DataLocation::DataOnEdges
   };
 
   class Driver

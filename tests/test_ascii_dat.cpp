@@ -17,6 +17,14 @@ static MeshH mesh()
   return m;
 }
 
+static MeshH lines_mesh()
+{
+  std::string path = test_file( "/2dm/lines.2dm" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  return m;
+}
+
 TEST( MeshAsciiDatTest, MissingMesh )
 {
   MeshH m = nullptr;
@@ -45,6 +53,268 @@ TEST( MeshAsciiDatTest, WrongFile )
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
   EXPECT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+  MDAL_CloseMesh( m );
+}
+
+TEST( Mesh2DMTest, Mixed1D3D )
+{
+  std::string meshFile = test_file( "/2dm/quad_and_line.2dm" );
+  MeshH m = MDAL_LoadMesh( meshFile.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  // for mixed meshes, vertex datasets are supported
+  // we use the dataset from quad_and_triangle, since if the number of vertices
+  // and number of elements matches, the actual file is the same for both 1D and 2D
+  // data
+  std::string vertexPath = test_file( "/ascii_dat/quad_and_triangle_vertex_scalar.dat" );
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  // for mixed meshes, element datasets are not supported
+  std::string facePath = test_file( "/ascii_dat/quad_and_triangle_els_scalar.dat" );
+  MDAL_M_LoadDatasets( m, facePath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+}
+
+TEST( MeshAsciiDatTest, LinesFaceScalarFile )
+{
+  MeshH m = lines_mesh();
+  std::string path = test_file( "/ascii_dat/lines_els_scalar.dat" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 2, meta_count );
+
+  const char *key = MDAL_G_metadataKey( g, 0 );
+  EXPECT_EQ( std::string( "name" ), std::string( key ) );
+
+  const char *val = MDAL_G_metadataValue( g, 0 );
+  EXPECT_EQ( std::string( "EdgeScalarDataset" ), std::string( val ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnEdges );
+
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 3, count );
+
+  double value = getValue( ds, 0 );
+  EXPECT_DOUBLE_EQ( 1, value );
+
+  value = getValue( ds, 1 );
+  EXPECT_DOUBLE_EQ( 2, value );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 1, min );
+  EXPECT_DOUBLE_EQ( 3, max );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 1, min );
+  EXPECT_DOUBLE_EQ( 3, max );
+
+  double time = MDAL_D_time( ds );
+  EXPECT_DOUBLE_EQ( 1, time );
+
+  EXPECT_TRUE( compareReferenceTime( g,  "1950-01-01T00:00:00" ) );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshAsciiDatTest, LinesFaceVectorFile )
+{
+  MeshH m = lines_mesh();
+  std::string path = test_file( "/ascii_dat/lines_els_vector.dat" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 2, meta_count );
+
+  const char *key = MDAL_G_metadataKey( g, 0 );
+  EXPECT_EQ( std::string( "name" ), std::string( key ) );
+
+  const char *val = MDAL_G_metadataValue( g, 0 );
+  EXPECT_EQ( std::string( "EdgeVectorDataset" ), std::string( val ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnEdges );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 3, count );
+
+  double value = getValueX( ds, 0 );
+  EXPECT_DOUBLE_EQ( 1, value );
+
+  value = getValueY( ds, 0 );
+  EXPECT_DOUBLE_EQ( 1, value );
+
+  value = getValueX( ds, 1 );
+  EXPECT_DOUBLE_EQ( 2, value );
+
+  value = getValueY( ds, 1 );
+  EXPECT_DOUBLE_EQ( 2, value );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 1.4142135623730951, min );
+  EXPECT_DOUBLE_EQ( 4.2426406871192848, max );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 1.4142135623730951, min );
+  EXPECT_DOUBLE_EQ( 4.2426406871192848, max );
+
+  double time = MDAL_D_time( ds );
+  EXPECT_DOUBLE_EQ( 1, time );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1950-01-07T00:00:00" ) );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshAsciiDatTest, LinesVertexScalarFile )
+{
+  MeshH m = lines_mesh();
+  std::string path = test_file( "/ascii_dat/lines_vertex_scalar.dat" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 2, meta_count );
+
+  const char *key = MDAL_G_metadataKey( g, 0 );
+  EXPECT_EQ( std::string( "name" ), std::string( key ) );
+
+  const char *val = MDAL_G_metadataValue( g, 0 );
+  EXPECT_EQ( std::string( "VertexScalarDataset" ), std::string( val ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 4, count );
+
+  double value = getValue( ds, 0 );
+  EXPECT_DOUBLE_EQ( 1, value );
+
+  value = getValue( ds, 1 );
+  EXPECT_DOUBLE_EQ( 2, value );
+
+  MDAL_CloseMesh( m );
+}
+
+
+TEST( MeshAsciiDatTest, LinesVertexVectorFile )
+{
+  MeshH m = lines_mesh();
+  std::string path = test_file( "/ascii_dat/lines_vertex_vector.dat" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 2, meta_count );
+
+  const char *key = MDAL_G_metadataKey( g, 0 );
+  EXPECT_EQ( std::string( "name" ), std::string( key ) );
+
+  const char *val = MDAL_G_metadataValue( g, 0 );
+  EXPECT_EQ( std::string( "VertexVectorDataset" ), std::string( val ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 4, count );
+
+  double time = MDAL_D_time( ds );
+  EXPECT_DOUBLE_EQ( 0, time );
+
+  double value = getValueX( ds, 0 );
+  EXPECT_DOUBLE_EQ( 1, value );
+
+  value = getValueY( ds, 0 );
+  EXPECT_DOUBLE_EQ( 1, value );
+
+  value = getValueX( ds, 1 );
+  EXPECT_DOUBLE_EQ( 2, value );
+
+  value = getValueY( ds, 1 );
+  EXPECT_DOUBLE_EQ( 1, value );
+
   MDAL_CloseMesh( m );
 }
 
@@ -736,6 +1006,104 @@ TEST( MeshAsciiDatTest, WriteScalarFaceTest )
 
     int count = MDAL_D_valueCount( ds );
     ASSERT_EQ( 2, count );
+
+    double value = getValue( ds, 0 );
+    EXPECT_DOUBLE_EQ( 1, value );
+
+    MDAL_CloseMesh( m );
+  }
+}
+
+TEST( MeshAsciiDatTest, WriteScalarEdgeTest )
+{
+  std::string path = test_file( "/2dm/lines.2dm" );
+  std::string scalarPath = tmp_file( "/2dm_WriteScalarLinesTest_els.dat" );
+  std::vector<double> vals = {1, 2, 3};
+
+  // Create a new dat file
+  {
+
+    MeshH m = MDAL_LoadMesh( path.c_str() );
+    ASSERT_NE( m, nullptr );
+
+    ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+    DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
+    ASSERT_NE( driver, nullptr );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnEdges ) );
+
+    DatasetGroupH g = MDAL_M_addDatasetGroup(
+                        m,
+                        "scalarGrp",
+                        MDAL_DataLocation::DataOnEdges,
+                        true,
+                        driver,
+                        scalarPath.c_str()
+                      );
+    ASSERT_NE( g, nullptr );
+
+    ASSERT_EQ( MDAL_G_metadataCount( g ), 1 );
+    MDAL_G_setMetadata( g, "testkey", "testvalue" );
+    ASSERT_EQ( MDAL_G_metadataCount( g ), 2 );
+
+    MDAL_G_addDataset( g,
+                       0.0,
+                       vals.data(),
+                       nullptr
+                     );
+    MDAL_G_addDataset( g,
+                       1.0,
+                       vals.data(),
+                       nullptr
+                     );
+
+    ASSERT_TRUE( MDAL_G_isInEditMode( g ) );
+    MDAL_G_closeEditMode( g );
+    ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+    ASSERT_FALSE( MDAL_G_isInEditMode( g ) );
+    ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+    ASSERT_EQ( g, MDAL_D_group( MDAL_G_dataset( g, 0 ) ) );
+
+    MDAL_CloseMesh( m );
+  }
+
+  // Ok, now try to load it from the new
+  // file and test the
+  // values are there
+  {
+    MeshH m = MDAL_LoadMesh( path.c_str() );
+    ASSERT_NE( m, nullptr );
+    MDAL_M_LoadDatasets( m, scalarPath.c_str() );
+    MDAL_Status s = MDAL_LastStatus();
+    EXPECT_EQ( MDAL_Status::None, s );
+    ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 2, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "scalarGrp" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnEdges );
+
+    ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+    DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 3, count );
 
     double value = getValue( ds, 0 );
     EXPECT_DOUBLE_EQ( 1, value );

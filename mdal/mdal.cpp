@@ -961,7 +961,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
       }
-      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) )
+      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
@@ -974,7 +974,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
       }
-      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) )
+      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;

@@ -71,7 +71,9 @@ enum MDAL_DataLocation
   //! Data is defined on face centres of 2D mesh
   DataOnFaces2D,
   //! Data is defined on volume centres of 3D mesh
-  DataOnVolumes3D
+  DataOnVolumes3D,
+  //! Data is defined on edges
+  DataOnEdges
 };
 
 typedef void *MeshH;
@@ -367,6 +369,7 @@ MDAL_EXPORT int MDAL_D_maximumVerticalLevelCount( DatasetH dataset );
  * For dataset with data location DataOnVertices2D returns vertex count
  * For dataset with data location DataOnFaces2D returns face count
  * For dataset with data location DataOnVolumes3D returns volumes count
+ * For dataset with data location DataOnEdges returns edges count
  */
 MDAL_EXPORT int MDAL_D_valueCount( DatasetH dataset );
 

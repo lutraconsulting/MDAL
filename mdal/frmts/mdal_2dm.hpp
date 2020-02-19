@@ -63,9 +63,6 @@ namespace MDAL
    *
    * full specification here: https://www.xmswiki.com/wiki/SMS:2D_Mesh_Files_*.2dm
    *
-   * Also we do not support the mesh where 2D and 1D elements are mixed, so either E2L or
-   * E3T/E4Q elements must be present in the file.
-   *
    * Exception for the official specification is for recognition of cell-centered
    * elevation values supported by BASEMENT 3.x releases
    * If face definition has extra column, it is parsed and recognized as

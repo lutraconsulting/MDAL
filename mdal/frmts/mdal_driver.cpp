@@ -55,6 +55,8 @@ bool MDAL::Driver::hasWriteDatasetCapability( MDAL_DataLocation location ) const
       return hasCapability( MDAL::Capability::WriteDatasetsOnFaces2D );
     case MDAL_DataLocation::DataOnVolumes3D:
       return hasCapability( MDAL::Capability::WriteDatasetsOnVolumes3D );
+    case MDAL_DataLocation::DataOnEdges:
+      return hasCapability( MDAL::Capability::WriteDatasetsOnEdges );
     default:
       return false;
   }
