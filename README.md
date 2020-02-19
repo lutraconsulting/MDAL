@@ -50,8 +50,9 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.10.0  | 0.3.3   |
 | 3.10.1  | 0.4.0   |
 | 3.10.2  | 0.4.1   |
-| 3.12.0  | 0.5.0   |
-| 3.14.0  | 0.6.0   |
+| 3.10.3  | 0.4.2   |
+| 3.12.0  | 0.5.1   |
+| 3.14.0  | 0.6.x   |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
