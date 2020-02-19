@@ -23,9 +23,9 @@ size_t MDAL::Dataset::valuesCount() const
 
   switch ( location )
   {
-    case MDAL_DataLocation::DataOnVertices2D: return mesh()->verticesCount();
-    case MDAL_DataLocation::DataOnFaces2D: return mesh()->facesCount();
-    case MDAL_DataLocation::DataOnVolumes3D: return volumesCount();
+    case MDAL_DataLocation::DataOnVertices: return mesh()->verticesCount();
+    case MDAL_DataLocation::DataOnFaces: return mesh()->facesCount();
+    case MDAL_DataLocation::DataOnVolumes: return volumesCount();
     case MDAL_DataLocation::DataOnEdges: return mesh()->edgesCount();
     default: return 0;
   }

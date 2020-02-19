@@ -134,7 +134,7 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -211,7 +211,7 @@ TEST( Mesh2DMTest, LinesFile )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -318,7 +318,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -352,7 +352,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );

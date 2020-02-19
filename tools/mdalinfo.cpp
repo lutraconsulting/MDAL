@@ -22,9 +22,9 @@ void printDriverInfo( int index )
   std::string filters = MDAL_DR_filters( driver );
 
   bool saveMeshCapability = MDAL_DR_saveMeshCapability( driver );
-  bool writeFaceDatasetsCapability = MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces2D );
-  bool writeVerticesDatasetsCapability = MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D );
-  bool writeVolumesDatasetsCapability = MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVolumes3D );
+  bool writeFaceDatasetsCapability = MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces );
+  bool writeVerticesDatasetsCapability = MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices );
+  bool writeVolumesDatasetsCapability = MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVolumes );
   std::string writeFlag;
   if ( saveMeshCapability )
     writeFlag += " -Wmesh-";
@@ -159,13 +159,13 @@ int main( int argc, char *argv[] )
       std::string definedOn;
       switch ( MDAL_G_dataLocation( group ) )
       {
-        case MDAL_DataLocation::DataOnFaces2D:
+        case MDAL_DataLocation::DataOnFaces:
           definedOn = "faces";
           break;
-        case MDAL_DataLocation::DataOnVertices2D:
+        case MDAL_DataLocation::DataOnVertices:
           definedOn = "vertices";
           break;
-        case MDAL_DataLocation::DataOnVolumes3D:
+        case MDAL_DataLocation::DataOnVolumes:
           definedOn = "volumes";
           break;
         default:

@@ -233,7 +233,7 @@ void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
                                           mFileName,
                                           datasetName
                                         );
-  group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+  group->setDataLocation( MDAL_DataLocation::DataOnFaces );
   group->setIsScalar( true );
   group->setReferenceTime( referenceTime );
 
@@ -330,7 +330,7 @@ std::shared_ptr<MDAL::MemoryDataset2D> MDAL::DriverHec2D::readElemOutput( const 
                                           mFileName,
                                           datasetName
                                         );
-  group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+  group->setDataLocation( MDAL_DataLocation::DataOnFaces );
   group->setIsScalar( true );
   group->setReferenceTime( referenceTime );
 

@@ -464,7 +464,7 @@ void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names,
                 mMesh->uri(),
                 var_name
               );
-      group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
+      group->setDataLocation( MDAL_DataLocation::DataOnVertices );
       group->setIsScalar( !is_vector );
 
       mMesh->datasetGroups.push_back( group );

@@ -39,7 +39,7 @@ TEST( ApiTest, DriversApi )
   EXPECT_EQ( MDAL_driverFromIndex( MDAL_driverCount() ), nullptr );
   EXPECT_EQ( MDAL_driverFromName( "invaliddrivername" ), nullptr );
   EXPECT_FALSE( MDAL_DR_meshLoadCapability( nullptr ) );
-  EXPECT_FALSE( MDAL_DR_writeDatasetsCapability( nullptr, MDAL_DataLocation::DataOnVertices2D ) );
+  EXPECT_FALSE( MDAL_DR_writeDatasetsCapability( nullptr, MDAL_DataLocation::DataOnVertices ) );
   EXPECT_EQ( MDAL_DR_longName( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_DR_name( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_DR_filters( nullptr ), std::string( "" ) );
@@ -59,8 +59,8 @@ TEST( ApiTest, MeshApi )
   MDAL_M_LoadDatasets( nullptr, nullptr );
   EXPECT_EQ( MDAL_M_datasetGroupCount( nullptr ), 0 );
   EXPECT_EQ( MDAL_M_datasetGroup( nullptr, 0 ), nullptr );
-  EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, MDAL_DataLocation::DataOnVertices2D, true, nullptr, nullptr ), nullptr );
-  EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, MDAL_DataLocation::DataOnVolumes3D, true, nullptr, nullptr ), nullptr );
+  EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, MDAL_DataLocation::DataOnVertices, true, nullptr, nullptr ), nullptr );
+  EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, MDAL_DataLocation::DataOnVolumes, true, nullptr, nullptr ), nullptr );
   EXPECT_EQ( MDAL_M_driverName( nullptr ), nullptr );
 }
 

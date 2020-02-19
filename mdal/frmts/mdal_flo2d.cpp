@@ -84,7 +84,7 @@ void MDAL::DriverFlo2D::addStaticDataset(
                                           datFileName,
                                           groupName
                                         );
-  group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+  group->setDataLocation( MDAL_DataLocation::DataOnFaces );
   group->setIsScalar( true );
 
   std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
@@ -196,7 +196,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
         datFileName,
         "Depth"
       );
-  depthDsGroup->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+  depthDsGroup->setDataLocation( MDAL_DataLocation::DataOnFaces );
   depthDsGroup->setIsScalar( true );
 
 
@@ -206,7 +206,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
         datFileName,
         "Water Level"
       );
-  waterLevelDsGroup->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+  waterLevelDsGroup->setDataLocation( MDAL_DataLocation::DataOnFaces );
   waterLevelDsGroup->setIsScalar( true );
 
   std::shared_ptr<DatasetGroup> flowDsGroup = std::make_shared< DatasetGroup >(
@@ -215,7 +215,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
         datFileName,
         "Velocity"
       );
-  flowDsGroup->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+  flowDsGroup->setDataLocation( MDAL_DataLocation::DataOnFaces );
   flowDsGroup->setIsScalar( false );
 
   std::shared_ptr<MDAL::MemoryDataset2D> flowDataset;
@@ -568,7 +568,7 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
                                          timedepFileName,
                                          grpName
                                        );
-    ds->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+    ds->setDataLocation( MDAL_DataLocation::DataOnFaces );
     ds->setIsScalar( !isVector );
 
     for ( size_t ts = 0; ts < timesteps; ++ts )
@@ -626,7 +626,7 @@ MDAL::DriverFlo2D::DriverFlo2D()
       "FLO2D",
       "Flo2D",
       "*.nc",
-      Capability::ReadMesh | Capability::ReadDatasets | Capability::WriteDatasetsOnFaces2D )
+      Capability::ReadMesh | Capability::ReadDatasets | Capability::WriteDatasetsOnFaces )
 {
 
 }
@@ -771,7 +771,7 @@ bool MDAL::DriverFlo2D::saveNewHDF5File( DatasetGroup *dsGroup )
 
 bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup, HdfGroup &groupTNOR )
 {
-  assert( dsGroup->dataLocation() == MDAL_DataLocation::DataOnFaces2D );
+  assert( dsGroup->dataLocation() == MDAL_DataLocation::DataOnFaces );
 
   HdfDataType dtMaxString = HdfDataType::createString();
   std::string dsGroupName = dsGroup->name();
@@ -872,7 +872,7 @@ bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup,
 
 bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
 {
-  if ( !group || ( group->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) )
+  if ( !group || ( group->dataLocation() != MDAL_DataLocation::DataOnFaces ) )
   {
     MDAL::debug( "flo-2d can store only 2D face datasets" );
     return true;

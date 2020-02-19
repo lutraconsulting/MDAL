@@ -47,22 +47,22 @@ namespace MDAL
 
       size_t valuesCount() const;
 
-      //! For DataOnVertices2D or DataOnFaces2D
+      //! For DataOnVertices or DataOnFaces
       virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) = 0;
-      //! For DataOnVertices2D or DataOnFaces2D
+      //! For DataOnVertices or DataOnFaces
       virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) = 0;
       //! For drivers that supports it, see supportsActiveFlag()
       virtual size_t activeData( size_t indexStart, size_t count, int *buffer );
 
-      //! For DataOnVolumes3D
+      //! For DataOnVolumes
       virtual size_t verticalLevelCountData( size_t indexStart, size_t count, int *buffer ) = 0;
-      //! For DataOnVolumes3D
+      //! For DataOnVolumes
       virtual size_t verticalLevelData( size_t indexStart, size_t count, double *buffer ) = 0;
-      //! For DataOnVolumes3D
+      //! For DataOnVolumes
       virtual size_t faceToVolumeData( size_t indexStart, size_t count, int *buffer ) = 0;
-      //! For DataOnVolumes3D
+      //! For DataOnVolumes
       virtual size_t scalarVolumesData( size_t indexStart, size_t count, double *buffer ) = 0;
-      //! For DataOnVolumes3D
+      //! For DataOnVolumes
       virtual size_t vectorVolumesData( size_t indexStart, size_t count, double *buffer ) = 0;
 
       virtual size_t volumesCount() const = 0;
@@ -185,7 +185,7 @@ namespace MDAL
       const std::string mDriverName;
       Mesh *mParent = nullptr;
       bool mIsScalar = true;
-      MDAL_DataLocation mDataLocation = MDAL_DataLocation::DataOnVertices2D;
+      MDAL_DataLocation mDataLocation = MDAL_DataLocation::DataOnVertices;
       std::string mUri; // file/uri from where it came
       Statistics mStatistics;
       DateTime mReferenceTime;

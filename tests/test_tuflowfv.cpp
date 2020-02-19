@@ -65,7 +65,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -123,7 +123,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes3D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes );
 
     ASSERT_EQ( 37, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -195,7 +195,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( false, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes3D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes );
 
     ASSERT_EQ( 37, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 4 );
@@ -253,7 +253,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 37, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 7 );
@@ -334,7 +334,7 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes3D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );

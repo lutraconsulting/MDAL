@@ -740,13 +740,13 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *valu
     return nullptr;
   }
 
-  if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes3D )
+  if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes )
   {
     sLastStatus = MDAL_Status::Err_MissingDriverCapability;
     return nullptr;
   }
 
-  if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices2D )
+  if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleDataset;
     return nullptr;
@@ -961,7 +961,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
       }
-      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
+      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
@@ -974,7 +974,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
       }
-      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
+      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
@@ -990,7 +990,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = m->facesCount();
       break;
     case MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
@@ -998,7 +998,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = m->facesCount();
       break;
     case MDAL_DataType::VERTICAL_LEVEL_DOUBLE:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
@@ -1006,7 +1006,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = m->facesCount() + d->volumesCount();
       break;
     case MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
@@ -1014,7 +1014,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = m->facesCount();
       break;
     case MDAL_DataType::SCALAR_VOLUMES_DOUBLE:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;
@@ -1027,7 +1027,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = d->volumesCount();
       break;
     case MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         sLastStatus = MDAL_Status::Err_IncompatibleDataset;
         return 0;

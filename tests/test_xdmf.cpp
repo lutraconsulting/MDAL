@@ -37,7 +37,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 2 );
@@ -84,7 +84,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     EXPECT_EQ( false, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 2 );
@@ -152,7 +152,7 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -199,7 +199,7 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -246,7 +246,7 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -291,7 +291,7 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -353,7 +353,7 @@ TEST( XdmfTest, Basement3SimpleChannel )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -417,7 +417,7 @@ TEST( XdmfTest, Basement3SimpleGeometry )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -481,7 +481,7 @@ TEST( XdmfTest, Simple )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 21, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 2 );
@@ -538,7 +538,7 @@ TEST( XdmfTest, Simple )
     EXPECT_EQ( false, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 21, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 2 );

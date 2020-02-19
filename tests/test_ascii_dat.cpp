@@ -237,7 +237,7 @@ TEST( MeshAsciiDatTest, LinesVertexScalarFile )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -286,7 +286,7 @@ TEST( MeshAsciiDatTest, LinesVertexVectorFile )
   EXPECT_EQ( false, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -346,7 +346,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFileWithNumberingGaps )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
@@ -427,7 +427,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFile )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
@@ -492,7 +492,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceVectorFile )
   EXPECT_EQ( false, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -560,7 +560,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFile )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -611,7 +611,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarOldFile )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -673,7 +673,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexScalarFileWithTabs )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -721,7 +721,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorFile )
   EXPECT_EQ( false, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -778,7 +778,7 @@ TEST( MeshAsciiDatTest, QuadAndTriangleVertexVectorOldFile )
   EXPECT_EQ( false, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -827,12 +827,12 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
-                        MDAL_DataLocation::DataOnVertices2D,
+                        MDAL_DataLocation::DataOnVertices,
                         true,
                         driver,
                         scalarPath.c_str()
@@ -888,7 +888,7 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -932,12 +932,12 @@ TEST( MeshAsciiDatTest, WriteScalarFaceTest )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces2D ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
-                        MDAL_DataLocation::DataOnFaces2D,
+                        MDAL_DataLocation::DataOnFaces,
                         true,
                         driver,
                         scalarPath.c_str()
@@ -993,7 +993,7 @@ TEST( MeshAsciiDatTest, WriteScalarFaceTest )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -1129,12 +1129,12 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTest )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "vectorGrp",
-                        MDAL_DataLocation::DataOnVertices2D,
+                        MDAL_DataLocation::DataOnVertices,
                         false,
                         driver,
                         vectorPath.c_str()
@@ -1186,7 +1186,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTest )
     EXPECT_EQ( false, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -1227,12 +1227,12 @@ TEST( MeshAsciiDatTest, WriteVectorFaceTest )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces2D ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "vectorGrp",
-                        MDAL_DataLocation::DataOnFaces2D,
+                        MDAL_DataLocation::DataOnFaces,
                         false,
                         driver,
                         vectorPath.c_str()
@@ -1284,7 +1284,7 @@ TEST( MeshAsciiDatTest, WriteVectorFaceTest )
     EXPECT_EQ( false, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -1324,12 +1324,12 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTestNoActive )
 
     DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices ) );
 
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "vectorGrp",
-                        MDAL_DataLocation::DataOnVertices2D,
+                        MDAL_DataLocation::DataOnVertices,
                         false,
                         driver,
                         vectorPath.c_str()
@@ -1381,7 +1381,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTestNoActive )
     EXPECT_EQ( false, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );

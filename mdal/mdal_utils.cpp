@@ -492,7 +492,7 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
     return ret;
 
   bool isVector = !dataset->group()->isScalar();
-  bool is3D = dataset->group()->dataLocation() == MDAL_DataLocation::DataOnVolumes3D;
+  bool is3D = dataset->group()->dataLocation() == MDAL_DataLocation::DataOnVolumes;
   size_t bufLen = 2000;
   std::vector<double> buffer( isVector ? bufLen * 2 : bufLen );
 
@@ -562,7 +562,7 @@ void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertic
                                           mesh->uri(),
                                           "Bed Elevation"
                                         );
-  group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
+  group->setDataLocation( MDAL_DataLocation::DataOnVertices );
   group->setIsScalar( true );
 
   std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
@@ -598,7 +598,7 @@ void MDAL::addFaceScalarDatasetGroup( MDAL::Mesh *mesh,
                                           mesh->uri(),
                                           name
                                         );
-  group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+  group->setDataLocation( MDAL_DataLocation::DataOnFaces );
   group->setIsScalar( true );
 
   std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );

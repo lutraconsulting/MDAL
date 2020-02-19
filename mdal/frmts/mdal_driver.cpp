@@ -49,12 +49,12 @@ bool MDAL::Driver::hasWriteDatasetCapability( MDAL_DataLocation location ) const
 {
   switch ( location )
   {
-    case MDAL_DataLocation::DataOnVertices2D:
-      return hasCapability( MDAL::Capability::WriteDatasetsOnVertices2D );
-    case MDAL_DataLocation::DataOnFaces2D:
-      return hasCapability( MDAL::Capability::WriteDatasetsOnFaces2D );
-    case MDAL_DataLocation::DataOnVolumes3D:
-      return hasCapability( MDAL::Capability::WriteDatasetsOnVolumes3D );
+    case MDAL_DataLocation::DataOnVertices:
+      return hasCapability( MDAL::Capability::WriteDatasetsOnVertices );
+    case MDAL_DataLocation::DataOnFaces:
+      return hasCapability( MDAL::Capability::WriteDatasetsOnFaces );
+    case MDAL_DataLocation::DataOnVolumes:
+      return hasCapability( MDAL::Capability::WriteDatasetsOnVolumes );
     case MDAL_DataLocation::DataOnEdges:
       return hasCapability( MDAL::Capability::WriteDatasetsOnEdges );
     default:

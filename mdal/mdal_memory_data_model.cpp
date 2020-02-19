@@ -19,7 +19,7 @@ MDAL::MemoryDataset2D::MemoryDataset2D( MDAL::DatasetGroup *grp, bool hasActiveF
   setSupportsActiveFlag( hasActiveFlag );
   if ( hasActiveFlag )
   {
-    assert( grp->dataLocation() == MDAL_DataLocation::DataOnVertices2D );
+    assert( grp->dataLocation() == MDAL_DataLocation::DataOnVertices );
     mActive = std::vector<int>( mesh()->facesCount(), 1 );
   }
 }
@@ -43,7 +43,7 @@ void MDAL::MemoryDataset2D::activateFaces( MDAL::MemoryMesh *mesh )
 {
   assert( mesh );
   assert( supportsActiveFlag() );
-  assert( group()->dataLocation() == MDAL_DataLocation::DataOnVertices2D );
+  assert( group()->dataLocation() == MDAL_DataLocation::DataOnVertices );
 
   bool isScalar = group()->isScalar();
 

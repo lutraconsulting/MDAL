@@ -78,7 +78,7 @@ TEST( MeshUgridTest, DFlow11Manzese )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -174,7 +174,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 13, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -252,7 +252,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 45, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -335,7 +335,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 23, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -380,7 +380,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   EXPECT_EQ( false, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 23, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 20 );
@@ -473,7 +473,7 @@ TEST( MeshUgridTest, ADCIRC )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -518,7 +518,7 @@ TEST( MeshUgridTest, ADCIRC )
   EXPECT_EQ( false, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 0 );

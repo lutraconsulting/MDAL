@@ -83,7 +83,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -122,7 +122,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   EXPECT_EQ( true, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 301, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 0 );
@@ -164,7 +164,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   EXPECT_EQ( false, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 301, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 80 );
