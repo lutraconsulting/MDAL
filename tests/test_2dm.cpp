@@ -51,6 +51,8 @@ TEST( Mesh2DMTest, Mixed1D3D )
 
   int e_count = MDAL_M_edgeCount( m );
   EXPECT_EQ( 1, e_count );
+
+  MDAL_CloseMesh( m );
 }
 
 TEST( Mesh2DMTest, MeshWithNumberingGaps )

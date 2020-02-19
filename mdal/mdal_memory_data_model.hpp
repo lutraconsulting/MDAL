@@ -23,7 +23,7 @@ namespace MDAL
   {
     double x;
     double y;
-    double z; // Bed elevation
+    double z = std::numeric_limits<double>::quiet_NaN(); // Bed elevation
 
   } Vertex;
 
