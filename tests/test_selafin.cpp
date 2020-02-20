@@ -30,8 +30,20 @@ TEST( MeshSLFTest, MalpassetGeometry )
   // ///////////
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 13541 );
+  double x = getVertexXCoordinatesAt( m, 0 );
+  double y = getVertexYCoordinatesAt( m, 0 );
   double z = getVertexZCoordinatesAt( m, 0 );
+  EXPECT_DOUBLE_EQ( 5905.615234375, x );
+  EXPECT_DOUBLE_EQ( 4695.9560546875, y );
   EXPECT_DOUBLE_EQ( 0.0, z );
+
+  x = getVertexXCoordinatesAt( m, 1000 );
+  y = getVertexYCoordinatesAt( m, 1000 );
+  z = getVertexZCoordinatesAt( m, 1000 );
+  EXPECT_DOUBLE_EQ( 16275.708984375, x );
+  EXPECT_DOUBLE_EQ( -936.93072509765625, y );
+  EXPECT_DOUBLE_EQ( 0.0, z );
+
   // ///////////
   // Faces
   // ///////////
@@ -41,7 +53,14 @@ TEST( MeshSLFTest, MalpassetGeometry )
   // test face 1
   int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( 3, f_v_count ); //only triangles!
+  int f_v = getFaceVerticesIndexAt( m, 100, 0 );
+  EXPECT_EQ( 6807, f_v );
+  f_v = getFaceVerticesIndexAt( m, 100, 1 );
+  EXPECT_EQ( 6277, f_v ); \
+  f_v = getFaceVerticesIndexAt( m, 100, 2 );
+  EXPECT_EQ( 6811, f_v );
 
+  // Datasets
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
   DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
