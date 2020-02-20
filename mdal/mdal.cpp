@@ -31,7 +31,7 @@ MDAL_Status MDAL_LastStatus()
 
 void MDAL_SetLoggerCallback( MDAL_LoggerCallback callback )
 {
-  MDAL::Log::Logger::getInstance().setCallback( callback );
+  MDAL::Log::setLoggerCallback( callback );
 }
 
 // helper to return string data - without having to deal with memory too much.
@@ -57,7 +57,8 @@ DriverH MDAL_driverFromIndex( int index )
 {
   if ( index < 0 )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+//    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "There is no such driver with index " + std::to_string(index));
     return nullptr;
   }
 

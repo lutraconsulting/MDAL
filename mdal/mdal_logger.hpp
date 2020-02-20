@@ -3,8 +3,8 @@
  Copyright (C) 2020 Tomas Mizera (tomas.mizera2 at gmail dot com)
 */
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef MDAL_LOGGER_H
+#define MDAL_LOGGER_H
 
 #include <string>
 
@@ -14,35 +14,16 @@ namespace MDAL
 {
   namespace Log
   {
-    static MDAL_Status sLastStatus;
+    void error( MDAL_Status status, std::string mssg );
 
-    void error( MDAL_Status status );
-    void warning( MDAL_Status status );
+    void warning( MDAL_Status status, std::string mssg );
 
-    MDAL_Status getLastStatus() { return sLastStatus; }
-    void resetLastStatus() { sLastStatus = MDAL_Status::None; }
+    MDAL_Status getLastStatus();
 
-    class Logger
-    {
-    public:
-      static Logger& getInstance() {
-        static Logger instance;
-        return instance;
-      }
+    void resetLastStatus();
 
-      void operator= ( const Logger & ) = delete;
-      Logger( const Logger & ) = delete;
-
-      void init();
-      void log( MDAL_Status status, std::string message );
-      void setCallback( MDAL_LoggerCallback callback );
-
-    private:
-      Logger();
-
-      MDAL_LoggerCallback mLoggerCallback;
-    };
+    void setLoggerCallback( MDAL_LoggerCallback callback );
   }
 }
 
-#endif // LOGGER_H
+#endif // MDAL_LOGGER_H

@@ -15,6 +15,7 @@
 
 #include <algorithm>
 
+#include "mdal.h"
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
 #include "mdal_datetime.hpp"
@@ -159,5 +160,9 @@ namespace MDAL
   //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
   MDAL::DateTime parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
 
+  //! TODO: documentation
+  MDAL_LoggerCallback setDefaultLoggerCallback();
+
+  void _standardStdout( MDAL_Status status, const char* mssg );
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

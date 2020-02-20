@@ -59,6 +59,14 @@ enum MDAL_Status
   Warn_NodeNotUnique
 };
 
+/* Log levels */
+enum MDAL_LogLevel
+{
+  Error,
+  Warn,
+  Debug
+};
+
 /**
  * Specifies where the data is defined
  */
@@ -82,7 +90,7 @@ typedef void *DatasetH;
 typedef void *DriverH;
 typedef void *AveragingMethodH;
 
-typedef void ( *MDAL_LoggerCallback )( MDAL_Status status, const char* message );
+typedef void ( *MDAL_LoggerCallback )( MDAL_LogLevel logLevel,MDAL_Status status, const char* message );
 
 //! Returns MDAL version
 MDAL_EXPORT const char *MDAL_Version();
@@ -91,6 +99,8 @@ MDAL_EXPORT const char *MDAL_Version();
 MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 
 //! Set callback for logging output
+//! if callback = nullptr avoids logs
+//! TODO: say that it defaultly outputs to stdout
 MDAL_EXPORT void MDAL_SetLoggerCallback( MDAL_LoggerCallback callback );
 
 ///////////////////////////////////////////////////////////////////////////////////////
