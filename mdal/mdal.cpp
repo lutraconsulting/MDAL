@@ -57,7 +57,6 @@ DriverH MDAL_driverFromIndex( int index )
 {
   if ( index < 0 )
   {
-//    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
     MDAL::Log::error( MDAL_Status::Err_MissingDriver, "There is no such driver with index " + std::to_string( index ) );
     return nullptr;
   }
@@ -78,7 +77,7 @@ bool MDAL_DR_meshLoadCapability( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
     return false;
   }
 
@@ -90,7 +89,7 @@ bool MDAL_DR_writeDatasetsCapability( DriverH driver, MDAL_DataLocation location
 {
   if ( !driver )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
     return false;
   }
 
@@ -103,7 +102,7 @@ bool MDAL_DR_saveMeshCapability( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
     return false;
   }
 
@@ -115,7 +114,7 @@ const char *MDAL_DR_longName( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
     return EMPTY_STR;
   }
 
@@ -127,7 +126,7 @@ const char *MDAL_DR_name( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
     return EMPTY_STR;
   }
 
@@ -139,7 +138,7 @@ const char *MDAL_DR_filters( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
     return EMPTY_STR;
   }
   MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
