@@ -80,6 +80,8 @@ TEST( Mesh2DMTest, Mixed1D3D )
   MDAL_M_LoadDatasets( m, facePath.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+
+  MDAL_CloseMesh( m );
 }
 
 TEST( MeshAsciiDatTest, LinesFaceScalarFile )
