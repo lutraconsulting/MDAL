@@ -57,7 +57,7 @@ DriverH MDAL_driverFromIndex( int index )
 {
   if ( index < 0 )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "There is no such driver with index " + std::to_string( index ) );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "No driver with index: " + std::to_string( index ) );
     return nullptr;
   }
 
@@ -77,7 +77,7 @@ bool MDAL_DR_meshLoadCapability( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return false;
   }
 
@@ -89,7 +89,7 @@ bool MDAL_DR_writeDatasetsCapability( DriverH driver, MDAL_DataLocation location
 {
   if ( !driver )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return false;
   }
 
@@ -102,7 +102,7 @@ bool MDAL_DR_saveMeshCapability( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return false;
   }
 
@@ -114,7 +114,7 @@ const char *MDAL_DR_longName( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return EMPTY_STR;
   }
 
@@ -126,7 +126,7 @@ const char *MDAL_DR_name( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return EMPTY_STR;
   }
 
@@ -138,7 +138,7 @@ const char *MDAL_DR_filters( DriverH driver )
 {
   if ( !driver )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return EMPTY_STR;
   }
   MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
@@ -153,7 +153,7 @@ MeshH MDAL_LoadMesh( const char *meshFile )
 {
   if ( !meshFile )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_FileNotFound;
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );
     return nullptr;
   }
 
@@ -165,7 +165,7 @@ void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
 {
   if ( !meshFile )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_FileNotFound;
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );
     return;
   }
 
@@ -174,19 +174,19 @@ void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
 
   if ( !d )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "No driver with name: " + driverName );
     return;
   }
 
   if ( !d->hasCapability( MDAL::Capability::SaveMesh ) )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriverCapability;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Driver " + driverName + " does not have SaveMesh capability" );
     return;
   }
 
   if ( d->faceVerticesMaximumCount() < MDAL_M_faceVerticesMaximumCount( mesh ) )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is incompatible with driver " + driverName );
     return;
   }
 
@@ -208,7 +208,7 @@ const char *MDAL_M_projection( MeshH mesh )
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return EMPTY_STR;
   }
 
@@ -220,7 +220,7 @@ void MDAL_M_extent( MeshH mesh, double *minX, double *maxX, double *minY, double
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     *minX = std::numeric_limits<double>::quiet_NaN();
     *maxX = std::numeric_limits<double>::quiet_NaN();
     *minY = std::numeric_limits<double>::quiet_NaN();
@@ -241,7 +241,7 @@ int MDAL_M_vertexCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
 
@@ -254,7 +254,7 @@ int MDAL_M_faceCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -266,7 +266,7 @@ int MDAL_M_faceVerticesMaximumCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -278,13 +278,13 @@ void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile )
 {
   if ( !datasetFile )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_FileNotFound;
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Dataset file is not valid (null)" );
     return;
   }
 
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return;
   }
 
@@ -298,7 +298,7 @@ int MDAL_M_datasetGroupCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -310,13 +310,13 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
 
   if ( index < 0 )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index is not valid: " + std::to_string( index ) );
     return nullptr;
   }
 
@@ -324,7 +324,7 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
   int len = static_cast<int>( m->datasetGroups.size() );
   if ( len <= index )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index " + std::to_string(index) + " is bigger than datasets count" );
     return nullptr;
   }
   size_t i = static_cast<size_t>( index );
@@ -341,25 +341,25 @@ DatasetGroupH MDAL_M_addDatasetGroup(
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
 
   if ( !name )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Name is not valid (null)" );
     return nullptr;
   }
 
   if ( !datasetGroupFile )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Dataset group file is not valid (null)" );
     return nullptr;
   }
 
   if ( !driver )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return nullptr;
   }
 
@@ -368,7 +368,7 @@ DatasetGroupH MDAL_M_addDatasetGroup(
 
   if ( !dr->hasWriteDatasetCapability( dataLocation ) )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriverCapability;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Driver " + dr->longName() + " does not have dataLocation capability" );
     return nullptr;
   }
 
@@ -389,7 +389,7 @@ const char *MDAL_M_driverName( MeshH mesh )
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
 
@@ -405,7 +405,7 @@ MeshVertexIteratorH MDAL_M_vertexIterator( MeshH mesh )
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -417,7 +417,7 @@ int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coord
 {
   if ( !iterator )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh Vertex Iterator is not valid (null)" );
     return 0;
   }
   MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
@@ -447,7 +447,7 @@ MeshFaceIteratorH MDAL_M_faceIterator( MeshH mesh )
 {
   if ( !mesh )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -463,7 +463,7 @@ int MDAL_FI_next( MeshFaceIteratorH iterator,
 {
   if ( !iterator )
   {
-    MDAL::Log::sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Iterator is not valid (null)" );
     return 0;
   }
   MDAL::MeshFaceIterator *it = static_cast< MDAL::MeshFaceIterator * >( iterator );
