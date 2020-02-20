@@ -62,11 +62,11 @@ bool MDAL::Driver::hasWriteDatasetCapability( MDAL_DataLocation location ) const
 
 int MDAL::Driver::faceVerticesMaximumCount() const { return -1; }
 
-std::unique_ptr< MDAL::Mesh > MDAL::Driver::load( const std::string &, MDAL_Status * ) { return std::unique_ptr< MDAL::Mesh >(); }
+std::unique_ptr< MDAL::Mesh > MDAL::Driver::load( const std::string & ) { return std::unique_ptr< MDAL::Mesh >(); }
 
-void MDAL::Driver::load( const std::string &, Mesh *, MDAL_Status * ) {}
+void MDAL::Driver::load( const std::string &, Mesh * ) {}
 
-void MDAL::Driver::save( const std::string &, MDAL::Mesh *, MDAL_Status * ) {}
+void MDAL::Driver::save( const std::string &, MDAL::Mesh * ) {}
 
 void MDAL::Driver::createDatasetGroup( MDAL::Mesh *mesh, const std::string &groupName, MDAL_DataLocation dataLocation, bool hasScalarData, const std::string &datasetGroupFile )
 {
