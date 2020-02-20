@@ -90,7 +90,7 @@ typedef void *DatasetH;
 typedef void *DriverH;
 typedef void *AveragingMethodH;
 
-typedef void ( *MDAL_LoggerCallback )( MDAL_LogLevel logLevel,MDAL_Status status, const char* message );
+typedef void ( *MDAL_LoggerCallback )( MDAL_LogLevel logLevel, MDAL_Status status, const char *message );
 
 //! Returns MDAL version
 MDAL_EXPORT const char *MDAL_Version();

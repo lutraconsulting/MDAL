@@ -58,7 +58,7 @@ DriverH MDAL_driverFromIndex( int index )
   if ( index < 0 )
   {
 //    MDAL::Log::sLastStatus = MDAL_Status::Err_MissingDriver;
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "There is no such driver with index " + std::to_string(index));
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "There is no such driver with index " + std::to_string( index ) );
     return nullptr;
   }
 

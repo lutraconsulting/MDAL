@@ -11,7 +11,7 @@
 static MDAL_Status sLastStatus;
 static MDAL_LoggerCallback sLoggerCallback = MDAL::setDefaultLoggerCallback();
 
-void _log(MDAL_LogLevel logLevel, MDAL_Status status, std::string mssg)
+void _log( MDAL_LogLevel logLevel, MDAL_Status status, std::string mssg )
 {
   if ( sLoggerCallback )
   {
@@ -22,7 +22,7 @@ void _log(MDAL_LogLevel logLevel, MDAL_Status status, std::string mssg)
 void MDAL::Log::error( MDAL_Status status, std::string mssg )
 {
   sLastStatus = status;
-  _log(MDAL_LogLevel::Error, status, mssg);
+  _log( MDAL_LogLevel::Error, status, mssg );
 }
 
 void MDAL::Log::warning( MDAL_Status status, std::string mssg )
@@ -41,7 +41,7 @@ void MDAL::Log::resetLastStatus()
   sLastStatus = MDAL_Status::None;
 }
 
-void MDAL::Log::setLoggerCallback(MDAL_LoggerCallback callback)
+void MDAL::Log::setLoggerCallback( MDAL_LoggerCallback callback )
 {
   sLoggerCallback = callback;
 }

@@ -163,6 +163,6 @@ namespace MDAL
   //! TODO: documentation
   MDAL_LoggerCallback setDefaultLoggerCallback();
 
-  void _standardStdout( MDAL_Status status, const char* mssg );
+  void _standardStdout( MDAL_Status status, const char *mssg );
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP
