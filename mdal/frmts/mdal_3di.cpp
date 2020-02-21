@@ -135,7 +135,7 @@ void MDAL::Driver3Di::addBedElevation( MemoryMesh *mesh )
                                           "Bed Elevation"
                                         );
 
-  group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+  group->setDataLocation( MDAL_DataLocation::DataOnFaces );
   group->setIsScalar( true );
 
   std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );

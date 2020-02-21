@@ -28,21 +28,16 @@ TEST( MeshHec2dTest, simpleArea )
 
   std::vector<double> expectedCoords =
   {
-    1.59, 3.00, 0.00,
-    2.59,  3.00, 0.00,
-    3.59,  3.00, 0.00,
-    1.59,  2.00, 0.00,
-    2.59,  2.00, 0.00,
-    3.59,  2.00, 0.00,
-    1.59, 1.00, 0.00,
-    2.59,  1.00, 0.00,
-    3.59, 1.00, 0.00
-  };
-  EXPECT_EQ( expectedCoords.size(), 9 * 3 );
+    -5.5731e-06, 90.0, 0.00,
+      9.999988, 90.00000297, 0.00,
+      9.999988, 99.962230818, 0.00,
+      19.999988, 90.00000297, 0.00
+    };
+  EXPECT_EQ( expectedCoords.size(), 4 * 3 );
 
-  std::vector<double> coordinates = getCoordinates( m, 9 );
+  std::vector<double> coordinates = getCoordinates( m, 4 );
 
-  compareVectors( expectedCoords, coordinates );
+  EXPECT_TRUE( compareVectors( expectedCoords, coordinates ) );
 
   // ///////////
   // Faces
@@ -80,7 +75,7 @@ TEST( MeshHec2dTest, simpleArea )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
 
 
@@ -115,7 +110,7 @@ TEST( MeshHec2dTest, simpleArea )
   EXPECT_EQ( true, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 41, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 0 );
@@ -192,7 +187,7 @@ TEST( MeshHec2dTest, MultiAreas )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -228,7 +223,7 @@ TEST( MeshHec2dTest, MultiAreas )
   EXPECT_EQ( true, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 7, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 5 );
@@ -303,7 +298,7 @@ TEST( MeshHec2dTest, model_505 )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -336,7 +331,7 @@ TEST( MeshHec2dTest, model_505 )
   EXPECT_EQ( true, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 5 );

@@ -34,21 +34,15 @@ TEST( MeshSWWTest, Cairns )
 
   std::vector<double> expectedCoords =
   {
-    0.0, 0.0, 0.0,
-    12, 0, 0.0,
-    12, 12, 0.0,
-    0, 12, 0.0,
-    12, 24, 0.0,
-    0, 24, 0.0,
-    24, 0, 0.0,
-    24, 12, 0.0,
-    24, 24, 0.0
+    368725.71875, 8129547, 3.109999895095825,
+    368745.71875, 8129547, 3.010999917984009,
+    368765.71875, 8129547, 2.920000076293945
   };
-  EXPECT_EQ( expectedCoords.size(), 9 * 3 );
+  EXPECT_EQ( expectedCoords.size(), 3 * 3 );
 
-  std::vector<double> coordinates = getCoordinates( m, 9 );
+  std::vector<double> coordinates = getCoordinates( m, 3 );
 
-  compareVectors( expectedCoords, coordinates );
+  EXPECT_TRUE( compareVectors( expectedCoords, coordinates ) );
 
   // ///////////
   // Faces
@@ -84,7 +78,7 @@ TEST( MeshSWWTest, Cairns )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -123,7 +117,7 @@ TEST( MeshSWWTest, Cairns )
   EXPECT_EQ( true, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 51, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 30 );

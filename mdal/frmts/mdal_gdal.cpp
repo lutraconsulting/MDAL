@@ -411,7 +411,7 @@ void MDAL::DriverGdal::addDatasetGroups()
                                             mFileName,
                                             band->first
                                           );
-    group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
+    group->setDataLocation( MDAL_DataLocation::DataOnVertices );
     bool is_vector = ( band->second.begin()->second.size() > 1 );
     group->setIsScalar( !is_vector );
 
@@ -448,6 +448,7 @@ void MDAL::DriverGdal::createMesh()
   mMesh.reset( new MemoryMesh(
                  name(),
                  vertices.size(),
+                 0,
                  faces.size(),
                  4, //maximum quads
                  computeExtent( vertices ),

@@ -180,11 +180,11 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Relat
     group->setIsScalar( !dsi.is_vector );
 
     if ( dsi.outputType == CFDimensions::Vertex2D )
-      group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
+      group->setDataLocation( MDAL_DataLocation::DataOnVertices );
     else if ( dsi.outputType == CFDimensions::Face2D )
-      group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+      group->setDataLocation( MDAL_DataLocation::DataOnFaces );
     else if ( dsi.outputType == CFDimensions::Volume3D )
-      group->setDataLocation( MDAL_DataLocation::DataOnVolumes3D );
+      group->setDataLocation( MDAL_DataLocation::DataOnVolumes );
     else
     {
       // unsupported
@@ -254,6 +254,9 @@ MDAL::DateTime MDAL::DriverCF::parseTime( std::vector<RelativeTimestamp> &times 
   std::string timeUnitInformation = mNcFile->getAttrStr( timeArrName, "units" );
   std::string calendar = mNcFile->getAttrStr( timeArrName, "calendar" );
   MDAL::DateTime referenceTime = parseCFReferenceTime( timeUnitInformation, calendar );
+  if ( !referenceTime.isValid() )
+    referenceTime = defaultReferenceTime();
+
   MDAL::RelativeTimestamp::Unit unit = parseCFTimeUnit( timeUnitInformation );
 
   times = std::vector<RelativeTimestamp>( nTimesteps );
@@ -315,6 +318,12 @@ bool MDAL::DriverCF::canReadMesh( const std::string &uri )
     return false;
   }
   return true;
+}
+
+MDAL::DateTime MDAL::DriverCF::defaultReferenceTime() const
+{
+  // return invalid reference time
+  return DateTime();
 }
 
 void MDAL::DriverCF::setProjection( MDAL::Mesh *mesh )
@@ -396,6 +405,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName 
       new MemoryMesh(
         name(),
         vertices.size(),
+        0,
         faces.size(),
         mDimensions.size( mDimensions.MaxVerticesInFace ),
         computeExtent( vertices ),

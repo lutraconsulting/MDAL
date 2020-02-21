@@ -176,6 +176,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverEsriTin::load( const std::string &uri )
       new MemoryMesh(
         name(),
         vertices.size(),
+        0,
         faces.size(),
         3,
         computeExtent( vertices ),

@@ -31,6 +31,7 @@ double getVertexZCoordinatesAt( MeshH mesh, int index );
 int getFaceVerticesCountAt( MeshH mesh, int faceIndex );
 int getFaceVerticesIndexAt( MeshH mesh, int faceIndex, int index );
 std::vector<int> faceVertexIndices( MeshH mesh, int faceCount );
+void getEdgeVertexIndices( MeshH mesh, int edgesCount, std::vector<int> &start, std::vector<int> &end );
 
 // Datasets 2D
 
@@ -54,9 +55,9 @@ double getValue3DY( DatasetH dataset, int index );
 bool compareVectors( const std::vector<double> &a, const std::vector<double> &b );
 bool compareVectors( const std::vector<int> &a, const std::vector<int> &b );
 
-//! Same vertices (coords), faces and connectivity between them
-bool compareMeshFrames( MeshH meshA, MeshH meshB );
-
+//! Same vertices (coords), faces, edges and connectivity between them
+void compareMeshFrames( MeshH meshA, MeshH meshB );
+void saveAndCompareMesh( const std::string &filename, const std::string &savedFile, const std::string &driver );
 
 //! Compare duration with millisecond precision
 bool compareDurationInHours( double h1, double h2 );

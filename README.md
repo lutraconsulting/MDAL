@@ -6,8 +6,9 @@
 # MDAL
 Mesh Data Abstraction Library
 
-see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119)
-see [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158)
+- see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119)
+- see [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158)
+- see [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164)
 
 ## Supported Formats
 
@@ -49,7 +50,9 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.10.0  | 0.3.3   |
 | 3.10.1  | 0.4.0   |
 | 3.10.2  | 0.4.1   |
-| 3.12.0  | 0.5.0   |
+| 3.10.3  | 0.4.2   |
+| 3.12.0  | 0.5.1   |
+| 3.14.0  | 0.6.x   |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
@@ -74,6 +77,8 @@ To be able to accept a pull request, please verify that:
 - no dead-code (e.g. unused functions) or commented out code
 - all new code or new dependencies (e.g. libraries) have GPLv2 compatible license
 - all tests pass
+
+Please respect our [Contributor Covenant Code of Conduct](code_of_conduct.md)
 
 ## Build 
 

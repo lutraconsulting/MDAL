@@ -30,9 +30,9 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
     ASSERT_NE( m, nullptr );
     DriverH driver = MDAL_driverFromName( "FLO2D" );
     ASSERT_NE( driver, nullptr );
-    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces2D ) );
-    ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices2D ) );
-    ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVolumes3D ) );
+    ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces ) );
+    ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices ) );
+    ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVolumes ) );
 
     ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
@@ -40,7 +40,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
-                        MDAL_DataLocation::DataOnFaces2D,
+                        MDAL_DataLocation::DataOnFaces,
                         true,
                         driver,
                         newFile.c_str()
@@ -66,7 +66,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
     DatasetGroupH gV = MDAL_M_addDatasetGroup(
                          m,
                          "vectorGrp",
-                         MDAL_DataLocation::DataOnFaces2D,
+                         MDAL_DataLocation::DataOnFaces,
                          false,
                          driver,
                          newFile.c_str()
@@ -115,7 +115,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       EXPECT_EQ( true, scalar );
 
       MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
       DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -145,7 +145,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       EXPECT_EQ( false, scalar );
 
       MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
       DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -208,7 +208,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
     DatasetGroupH g = MDAL_M_addDatasetGroup(
                         m,
                         "scalarGrp",
-                        MDAL_DataLocation::DataOnFaces2D,
+                        MDAL_DataLocation::DataOnFaces,
                         true,
                         driver,
                         appendedFile.c_str()
@@ -234,7 +234,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
     DatasetGroupH gV = MDAL_M_addDatasetGroup(
                          m,
                          "vectorGrp",
-                         MDAL_DataLocation::DataOnFaces2D,
+                         MDAL_DataLocation::DataOnFaces,
                          false,
                          driver,
                          appendedFile.c_str()
@@ -281,7 +281,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       EXPECT_EQ( true, scalar );
 
       MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
       DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -317,7 +317,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       EXPECT_EQ( false, scalar );
 
       MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+      EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
       DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -373,18 +373,21 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 571 );
 
+  // the vertices are shifted by cell 1/2 size
+  // from numbers that are present in CADPTS.DAT
+  // file
   std::vector<double> expectedCoords =
   {
-    0.000,        0.000, 0.000,
-    100.000,       0.000, 0.000,
-    200.000,        0.000, 0.000,
-    300.000,      0.000, 0.000
+    50.0, -50.0, 0.000,
+    50.0,  50.0, 0.000,
+    -50.0,  50.0, 0.000,
+    -50.0, -50.0, 0.000
   };
   EXPECT_EQ( expectedCoords.size(), 4 * 3 );
 
   std::vector<double> coordinates = getCoordinates( m, 4 );
 
-  compareVectors( expectedCoords, coordinates );
+  EXPECT_TRUE( compareVectors( expectedCoords, coordinates ) );
 
   // ///////////
   // Faces
@@ -422,7 +425,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -461,7 +464,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   EXPECT_EQ( true, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 20, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 0 );
@@ -508,7 +511,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   EXPECT_EQ( false, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 20, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 17 );
@@ -556,21 +559,15 @@ TEST( MeshFlo2dTest, basic )
 
     std::vector<double> expectedCoords =
     {
-      1.59, 3.00, 0.00,
-      2.59,  3.00, 0.00,
-      3.59,  3.00, 0.00,
-      1.59,  2.00, 0.00,
-      2.59,  2.00, 0.00,
-      3.59,  2.00, 0.00,
-      1.59, 1.00, 0.00,
-      2.59,  1.00, 0.00,
-      3.59, 1.00, 0.00
+      2.09, 2.50, 0.00,
+      2.09, 3.50, 0.00,
+      1.09, 3.50, 0.00,
     };
-    EXPECT_EQ( expectedCoords.size(), 9 * 3 );
+    EXPECT_EQ( expectedCoords.size(), 3 * 3 );
 
-    std::vector<double> coordinates = getCoordinates( m, 9 );
+    std::vector<double> coordinates = getCoordinates( m, 3 );
 
-    compareVectors( expectedCoords, coordinates );
+    EXPECT_TRUE( compareVectors( expectedCoords, coordinates ) );
 
     // ///////////
     // Faces
@@ -608,7 +605,7 @@ TEST( MeshFlo2dTest, basic )
     EXPECT_EQ( true, scalar );
 
     MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
     DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -641,7 +638,7 @@ TEST( MeshFlo2dTest, basic )
     EXPECT_EQ( true, scalar );
 
     dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 3, MDAL_G_datasetCount( g ) );
     ds = MDAL_G_dataset( g, 0 );
@@ -688,7 +685,7 @@ TEST( MeshFlo2dTest, basic )
     EXPECT_EQ( true, scalar );
 
     dataLocation = MDAL_G_dataLocation( g );
-    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
     ds = MDAL_G_dataset( g, 0 );
@@ -758,7 +755,7 @@ TEST( MeshFlo2dTest, basic_required_files_only )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -822,7 +819,7 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -855,7 +852,7 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
   EXPECT_EQ( true, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 4, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 2 );

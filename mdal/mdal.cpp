@@ -21,7 +21,7 @@ static const char *EMPTY_STR = "";
 
 const char *MDAL_Version()
 {
-  return "0.4.94";
+  return "0.5.90";
 }
 
 MDAL_Status MDAL_LastStatus()
@@ -255,6 +255,20 @@ int MDAL_M_vertexCount( MeshH mesh )
   return len;
 }
 
+
+int MDAL_M_edgeCount( MeshH mesh )
+{
+  if ( !mesh )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return 0;
+  }
+
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  int len = static_cast<int>( m->edgesCount() );
+  return len;
+}
+
 int MDAL_M_faceCount( MeshH mesh )
 {
   if ( !mesh )
@@ -420,22 +434,74 @@ MeshVertexIteratorH MDAL_M_vertexIterator( MeshH mesh )
 
 int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coordinates )
 {
+  if ( verticesCount < 1 )
+    return 0;
+
   if ( !iterator )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh Vertex Iterator is not valid (null)" );
     return 0;
   }
-  MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
-  size_t size = static_cast<size_t>( verticesCount );
-  if ( size == 0 )
+  if ( !coordinates )
   {
+    sLastStatus = MDAL_Status::Err_InvalidData;
     return 0;
   }
+  MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
+  size_t size = static_cast<size_t>( verticesCount );
   size_t ret = it->next( size, coordinates );
   return static_cast<int>( ret );
 }
 
 void MDAL_VI_close( MeshVertexIteratorH iterator )
+{
+  if ( iterator )
+  {
+    MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
+    delete it;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// MESH EDGES
+///////////////////////////////////////////////////////////////////////////////////////
+
+MeshEdgeIteratorH MDAL_M_edgeIterator( MeshH mesh )
+{
+  if ( !mesh )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return nullptr;
+  }
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  std::unique_ptr<MDAL::MeshEdgeIterator> it = m->readEdges();
+  return static_cast< MeshEdgeIteratorH >( it.release() );
+}
+
+int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIndices, int *endVertexIndices )
+{
+  if ( edgesCount < 1 )
+    return 0;
+
+  if ( !iterator )
+  {
+    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    return 0;
+  }
+
+  if ( !startVertexIndices || !endVertexIndices )
+  {
+    sLastStatus = MDAL_Status::Err_InvalidData;
+    return 0;
+  }
+
+  MDAL::MeshEdgeIterator *it = static_cast< MDAL::MeshEdgeIterator * >( iterator );
+  size_t size = static_cast<size_t>( edgesCount );
+  size_t ret = it->next( size, startVertexIndices, endVertexIndices );
+  return static_cast<int>( ret );
+}
+
+void MDAL_EI_close( MeshEdgeIteratorH iterator )
 {
   if ( iterator )
   {
@@ -466,6 +532,9 @@ int MDAL_FI_next( MeshFaceIteratorH iterator,
                   int vertexIndicesBufferLen,
                   int *vertexIndicesBuffer )
 {
+  if ( ( faceOffsetsBufferLen < 1 ) || ( vertexIndicesBufferLen < 1 ) )
+    return 0;
+
   if ( !iterator )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh Face Iterator is not valid (null)" );
@@ -693,13 +762,13 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *valu
     return nullptr;
   }
 
-  if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes3D )
+  if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes )
   {
     MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Dataset Group has data on 3D volumes" );
     return nullptr;
   }
 
-  if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices2D )
+  if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Active flag is only supported on datasets with data on vertices" );
     return nullptr;
@@ -914,7 +983,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
         MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not scalar" );
         return 0;
       }
-      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) )
+      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
       {
         MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Scalar access only supported on datasets with data on vertices or faces" );
         return 0;
@@ -927,7 +996,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
         MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is scalar" );
         return 0;
       }
-      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices2D ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) )
+      if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
       {
         MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Vector access only supported on datasets with data on vertices or faces" );
         return 0;
@@ -943,7 +1012,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = m->facesCount();
       break;
     case MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
@@ -951,7 +1020,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = m->facesCount();
       break;
     case MDAL_DataType::VERTICAL_LEVEL_DOUBLE:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
@@ -959,7 +1028,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = m->facesCount() + d->volumesCount();
       break;
     case MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
@@ -967,7 +1036,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = m->facesCount();
       break;
     case MDAL_DataType::SCALAR_VOLUMES_DOUBLE:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
@@ -980,7 +1049,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
       valuesCount = d->volumesCount();
       break;
     case MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE:
-      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes3D )
+      if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
         MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
