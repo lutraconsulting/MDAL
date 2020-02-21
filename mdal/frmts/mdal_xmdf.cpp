@@ -116,23 +116,23 @@ bool MDAL::DriverXmdf::canReadDatasets( const std::string &uri )
   return true;
 }
 
-void MDAL::DriverXmdf::load( const std::string &datFile,  MDAL::Mesh *mesh, MDAL_Status *status )
+void MDAL::DriverXmdf::load( const std::string &datFile,  MDAL::Mesh *mesh )
 {
   mDatFile = datFile;
   mMesh = mesh;
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   HdfFile file( mDatFile, HdfFile::ReadOnly );
   if ( !file.isValid() )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "File " + mDatFile + " is not valid" );
     return;
   }
 
   HdfDataset dsFileType = file.dataset( "/File Type" );
   if ( dsFileType.readString() != "Xmdf" )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Unknown dataset file type" );
     return;
   }
 
@@ -144,8 +144,7 @@ void MDAL::DriverXmdf::load( const std::string &datFile,  MDAL::Mesh *mesh, MDAL
   std::vector<std::string> rootGroups = file.groups();
   if ( rootGroups.size() != 1 )
   {
-    MDAL::debug( "Expecting exactly one root group for the mesh data" );
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Expecting exactly one root group for the mesh data" );
     return;
   }
   HdfGroup gMesh = file.group( rootGroups[0] );
@@ -203,7 +202,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
        !MDAL::contains( gDataNames, "Mins" ) ||
        !MDAL::contains( gDataNames, "Maxs" ) )
   {
-    MDAL::debug( "ignoring dataset " + groupName + " - not having required arrays" );
+    MDAL::Log::info( "ignoring dataset " + groupName + " - not having required arrays" );
     return group;
   }
 
@@ -226,7 +225,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
        dimMaxs.size() != 1
      )
   {
-    MDAL::debug( "ignoring dataset " + groupName + " - arrays not having correct dimension counts" );
+    MDAL::Log::info( "ignoring dataset " + groupName + " - arrays not having correct dimension counts" );
     return group;
   }
   hsize_t nTimeSteps = dimTimes[0];
@@ -236,12 +235,12 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
        dimMins[0] != nTimeSteps ||
        dimMaxs[0] != nTimeSteps )
   {
-    MDAL::debug( "ignoring dataset " + groupName + " - arrays not having correct dimension sizes" );
+    MDAL::Log::info( "ignoring dataset " + groupName + " - arrays not having correct dimension sizes" );
     return group;
   }
   if ( dimValues[1] != vertexCount || dimActive[1] != faceCount )
   {
-    MDAL::debug( "ignoring dataset " + groupName + " - not aligned with the used mesh" );
+    MDAL::Log::info( "ignoring dataset " + groupName + " - not aligned with the used mesh" );
     return group;
   }
 

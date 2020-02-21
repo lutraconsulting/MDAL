@@ -17,6 +17,7 @@
 #include "mdal.h"
 #include "mdal_hdf5.hpp"
 #include "mdal_driver.hpp"
+#include "mdal_logger.hpp"
 
 namespace MDAL
 {
@@ -83,7 +84,7 @@ namespace MDAL
       DriverXmdf *create() override;
 
       bool canReadDatasets( const std::string &uri ) override;
-      void load( const std::string &datFile, Mesh *mesh, MDAL_Status *status ) override;
+      void load( const std::string &datFile, Mesh *mesh ) override;
 
     private:
       MDAL::Mesh *mMesh = nullptr;

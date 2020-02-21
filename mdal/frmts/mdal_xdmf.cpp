@@ -634,19 +634,18 @@ bool MDAL::DriverXdmf::canReadDatasets( const std::string &uri )
 }
 
 void MDAL::DriverXdmf::load( const std::string &datFile,
-                             MDAL::Mesh *mesh,
-                             MDAL_Status *status )
+                             MDAL::Mesh *mesh )
 {
   assert( mesh );
 
   mDatFile = datFile;
   mMesh = mesh;
 
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   if ( !MDAL::fileExists( mDatFile ) )
   {
-    if ( status ) *status = MDAL_Status::Err_FileNotFound;
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, name(), "File could not be found " + mDatFile );
     return;
   }
 
@@ -662,6 +661,6 @@ void MDAL::DriverXdmf::load( const std::string &datFile,
   }
   catch ( MDAL_Status err )
   {
-    if ( status ) *status = err;
+    MDAL::Log::error( err, "Error occured while loading file " + mDatFile );
   }
 }

@@ -12,6 +12,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "mdal_logger.hpp"
+
 //! C++ Wrapper around libxml2 library
 class XMLFile
 {
