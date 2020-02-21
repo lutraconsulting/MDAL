@@ -35,10 +35,9 @@ void MDAL::Log::warning( MDAL_Status status, std::string mssg )
   _log( MDAL_LogLevel::Warn, status, mssg );
 }
 
-void MDAL::Log::info( MDAL_Status status, std::string mssg )
+void MDAL::Log::info( std::string mssg )
 {
-  sLastStatus = status;
-  _log( MDAL_LogLevel::Info, status, mssg );
+  _log( MDAL_LogLevel::Info, MDAL_Status::None, mssg );
 }
 
 void MDAL::Log::debug( std::string mssg )

@@ -26,7 +26,7 @@ namespace MDAL
     void warning( MDAL_Status status, std::string mssg );
 
     /** Logger function handling warning logs */
-    void info( MDAL_Status status, std::string mssg );
+    void info( std::string mssg );
 
     /** Logger function handling warning logs */
     void debug( std::string mssg );
