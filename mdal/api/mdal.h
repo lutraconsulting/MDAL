@@ -99,16 +99,24 @@ MDAL_EXPORT const char *MDAL_Version();
 //! Returns last status message
 MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 
-//! Set custom callback for logging output. By default output is not being shown anywhere,
-//! however by setting environment variable MDAL_DEBUG, logger outputs logs to standard stdout.
-//! Calling this method with nullptr dissables logger ( logs will not be shown anywhere ).
-//! \since MDAL 0.6.0
+/**
+ * Sets custom callback for logging output
+ *
+ * By default standard stdout is used as output.
+ * Calling this method with nullptr dissables logger ( logs will not be shown anywhere ).
+ * MDAL_LoggerCallback is a function accepting MDAL_LogLevel, MDAL_Status and const char* string
+ * \since MDAL 0.6.0
+ */
 MDAL_EXPORT void MDAL_SetLoggerCallback( MDAL_LoggerCallback callback );
 
-//! Set maximum log level (verbosity)
-//! By default logger outputs errors
-//! Log levels (low to high): Error, Warn, Info, Debug
-//! For example if LogVerbosity is set to Warn, logger outputs Error and Warn levels.
+/**
+ * Sets maximum log level (verbosity)
+ *
+ * By default logger outputs errors.
+ * Log levels (low to high): Error, Warn, Info, Debug
+ * For example, if LogVerbosity is set to Warn, logger outputs errors and warnings.
+ * \since MDAL 0.6.0
+ */
 MDAL_EXPORT void MDAL_SetLogVerbosity( MDAL_LogLevel verbosity );
 
 ///////////////////////////////////////////////////////////////////////////////////////
