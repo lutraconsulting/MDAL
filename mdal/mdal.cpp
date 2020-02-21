@@ -425,6 +425,9 @@ MeshVertexIteratorH MDAL_M_vertexIterator( MeshH mesh )
 
 int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coordinates )
 {
+  if ( verticesCount < 1 )
+    return 0;
+
   if ( !iterator )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleMesh;
@@ -468,6 +471,9 @@ MeshEdgeIteratorH MDAL_M_edgeIterator( MeshH mesh )
 
 int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIndices, int *endVertexIndices )
 {
+  if ( edgesCount < 1 )
+    return 0;
+
   if ( !iterator )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleMesh;
@@ -517,6 +523,9 @@ int MDAL_FI_next( MeshFaceIteratorH iterator,
                   int vertexIndicesBufferLen,
                   int *vertexIndicesBuffer )
 {
+  if ( ( faceOffsetsBufferLen < 1 ) || ( vertexIndicesBufferLen < 1 ) )
+    return 0;
+
   if ( !iterator )
   {
     sLastStatus = MDAL_Status::Err_IncompatibleMesh;
