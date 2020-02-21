@@ -16,9 +16,9 @@ MDAL::Driver *MDAL::DriverEsriTin::create()
   return new DriverEsriTin();
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::DriverEsriTin::load( const std::string &uri, MDAL_Status *status )
+std::unique_ptr<MDAL::Mesh> MDAL::DriverEsriTin::load( const std::string &uri )
 {
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   try
   {
@@ -199,7 +199,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverEsriTin::load( const std::string &uri, M
   }
   catch ( MDAL_Status error )
   {
-    if ( status ) *status = ( error );
+    MDAL::Log::errorFromDriver( error, name(), "error while loading file " + uri );
     return std::unique_ptr<Mesh>();
   }
 }

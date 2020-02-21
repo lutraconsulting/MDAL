@@ -665,20 +665,20 @@ bool MDAL::DriverFlo2D::canReadDatasets( const std::string &uri )
   return true;
 }
 
-void MDAL::DriverFlo2D::load( const std::string &uri, MDAL::Mesh *mesh, MDAL_Status *status )
+void MDAL::DriverFlo2D::load( const std::string &uri, MDAL::Mesh *mesh )
 {
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   MDAL::MemoryMesh *memoryMesh = dynamic_cast<MDAL::MemoryMesh *>( mesh );
   if ( !memoryMesh )
   {
-    if ( status ) *status = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_IncompatibleMesh, name(), "Mesh is not valid (null)" );
     return;
   }
 
   if ( !MDAL::fileExists( uri ) )
   {
-    if ( status ) *status = MDAL_Status::Err_FileNotFound;
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_FileNotFound, name(), "Could not find file " + uri );
     return;
   }
 
@@ -686,14 +686,14 @@ void MDAL::DriverFlo2D::load( const std::string &uri, MDAL::Mesh *mesh, MDAL_Sta
   if ( err )
   {
     // TODO better error message?
-    if ( status ) *status = MDAL_Status::Err_InvalidData;
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_InvalidData, name(), "Could not parse HDF5 datasets" );
   }
 }
 
-std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &resultsFile, MDAL_Status *status )
+std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &resultsFile )
 {
   mDatFileName = resultsFile;
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
   mMesh.reset();
   std::vector<CellCenter> cells;
 
@@ -722,7 +722,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &result
 
   catch ( MDAL_Status error )
   {
-    if ( status ) *status = ( error );
+    MDAL::Log::errorFromDriver( error, name(), "error occured while loading file " + resultsFile );
     mMesh.reset();
   }
 
@@ -873,7 +873,7 @@ bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
 {
   if ( !group || ( group->dataLocation() != MDAL_DataLocation::DataOnFaces2D ) )
   {
-    MDAL::debug( "flo-2d can store only 2D face datasets" );
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_IncompatibleDataset, name(), "flo-2d can store only 2D face datasets" );
     return true;
   }
 
@@ -893,7 +893,7 @@ bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
   }
   catch ( MDAL_Status error )
   {
-    MDAL::debug( "Error status: " + std::to_string( error ) );
+    MDAL::Log::errorFromDriver( error, name(), "error occured" );
     return true;
   }
 }

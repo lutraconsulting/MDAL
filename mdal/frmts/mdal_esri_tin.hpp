@@ -18,6 +18,7 @@
 #include "mdal.h"
 #include "mdal_driver.hpp"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 namespace MDAL
 {
@@ -71,7 +72,7 @@ namespace MDAL
 
       Driver *create() override;
 
-      virtual std::unique_ptr< Mesh > load( const std::string &uri, MDAL_Status *status ) override;
+      virtual std::unique_ptr< Mesh > load( const std::string &uri ) override;
 
       bool canReadMesh( const std::string &uri ) override;
 
