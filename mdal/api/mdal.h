@@ -36,7 +36,7 @@
 extern "C" {
 #endif
 
-/* Statuses */
+/** Statuses */
 enum MDAL_Status
 {
   None,
@@ -59,12 +59,13 @@ enum MDAL_Status
   Warn_NodeNotUnique
 };
 
-/* Log levels */
+/** Log levels */
 enum MDAL_LogLevel
 {
-  Error,
+  Debug,
+  Info,
   Warn,
-  Debug
+  Error,
 };
 
 /**
