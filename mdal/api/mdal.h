@@ -53,8 +53,9 @@ enum MDAL_Status
   Err_MissingDriver,
   Err_MissingDriverCapability,
   Err_FailToWriteToDisk,
+  Err_UnsupportedElement,
+
   // Warnings
-  Warn_UnsupportedElement,
   Warn_InvalidElements,
   Warn_ElementWithInvalidNode,
   Warn_ElementNotUnique,

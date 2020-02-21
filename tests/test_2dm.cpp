@@ -35,7 +35,7 @@ TEST( Mesh2DMTest, UnsuportedElements )
   EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
 }
 
-TEST( Mesh2DMTest, Mixed1D3D )
+TEST( Mesh2DMTest, Mixed1D2D )
 {
   std::string path = test_file( "/2dm/quad_and_line.2dm" );
   MeshH m = MDAL_LoadMesh( path.c_str() );

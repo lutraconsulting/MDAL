@@ -258,7 +258,7 @@ int MDAL_M_edgeCount( MeshH mesh )
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   int len = static_cast<int>( m->edgesCount() );
   return len;
-}\
+}
 
 int MDAL_M_faceCount( MeshH mesh )
 {
@@ -432,10 +432,6 @@ int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coord
   }
   MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
   size_t size = static_cast<size_t>( verticesCount );
-  if ( size == 0 )
-  {
-    return 0;
-  }
   size_t ret = it->next( size, coordinates );
   return static_cast<int>( ret );
 }
@@ -474,10 +470,6 @@ int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIn
   }
   MDAL::MeshEdgeIterator *it = static_cast< MDAL::MeshEdgeIterator * >( iterator );
   size_t size = static_cast<size_t>( edgesCount );
-  if ( size == 0 )
-  {
-    return 0;
-  }
   size_t ret = it->next( size, startVertexIndices, endVertexIndices );
   return static_cast<int>( ret );
 }

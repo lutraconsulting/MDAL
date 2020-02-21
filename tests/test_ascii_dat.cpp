@@ -56,7 +56,7 @@ TEST( MeshAsciiDatTest, WrongFile )
   MDAL_CloseMesh( m );
 }
 
-TEST( Mesh2DMTest, Mixed1D3D )
+TEST( Mesh2DMTest, Mixed1D2D )
 {
   std::string meshFile = test_file( "/2dm/quad_and_line.2dm" );
   MeshH m = MDAL_LoadMesh( meshFile.c_str() );

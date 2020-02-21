@@ -146,7 +146,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
               startsWith( line, "E8Q" ) ||
               startsWith( line, "E9Q" ) )
     {
-      if ( status ) *status = MDAL_Status::Warn_UnsupportedElement;
+      if ( status ) *status = MDAL_Status::Err_UnsupportedElement;
       return nullptr;
     }
   }
@@ -361,7 +361,7 @@ void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh, MDAL_Statu
     int startIndex;
     int endIndex;
     edgeIterator->next( 1, &startIndex, &endIndex );
-    line = "E2L " + std::to_string( i + 1 ) + " " + std::to_string( startIndex + 1 ) + " " + std::to_string( endIndex + 1 ) + " 1";
+    line = "E2L " + std::to_string( mesh->facesCount() + i + 1 ) + " " + std::to_string( startIndex + 1 ) + " " + std::to_string( endIndex + 1 ) + " 1";
     file << line << std::endl;
   }
 

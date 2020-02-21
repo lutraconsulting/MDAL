@@ -55,7 +55,7 @@ namespace MDAL
    * 2DM format specification used in TUFLOW, HYDRO_AS-2D and BASEMENET solvers
    * Text file format representing mesh vertices (ND) and faces (E**)
    * ND id x y z
-   * The format supports lines, triangles and squads, where the elememts could be
+   * The format supports lines, triangles and quads, where the elememts could be
    * stored with some intermediate points (e.g. triangle defined by 6 vertices, vertices
    * and the middle of the edges) We do support only simple definition, so E6T, E8Q and E9Q
    * are not supported.
