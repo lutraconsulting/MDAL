@@ -430,6 +430,11 @@ int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coord
     sLastStatus = MDAL_Status::Err_IncompatibleMesh;
     return 0;
   }
+  if ( !coordinates )
+  {
+    sLastStatus = MDAL_Status::Err_InvalidData;
+    return 0;
+  }
   MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
   size_t size = static_cast<size_t>( verticesCount );
   size_t ret = it->next( size, coordinates );
@@ -468,6 +473,13 @@ int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIn
     sLastStatus = MDAL_Status::Err_IncompatibleMesh;
     return 0;
   }
+
+  if ( !startVertexIndices || !endVertexIndices )
+  {
+    sLastStatus = MDAL_Status::Err_InvalidData;
+    return 0;
+  }
+
   MDAL::MeshEdgeIterator *it = static_cast< MDAL::MeshEdgeIterator * >( iterator );
   size_t size = static_cast<size_t>( edgesCount );
   size_t ret = it->next( size, startVertexIndices, endVertexIndices );
