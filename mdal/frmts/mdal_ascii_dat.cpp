@@ -22,7 +22,7 @@
 
 #include <math.h>
 
-#define EXIT_WITH_ERROR(error, mssg)       {  MDAL::Log::error( error, "ASCII_DAT", mssg); return; }
+#define EXIT_WITH_ERROR(error, mssg)       {  MDAL::Log::errorf( error, "ASCII_DAT", mssg); return; }
 
 MDAL::DriverAsciiDat::DriverAsciiDat( ):
   Driver( "ASCII_DAT",
@@ -108,7 +108,8 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
       size_t meshIdCount = maximumId( mesh ) + 1;
       if ( meshIdCount != fileNodeCount )
       {
-        EXIT_WITH_ERROR(MDAL_Status::Err_IncompatibleMesh, "loading old format failed" )
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "Loading old format failed" );
+        return;
       }
     }
     else if ( cardType == "SCALAR" || cardType == "VECTOR" )
@@ -129,14 +130,15 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
     {
       std::stringstream str;
       str << " Unknown card:" << line;
-      MDAL::Log::debug( str.str() );
+      MDAL::Log::info( str.str() );
     }
   }
   while ( std::getline( in, line ) );
 
   if ( !group || group->datasets.size() == 0 )
   {
-    EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "Dataset group is not valid (null) or has zero datasets" );
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Dataset group is not valid (null) or has zero datasets" );
+    return;
   }
 
   group->setStatistics( MDAL::calculateStatistics( group ) );
@@ -161,7 +163,8 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     if ( ( mesh->facesCount() > 0 ) && ( mesh->edgesCount() > 0 ) )
     {
       // unable to read for mixed 1D, 2D mesh
-      EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh, "unable to read for mixed 1D, 2D mesh" )
+      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "unable to read for mixed 1D, 2D mesh" );
+      return;
     }
 
     if ( mesh->facesCount() > 0 )
@@ -190,26 +193,36 @@ void MDAL::DriverAsciiDat::loadNewFormat(
       size_t fileNodeCount = toSizeT( items[1] );
       size_t meshIdCount = maximumId( mesh ) + 1;
       if ( meshIdCount != fileNodeCount )
-        EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh, "IDs in mesh and nodes in file are not equal" )
-
+      {
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "IDs in mesh and nodes in file are not equal" );
+        return;
       }
+
+    }
     else if ( cardType == "NC" && items.size() >= 2 )
     {
       size_t fileElemCount = toSizeT( items[1] );
       size_t elemCount = mesh->facesCount() + mesh->edgesCount();
       if ( elemCount != fileElemCount )
-        EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh, "Elements in mesh and elements in file are not equal" )
+      {
+        MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Elements in mesh and elements in file are not equal" );
+        return;
       }
+    }
     else if ( cardType == "OBJTYPE" )
     {
       if ( items[1] != "mesh2d" && items[1] != "\"mesh2d\"" )
-        EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "Error in file" )
+      {
+        MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Error in file" );
+        return;
       }
+    }
     else if ( cardType == "BEGSCL" || cardType == "BEGVEC" )
     {
       if ( group )
       {
-        EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "New dataset while previous one is still active!" )
+        MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "New dataset while previous one is still active!" );
+        return;
       }
       isVector = cardType == "BEGVEC";
 
@@ -227,7 +240,8 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     {
       if ( !group )
       {
-        EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "ENDDS card for no active dataset!" )
+        MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "ENDDS card for no active dataset!" );
+        return;
       }
       group->setStatistics( MDAL::calculateStatistics( group ) );
       mesh->datasetGroups.push_back( group );
@@ -237,7 +251,8 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     {
       if ( !group )
       {
-        EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "NAME card for no active dataset!" )
+        MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "NAME card for no active dataset!" );
+        return;
       }
 
       size_t quoteIdx1 = line.find( '\"' );
@@ -253,7 +268,8 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     {
       if ( !group )
       {
-        EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "TIMEUNITS card for no active dataset!" )
+        MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "TIMEUNITS card for no active dataset!" );
+        return;
       }
 
       group->setMetadata( "TIMEUNITS", items[1] );
@@ -278,7 +294,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     {
       std::stringstream str;
       str << " Unknown card:" << line;
-      MDAL::Log::debug( str.str() );
+      MDAL::Log::info( str.str() );
     }
   }
 }
@@ -306,21 +322,24 @@ void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh )
 
   if ( !MDAL::fileExists( mDatFile ) )
   {
-    EXIT_WITH_ERROR( MDAL_Status::Err_FileNotFound, "could not find file " + datFile )
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, name(), "could not find file " + datFile );
+    return;
   }
 
   size_t mID = maximumId( mesh );
   if ( mID == std::numeric_limits<size_t>::max() )
   {
     // This happens when mesh is 2DM and vertices are numbered from 0
-    EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh, "mesh is 2DM and vertices are numbered from 0" )
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "mesh is 2DM and vertices are numbered from 0" );
+    return;
   }
 
   std::ifstream in( mDatFile, std::ifstream::in );
   std::string line;
   if ( !std::getline( in, line ) )
   {
-    EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "could not read file " +  mDatFile )
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "could not read file " +  mDatFile );
+    return;
   }
   line = trim( line );
   if ( canReadNewFormat( line ) )
@@ -389,7 +408,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
       }
       else
       {
-        MDAL::Log::debug( "invalid timestep line" );
+        MDAL::Log::info( "invalid timestep line" );
       }
     }
     else
@@ -398,7 +417,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
         dataset->setScalarValue( index, toDouble( tsItems[0] ) );
       else
       {
-        MDAL::Log::debug( "invalid timestep line" );
+        MDAL::Log::info( "invalid timestep line" );
       }
     }
   }
@@ -434,7 +453,7 @@ void MDAL::DriverAsciiDat::readElementTimestep(
       }
       else
       {
-        MDAL::Log::debug( "invalid timestep line" );
+        MDAL::Log::info( "invalid timestep line" );
       }
     }
     else
@@ -443,7 +462,7 @@ void MDAL::DriverAsciiDat::readElementTimestep(
         dataset->setScalarValue( index, toDouble( tsItems[0] ) ) ;
       else
       {
-        MDAL::Log::debug( "invalid timestep line" );
+        MDAL::Log::info( "invalid timestep line" );
       }
     }
   }
