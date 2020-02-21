@@ -429,7 +429,7 @@ void MDAL::DriverUgrid::save( const std::string &uri, MDAL::Mesh *mesh )
   }
   catch ( MDAL_Status error )
   {
-    MDAL::Log::errorFromDriver( error, name(), "could not save file " + uri );
+    MDAL::Log::error( error, name(), "could not save file " + uri );
   }
 }
 

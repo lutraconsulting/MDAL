@@ -405,7 +405,7 @@ void NetCDFFile::putAttrStr( int varId, const std::string &attrName, const std::
   int res = nc_put_att_text( mNcid, varId, attrName.c_str(), value.size(), value.c_str() );
   if ( res != NC_NOERR )
   {
-    MDAL::debug( nc_strerror( res ) );
+    MDAL::Log::debug( nc_strerror( res ) );
     throw MDAL_Status::Err_FailToWriteToDisk;
   }
 }

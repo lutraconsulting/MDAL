@@ -49,7 +49,7 @@ bool _parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t ve
   std::map<size_t, size_t>::iterator search = vertexIDtoIndex.find( vertexID );
   if ( search != vertexIDtoIndex.end() )
   {
-    MDAL::Log::warningFromDriver( Warn_ElementNotUnique, DRIVER_NAME, "could not find vertex" );
+    MDAL::Log::warning( Warn_ElementNotUnique, DRIVER_NAME, "could not find vertex" );
     return true;
   }
 
@@ -117,7 +117,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile )
   std::string line;
   if ( !std::getline( in, line ) || !startsWith( line, "MESH2D" ) )
   {
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_UnknownFormat, name(), meshFile + " could not be opened" );
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), meshFile + " could not be opened" );
     return nullptr;
   }
 
@@ -146,7 +146,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile )
               startsWith( line, "E8Q" ) ||
               startsWith( line, "E9Q" ) )
     {
-      MDAL::Log::warningFromDriver( MDAL_Status::Err_UnsupportedElement, name(),  "found unsupported element");
+      MDAL::Log::warning( MDAL_Status::Err_UnsupportedElement, name(),  "found unsupported element" );
       return nullptr;
     }
   }
@@ -235,7 +235,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile )
         if ( ( lastVertexID != 0 ) && ( nodeID <= lastVertexID ) )
         {
           // the algorithm requires that the file has NDs orderer by index
-          MDAL::Log::errorFromDriver( MDAL_Status::Err_InvalidData, name(), "nodes are not ordered by index" );
+          MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "nodes are not ordered by index" );
           return nullptr;
         }
         lastVertexID = nodeID;
@@ -266,7 +266,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile )
       }
       else if ( vertices.size() < nodeID )
       {
-        MDAL::Log::warningFromDriver( MDAL_Status::Warn_ElementWithInvalidNode, name(), "found invalid node" );
+        MDAL::Log::warning( MDAL_Status::Warn_ElementWithInvalidNode, name(), "found invalid node" );
       }
     }
     //TODO check validity of the face

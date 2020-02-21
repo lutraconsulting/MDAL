@@ -200,7 +200,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverEsriTin::load( const std::string &uri )
   }
   catch ( MDAL_Status error )
   {
-    MDAL::Log::errorFromDriver( error, name(), "error while loading file " + uri );
+    MDAL::Log::error( error, name(), "error while loading file " + uri );
     return std::unique_ptr<Mesh>();
   }
 }

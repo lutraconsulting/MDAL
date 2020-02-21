@@ -22,11 +22,10 @@
 
 #include <math.h>
 
-#define DRIVER_NAME "ASCII_DAT"
-#define EXIT_WITH_ERROR(error, mssg)       {  MDAL::Log::errorFromDriver( error, DRIVER_NAME, mssg); return; }
+#define EXIT_WITH_ERROR(error, mssg)       {  MDAL::Log::errorFromDriver( error, name(), mssg); return; }
 
 MDAL::DriverAsciiDat::DriverAsciiDat( ):
-  Driver( DRIVER_NAME,
+  Driver( "ASCII_DAT",
           "DAT",
           "*.dat",
           Capability::ReadDatasets | Capability::WriteDatasetsOnFaces |
@@ -193,7 +192,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
       if ( meshIdCount != fileNodeCount )
         EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh, "IDs in mesh and nodes in file are not equal" )
 
-    }
+      }
     else if ( cardType == "NC" && items.size() >= 2 )
     {
       size_t fileElemCount = toSizeT( items[1] );
@@ -205,7 +204,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     {
       if ( items[1] != "mesh2d" && items[1] != "\"mesh2d\"" )
         EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "Error in file" )
-    }
+      }
     else if ( cardType == "BEGSCL" || cardType == "BEGVEC" )
     {
       if ( group )

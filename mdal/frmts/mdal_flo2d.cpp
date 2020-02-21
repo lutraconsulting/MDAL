@@ -673,13 +673,13 @@ void MDAL::DriverFlo2D::load( const std::string &uri, MDAL::Mesh *mesh )
   MDAL::MemoryMesh *memoryMesh = dynamic_cast<MDAL::MemoryMesh *>( mesh );
   if ( !memoryMesh )
   {
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_IncompatibleMesh, name(), "Mesh is not valid (null)" );
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "Mesh is not valid (null)" );
     return;
   }
 
   if ( !MDAL::fileExists( uri ) )
   {
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_FileNotFound, name(), "Could not find file " + uri );
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, name(), "Could not find file " + uri );
     return;
   }
 
@@ -687,7 +687,7 @@ void MDAL::DriverFlo2D::load( const std::string &uri, MDAL::Mesh *mesh )
   if ( err )
   {
     // TODO better error message?
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_InvalidData, name(), "Could not parse HDF5 datasets" );
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "Could not parse HDF5 datasets" );
   }
 }
 
@@ -723,7 +723,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &result
 
   catch ( MDAL_Status error )
   {
-    MDAL::Log::errorFromDriver( error, name(), "error occured while loading file " + resultsFile );
+    MDAL::Log::error( error, name(), "error occured while loading file " + resultsFile );
     mMesh.reset();
   }
 
@@ -874,7 +874,7 @@ bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
 {
   if ( !group || ( group->dataLocation() != MDAL_DataLocation::DataOnFaces ) )
   {
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_IncompatibleDataset, name(), "flo-2d can store only 2D face datasets" );
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, name(), "flo-2d can store only 2D face datasets" );
     return true;
   }
 
@@ -894,7 +894,7 @@ bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
   }
   catch ( MDAL_Status error )
   {
-    MDAL::Log::errorFromDriver( error, name(), "error occured" );
+    MDAL::Log::error( error, name(), "error occured" );
     return true;
   }
 }

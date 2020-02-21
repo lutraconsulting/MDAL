@@ -430,7 +430,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName 
   }
   catch ( MDAL_Status error )
   {
-    MDAL::Log::errorFromDriver( error, name(), "error while loading file " + fileName);
+    MDAL::Log::error( error, name(), "error while loading file " + fileName );
     return std::unique_ptr<Mesh>();
   }
 }

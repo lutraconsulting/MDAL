@@ -679,10 +679,10 @@ bool MDAL::DriverHec2D::canReadFormat505( const std::string &fileType ) const
   return fileType == "HEC-RAS Geometry";
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::DriverHec2D::load( const std::string &resultsFile, MDAL_Status *status )
+std::unique_ptr<MDAL::Mesh> MDAL::DriverHec2D::load( const std::string &resultsFile )
 {
   mFileName = resultsFile;
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
   mMesh.reset();
 
   try
@@ -722,7 +722,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverHec2D::load( const std::string &resultsF
   }
   catch ( MDAL_Status error )
   {
-    if ( status ) *status = ( error );
+    MDAL::Log::error( error, name(), "Error occured while loading file " + resultsFile );
     mMesh.reset();
   }
 

@@ -21,10 +21,20 @@ namespace MDAL
    */
   namespace Log
   {
+    struct LogStruct
+    {
+      LogStruct( MDAL_Status s, std::string driver, std::string m ): status( s ), driver( driver ), mssg( m ) {}
+      MDAL_Status status;
+      std::string driver;
+      std::string mssg;
+    };
+
+    void error( LogStruct logStruct );
     void error( MDAL_Status status, std::string mssg );
-    void errorFromDriver( MDAL_Status status, std::string driverName, std::string mssg );
+    void error( MDAL_Status status, std::string driverName, std::string mssg );
+    void warning( LogStruct logStruct );
     void warning( MDAL_Status status, std::string mssg );
-    void warningFromDriver( MDAL_Status status, std::string driverName, std::string mssg );
+    void warning( MDAL_Status status, std::string driverName, std::string mssg );
     void info( std::string mssg );
     void debug( std::string mssg );
 
