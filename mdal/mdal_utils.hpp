@@ -35,9 +35,6 @@ namespace MDAL
   //! returns quiet_NaN if value equals nodata value, otherwise returns val itself
   double safeValue( double val, double nodata, double eps = std::numeric_limits<double>::epsilon() );
 
-  // debugging
-  void debug( const std::string &message );
-
   /** Return whether file exists */
   bool fileExists( const std::string &filename );
   std::string baseName( const std::string &filename );

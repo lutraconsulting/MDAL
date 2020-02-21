@@ -6,7 +6,6 @@
 #include <iostream>
 
 #include "mdal_logger.hpp"
-#include "mdal_utils.hpp"
 
 // Standard output for logger
 void _standardStdout( MDAL_LogLevel logLevel, MDAL_Status status, const char *mssg );

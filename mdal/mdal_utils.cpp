@@ -195,15 +195,6 @@ bool MDAL::contains( const std::string &str, const std::string &substr, Contains
   }
 }
 
-void MDAL::debug( const std::string &message )
-{
-#ifdef NDEBUG
-  MDAL_UNUSED( message );
-#else
-  std::cout << message << std::endl;
-#endif
-}
-
 bool MDAL::toBool( const std::string &str )
 {
   int i = atoi( str.c_str() );
