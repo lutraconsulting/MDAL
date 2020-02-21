@@ -17,6 +17,7 @@
 #include "mdal.h"
 #include "mdal_driver.hpp"
 #include "mdal_netcdf.hpp"
+#include "mdal_logger.hpp"
 
 namespace MDAL
 {
@@ -40,7 +41,7 @@ namespace MDAL
       ~DriverSWW( ) override = default;
       DriverSWW *create() override;
 
-      std::unique_ptr< Mesh > load( const std::string &resultsFile, MDAL_Status *status ) override;
+      std::unique_ptr< Mesh > load( const std::string &resultsFile ) override;
       bool canReadMesh( const std::string &uri ) override;
 
     private:

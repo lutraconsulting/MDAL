@@ -559,9 +559,9 @@ bool MDAL::DriverSelafin::canReadMesh( const std::string &uri )
   return true;
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFile, MDAL_Status *status )
+std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFile )
 {
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
   mFileName = meshFile;
   mMesh.reset();
 
@@ -604,7 +604,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFi
   }
   catch ( MDAL_Status error )
   {
-    if ( status ) *status = ( error );
+    MDAL::Log::error( error, name(), "Error while loading file " + meshFile );
     mMesh.reset();
   }
   return std::unique_ptr<Mesh>( mMesh.release() );

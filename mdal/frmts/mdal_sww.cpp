@@ -423,11 +423,10 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
 }
 
 std::unique_ptr<MDAL::Mesh> MDAL::DriverSWW::load(
-  const std::string &resultsFile,
-  MDAL_Status *status )
+  const std::string &resultsFile )
 {
   mFileName = resultsFile;
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   NetCDFFile ncFile;
 
@@ -464,7 +463,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSWW::load(
   }
   catch ( MDAL_Status err )
   {
-    if ( status ) *status = err;
+    MDAL::Log::error( err, "Error while loading file " + resultsFile );
     return std::unique_ptr< MDAL::Mesh >();
   }
 }
