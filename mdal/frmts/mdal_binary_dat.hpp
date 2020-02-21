@@ -16,6 +16,7 @@
 #include "mdal_data_model.hpp"
 #include "mdal.h"
 #include "mdal_driver.hpp"
+#include "mdal_logger.hpp"
 
 namespace MDAL
 {
@@ -28,7 +29,7 @@ namespace MDAL
       DriverBinaryDat *create() override;
 
       bool canReadDatasets( const std::string &uri ) override;
-      void load( const std::string &datFile, Mesh *mesh, MDAL_Status *status ) override;
+      void load( const std::string &datFile, Mesh *mesh ) override;
       bool persist( DatasetGroup *group ) override;
 
     private:
