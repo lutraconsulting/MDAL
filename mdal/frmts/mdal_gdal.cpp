@@ -544,10 +544,10 @@ bool MDAL::DriverGdal::canReadMesh( const std::string &uri )
   return true;
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName, MDAL_Status *status )
+std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName )
 {
   mFileName = fileName;
-  if ( status ) *status = MDAL_Status::None ;
+  MDAL::Log::resetLastStatus();
 
   mPafScanline = nullptr;
   mMesh.reset();
@@ -602,7 +602,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName,
   }
   catch ( MDAL_Status error )
   {
-    if ( status ) *status = ( error );
+    MDAL::Log::errorFromDriver( error, name(), "error occured while loading " + fileName );
     mMesh.reset();
   }
 
@@ -613,7 +613,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName,
   // do not allow mesh without any valid datasets
   if ( mMesh && ( mMesh->datasetGroups.empty() ) )
   {
-    if ( status ) *status = MDAL_Status::Err_InvalidData;
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_InvalidData, name(), "Mesh does not have any valid dataset" );
     mMesh.reset();
   }
   return std::unique_ptr<Mesh>( mMesh.release() );
