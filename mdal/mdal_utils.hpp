@@ -159,12 +159,5 @@ namespace MDAL
   //! parse the reference time in the CF convention string format "XXXX since 2019-01-01 00:00:00"
   //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
   MDAL::DateTime parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
-
-  //! standard stdout for logs - used when MDAL_DEBUG environment variable is set
-  void _standardStdout( MDAL_LogLevel logLevel, MDAL_Status status, const char *mssg );
-
-  //! helper function to check if environment variable responsible for mdal debugging is set
-  MDAL_LoggerCallback setDefaultLoggerCallback();
-
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

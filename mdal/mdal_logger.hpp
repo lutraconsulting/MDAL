@@ -25,6 +25,12 @@ namespace MDAL
     /** Logger function handling warning logs */
     void warning( MDAL_Status status, std::string mssg );
 
+    /** Logger function handling warning logs */
+    void info( MDAL_Status status, std::string mssg );
+
+    /** Logger function handling warning logs */
+    void debug( std::string mssg );
+
     /** Function to get last set MDAL_Status */
     MDAL_Status getLastStatus();
 
@@ -36,6 +42,9 @@ namespace MDAL
     //! MDAL_LoggerCallback is a function accepting MDAL_LogLevel, MDAL_Status and const char* string
     //! Declaration can be found in mdal.h
     void setLoggerCallback( MDAL_LoggerCallback callback );
+
+    //! Function to set maximum log level ( verbosity )
+    void setLogVerbosity( MDAL_LogLevel verbosity );
   }
 }
 

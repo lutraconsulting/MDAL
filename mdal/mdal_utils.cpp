@@ -798,22 +798,3 @@ bool MDAL::getHeaderLine( std::ifstream &stream, std::string &line )
   line = std::string( b );
   return true;
 }
-
-void MDAL::_standardStdout( MDAL_LogLevel logLevel, MDAL_Status status, const char *mssg )
-{
-  if ( logLevel == MDAL_LogLevel::Error )
-    std::cerr << "ERR: Status " << status << ": " << mssg << std::endl;
-  else if ( logLevel == MDAL_LogLevel::Warn )
-    std::cout << "WARN: Status " << status << ": " << mssg << std::endl;
-  else
-    std::cout << "DEBUG: Status " << status << ": " << mssg << std::endl;
-}
-
-MDAL_LoggerCallback MDAL::setDefaultLoggerCallback()
-{
-  if ( getenv( "MDAL_DEBUG" ) )
-  {
-    return &_standardStdout;
-  }
-  return nullptr;
-}

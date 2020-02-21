@@ -34,6 +34,11 @@ void MDAL_SetLoggerCallback( MDAL_LoggerCallback callback )
   MDAL::Log::setLoggerCallback( callback );
 }
 
+void MDAL_SetLogVerbosity( MDAL_LogLevel verbosity )
+{
+  MDAL::Log::setLogVerbosity( verbosity );
+}
+
 // helper to return string data - without having to deal with memory too much.
 // returned pointer is valid only next call. also not thread-safe.
 const char *_return_str( const std::string &str )

@@ -62,10 +62,10 @@ enum MDAL_Status
 /** Log levels */
 enum MDAL_LogLevel
 {
-  Debug,
-  Info,
-  Warn,
   Error,
+  Warn,
+  Info,
+  Debug,
 };
 
 /**
@@ -104,6 +104,12 @@ MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 //! Calling this method with nullptr dissables logger ( logs will not be shown anywhere ).
 //! \since MDAL 0.6.0
 MDAL_EXPORT void MDAL_SetLoggerCallback( MDAL_LoggerCallback callback );
+
+//! Set maximum log level (verbosity)
+//! By default logger outputs errors
+//! Log levels (low to high): Error, Warn, Info, Debug
+//! For example if LogVerbosity is set to Warn, logger outputs Error and Warn levels.
+MDAL_EXPORT void MDAL_SetLogVerbosity( MDAL_LogLevel verbosity );
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DRIVERS
