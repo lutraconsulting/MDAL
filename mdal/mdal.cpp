@@ -329,7 +329,7 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
   int len = static_cast<int>( m->datasetGroups.size() );
   if ( len <= index )
   {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index " + std::to_string(index) + " is bigger than datasets count" );
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index " + std::to_string( index ) + " is bigger than datasets count" );
     return nullptr;
   }
   size_t i = static_cast<size_t>( index );

@@ -61,14 +61,14 @@ void MDAL::Log::setLoggerCallback( MDAL_LoggerCallback callback )
   sLoggerCallback = callback;
 }
 
-void MDAL::Log::setLogVerbosity(MDAL_LogLevel verbosity)
+void MDAL::Log::setLogVerbosity( MDAL_LogLevel verbosity )
 {
   sLogVerbosity = verbosity;
 }
 
 void _standardStdout( MDAL_LogLevel logLevel, MDAL_Status status, const char *mssg )
 {
-  switch( logLevel )
+  switch ( logLevel )
   {
     case Error:
       std::cerr << "ERROR: Status " << status << ": " << mssg << std::endl;
