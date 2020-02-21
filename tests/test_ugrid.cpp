@@ -12,68 +12,20 @@
 
 TEST( MeshUgridTest, SaveDFlow11Manzese )
 {
-  //test driver capability
-  EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( "Ugrid" ) ) );
-
-  // Open mesh
-  std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
-  MeshH meshToSave = MDAL_LoadMesh( path.c_str() );
-  EXPECT_NE( meshToSave, nullptr );
-  MDAL_Status s = MDAL_LastStatus();
-  ASSERT_EQ( MDAL_Status::None, s );
-
-  // Save the mesh as UGRID
-  std::string fileNameToSave = tmp_file( "/manzese_1d2d_small_map_saveTest.nc" );
-  MDAL_SaveMesh( meshToSave, fileNameToSave.c_str(), "Ugrid" );
-  s = MDAL_LastStatus();
-  ASSERT_EQ( MDAL_Status::None, s );
-
-  // Load saved UGRID mesh
-  MeshH savedMesh = MDAL_LoadMesh( fileNameToSave.c_str() );
-  EXPECT_NE( savedMesh, nullptr );
-  s = MDAL_LastStatus();
-  ASSERT_EQ( MDAL_Status::None, s );
-
-  // Compare saved with the original mesh
-  EXPECT_TRUE( compareMeshFrames( meshToSave, savedMesh ) );
-
-  // Close meshed and delete all the files
-  MDAL_CloseMesh( meshToSave );
-  MDAL_CloseMesh( savedMesh );
-  std::remove( fileNameToSave.c_str() );
+  saveAndCompareMesh(
+    test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ),
+    tmp_file( "/manzese_1d2d_small_map_saveTest.nc" ),
+    "Ugrid"
+  );
 }
 
 TEST( MeshUgridTest, SaveQuadAndTriangle )
 {
-  //test driver capability
-  EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( "Ugrid" ) ) );
-
-  // Open mesh with both triangle and quad
-  std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
-  MeshH meshToSave = MDAL_LoadMesh( path.c_str() );
-  EXPECT_NE( meshToSave, nullptr );
-  MDAL_Status s = MDAL_LastStatus();
-  ASSERT_EQ( MDAL_Status::None, s );
-
-  // Save the mesh as UGRID
-  std::string fileNameToSave = tmp_file( "/quad_and_triangle_saveTest.nc" );
-  MDAL_SaveMesh( meshToSave, fileNameToSave.c_str(), "Ugrid" );
-  s = MDAL_LastStatus();
-  ASSERT_EQ( MDAL_Status::None, s );
-
-  // Load saved UGRID mesh
-  MeshH savedMesh = MDAL_LoadMesh( fileNameToSave.c_str() );
-  EXPECT_NE( savedMesh, nullptr );
-  s = MDAL_LastStatus();
-  ASSERT_EQ( MDAL_Status::None, s );
-
-  // Compare saved with the original mesh
-  EXPECT_TRUE( compareMeshFrames( meshToSave, savedMesh ) );
-
-  // Close meshed and delete all the files
-  MDAL_CloseMesh( meshToSave );
-  MDAL_CloseMesh( savedMesh );
-  std::remove( fileNameToSave.c_str() );
+  saveAndCompareMesh(
+    test_file( "/2dm/quad_and_triangle.2dm" ),
+    tmp_file( "/quad_and_triangle_saveTest.nc" ),
+    "Ugrid"
+  );
 }
 
 TEST( MeshUgridTest, DFlow11Manzese )
@@ -126,7 +78,7 @@ TEST( MeshUgridTest, DFlow11Manzese )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 0 );
@@ -222,7 +174,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 13, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -300,7 +252,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 45, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -383,7 +335,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 23, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 3 );
@@ -428,7 +380,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   EXPECT_EQ( false, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 23, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 20 );
@@ -521,7 +473,7 @@ TEST( MeshUgridTest, ADCIRC )
   EXPECT_EQ( true, scalar );
 
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
   DatasetH ds = MDAL_G_dataset( g, 1 );
@@ -566,7 +518,7 @@ TEST( MeshUgridTest, ADCIRC )
   EXPECT_EQ( false, scalar );
 
   dataLocation = MDAL_G_dataLocation( g );
-  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices2D );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 0 );

@@ -292,7 +292,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
             mesh,
             mFileName,
             groupName );
-    mds->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
+    mds->setDataLocation( MDAL_DataLocation::DataOnVertices );
     mds->setIsScalar( true );
 
     int zDimsX = 0;
@@ -360,7 +360,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
             mesh,
             mFileName,
             groupName );
-    mds->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
+    mds->setDataLocation( MDAL_DataLocation::DataOnVertices );
     mds->setIsScalar( false );
 
     int zDimsX = 0;
@@ -443,6 +443,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSWW::load(
       new MemoryMesh(
         name(),
         vertices.size(),
+        0,
         faces.size(),
         3, // triangles
         computeExtent( vertices ),

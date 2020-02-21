@@ -1,5 +1,9 @@
-#define xstr(a) str(a)
-#define str(a) #a
+/*
+ MDAL - Mesh Data Abstraction Library (MIT License)
+ Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
+*/
+
+#include "gtest/gtest.h"
 
 #include "mdal_testutils.hpp"
 #include "mdal_config.hpp"
@@ -183,29 +187,41 @@ bool compareVectors( const std::vector<double> &a, const std::vector<double> &b 
   return true;
 }
 
-bool compareMeshFrames( MeshH meshA, MeshH meshB )
+void compareMeshFrames( MeshH meshA, MeshH meshB )
 {
   // Vertices
   int orignal_v_count = MDAL_M_vertexCount( meshA );
   int saved_v_count = MDAL_M_vertexCount( meshB );
-  if ( orignal_v_count != saved_v_count ) return false;
+  EXPECT_EQ( orignal_v_count, saved_v_count );
 
   std::vector<double> coordsA = getCoordinates( meshA, orignal_v_count );
   std::vector<double> coordsB = getCoordinates( meshB, saved_v_count );
-  if ( !compareVectors( coordsA, coordsB ) )
-    return false;
+  EXPECT_TRUE( compareVectors( coordsA, coordsB ) );
+
+  // Edges
+  int orignal_e_count = MDAL_M_edgeCount( meshA );
+  int saved_e_count = MDAL_M_edgeCount( meshB );
+  EXPECT_EQ( orignal_e_count, saved_e_count );
+
+  std::vector<int> original_start;
+  std::vector<int> original_end;
+  std::vector<int> saved_start;
+  std::vector<int> saved_end;
+
+  getEdgeVertexIndices( meshA, orignal_e_count, original_start, original_end );
+  getEdgeVertexIndices( meshB, saved_e_count, saved_start, saved_end );
+
+  EXPECT_TRUE( compareVectors( original_start, saved_start ) );
+  EXPECT_TRUE( compareVectors( original_end, saved_end ) );
 
   // Faces
   int orignal_f_count = MDAL_M_faceCount( meshA );
   int saved_f_count = MDAL_M_faceCount( meshB );
-  if ( orignal_f_count != saved_f_count ) return false;
+  EXPECT_EQ( orignal_f_count, saved_f_count );
 
   std::vector<int> verticesA = faceVertexIndices( meshA, orignal_f_count );
   std::vector<int> verticesB = faceVertexIndices( meshB, saved_f_count );
-  if ( !compareVectors( verticesA, verticesB ) )
-    return false;
-
-  return true;
+  EXPECT_TRUE( compareVectors( verticesA, verticesB ) );
 }
 
 std::vector<double> getCoordinates( MeshH mesh, int verticesCount )
@@ -215,6 +231,17 @@ std::vector<double> getCoordinates( MeshH mesh, int verticesCount )
   MDAL_VI_next( iterator, verticesCount, coordinates.data() );
   MDAL_VI_close( iterator );
   return coordinates;
+}
+
+void getEdgeVertexIndices( MeshH mesh, int edgesCount, std::vector<int> &start, std::vector<int> &end )
+{
+  MeshEdgeIteratorH iterator = MDAL_M_edgeIterator( mesh );
+  start.clear();
+  start.resize( static_cast<size_t>( edgesCount ) );
+  end.clear();
+  end.resize( static_cast<size_t>( edgesCount ) );
+  MDAL_EI_next( iterator, edgesCount, start.data(), end.data() );
+  MDAL_EI_close( iterator );
 }
 
 double _getVertexCoordinatesAt( MeshH mesh, int index, int coordIndex )
@@ -323,4 +350,35 @@ bool hasReferenceTime( DatasetGroupH group )
 bool compareReferenceTime( DatasetGroupH group, const char *referenceTime )
 {
   return std::strcmp( MDAL_G_referenceTime( group ), referenceTime ) == 0;
+}
+
+void saveAndCompareMesh( const std::string &filename, const std::string &savedFile, const std::string &driver )
+{
+  //test driver capability
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( driver.c_str() ) ) );
+
+  // Open mesh
+  MeshH meshToSave = MDAL_LoadMesh( filename.c_str() );
+  EXPECT_NE( meshToSave, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Save the mesh
+  MDAL_SaveMesh( meshToSave, savedFile.c_str(), driver.c_str() );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Load saved mesh
+  MeshH savedMesh = MDAL_LoadMesh( savedFile.c_str() );
+  EXPECT_NE( savedMesh, nullptr );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Compare saved with the original mesh
+  compareMeshFrames( meshToSave, savedMesh );
+
+  // Close meshed and delete all the files
+  MDAL_CloseMesh( meshToSave );
+  MDAL_CloseMesh( savedMesh );
+  std::remove( savedFile.c_str() );
 }

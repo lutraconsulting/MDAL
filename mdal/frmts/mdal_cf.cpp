@@ -180,11 +180,11 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Relat
     group->setIsScalar( !dsi.is_vector );
 
     if ( dsi.outputType == CFDimensions::Vertex2D )
-      group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
+      group->setDataLocation( MDAL_DataLocation::DataOnVertices );
     else if ( dsi.outputType == CFDimensions::Face2D )
-      group->setDataLocation( MDAL_DataLocation::DataOnFaces2D );
+      group->setDataLocation( MDAL_DataLocation::DataOnFaces );
     else if ( dsi.outputType == CFDimensions::Volume3D )
-      group->setDataLocation( MDAL_DataLocation::DataOnVolumes3D );
+      group->setDataLocation( MDAL_DataLocation::DataOnVolumes );
     else
     {
       // unsupported
@@ -405,6 +405,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
       new MemoryMesh(
         name(),
         vertices.size(),
+        0,
         faces.size(),
         mDimensions.size( mDimensions.MaxVerticesInFace ),
         computeExtent( vertices ),

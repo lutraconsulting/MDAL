@@ -82,7 +82,7 @@ MDAL::DriverBinaryDat::DriverBinaryDat():
   Driver( "BINARY_DAT",
           "Binary DAT",
           "*.dat",
-          Capability::ReadDatasets | Capability::WriteDatasetsOnVertices2D
+          Capability::ReadDatasets | Capability::WriteDatasetsOnVertices
         )
 {
 }
@@ -163,7 +163,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
                                           mesh,
                                           mDatFile
                                         ); // DAT datasets
-  group->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
+  group->setDataLocation( MDAL_DataLocation::DataOnVertices );
 
   // in TUFLOW results there could be also a special timestep (99999) with maximums
   // we will put it into a separate dataset
@@ -172,7 +172,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh, 
         mesh,
         mDatFile
       );
-  groupMax->setDataLocation( MDAL_DataLocation::DataOnVertices2D );
+  groupMax->setDataLocation( MDAL_DataLocation::DataOnVertices );
 
   while ( card != CT_ENDDS )
   {
@@ -394,7 +394,7 @@ static bool writeRawData( std::ofstream &out, const char *s, int n )
 
 bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
 {
-  assert( group->dataLocation() == MDAL_DataLocation::DataOnVertices2D );
+  assert( group->dataLocation() == MDAL_DataLocation::DataOnVertices );
 
   std::ofstream out( group->uri(), std::ofstream::out | std::ofstream::binary );
 

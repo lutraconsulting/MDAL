@@ -586,7 +586,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXdmf::findGroup( std::map<std::s
               groupName
             );
     group->setIsScalar( isScalar );
-    group->setDataLocation( MDAL_DataLocation::DataOnFaces2D ); //only center-based implemented
+    group->setDataLocation( MDAL_DataLocation::DataOnFaces ); //only center-based implemented
     groups[groupName] = group;
   }
   else
