@@ -411,7 +411,7 @@ void MDAL::DriverUgrid::parse2VariablesFromAttribute( const std::string &name, c
   }
 }
 
-void MDAL::DriverUgrid::save( const std::string &uri, MDAL::Mesh *mesh, MDAL_Status *status )
+void MDAL::DriverUgrid::save( const std::string &uri, MDAL::Mesh *mesh )
 {
   mFileName = uri;
 
@@ -429,7 +429,7 @@ void MDAL::DriverUgrid::save( const std::string &uri, MDAL::Mesh *mesh, MDAL_Sta
   }
   catch ( MDAL_Status error )
   {
-    if ( status ) *status = ( error );
+    MDAL::Log::errorFromDriver( error, longName(), "could not save file " + uri );
   }
 }
 

@@ -369,13 +369,13 @@ void MDAL::DriverCF::setProjection( MDAL::Mesh *mesh )
   }
 }
 
-std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName, MDAL_Status *status )
+std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName )
 {
   mNcFile.reset( new NetCDFFile );
 
   mFileName = fileName;
 
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   //Dimensions dims;
   std::vector<MDAL::RelativeTimestamp> times;
@@ -420,7 +420,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
   }
   catch ( MDAL_Status error )
   {
-    if ( status ) *status = ( error );
+    MDAL::Log::errorFromDriver( error, longName(), "error while loading file " + fileName);
     return std::unique_ptr<Mesh>();
   }
 }
