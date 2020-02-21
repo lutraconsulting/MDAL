@@ -34,7 +34,7 @@ void NetCDFFile::openFile( const std::string &fileName )
   int res = nc_open( fileName.c_str(), NC_NOWRITE, &mNcid );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
+    MDAL::Log::info( nc_strerror( res ) );
     throw MDAL_Status::Err_UnknownFormat;
   }
 }
@@ -368,7 +368,7 @@ void NetCDFFile::createFile( const std::string &fileName )
   int res = nc_create( fileName.c_str(), NC_CLOBBER, &mNcid );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
+    MDAL::Log::info( nc_strerror( res ) );
     throw MDAL_Status::Err_FailToWriteToDisk;
   }
 }
@@ -379,7 +379,7 @@ int NetCDFFile::defineDimension( const std::string &name, size_t size )
   int res = nc_def_dim( mNcid, name.c_str(), size, &dimId );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
+    MDAL::Log::info( nc_strerror( res ) );
     throw MDAL_Status::Err_FailToWriteToDisk;
   }
   return dimId;
@@ -393,7 +393,7 @@ int NetCDFFile::defineVar( const std::string &varName,
   int res = nc_def_var( mNcid, varName.c_str(), ncType, dimensionCount, dimensions, &varIdp );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
+    MDAL::Log::info( nc_strerror( res ) );
     throw MDAL_Status::Err_FailToWriteToDisk;
   }
 
@@ -405,7 +405,7 @@ void NetCDFFile::putAttrStr( int varId, const std::string &attrName, const std::
   int res = nc_put_att_text( mNcid, varId, attrName.c_str(), value.size(), value.c_str() );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
+    MDAL::Log::info( nc_strerror( res ) );
     throw MDAL_Status::Err_FailToWriteToDisk;
   }
 }
@@ -415,7 +415,7 @@ void NetCDFFile::putAttrInt( int varId, const std::string &attrName, int value )
   int res = nc_put_att_int( mNcid, varId, attrName.c_str(), NC_INT, 1, &value );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
+    MDAL::Log::info( nc_strerror( res ) );
     throw MDAL_Status::Err_FailToWriteToDisk;
   }
 }
@@ -425,7 +425,7 @@ void NetCDFFile::putAttrDouble( int varId, const std::string &attrName, double v
   int res = nc_put_att_double( mNcid, varId, attrName.c_str(), NC_DOUBLE, 1, &value );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
+    MDAL::Log::info( nc_strerror( res ) );
     throw MDAL_Status::Err_FailToWriteToDisk;
   }
 }
@@ -435,7 +435,7 @@ void NetCDFFile::putDataDouble( int varId, const size_t index, const double valu
   int res = nc_put_var1_double( mNcid, varId, &index, &value );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
+    MDAL::Log::info( nc_strerror( res ) );
     throw MDAL_Status::Err_FailToWriteToDisk;
   }
 }
@@ -450,7 +450,7 @@ void NetCDFFile::putDataArrayInt( int varId, size_t line, size_t faceVerticesMax
   int res = nc_put_vara_int( mNcid, varId, start, count, values );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
+    MDAL::Log::info( nc_strerror( res ) );
     throw MDAL_Status::Err_FailToWriteToDisk;
   }
 }
