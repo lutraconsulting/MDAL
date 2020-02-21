@@ -85,3 +85,12 @@ void _standardStdout( MDAL_LogLevel logLevel, MDAL_Status status, const char *ms
   }
 }
 
+void MDAL::Log::errorFromDriver(MDAL_Status status, std::string driverName, std::string mssg)
+{
+  error( status, "Driver: " + driverName + ": " + mssg );
+}
+
+void MDAL::Log::warningFromDriver(MDAL_Status status, std::string driverName, std::string mssg)
+{
+  warning( status, "Driver: " + driverName + ": " + mssg );
+}
