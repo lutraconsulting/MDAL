@@ -158,7 +158,7 @@ MeshH MDAL_LoadMesh( const char *meshFile )
   }
 
   std::string filename( meshFile );
-  return static_cast< MeshH >( MDAL::DriverManager::instance().load( filename, &MDAL::Log::sLastStatus ).release() );
+  return static_cast< MeshH >( MDAL::DriverManager::instance().load( filename ).release() );
 }
 
 void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
@@ -191,7 +191,7 @@ void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
   }
 
   std::string filename( meshFile );
-  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), filename, driverName, &MDAL::Log::sLastStatus );
+  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), filename, driverName );
 }
 
 
@@ -291,7 +291,7 @@ void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile )
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
 
   std::string filename( datasetFile );
-  MDAL::DriverManager::instance().loadDatasets( m, datasetFile, &MDAL::Log::sLastStatus );
+  MDAL::DriverManager::instance().loadDatasets( m, datasetFile );
 }
 
 int MDAL_M_datasetGroupCount( MeshH mesh )
