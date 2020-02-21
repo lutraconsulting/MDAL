@@ -373,7 +373,7 @@ DatasetGroupH MDAL_M_addDatasetGroup(
 
   if ( !dr->hasWriteDatasetCapability( dataLocation ) )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Driver " + dr->longName() + " does not have Write Dataset capability" );
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_MissingDriverCapability, dr->name(), "does not have Write Dataset capability" );
     return nullptr;
   }
 

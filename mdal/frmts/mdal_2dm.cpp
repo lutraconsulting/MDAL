@@ -115,7 +115,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile )
   std::string line;
   if ( !std::getline( in, line ) || !startsWith( line, "MESH2D" ) )
   {
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_UnknownFormat, longName(), meshFile + " could not be opened" );
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_UnknownFormat, name(), meshFile + " could not be opened" );
     return nullptr;
   }
 
@@ -140,7 +140,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile )
               startsWith( line, "E8Q" ) ||
               startsWith( line, "E9Q" ) )
     {
-      MDAL::Log::warning( MDAL_Status::Warn_UnsupportedElement, longName() + " found unsupported element" );
+      MDAL::Log::warning( MDAL_Status::Warn_UnsupportedElement, name() + " found unsupported element" );
       faceCount += 1; // We still count them as elements
     }
   }
@@ -229,7 +229,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile )
         if ( ( lastVertexID != 0 ) && ( nodeID <= lastVertexID ) )
         {
           // the algorithm requires that the file has NDs orderer by index
-          MDAL::Log::errorFromDriver( MDAL_Status::Err_InvalidData, longName(), "nodes are not ordered by index" );
+          MDAL::Log::errorFromDriver( MDAL_Status::Err_InvalidData, name(), "nodes are not ordered by index" );
           return nullptr;
         }
         lastVertexID = nodeID;
@@ -260,7 +260,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile )
       }
       else if ( vertices.size() < nodeID )
       {
-        MDAL::Log::warningFromDriver( MDAL_Status::Warn_ElementWithInvalidNode, longName(), "found invalid node" );
+        MDAL::Log::warningFromDriver( MDAL_Status::Warn_ElementWithInvalidNode, name(), "found invalid node" );
       }
     }
     //TODO check validity of the face
@@ -295,7 +295,7 @@ void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh )
 
   if ( !file.is_open() )
   {
-    MDAL::Log::error( MDAL_Status::Err_FailToWriteToDisk, "Driver " + longName() + ": " + uri + " could not be opened" );
+    MDAL::Log::error( MDAL_Status::Err_FailToWriteToDisk, "Driver " + name() + ": " + uri + " could not be opened" );
   }
 
   std::string line = "MESH2D";

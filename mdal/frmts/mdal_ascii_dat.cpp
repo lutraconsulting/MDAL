@@ -296,7 +296,7 @@ void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh )
 
   if ( !MDAL::fileExists( mDatFile ) )
   {
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_FileNotFound, longName(), "could not find file " + datFile );
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_FileNotFound, name(), "could not find file " + datFile );
     return;
   }
 
@@ -304,7 +304,7 @@ void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh )
   if ( mID == std::numeric_limits<size_t>::max() )
   {
     // This happens when mesh is 2DM and vertices are numbered from 0
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_IncompatibleMesh, longName(), "mesh is 2DM and vertices are numbered from 0" );
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_IncompatibleMesh, name(), "mesh is 2DM and vertices are numbered from 0" );
     return;
   }
 
@@ -312,7 +312,7 @@ void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh )
   std::string line;
   if ( !std::getline( in, line ) )
   {
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_UnknownFormat, longName(), "could not read file " +  mDatFile);
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_UnknownFormat, name(), "could not read file " +  mDatFile);
     return;
   }
   line = trim( line );
