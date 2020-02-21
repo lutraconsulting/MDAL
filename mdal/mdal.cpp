@@ -260,7 +260,7 @@ int MDAL_M_edgeCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
 
@@ -444,7 +444,7 @@ int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coord
   }
   if ( !coordinates )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Coordinates pointer is not valid (null)" );
     return 0;
   }
   MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
@@ -470,7 +470,7 @@ MeshEdgeIteratorH MDAL_M_edgeIterator( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -485,13 +485,13 @@ int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIn
 
   if ( !iterator )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh Edge Iterator is not valid (null)" );
     return 0;
   }
 
   if ( !startVertexIndices || !endVertexIndices )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Start or End Vertex Index is not valid (null)" );
     return 0;
   }
 

@@ -43,7 +43,7 @@ static const int CF_FLAG_INT_SIZE = 4;
 
 static void exit_with_error( MDAL_Status error, const std::string msg )
 {
-  MDAL::Log::errorFromDriver( error, "BINARY_DAT", msg );
+  MDAL::Log::error( error, "BINARY_DAT", msg );
 }
 
 static bool read( std::ifstream &in, char *s, int n )
@@ -122,7 +122,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh )
 
   if ( !MDAL::fileExists( mDatFile ) )
   {
-    MDAL::Log::errorFromDriver( MDAL_Status::Err_FileNotFound, name(), "" );
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, name(), "File could not be found " + mDatFile );
     return;
   }
 

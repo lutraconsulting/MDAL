@@ -16,13 +16,13 @@
 #include <limits>
 
 #include "mdal_ascii_dat.hpp"
-#include "mdal.h"
 #include "mdal_utils.hpp"
 #include "mdal_2dm.hpp"
+#include "mdal.h"
 
 #include <math.h>
 
-#define EXIT_WITH_ERROR(error, mssg)       {  MDAL::Log::errorFromDriver( error, name(), mssg); return; }
+#define EXIT_WITH_ERROR(error, mssg)       {  MDAL::Log::error( error, "ASCII_DAT", mssg); return; }
 
 MDAL::DriverAsciiDat::DriverAsciiDat( ):
   Driver( "ASCII_DAT",
@@ -108,7 +108,7 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
       size_t meshIdCount = maximumId( mesh ) + 1;
       if ( meshIdCount != fileNodeCount )
       {
-        EXIT_WITH_ERROR( MDAL_Status::Err_IncompatibleMesh, "loading old format failed" )
+        EXIT_WITH_ERROR(MDAL_Status::Err_IncompatibleMesh, "loading old format failed" )
       }
     }
     else if ( cardType == "SCALAR" || cardType == "VECTOR" )
@@ -136,7 +136,7 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
 
   if ( !group || group->datasets.size() == 0 )
   {
-    EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "Dataset group is not valid (null) or has zero datasets" )
+    EXIT_WITH_ERROR( MDAL_Status::Err_UnknownFormat, "Dataset group is not valid (null) or has zero datasets" );
   }
 
   group->setStatistics( MDAL::calculateStatistics( group ) );
