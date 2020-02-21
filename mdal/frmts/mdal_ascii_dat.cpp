@@ -22,10 +22,11 @@
 
 #include <math.h>
 
-#define EXIT_WITH_ERROR(error)       {  if (status) *status = (error); return; }
+#define DRIVER_NAME "ASCII_DAT"
+#define EXIT_WITH_ERROR(error)       {  MDAL::Log::errorFromDriver( error, DRIVER_NAME, "error occured"); return; }
 
 MDAL::DriverAsciiDat::DriverAsciiDat( ):
-  Driver( "ASCII_DAT",
+  Driver( DRIVER_NAME,
           "DAT",
           "*.dat",
           Capability::ReadDatasets | Capability::WriteDatasetsOnFaces2D | Capability::WriteDatasetsOnVertices2D
@@ -68,8 +69,7 @@ bool MDAL::DriverAsciiDat::canReadNewFormat( const std::string &line ) const
 
 
 void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
-    Mesh *mesh,
-    MDAL_Status *status ) const
+    Mesh *mesh ) const
 {
   std::shared_ptr<DatasetGroup> group; // DAT outputs data
   std::string groupName( MDAL::baseName( mDatFile ) );
@@ -146,8 +146,7 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
 
 void MDAL::DriverAsciiDat::loadNewFormat(
   std::ifstream &in,
-  Mesh *mesh,
-  MDAL_Status *status ) const
+  Mesh *mesh ) const
 {
   bool isVector = false;
   std::shared_ptr<DatasetGroup> group; // DAT outputs data
@@ -290,14 +289,14 @@ size_t MDAL::DriverAsciiDat::maximumId( const MDAL::Mesh *mesh ) const
  * In MDAL we convert one output to one MDAL dataset;
  *
  */
-void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh, MDAL_Status *status )
+void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh )
 {
   mDatFile = datFile;
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   if ( !MDAL::fileExists( mDatFile ) )
   {
-    if ( status ) *status = MDAL_Status::Err_FileNotFound;
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_FileNotFound, longName(), "could not find file " + datFile );
     return;
   }
 
@@ -305,7 +304,7 @@ void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh, M
   if ( mID == std::numeric_limits<size_t>::max() )
   {
     // This happens when mesh is 2DM and vertices are numbered from 0
-    if ( status ) *status = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_IncompatibleMesh, longName(), "mesh is 2DM and vertices are numbered from 0" );
     return;
   }
 
@@ -313,14 +312,14 @@ void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh, M
   std::string line;
   if ( !std::getline( in, line ) )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::errorFromDriver( MDAL_Status::Err_UnknownFormat, longName(), "could not read file " +  mDatFile);
     return;
   }
   line = trim( line );
   if ( canReadNewFormat( line ) )
   {
     // we do not need to parse first line again
-    loadNewFormat( in, mesh, status );
+    loadNewFormat( in, mesh );
   }
   else
   {
@@ -328,7 +327,7 @@ void MDAL::DriverAsciiDat::load( const std::string &datFile, MDAL::Mesh *mesh, M
     // scalar/vector flag or timestep flag
     in.clear();
     in.seekg( 0 );
-    loadOldFormat( in, mesh, status );
+    loadOldFormat( in, mesh );
   }
 }
 
