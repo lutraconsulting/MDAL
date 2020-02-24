@@ -261,6 +261,29 @@ TEST( ApiTest, DatasetsApi )
   MDAL_D_minimumMaximum( nullptr, nullptr, &b );
 }
 
+std::string receivedLogMessage;
+MDAL_LogLevel receivedLogLevel;
+
+void _testLoggerCallback( MDAL_LogLevel logLevel, MDAL_Status, const char *mssg )
+{
+  receivedLogMessage = mssg;
+  receivedLogLevel = logLevel;
+}
+
+TEST( ApitTest, LoggerApi )
+{
+  MDAL_SetLoggerCallback( &_testLoggerCallback );
+  MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
+
+  // obvious silly call to test logger call
+  auto dr = MDAL_driverFromIndex( -1 );
+
+  EXPECT_EQ( dr, nullptr );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_MissingDriver );
+  EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Error );
+  EXPECT_EQ( receivedLogMessage, "No driver with index: -1" );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
