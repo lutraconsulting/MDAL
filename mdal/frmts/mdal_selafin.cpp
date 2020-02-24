@@ -21,6 +21,7 @@
 #include "mdal.h"
 #include "mdal_utils.hpp"
 #include <math.h>
+#include "mdal_logger.hpp"
 
 MDAL::SerafinStreamReader::SerafinStreamReader() = default;
 

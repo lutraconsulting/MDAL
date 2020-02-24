@@ -12,6 +12,7 @@
 
 #include "mdal_sww.hpp"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 MDAL::DriverSWW::DriverSWW()
   : Driver( "SWW",

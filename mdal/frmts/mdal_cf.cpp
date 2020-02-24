@@ -14,6 +14,7 @@
 #include "mdal_data_model.hpp"
 #include "mdal_cf.hpp"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 #define CF_THROW_ERR throw MDAL_Status::Err_UnknownFormat
 

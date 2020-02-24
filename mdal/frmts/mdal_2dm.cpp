@@ -18,6 +18,7 @@
 #include "mdal_2dm.hpp"
 #include "mdal.h"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 #define DRIVER_NAME "2DM"
 
@@ -303,7 +304,7 @@ void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh )
 
   if ( !file.is_open() )
   {
-    MDAL::Log::error( MDAL_Status::Err_FailToWriteToDisk, "Driver " + name() + ": " + uri + " could not be opened" );
+    MDAL::Log::error( MDAL_Status::Err_FailToWriteToDisk, name(), "Could not open file " + uri );
   }
 
   std::string line = "MESH2D";

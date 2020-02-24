@@ -68,7 +68,7 @@ enum MDAL_LogLevel
   Error,
   Warn,
   Info,
-  Debug,
+  Debug
 };
 
 /**

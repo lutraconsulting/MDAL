@@ -17,7 +17,6 @@
 #include "mdal_utils.hpp"
 #include "mdal_netcdf.hpp"
 #include "mdal_driver.hpp"
-#include "mdal_logger.hpp"
 
 namespace MDAL
 {

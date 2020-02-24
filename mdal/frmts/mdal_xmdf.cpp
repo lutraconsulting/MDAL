@@ -8,6 +8,7 @@
 #include "mdal_utils.hpp"
 #include "mdal_data_model.hpp"
 #include "mdal_hdf5.hpp"
+#include "mdal_logger.hpp"
 
 #include <string>
 #include <vector>

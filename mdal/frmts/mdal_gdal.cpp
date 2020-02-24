@@ -12,6 +12,7 @@
 #include "ogr_srs_api.h"
 #include "gdal_alg.h"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 #define MDAL_NODATA -9999
 

@@ -18,6 +18,7 @@
 
 #include "mdal_utils.hpp"
 #include "mdal_hdf5.hpp"
+#include "mdal_logger.hpp"
 
 #define FLO2D_NAN 0.0
 
@@ -686,7 +687,6 @@ void MDAL::DriverFlo2D::load( const std::string &uri, MDAL::Mesh *mesh )
   bool err = parseHDF5Datasets( memoryMesh, uri );
   if ( err )
   {
-    // TODO better error message?
     MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "Could not parse HDF5 datasets" );
   }
 }

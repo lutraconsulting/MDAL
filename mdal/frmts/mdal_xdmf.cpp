@@ -19,6 +19,7 @@
 #include "mdal_utils.hpp"
 #include "mdal_data_model.hpp"
 #include "mdal_xml.hpp"
+#include "mdal_logger.hpp"
 
 MDAL::XdmfDataset::XdmfDataset( MDAL::DatasetGroup *grp,
                                 const MDAL::HyperSlab &slab,

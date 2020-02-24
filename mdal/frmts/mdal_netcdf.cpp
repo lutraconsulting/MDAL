@@ -12,6 +12,7 @@
 #include "mdal_netcdf.hpp"
 #include "mdal.h"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 NetCDFFile::NetCDFFile(): mNcid( 0 ) {}
 

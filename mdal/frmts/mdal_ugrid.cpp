@@ -5,6 +5,7 @@
 
 #include "mdal_ugrid.hpp"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 #include <netcdf.h>
 #include <assert.h>

@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 
-#include "mdal_logger.hpp"
 
 //! C++ Wrapper around netcdf C library
 class NetCDFFile

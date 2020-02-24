@@ -14,6 +14,7 @@
 #include "mdal_hec2d.hpp"
 #include "mdal_hdf5.hpp"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 static HdfFile openHdfFile( const std::string &fileName )
 {

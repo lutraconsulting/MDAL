@@ -19,6 +19,7 @@
 #include "mdal_utils.hpp"
 #include "mdal_2dm.hpp"
 #include "mdal.h"
+#include "mdal_logger.hpp"
 
 #include <math.h>
 

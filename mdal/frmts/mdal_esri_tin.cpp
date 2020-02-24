@@ -4,6 +4,7 @@
 */
 
 #include "mdal_esri_tin.hpp"
+#include "mdal_logger.hpp"
 
 MDAL::DriverEsriTin::DriverEsriTin(): Driver( "ESRI_TIN",
       "Esri TIN",
