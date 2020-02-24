@@ -153,7 +153,7 @@ MDAL::Faces MDAL::DriverSWW::readFaces( const NetCDFFile &ncFile ) const
   size_t nVolumes, nVertices;
   ncFile.getDimension( "number_of_volumes", &nVolumes, &nVolumesId );
   ncFile.getDimension( "number_of_vertices", &nVertices, &nVerticesId );
-  if ( nVertices != 3 ) throw MDAL_Status::Err_UnknownFormat;
+  if ( nVertices != 3 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Number of vertices is not allowed" );
 
   std::vector<int> pvolumes = ncFile.readIntArr( "volumes", nVertices * nVolumes );
 
@@ -302,7 +302,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
 
     int zDimsX = 0;
     if ( nc_inq_varndims( ncFile.handle(), varxid, &zDimsX ) != NC_NOERR )
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Fail while reading scalar group: invalid variable id or bad ncid" );
 
     if ( zDimsX == 1 )
     {
@@ -371,13 +371,13 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
     int zDimsX = 0;
     int zDimsY = 0;
     if ( nc_inq_varndims( ncFile.handle(), varxid, &zDimsX ) != NC_NOERR )
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Fail while reading vector group: invalid variable id or bad ncid" );
 
     if ( nc_inq_varndims( ncFile.handle(), varyid, &zDimsY ) != NC_NOERR )
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Fail while reading vector group: invalid variable id or bad ncid" );
 
     if ( zDimsX != zDimsY )
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Fail while reading vector group: dimensions do not match" );
 
     if ( zDimsX == 1 )
     {

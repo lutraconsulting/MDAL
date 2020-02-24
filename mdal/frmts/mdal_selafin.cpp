@@ -30,12 +30,12 @@ void MDAL::SerafinStreamReader::initialize( const std::string &fileName )
   mFileName = fileName;
   if ( !MDAL::fileExists( mFileName ) )
   {
-    throw MDAL_Status::Err_FileNotFound;
+    throw MDAL::Error( MDAL_Status::Err_FileNotFound, "Did not find file " + mFileName );
   }
 
   mIn = std::ifstream( mFileName, std::ifstream::in | std::ifstream::binary );
   if ( !mIn )
-    throw MDAL_Status::Err_FileNotFound; // Couldn't open the file
+    throw MDAL::Error( MDAL_Status::Err_FileNotFound, "File " + mFileName + " could not be open" ); // Couldn't open the file
 
   // get length of file:
   mIn.seekg( 0, mIn.end );
@@ -62,7 +62,7 @@ bool MDAL::SerafinStreamReader::getStreamPrecision( )
   }
   else
   {
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Not found stream precision" );
   }
   ignore_array_length( );
   return ret;
@@ -71,7 +71,7 @@ bool MDAL::SerafinStreamReader::getStreamPrecision( )
 std::string MDAL::SerafinStreamReader::read_string( size_t len )
 {
   size_t length = read_sizet();
-  if ( length != len ) throw MDAL_Status::Err_UnknownFormat;
+  if ( length != len ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to read string" );
   std::string ret = read_string_without_length( len );
   ignore_array_length();
   return ret;
@@ -82,11 +82,11 @@ std::vector<double> MDAL::SerafinStreamReader::read_double_arr( size_t len )
   size_t length = read_sizet();
   if ( mStreamInFloatPrecision )
   {
-    if ( length != len * 4 ) throw MDAL_Status::Err_UnknownFormat;
+    if ( length != len * 4 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading double array" );
   }
   else
   {
-    if ( length != len * 8 ) throw MDAL_Status::Err_UnknownFormat;
+    if ( length != len * 8 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading double array" );
   }
   std::vector<double> ret( len );
   for ( size_t i = 0; i < len; ++i )
@@ -100,7 +100,7 @@ std::vector<double> MDAL::SerafinStreamReader::read_double_arr( size_t len )
 std::vector<int> MDAL::SerafinStreamReader::read_int_arr( size_t len )
 {
   size_t length = read_sizet();
-  if ( length != len * 4 ) throw MDAL_Status::Err_UnknownFormat;
+  if ( length != len * 4 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading int array" );
   std::vector<int> ret( len );
   for ( size_t i = 0; i < len; ++i )
   {
@@ -113,7 +113,7 @@ std::vector<int> MDAL::SerafinStreamReader::read_int_arr( size_t len )
 std::vector<size_t> MDAL::SerafinStreamReader::read_size_t_arr( size_t len )
 {
   size_t length = read_sizet();
-  if ( length != len * 4 ) throw MDAL_Status::Err_UnknownFormat;
+  if ( length != len * 4 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading sizet array" );
   std::vector<size_t> ret( len );
   for ( size_t i = 0; i < len; ++i )
   {
@@ -128,7 +128,7 @@ std::string MDAL::SerafinStreamReader::read_string_without_length( size_t len )
   std::vector<char> ptr( len );
   mIn.read( ptr.data(), static_cast<int>( len ) );
   if ( !mIn )
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open stream for reading string without length" );
 
   size_t str_length = 0;
   for ( size_t i = len; i > 0; --i )
@@ -151,13 +151,13 @@ double MDAL::SerafinStreamReader::read_double( )
   {
     float ret_f;
     if ( !readValue( ret_f, mIn, mIsNativeLittleEndian ) )
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Reading double failed" );
     ret = static_cast<double>( ret_f );
   }
   else
   {
     if ( !readValue( ret, mIn, mIsNativeLittleEndian ) )
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Reading double failed" );
   }
   return ret;
 }
@@ -169,7 +169,7 @@ int MDAL::SerafinStreamReader::read_int( )
 
   if ( mIn.read( reinterpret_cast< char * >( &data ), 4 ) )
     if ( !mIn )
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open stream for reading int" );
   if ( mIsNativeLittleEndian )
   {
     std::reverse( reinterpret_cast< char * >( &data ), reinterpret_cast< char * >( &data ) + 4 );
@@ -196,7 +196,7 @@ void MDAL::SerafinStreamReader::ignore( int len )
 {
   mIn.ignore( len );
   if ( !mIn )
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to ignore characters (invalid stream)" );
 }
 
 void MDAL::SerafinStreamReader::ignore_array_length( )
@@ -285,7 +285,7 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
   if ( params[6] != 0 )
   {
     // would need additional parsing
-    throw MDAL_Status::Err_MissingDriver;
+    throw MDAL::Error( MDAL_Status::Err_MissingDriver, "File " + mFileName + " would need additional parsing" );
   }
 
   /*
@@ -380,7 +380,7 @@ void MDAL::DriverSelafin::createMesh(
   {
     if ( nPointsPerElem != 3 )
     {
-      throw MDAL_Status::Err_IncompatibleMesh; //we can add it, but it is uncommon for this format
+      throw MDAL::Error( MDAL_Status::Err_IncompatibleMesh, "Creating mesh failed, wrong number of points per element (3)" ); //we can add it, but it is uncommon for this format
     }
 
     // elemPtr->setId(e);

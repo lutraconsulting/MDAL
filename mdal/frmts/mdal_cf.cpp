@@ -16,8 +16,6 @@
 #include "mdal_utils.hpp"
 #include "mdal_logger.hpp"
 
-#define CF_THROW_ERR throw MDAL_Status::Err_UnknownFormat
-
 MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
 {
   /*
@@ -145,7 +143,7 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
   }
   while ( true );
 
-  if ( dsinfo_map.size() == 0 ) throw MDAL_Status::Err_InvalidData;
+  if ( dsinfo_map.size() == 0 ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Could not parse dataset group info" );
 
   return dsinfo_map;
 }

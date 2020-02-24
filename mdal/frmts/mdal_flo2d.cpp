@@ -104,7 +104,7 @@ void MDAL::DriverFlo2D::parseCADPTSFile( const std::string &datFileName, std::ve
   std::string cadptsFile( fileNameFromDir( datFileName, "CADPTS.DAT" ) );
   if ( !MDAL::fileExists( cadptsFile ) )
   {
-    throw MDAL_Status::Err_FileNotFound;
+    throw MDAL::Error( MDAL_Status::Err_FileNotFound, "Could not find file " + cadptsFile );
   }
 
   std::ifstream cadptsStream( cadptsFile, std::ifstream::in );
@@ -116,7 +116,7 @@ void MDAL::DriverFlo2D::parseCADPTSFile( const std::string &datFileName, std::ve
     std::vector<std::string> lineParts = MDAL::split( line, ' ' );
     if ( lineParts.size() != 3 )
     {
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CADPTS file, wrong lineparts count (3)" );
     }
     CellCenter cc;
     cc.id = MDAL::toSizeT( lineParts[1] ) - 1; //numbered from 1
@@ -136,7 +136,7 @@ void MDAL::DriverFlo2D::parseFPLAINFile( std::vector<double> &elevations,
   std::string fplainFile( fileNameFromDir( datFileName, "FPLAIN.DAT" ) );
   if ( !MDAL::fileExists( fplainFile ) )
   {
-    throw MDAL_Status::Err_FileNotFound;
+    throw MDAL::Error( MDAL_Status::Err_FileNotFound, "Could not find file " + fplainFile );
   }
 
   std::ifstream fplainStream( fplainFile, std::ifstream::in );
@@ -148,7 +148,7 @@ void MDAL::DriverFlo2D::parseFPLAINFile( std::vector<double> &elevations,
     std::vector<std::string> lineParts = MDAL::split( line, ' ' );
     if ( lineParts.size() != 7 )
     {
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading Fplain file, wrong lineparts count (7)" );
     }
     size_t cc_i = MDAL::toSizeT( lineParts[0] ) - 1; //numbered from 1
     for ( size_t j = 0; j < 4; ++j )
@@ -250,8 +250,8 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
     else if ( ( lineParts.size() == 5 ) || ( lineParts.size() == 6 ) )
     {
       // new Vertex for time
-      if ( !depthDataset || !flowDataset || !waterLevelDataset ) throw MDAL_Status::Err_UnknownFormat;
-      if ( face_idx == nVertexs ) throw MDAL_Status::Err_IncompatibleMesh;
+      if ( !depthDataset || !flowDataset || !waterLevelDataset ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Depth, flow or water level dataset is not valid (null)" );
+      if ( face_idx == nVertexs ) throw MDAL::Error( MDAL_Status::Err_IncompatibleMesh, "Invalid face id" );
 
       // this is magnitude: getDouble(lineParts[2]);
       flowDataset->setVectorValue( face_idx, getDouble( lineParts[3] ),  getDouble( lineParts[4] ) );
@@ -266,7 +266,7 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
     }
     else
     {
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to load TIMDEP file, found unknown format" );
     }
   }
 
@@ -306,12 +306,12 @@ void MDAL::DriverFlo2D::parseDEPTHFile( const std::string &datFileName, const st
   while ( std::getline( depthStream, line ) )
   {
     line = MDAL::rtrim( line );
-    if ( vertex_idx == nFaces ) throw MDAL_Status::Err_IncompatibleMesh;
+    if ( vertex_idx == nFaces ) throw MDAL::Error( MDAL_Status::Err_IncompatibleMesh, "Error while loading DEPTH file, invalid vertex index" );
 
     std::vector<std::string> lineParts = MDAL::split( line, ' ' );
     if ( lineParts.size() != 4 )
     {
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading DEPTH file, wrong lineparts count (4)" );
     }
 
     double val = getDouble( lineParts[3] );
@@ -351,13 +351,13 @@ void MDAL::DriverFlo2D::parseVELFPVELOCFile( const std::string &datFileName )
     // VELFP.OUT - COORDINATES (ELEM NUM, X, Y, MAX VEL) - Maximum floodplain flow velocity;
     while ( std::getline( velocityStream, line ) )
     {
-      if ( vertex_idx == nFaces ) throw MDAL_Status::Err_IncompatibleMesh;
+      if ( vertex_idx == nFaces ) throw MDAL::Error( MDAL_Status::Err_IncompatibleMesh, "Error while loading VELFP file, invalid vertex index" );
 
       line = MDAL::rtrim( line );
       std::vector<std::string> lineParts = MDAL::split( line, ' ' );
       if ( lineParts.size() != 4 )
       {
-        throw MDAL_Status::Err_UnknownFormat;
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading VELFP file, wrong lineparts count (4)" );
       }
 
       double val = getDouble( lineParts[3] );
@@ -382,13 +382,13 @@ void MDAL::DriverFlo2D::parseVELFPVELOCFile( const std::string &datFileName )
     // VELOC.OUT - COORDINATES (ELEM NUM, X, Y, MAX VEL)  - Maximum channel flow velocity
     while ( std::getline( velocityStream, line ) )
     {
-      if ( vertex_idx == nFaces ) throw MDAL_Status::Err_IncompatibleMesh;
+      if ( vertex_idx == nFaces ) throw MDAL::Error( MDAL_Status::Err_IncompatibleMesh, "Error while loading VELOC file, invalid vertex index" );
 
       line = MDAL::rtrim( line );
       std::vector<std::string> lineParts = MDAL::split( line, ' ' );
       if ( lineParts.size() != 4 )
       {
-        throw MDAL_Status::Err_UnknownFormat;
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading VELOC file, wrong lineparts count (4)" );
       }
 
       double val = getDouble( lineParts[3] );
@@ -426,7 +426,7 @@ double MDAL::DriverFlo2D::calcCellSize( const std::vector<CellCenter> &cells )
       }
     }
   }
-  throw MDAL_Status::Err_IncompatibleMesh;
+  throw MDAL::Error( MDAL_Status::Err_IncompatibleMesh, "Did not find izolated cell" );
 }
 
 MDAL::Vertex MDAL::DriverFlo2D::createVertex( size_t position, double half_cell_size, const CellCenter &cell )

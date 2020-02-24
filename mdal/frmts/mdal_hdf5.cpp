@@ -130,7 +130,7 @@ std::string HdfAttribute::readString() const
 void HdfAttribute::write( const std::string &value )
 {
   if ( !isValid() || !mType.isValid() )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Write failed due to invalid data" );
 
   // make sure you do not store more than it is possible
   std::vector<char> buf( HDF_MAX_NAME + 1, '\0' );
@@ -138,16 +138,16 @@ void HdfAttribute::write( const std::string &value )
   memcpy( buf.data(), value.c_str(), size );
 
   if ( H5Awrite( d->id, mType.id(), buf.data() ) < 0 )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Could not write data" );
 }
 
 void HdfAttribute::write( int value )
 {
   if ( !isValid() || !mType.isValid() )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Write failed due to invalid data" );
 
   if ( H5Awrite( d->id, mType.id(), &value ) < 0 )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Could not write data" );
 }
 
 HdfDataset::HdfDataset( hid_t file, const std::string &path, HdfDataType dtype, size_t nItems )
@@ -259,37 +259,37 @@ float HdfDataset::readFloat() const
 void HdfDataset::write( std::vector<float> &value )
 {
   if ( !isValid() || !mType.isValid() )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Write failed due to invalid data" );
 
   // Write float array to dataset
   if ( H5Dwrite( d->id, mType.id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, value.data() ) < 0 )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Could not write float array to dataset" );
 }
 
 void HdfDataset::write( float value )
 {
   if ( !isValid() || !mType.isValid() )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Write failed due to invalid data" );
 
   // Write float array to dataset
   if ( H5Dwrite( d->id, mType.id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, &value ) < 0 )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Could not write float to dataset" );
 }
 
 void HdfDataset::write( std::vector<double> &value )
 {
   if ( !isValid() || !mType.isValid() )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Write failed due to invalid data" );
 
   // Write double array to dataset.
   if ( H5Dwrite( d->id, mType.id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, value.data() ) < 0 )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Could not write double array to dataset" );
 }
 
 void HdfDataset::write( const std::string &value )
 {
   if ( !isValid() || !mType.isValid() )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Write failed due to invalid data" );
 
   // make sure you do not store more than it is possible
   std::vector<char> buf( HDF_MAX_NAME + 1, '\0' );
@@ -298,7 +298,7 @@ void HdfDataset::write( const std::string &value )
 
   // Write string to dataset.
   if ( H5Dwrite( d->id, mType.id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, buf.data() ) < 0 )
-    throw MDAL_Status::Err_FailToWriteToDisk;
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Could not write string to dataset" );
 }
 
 std::string HdfDataset::readString() const

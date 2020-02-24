@@ -19,42 +19,42 @@
 static HdfFile openHdfFile( const std::string &fileName )
 {
   HdfFile file( fileName, HdfFile::ReadOnly );
-  if ( !file.isValid() ) throw MDAL_Status::Err_UnknownFormat;
+  if ( !file.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf file " + fileName );
   return file;
 }
 
 static HdfGroup openHdfGroup( const HdfFile &hdfFile, const std::string &name )
 {
   HdfGroup grp = hdfFile.group( name );
-  if ( !grp.isValid() ) throw MDAL_Status::Err_UnknownFormat;
+  if ( !grp.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf group " + name + " from file" );
   return grp;
 }
 
 static HdfGroup openHdfGroup( const HdfGroup &hdfGroup, const std::string &name )
 {
   HdfGroup grp = hdfGroup.group( name );
-  if ( !grp.isValid() ) throw MDAL_Status::Err_UnknownFormat;
+  if ( !grp.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf group " + name + " from group" );
   return grp;
 }
 
 static HdfDataset openHdfDataset( const HdfGroup &hdfGroup, const std::string &name )
 {
   HdfDataset dsFileType = hdfGroup.dataset( name );
-  if ( !dsFileType.isValid() ) throw MDAL_Status::Err_UnknownFormat;
+  if ( !dsFileType.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf dataset " + name );
   return dsFileType;
 }
 
 static std::string openHdfAttribute( const HdfFile &hdfFile, const std::string &name )
 {
   HdfAttribute attr = hdfFile.attribute( name );
-  if ( !attr.isValid() ) throw MDAL_Status::Err_UnknownFormat;
+  if ( !attr.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf attribute " + name + " from file");
   return attr.readString();
 }
 
 static std::string openHdfAttribute( const HdfDataset &hdfDataset, const std::string &name )
 {
   HdfAttribute attr = hdfDataset.attribute( name );
-  if ( !attr.isValid() ) throw MDAL_Status::Err_UnknownFormat;
+  if ( !attr.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf group " + name + " from dataset");
   return attr.readString();
 }
 
@@ -474,7 +474,7 @@ std::vector<std::string> MDAL::DriverHec2D::read2DFlowAreasNamesOld( HdfGroup gG
 {
   HdfDataset dsNames = openHdfDataset( gGeom2DFlowAreas, "Names" );
   std::vector<std::string> names = dsNames.readArrayString();
-  if ( names.empty() ) throw MDAL_Status::Err_InvalidData;
+  if ( names.empty() ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Unable to read 2D Flow area names, no names found" );
   return names;
 }
 
@@ -543,7 +543,7 @@ std::vector<std::string> MDAL::DriverHec2D::read2DFlowAreasNames505( HdfGroup gG
   H5Tclose( attributeHID );
   H5Tclose( stringHID );
   std::vector<std::string> names;
-  if ( attributes.empty() ) throw MDAL_Status::Err_InvalidData;
+  if ( attributes.empty() ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Unable to read 2D Flow Area Names, no attributes found" );
 
   for ( const auto &attr : attributes )
   {

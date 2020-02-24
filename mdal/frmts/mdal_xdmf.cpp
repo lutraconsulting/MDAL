@@ -263,8 +263,7 @@ MDAL::HyperSlab MDAL::DriverXdmf::parseHyperSlab( const std::string &str, size_t
   }
   if ( i != 3 * dimX )
   {
-    MDAL::Log::debug( "hyperSlab dimensions mismatch" );
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "hyperSlab dimensions mismatch" );
   }
 
   MDAL::HyperSlab slab;
@@ -275,8 +274,7 @@ MDAL::HyperSlab MDAL::DriverXdmf::parseHyperSlab( const std::string &str, size_t
 
   if ( ( data[1][0] != 1 ) || ( data[1][1] != 1 ) )
   {
-    MDAL::Log::debug( " only hyperSlab with stride 1 are supported " );
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "only hyperSlab with stride 1 are supported" );
   }
 
   // sort
@@ -301,8 +299,7 @@ MDAL::HyperSlab MDAL::DriverXdmf::parseHyperSlab( const std::string &str, size_t
   }
   else
   {
-    MDAL::Log::debug( "hyperSlab dimensions mismatch, not scalar or vector" );
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "hyperSlab dimensions mismatch, not scalar or vector" );
   }
 
   return slab;
@@ -314,8 +311,7 @@ MDAL::HyperSlab MDAL::DriverXdmf::parseHyperSlabNode( const XMLFile &xmfFile, xm
   std::vector<size_t> slabDim = parseDimensions2D( slabDimS );
   if ( slabDim[0] != 3 || ( slabDim[1] != 2 && slabDim[1] != 3 ) )
   {
-    MDAL::Log::debug( "Only two-dimensional slab array with dim 3x3 is supported (1)" );
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Only two-dimensional slab array with dim 3x3 is supported (1)" );
   }
 
   std::string slabS = xmfFile.content( node );
@@ -364,8 +360,7 @@ void MDAL::DriverXdmf::hdf5NamePath( const std::string &dataItemPath, std::strin
   std::vector<std::string> chunks = MDAL::split( path, ":" );
   if ( chunks.size() != 2 )
   {
-    MDAL::Log::debug( "must be in format fileName:hdfPath" );
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "must be in format fileName:hdfPath" );
   }
 
   filePath = dirName + "/" + chunks[0];
@@ -381,8 +376,7 @@ std::vector<size_t> MDAL::DriverXdmf::parseDimensions2D( const std::string &data
     slabDim.push_back( number );
   if ( slabDim.size() != 2 )
   {
-    MDAL::Log::debug( "Only two-dimensional slab array is supported" );
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Only two-dimensional slab array is supported" );
   }
   return slabDim;
 }
@@ -396,8 +390,7 @@ std::pair<HdfDataset, MDAL::HyperSlab> MDAL::DriverXdmf::parseXdmfDataset(
   size_t dim = xmfFile.querySizeTAttribute( itemNod, "Dimensions" );
   if ( dim != facesCount )
   {
-    MDAL::Log::debug( "Dataset dimensions should correspond to the number of mesh elements" );
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Dataset dimensions should correspond to the number of mesh elements" );
   }
 
   xmlNodePtr node1 = xmfFile.getCheckChild( itemNod, "DataItem" );
@@ -414,8 +407,7 @@ std::pair<HdfDataset, MDAL::HyperSlab> MDAL::DriverXdmf::parseXdmfDataset(
   }
   else
   {
-    MDAL::Log::debug( "Only XML hyperSlab and HDF dataset Format supported" );
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Only XML hyperSlab and HDF dataset Format supported" );
   }
 }
 
@@ -453,14 +445,12 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
       if ( !xmfFile.checkAttribute( scalarNod, "AttributeType", "Scalar" ) &&
            !xmfFile.checkAttribute( scalarNod, "AttributeType", "Vector" ) )
       {
-        MDAL::Log::debug( "Only scalar and vector data are currently supported" );
-        throw MDAL_Status::Err_UnknownFormat;
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Only scalar and vector data are currently supported" );
       }
       std::string groupName = xmfFile.attribute( scalarNod, "Name" );
       if ( groupName.empty() )
       {
-        MDAL::Log::debug( "Group name cannot be empty" );
-        throw MDAL_Status::Err_UnknownFormat;
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Group name cannot be empty" );
       }
 
       xmlNodePtr itemNod = xmfFile.getCheckChild( scalarNod, "DataItem" );
@@ -512,8 +502,7 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
           }
           else
           {
-            MDAL::Log::debug( "Expecting HyperSlab Types under Function" );
-            throw MDAL_Status::Err_UnknownFormat;
+            throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Expecting HyperSlab Types under Function" );
           }
         }
 
@@ -546,8 +535,7 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
       }
       else
       {
-        MDAL::Log::debug( "Expecting Function or HyperSlab Type" );
-        throw MDAL_Status::Err_UnknownFormat;
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Expecting Function or HyperSlab Type" );
       }
     }
   }
@@ -559,8 +547,7 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
     std::shared_ptr<MDAL::DatasetGroup> grp = group.second;
     if ( grp->datasets.size() != nTimesteps )
     {
-      MDAL::Log::debug( "Invalid group, missing timesteps" );
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Invalid group, missing timesteps" );
     }
 
     const MDAL::Statistics stats = MDAL::calculateStatistics( grp );
@@ -595,8 +582,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXdmf::findGroup( std::map<std::s
     group = groups[groupName];
     if ( group->isScalar() != isScalar )
     {
-      MDAL::Log::debug( "Inconsistent groups" );
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat,  "Inconsistent groups" );
     }
   }
   return group;

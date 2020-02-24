@@ -48,8 +48,7 @@ XMLFile::~XMLFile()
 
 void XMLFile::error( const std::string &str ) const
 {
-  MDAL::Log::debug( str + "(" + mFileName + ")" );
-  throw MDAL_Status::Err_UnknownFormat;
+  throw MDAL::Error( MDAL_Status::Err_UnknownFormat, str + "(" + mFileName + ")" );
 }
 
 void XMLFile::openFile( const std::string &fileName )

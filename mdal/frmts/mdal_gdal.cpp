@@ -22,7 +22,7 @@ void MDAL::GdalDataset::init( const std::string &dsName )
 
   // Open dataset
   mHDataset = GDALOpen( dsName.data(), GA_ReadOnly );
-  if ( !mHDataset ) throw MDAL_Status::Err_UnknownFormat;
+  if ( !mHDataset ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open dataset " + mDatasetName + " (unknown format)" );
 
   // Now parse it
   parseParameters();
@@ -32,15 +32,15 @@ void MDAL::GdalDataset::init( const std::string &dsName )
 void MDAL::GdalDataset::parseParameters()
 {
   mNBands = static_cast<unsigned int>( GDALGetRasterCount( mHDataset ) );
-  if ( mNBands == 0 ) throw MDAL_Status::Err_InvalidData;
+  if ( mNBands == 0 ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Unable to get parameters from dataset" );
 
   GDALGetGeoTransform( mHDataset, mGT ); // in case of error it returns Identid
 
   mXSize = static_cast<unsigned int>( GDALGetRasterXSize( mHDataset ) ); //raster width in pixels
-  if ( mXSize == 0 ) throw MDAL_Status::Err_InvalidData;
+  if ( mXSize == 0 ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Raster width is zero" );
 
   mYSize = static_cast<unsigned int>( GDALGetRasterYSize( mHDataset ) ); //raster height in pixels
-  if ( mYSize == 0 ) throw MDAL_Status::Err_InvalidData;
+  if ( mYSize == 0 ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Raster height is zero" );
 
   mNPoints = mXSize * mYSize;
   mNVolumes = ( mXSize - 1 ) * ( mYSize - 1 );
@@ -204,7 +204,7 @@ void MDAL::DriverGdal::parseRasterBands( const MDAL::GdalDataset *cfGDALDataset 
     GDALRasterBandH gdalBand = GDALGetRasterBand( cfGDALDataset->mHDataset, static_cast<int>( i ) );
     if ( !gdalBand )
     {
-      throw MDAL_Status::Err_InvalidData;
+      throw MDAL::Error( MDAL_Status::Err_InvalidData, "Invalid GDAL band" );
     }
 
     // Reference time
@@ -365,7 +365,7 @@ void MDAL::DriverGdal::addDataToOutput( GDALRasterBandH raster_band, std::shared
                  );
     if ( err != CE_None )
     {
-      throw MDAL_Status::Err_InvalidData;
+      throw MDAL::Error( MDAL_Status::Err_InvalidData, "Error while buffering data to output" );
     }
 
     for ( unsigned int x = 0; x < mXSize; ++x )
@@ -483,7 +483,7 @@ std::vector<std::string> MDAL::DriverGdal::parseDatasetNames( const std::string 
   std::vector<std::string> ret;
 
   GDALDatasetH hDataset = GDALOpen( gdal_name.data(), GA_ReadOnly );
-  if ( hDataset == nullptr ) throw MDAL_Status::Err_UnknownFormat;
+  if ( hDataset == nullptr ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open dataset " + gdal_name );
 
   metadata_hash metadata = parseMetadata( hDataset, "SUBDATASETS" );
 
@@ -514,7 +514,7 @@ void MDAL::DriverGdal::registerDriver()
   GDALAllRegister();
   // check that our driver exists
   GDALDriverH hDriver = GDALGetDriverByName( mGdalDriverName.data() );
-  if ( !hDriver ) throw MDAL_Status::Err_MissingDriver;
+  if ( !hDriver ) throw MDAL::Error( MDAL_Status::Err_MissingDriver, "No such driver with name " + mGdalDriverName );
 }
 
 const MDAL::GdalDataset *MDAL::DriverGdal::meshGDALDataset()

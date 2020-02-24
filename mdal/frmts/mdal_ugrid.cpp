@@ -45,7 +45,7 @@ std::string MDAL::DriverUgrid::findMeshName( int dimension, bool optional ) cons
   if ( optional )
     return "";
   else
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to find mesh name" );
 }
 
 std::string MDAL::DriverUgrid::nodeZVariableName() const
@@ -83,13 +83,13 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
 
   std::vector<std::string> nodeVariablesName = MDAL::split( mNcFile->getAttrStr( mMesh2dName, "node_coordinates" ), ' ' );
   if ( nodeVariablesName.size() < 2 )
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Number of variables is less than minimum (2)" );
 
   std::vector<size_t> nodeDimension;
   std::vector<int> nodeDimensionId;
   mNcFile->getDimensions( nodeVariablesName.at( 0 ), nodeDimension, nodeDimensionId );
   if ( nodeDimension.size() != 1 )
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "This is 1D node" );
 
   dims.setDimension( CFDimensions::Vertex2D, nodeDimension.at( 0 ), nodeDimensionId.at( 0 ) );
 
@@ -100,7 +100,7 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
   std::string faceConnectivityVariablesName = mNcFile->getAttrStr( mMesh2dName, "face_node_connectivity" );
   std::string faceDimensionLocation = mNcFile->getAttrStr( mMesh2dName, "face_dimension" );
   if ( faceConnectivityVariablesName == "" )
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Did not find face connectivity variables" );
 
   size_t facesCount;
   size_t maxVerticesPerFace;
@@ -111,7 +111,7 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
   int maxVerticesPerFaceDimensionId;
   mNcFile->getDimensions( faceConnectivityVariablesName, faceDimension, faceDimensionId );
   if ( faceDimension.size() != 2 )
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Face dimension is 2D" );
 
   if ( faceDimensionLocation != "" )
   {
@@ -403,7 +403,7 @@ void MDAL::DriverUgrid::parse2VariablesFromAttribute( const std::string &name, c
       var2 = "";
     }
     else
-      throw MDAL_Status::Err_UnknownFormat;
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to parse variables from attribute" );
   }
   else
   {
