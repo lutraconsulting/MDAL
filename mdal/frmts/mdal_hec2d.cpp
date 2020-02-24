@@ -47,14 +47,14 @@ static HdfDataset openHdfDataset( const HdfGroup &hdfGroup, const std::string &n
 static std::string openHdfAttribute( const HdfFile &hdfFile, const std::string &name )
 {
   HdfAttribute attr = hdfFile.attribute( name );
-  if ( !attr.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf attribute " + name + " from file");
+  if ( !attr.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf attribute " + name + " from file" );
   return attr.readString();
 }
 
 static std::string openHdfAttribute( const HdfDataset &hdfDataset, const std::string &name )
 {
   HdfAttribute attr = hdfDataset.attribute( name );
-  if ( !attr.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf group " + name + " from dataset");
+  if ( !attr.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf group " + name + " from dataset" );
   return attr.readString();
 }
 

@@ -33,7 +33,7 @@ namespace MDAL
       {return MAX_VERTICES_PER_FACE_TIN;}
 
       bool canReadMesh( const std::string &uri ) override;
-      std::unique_ptr< Mesh > load( const std::string &meshFile, MDAL_Status *status ) override;
+      std::unique_ptr< Mesh > load( const std::string &meshFile ) override;
   };
 
 } // namespace MDAL

@@ -18,6 +18,7 @@
 #include "mdal_xms_tin.hpp"
 #include "mdal.h"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 #define DRIVER_NAME "XMS_TIN"
 
@@ -48,33 +49,33 @@ bool MDAL::DriverXmsTin::canReadMesh( const std::string &uri )
   return true;
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::DriverXmsTin::load( const std::string &meshFile, MDAL_Status *status )
+std::unique_ptr<MDAL::Mesh> MDAL::DriverXmsTin::load( const std::string &meshFile )
 {
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   std::ifstream in( meshFile, std::ifstream::in );
   std::string line;
   if ( !std::getline( in, line ) || !startsWith( line, "TIN" ) )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), meshFile + " does not start with TIN keyword" );
     return nullptr;
   }
 
   // Read vertices
   if ( !std::getline( in, line ) || !startsWith( line, "BEGT" ) )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), meshFile + " second line does not start with BEGT keyword" );
     return nullptr;
   }
   if ( !std::getline( in, line ) )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain 3rd line" );
     return nullptr;
   }
   std::vector<std::string> chunks = split( line,  ' ' );
   if ( ( chunks.size() != 2 ) || ( chunks[0] != "VERT" ) )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " 4th line does not contain VERT keyword with number of vertices" );
     return nullptr;
   }
   size_t vertexCount = MDAL::toSizeT( chunks[1] );
@@ -83,13 +84,13 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverXmsTin::load( const std::string &meshFil
   {
     if ( !std::getline( in, line ) )
     {
-      if ( status ) *status = MDAL_Status::Err_IncompatibleMesh;
+      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough vertex definitions" );
       return nullptr;
     }
     chunks = split( line,  ' ' );
     if ( chunks.size() != 4 )
     {
-      if ( status ) *status = MDAL_Status::Err_IncompatibleMesh;
+      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain valid vertex definition" );
       return nullptr;
     }
 
@@ -102,13 +103,13 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverXmsTin::load( const std::string &meshFil
   // Read triangles
   if ( !std::getline( in, line ) )
   {
-    if ( status ) *status = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain valid triangle definition" );
     return nullptr;
   }
   chunks = split( line,  ' ' );
   if ( ( chunks.size() != 2 ) || ( chunks[0] != "TRI" ) )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain TRI keyword" );
     return nullptr;
   }
   size_t faceCount = MDAL::toSizeT( chunks[1] );
@@ -117,14 +118,14 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverXmsTin::load( const std::string &meshFil
   {
     if ( !std::getline( in, line ) )
     {
-      if ( status ) *status = MDAL_Status::Err_IncompatibleMesh;
+      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough triangle definitions" );
       return nullptr;
     }
     chunks = split( line,  ' ' );
     if ( chunks.size() != 3 )
     {
       // should have 3 indexes
-      if ( status ) *status = MDAL_Status::Err_IncompatibleMesh;
+      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain valid triangle defintion" );
       return nullptr;
     }
 
@@ -138,7 +139,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverXmsTin::load( const std::string &meshFil
   // Final keyword
   if ( !std::getline( in, line ) || !startsWith( line, "ENDT" ) )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not end with ENDT keyword" );
     return nullptr;
   }
 
