@@ -94,12 +94,12 @@ void MDAL::Log::warning( MDAL_Status status, std::string driverName, std::string
   warning( status, "Driver: " + driverName + ": " + mssg );
 }
 
-void MDAL::Log::error( MDAL::Log::LogStruct logStruct )
+void MDAL::Log::error( MDAL::Error e )
 {
-  error( logStruct.status, "Driver: " + logStruct.driver + ": " + logStruct.mssg );
+  error( e.status, "Driver: " + e.driver + ": " + e.mssg );
 }
 
-void MDAL::Log::warning( MDAL::Log::LogStruct logStruct )
+void MDAL::Log::warning( MDAL::Error e )
 {
-  warning( logStruct.status, "Driver: " + logStruct.driver + ": " + logStruct.mssg );
+  warning( e.status, "Driver: " + e.driver + ": " + e.mssg );
 }

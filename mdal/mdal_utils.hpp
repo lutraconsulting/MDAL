@@ -15,7 +15,6 @@
 
 #include <algorithm>
 
-#include "mdal.h"
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
 #include "mdal_datetime.hpp"
@@ -156,5 +155,13 @@ namespace MDAL
   //! parse the reference time in the CF convention string format "XXXX since 2019-01-01 00:00:00"
   //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
   MDAL::DateTime parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
+
+  struct Error
+  {
+    Error( MDAL_Status s, std::string m, std::string d = ""): status( s ), mssg( m ), driver( d ) {}
+    MDAL_Status status;
+    std::string mssg;
+    std::string driver;
+  };
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include "mdal.h"
+#include "mdal_utils.hpp"
 
 namespace MDAL
 {
@@ -21,18 +21,10 @@ namespace MDAL
    */
   namespace Log
   {
-    struct LogStruct
-    {
-      LogStruct( MDAL_Status s, std::string driver, std::string m ): status( s ), driver( driver ), mssg( m ) {}
-      MDAL_Status status;
-      std::string driver;
-      std::string mssg;
-    };
-
-    void error( LogStruct logStruct );
+    void error( MDAL::Error );
     void error( MDAL_Status status, std::string mssg );
     void error( MDAL_Status status, std::string driverName, std::string mssg );
-    void warning( LogStruct logStruct );
+    void warning( MDAL::Error );
     void warning( MDAL_Status status, std::string mssg );
     void warning( MDAL_Status status, std::string driverName, std::string mssg );
     void info( std::string mssg );
