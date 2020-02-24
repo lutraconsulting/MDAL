@@ -18,6 +18,7 @@
 #include "mdal_2dm.hpp"
 #include "mdal.h"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 #define DRIVER_NAME "2DM"
 
@@ -41,7 +42,7 @@ MDAL::Mesh2dm::Mesh2dm( size_t verticesCount,
 
 MDAL::Mesh2dm::~Mesh2dm() = default;
 
-bool _parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t vertexIndex, size_t vertexID, MDAL_Status *status )
+bool _parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t vertexIndex, size_t vertexID )
 {
   if ( vertexIndex == vertexID )
     return false;
@@ -49,7 +50,7 @@ bool _parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t ve
   std::map<size_t, size_t>::iterator search = vertexIDtoIndex.find( vertexID );
   if ( search != vertexIDtoIndex.end() )
   {
-    if ( status ) *status = MDAL_Status::Warn_ElementNotUnique;
+    MDAL::Log::warning( Warn_ElementNotUnique, DRIVER_NAME, "could not find vertex" );
     return true;
   }
 
@@ -107,17 +108,17 @@ bool MDAL::Driver2dm::canReadMesh( const std::string &uri )
   return true;
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, MDAL_Status *status )
+std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile )
 {
   mMeshFile = meshFile;
 
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   std::ifstream in( mMeshFile, std::ifstream::in );
   std::string line;
   if ( !std::getline( in, line ) || !startsWith( line, "MESH2D" ) )
   {
-    if ( status ) *status = MDAL_Status::Err_UnknownFormat;
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), meshFile + " could not be opened" );
     return nullptr;
   }
 
@@ -146,7 +147,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
               startsWith( line, "E8Q" ) ||
               startsWith( line, "E9Q" ) )
     {
-      if ( status ) *status = MDAL_Status::Err_UnsupportedElement;
+      MDAL::Log::warning( MDAL_Status::Err_UnsupportedElement, name(),  "found unsupported element" );
       return nullptr;
     }
   }
@@ -235,14 +236,14 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
         if ( ( lastVertexID != 0 ) && ( nodeID <= lastVertexID ) )
         {
           // the algorithm requires that the file has NDs orderer by index
-          if ( status ) *status = MDAL_Status::Err_InvalidData;
+          MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "nodes are not ordered by index" );
           return nullptr;
         }
         lastVertexID = nodeID;
       }
       nodeID -= 1; // 2dm is numbered from 1
 
-      _parse_vertex_id_gaps( vertexIDtoIndex, vertexIndex, nodeID, status );
+      _parse_vertex_id_gaps( vertexIDtoIndex, vertexIndex, nodeID );
       assert( vertexIndex < vertexCount );
       Vertex &vertex = vertices[vertexIndex];
       vertex.x = toDouble( chunks[2] );
@@ -266,7 +267,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
       }
       else if ( vertices.size() < nodeID )
       {
-        if ( status ) *status = MDAL_Status::Warn_ElementWithInvalidNode;
+        MDAL::Log::warning( MDAL_Status::Warn_ElementWithInvalidNode, name(), "found invalid node" );
       }
     }
     //TODO check validity of the face
@@ -295,15 +296,15 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   return std::unique_ptr<Mesh>( mesh.release() );
 }
 
-void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh, MDAL_Status *status )
+void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh )
 {
-  if ( status ) *status = MDAL_Status::None;
+  MDAL::Log::resetLastStatus();
 
   std::ofstream file( uri, std::ofstream::out );
 
   if ( !file.is_open() )
   {
-    if ( status ) *status = MDAL_Status::Err_FailToWriteToDisk;
+    MDAL::Log::error( MDAL_Status::Err_FailToWriteToDisk, name(), "Could not open file " + uri );
   }
 
   std::string line = "MESH2D";

@@ -56,15 +56,15 @@ namespace MDAL
       DriverAsciiDat *create() override;
 
       bool canReadDatasets( const std::string &uri ) override;
-      void load( const std::string &datFile, Mesh *mesh, MDAL_Status *status ) override;
+      void load( const std::string &datFile, Mesh *mesh ) override;
       bool persist( DatasetGroup *group ) override;
 
     private:
       bool canReadOldFormat( const std::string &line ) const;
       bool canReadNewFormat( const std::string &line ) const;
 
-      void loadOldFormat( std::ifstream &in, Mesh *mesh, MDAL_Status *status ) const;
-      void loadNewFormat( std::ifstream &in, Mesh *mesh, MDAL_Status *status ) const;
+      void loadOldFormat( std::ifstream &in, Mesh *mesh ) const;
+      void loadNewFormat( std::ifstream &in, Mesh *mesh ) const;
 
       //! Gets maximum (native) index.
       //! For meshes without indexing gap it is vertexCount - 1

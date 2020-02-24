@@ -62,6 +62,15 @@ enum MDAL_Status
   Warn_NodeNotUnique
 };
 
+/** Log levels */
+enum MDAL_LogLevel
+{
+  Error,
+  Warn,
+  Info,
+  Debug
+};
+
 /**
  * Specifies where the data is defined
  */
@@ -88,6 +97,8 @@ typedef void *DatasetH;
 typedef void *DriverH;
 typedef void *AveragingMethodH;
 
+typedef void ( *MDAL_LoggerCallback )( MDAL_LogLevel logLevel, MDAL_Status status, const char *message );
+
 /**
  * Returns MDAL version
  */
@@ -97,6 +108,26 @@ MDAL_EXPORT const char *MDAL_Version();
  * Returns last status message
  */
 MDAL_EXPORT MDAL_Status MDAL_LastStatus();
+
+/**
+ * Sets custom callback for logging output
+ *
+ * By default standard stdout is used as output.
+ * Calling this method with nullptr dissables logger ( logs will not be shown anywhere ).
+ * MDAL_LoggerCallback is a function accepting MDAL_LogLevel, MDAL_Status and const char* string
+ * \since MDAL 0.6.0
+ */
+MDAL_EXPORT void MDAL_SetLoggerCallback( MDAL_LoggerCallback callback );
+
+/**
+ * Sets maximum log level (verbosity)
+ *
+ * By default logger outputs errors.
+ * Log levels (low to high): Error, Warn, Info, Debug
+ * For example, if LogVerbosity is set to Warn, logger outputs errors and warnings.
+ * \since MDAL 0.6.0
+ */
+MDAL_EXPORT void MDAL_SetLogVerbosity( MDAL_LogLevel verbosity );
 
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DRIVERS

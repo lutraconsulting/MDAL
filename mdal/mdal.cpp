@@ -13,12 +13,11 @@
 #include "mdal_driver_manager.hpp"
 #include "mdal_data_model.hpp"
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 
 #define NODATA std::numeric_limits<double>::quiet_NaN()
 
 static const char *EMPTY_STR = "";
-
-static MDAL_Status sLastStatus;
 
 const char *MDAL_Version()
 {
@@ -27,7 +26,17 @@ const char *MDAL_Version()
 
 MDAL_Status MDAL_LastStatus()
 {
-  return sLastStatus;
+  return MDAL::Log::getLastStatus();
+}
+
+void MDAL_SetLoggerCallback( MDAL_LoggerCallback callback )
+{
+  MDAL::Log::setLoggerCallback( callback );
+}
+
+void MDAL_SetLogVerbosity( MDAL_LogLevel verbosity )
+{
+  MDAL::Log::setLogVerbosity( verbosity );
 }
 
 // helper to return string data - without having to deal with memory too much.
@@ -53,7 +62,7 @@ DriverH MDAL_driverFromIndex( int index )
 {
   if ( index < 0 )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "No driver with index: " + std::to_string( index ) );
     return nullptr;
   }
 
@@ -73,7 +82,7 @@ bool MDAL_DR_meshLoadCapability( DriverH driver )
 {
   if ( !driver )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return false;
   }
 
@@ -85,7 +94,7 @@ bool MDAL_DR_writeDatasetsCapability( DriverH driver, MDAL_DataLocation location
 {
   if ( !driver )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return false;
   }
 
@@ -98,7 +107,7 @@ bool MDAL_DR_saveMeshCapability( DriverH driver )
 {
   if ( !driver )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return false;
   }
 
@@ -110,7 +119,7 @@ const char *MDAL_DR_longName( DriverH driver )
 {
   if ( !driver )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return EMPTY_STR;
   }
 
@@ -122,7 +131,7 @@ const char *MDAL_DR_name( DriverH driver )
 {
   if ( !driver )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return EMPTY_STR;
   }
 
@@ -134,7 +143,7 @@ const char *MDAL_DR_filters( DriverH driver )
 {
   if ( !driver )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return EMPTY_STR;
   }
   MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
@@ -149,19 +158,19 @@ MeshH MDAL_LoadMesh( const char *meshFile )
 {
   if ( !meshFile )
   {
-    sLastStatus = MDAL_Status::Err_FileNotFound;
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );
     return nullptr;
   }
 
   std::string filename( meshFile );
-  return static_cast< MeshH >( MDAL::DriverManager::instance().load( filename, &sLastStatus ).release() );
+  return static_cast< MeshH >( MDAL::DriverManager::instance().load( filename ).release() );
 }
 
 void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
 {
   if ( !meshFile )
   {
-    sLastStatus = MDAL_Status::Err_FileNotFound;
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );
     return;
   }
 
@@ -170,24 +179,24 @@ void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
 
   if ( !d )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "No driver with name: " + driverName );
     return;
   }
 
   if ( !d->hasCapability( MDAL::Capability::SaveMesh ) )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriverCapability;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Driver " + driverName + " does not have SaveMesh capability" );
     return;
   }
 
   if ( d->faceVerticesMaximumCount() < MDAL_M_faceVerticesMaximumCount( mesh ) )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is incompatible with driver " + driverName );
     return;
   }
 
   std::string filename( meshFile );
-  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), filename, driverName, &sLastStatus );
+  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), filename, driverName );
 }
 
 
@@ -204,7 +213,7 @@ const char *MDAL_M_projection( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return EMPTY_STR;
   }
 
@@ -216,7 +225,7 @@ void MDAL_M_extent( MeshH mesh, double *minX, double *maxX, double *minY, double
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     *minX = std::numeric_limits<double>::quiet_NaN();
     *maxX = std::numeric_limits<double>::quiet_NaN();
     *minY = std::numeric_limits<double>::quiet_NaN();
@@ -237,7 +246,7 @@ int MDAL_M_vertexCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
 
@@ -251,7 +260,7 @@ int MDAL_M_edgeCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
 
@@ -264,7 +273,7 @@ int MDAL_M_faceCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -276,7 +285,7 @@ int MDAL_M_faceVerticesMaximumCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -288,27 +297,27 @@ void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile )
 {
   if ( !datasetFile )
   {
-    sLastStatus = MDAL_Status::Err_FileNotFound;
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Dataset file is not valid (null)" );
     return;
   }
 
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return;
   }
 
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
 
   std::string filename( datasetFile );
-  MDAL::DriverManager::instance().loadDatasets( m, datasetFile, &sLastStatus );
+  MDAL::DriverManager::instance().loadDatasets( m, datasetFile );
 }
 
 int MDAL_M_datasetGroupCount( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return 0;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -320,13 +329,13 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
 
   if ( index < 0 )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index is not valid: " + std::to_string( index ) );
     return nullptr;
   }
 
@@ -334,7 +343,7 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
   int len = static_cast<int>( m->datasetGroups.size() );
   if ( len <= index )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index " + std::to_string( index ) + " is bigger than datasets count" );
     return nullptr;
   }
   size_t i = static_cast<size_t>( index );
@@ -351,25 +360,25 @@ DatasetGroupH MDAL_M_addDatasetGroup(
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
 
   if ( !name )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Name is not valid (null)" );
     return nullptr;
   }
 
   if ( !datasetGroupFile )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Dataset group file is not valid (null)" );
     return nullptr;
   }
 
   if ( !driver )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
     return nullptr;
   }
 
@@ -378,7 +387,7 @@ DatasetGroupH MDAL_M_addDatasetGroup(
 
   if ( !dr->hasWriteDatasetCapability( dataLocation ) )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriverCapability;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, dr->name(), "does not have Write Dataset capability" );
     return nullptr;
   }
 
@@ -399,7 +408,7 @@ const char *MDAL_M_driverName( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
 
@@ -415,7 +424,7 @@ MeshVertexIteratorH MDAL_M_vertexIterator( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -430,12 +439,12 @@ int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coord
 
   if ( !iterator )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh Vertex Iterator is not valid (null)" );
     return 0;
   }
   if ( !coordinates )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Coordinates pointer is not valid (null)" );
     return 0;
   }
   MDAL::MeshVertexIterator *it = static_cast< MDAL::MeshVertexIterator * >( iterator );
@@ -461,7 +470,7 @@ MeshEdgeIteratorH MDAL_M_edgeIterator( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -476,13 +485,13 @@ int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIn
 
   if ( !iterator )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh Edge Iterator is not valid (null)" );
     return 0;
   }
 
   if ( !startVertexIndices || !endVertexIndices )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Start or End Vertex Index is not valid (null)" );
     return 0;
   }
 
@@ -509,7 +518,7 @@ MeshFaceIteratorH MDAL_M_faceIterator( MeshH mesh )
 {
   if ( !mesh )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
     return nullptr;
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
@@ -528,7 +537,7 @@ int MDAL_FI_next( MeshFaceIteratorH iterator,
 
   if ( !iterator )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleMesh;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh Face Iterator is not valid (null)" );
     return 0;
   }
   MDAL::MeshFaceIterator *it = static_cast< MDAL::MeshFaceIterator * >( iterator );
@@ -558,7 +567,7 @@ MeshH MDAL_G_mesh( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDatasetGroup, "Dataset group is not valid (null)" );
     return nullptr;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -570,7 +579,7 @@ int MDAL_G_datasetCount( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDatasetGroup, "Dataset group is not valid (null)" );
     return 0;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -582,13 +591,13 @@ DatasetH MDAL_G_dataset( DatasetGroupH group, int index )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDatasetGroup, "Dataset group is not valid (null)" );
     return nullptr;
   }
 
   if ( index < 0 )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDatasetGroup, "Requested index: " + std::to_string( index ) + " is out of scope for dataset groups" );
     return nullptr;
   }
 
@@ -596,7 +605,7 @@ DatasetH MDAL_G_dataset( DatasetGroupH group, int index )
   int len = static_cast<int>( g->datasets.size() );
   if ( len <= index )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDatasetGroup;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDatasetGroup, "Requested index: " + std::to_string( index ) + " is out of scope for dataset groups" );
     return nullptr;
   }
   size_t i = static_cast<size_t>( index );
@@ -607,7 +616,7 @@ int MDAL_G_metadataCount( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return 0;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -619,14 +628,14 @@ const char *MDAL_G_metadataKey( DatasetGroupH group, int index )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return EMPTY_STR;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
   int len = static_cast<int>( g->metadata.size() );
   if ( len <= index )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Requested index: " + std::to_string( index ) + " is out of scope for dataset groups" );
     return EMPTY_STR;
   }
   size_t i = static_cast<size_t>( index );
@@ -637,14 +646,14 @@ const char *MDAL_G_metadataValue( DatasetGroupH group, int index )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return EMPTY_STR;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
   int len = static_cast<int>( g->metadata.size() );
   if ( len <= index )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Requested index: " + std::to_string( index ) + " is out of scope for metadata" );
     return EMPTY_STR;
   }
   size_t i = static_cast<size_t>( index );
@@ -655,7 +664,7 @@ const char *MDAL_G_name( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return EMPTY_STR;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -666,7 +675,7 @@ bool MDAL_G_hasScalarData( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return true;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -677,7 +686,7 @@ MDAL_DataLocation MDAL_G_dataLocation( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return DataInvalidLocation;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -688,7 +697,7 @@ int MDAL_G_maximumVerticalLevelCount( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return 0;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -700,13 +709,13 @@ void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max )
 {
   if ( !min || !max )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointers min or max are not valid (null)" );
     return;
   }
 
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     *min = NODATA;
     *max = NODATA;
     return;
@@ -722,20 +731,20 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *valu
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return nullptr;
   }
 
   if ( !values )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointer Values is not valid" );
     return nullptr;
   }
 
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
   if ( !g->isInEditMode() )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not in edit mode" );
     return nullptr;
   }
 
@@ -743,25 +752,25 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *valu
   std::shared_ptr<MDAL::Driver> dr = MDAL::DriverManager::instance().driver( driverName );
   if ( !dr )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver name " + driverName + " saved in dataset group could not be found" );
     return nullptr;
   }
 
   if ( !dr->hasWriteDatasetCapability( g->dataLocation() ) )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriverCapability;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Driver " + driverName + " does not have Write Dataset capability" );
     return nullptr;
   }
 
   if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriverCapability;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Dataset Group has data on 3D volumes" );
     return nullptr;
   }
 
   if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Active flag is only supported on datasets with data on vertices" );
     return nullptr;
   }
 
@@ -782,7 +791,7 @@ bool MDAL_G_isInEditMode( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return true;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -793,7 +802,7 @@ void MDAL_G_closeEditMode( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -810,20 +819,20 @@ void MDAL_G_closeEditMode( DatasetGroupH group )
   std::shared_ptr<MDAL::Driver> dr = MDAL::DriverManager::instance().driver( driverName );
   if ( !dr )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriver;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver name " + driverName + " saved in dataset group could not be found" );
     return;
   }
 
   if ( !dr->hasWriteDatasetCapability( g->dataLocation() ) )
   {
-    sLastStatus = MDAL_Status::Err_MissingDriverCapability;
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Driver " + driverName + " does not have Write Dataset capability" );
     return;
   }
 
   bool error = dr->persist( g );
   if ( error )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Persist error occured in driver" );
   }
 }
 
@@ -831,7 +840,7 @@ const char *MDAL_G_referenceTime( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return EMPTY_STR;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -842,18 +851,18 @@ void MDAL_G_setMetadata( DatasetGroupH group, const char *key, const char *val )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
   }
 
   if ( !key )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointer key is not valid (null)" );
     return;
   }
 
   if ( !val )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointer val is not valid (null)" );
     return;
   }
 
@@ -867,7 +876,7 @@ const char *MDAL_G_driverName( DatasetGroupH group )
 {
   if ( !group )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
     return EMPTY_STR;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
@@ -882,7 +891,7 @@ DatasetGroupH MDAL_D_group( DatasetH dataset )
 {
   if ( !dataset )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     return nullptr;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
@@ -893,7 +902,7 @@ double MDAL_D_time( DatasetH dataset )
 {
   if ( !dataset )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     return NODATA;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
@@ -904,7 +913,7 @@ int MDAL_D_volumesCount( DatasetH dataset )
 {
   if ( !dataset )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     return 0;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
@@ -916,7 +925,7 @@ int MDAL_D_maximumVerticalLevelCount( DatasetH dataset )
 {
   if ( !dataset )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     return 0;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
@@ -928,7 +937,7 @@ int MDAL_D_valueCount( DatasetH dataset )
 {
   if ( !dataset )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     return 0;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
@@ -940,7 +949,7 @@ bool MDAL_D_isValid( DatasetH dataset )
 {
   if ( !dataset )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     return false;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
@@ -951,7 +960,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
 {
   if ( !dataset )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     return 0;
   }
   MDAL::Dataset *d = static_cast< MDAL::Dataset * >( dataset );
@@ -971,12 +980,12 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::SCALAR_DOUBLE:
       if ( !g->isScalar() )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not scalar" );
         return 0;
       }
       if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Scalar access only supported on datasets with data on vertices or faces" );
         return 0;
       }
       valuesCount = d->valuesCount();
@@ -984,12 +993,12 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::VECTOR_2D_DOUBLE:
       if ( g->isScalar() )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is scalar" );
         return 0;
       }
       if ( ( g->dataLocation() != MDAL_DataLocation::DataOnVertices ) && ( g->dataLocation() != MDAL_DataLocation::DataOnFaces ) && ( g->dataLocation() != MDAL_DataLocation::DataOnEdges ) )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Vector access only supported on datasets with data on vertices or faces" );
         return 0;
       }
       valuesCount = d->valuesCount();
@@ -997,7 +1006,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::ACTIVE_INTEGER:
       if ( !d->supportsActiveFlag() )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not support Active Flag" );
         return 0;
       }
       valuesCount = m->facesCount();
@@ -1005,7 +1014,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER:
       if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
       }
       valuesCount = m->facesCount();
@@ -1013,7 +1022,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::VERTICAL_LEVEL_DOUBLE:
       if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
       }
       valuesCount = m->facesCount() + d->volumesCount();
@@ -1021,7 +1030,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER:
       if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
       }
       valuesCount = m->facesCount();
@@ -1029,12 +1038,12 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::SCALAR_VOLUMES_DOUBLE:
       if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
       }
       if ( !g->isScalar() )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not scalar" );
         return 0;
       }
       valuesCount = d->volumesCount();
@@ -1042,12 +1051,12 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
     case MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE:
       if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group does not have data on volumes in 3D" );
         return 0;
       }
       if ( g->isScalar() )
       {
-        sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is scalar" );
         return 0;
       }
       valuesCount = 2 * d->volumesCount();
@@ -1057,13 +1066,13 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
   // Check that we are not reaching out of values limit
   if ( valuesCount <= indexStartSizeT )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Reached out of values limit" );
     return 0;
   }
 
   if ( valuesCount < indexStartSizeT + countSizeT )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Reached out of values limit" );
     return 0;
   }
 
@@ -1104,13 +1113,13 @@ void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max )
 {
   if ( !min || !max )
   {
-    sLastStatus = MDAL_Status::Err_InvalidData;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointers min or max are not valid (null)" );
     return;
   }
 
   if ( !dataset )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     *min = NODATA;
     *max = NODATA;
     return;
@@ -1126,7 +1135,7 @@ bool MDAL_D_hasActiveFlagCapability( DatasetH dataset )
 {
   if ( !dataset )
   {
-    sLastStatus = MDAL_Status::Err_IncompatibleDataset;
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset is not valid (null)" );
     return false;
   }
 
