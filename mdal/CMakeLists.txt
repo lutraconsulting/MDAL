@@ -10,6 +10,7 @@ SET(MDAL_SOURCES
   mdal_memory_data_model.cpp
   frmts/mdal_driver.cpp
   frmts/mdal_2dm.cpp
+  frmts/mdal_xms_tin.cpp
   frmts/mdal_ascii_dat.cpp
   frmts/mdal_binary_dat.cpp
   frmts/mdal_selafin.cpp
@@ -25,6 +26,7 @@ SET(MDAL_HEADERS
   mdal_memory_data_model.hpp
   frmts/mdal_driver.hpp
   frmts/mdal_2dm.hpp
+  frmts/mdal_xms_tin.hpp
   frmts/mdal_ascii_dat.hpp
   frmts/mdal_binary_dat.hpp
   frmts/mdal_selafin.hpp
