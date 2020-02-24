@@ -131,7 +131,7 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
     {
       std::stringstream str;
       str << " Unknown card:" << line;
-      MDAL::Log::info( str.str() );
+      MDAL::Log::debug( str.str() );
     }
   }
   while ( std::getline( in, line ) );
@@ -295,7 +295,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     {
       std::stringstream str;
       str << " Unknown card:" << line;
-      MDAL::Log::info( str.str() );
+      MDAL::Log::debug( str.str() );
     }
   }
 }
@@ -409,7 +409,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
       }
       else
       {
-        MDAL::Log::info( "invalid timestep line" );
+        MDAL::Log::debug( "invalid timestep line" );
       }
     }
     else
@@ -418,7 +418,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
         dataset->setScalarValue( index, toDouble( tsItems[0] ) );
       else
       {
-        MDAL::Log::info( "invalid timestep line" );
+        MDAL::Log::debug( "invalid timestep line" );
       }
     }
   }
@@ -454,7 +454,7 @@ void MDAL::DriverAsciiDat::readElementTimestep(
       }
       else
       {
-        MDAL::Log::info( "invalid timestep line" );
+        MDAL::Log::debug( "invalid timestep line" );
       }
     }
     else
@@ -463,7 +463,7 @@ void MDAL::DriverAsciiDat::readElementTimestep(
         dataset->setScalarValue( index, toDouble( tsItems[0] ) ) ;
       else
       {
-        MDAL::Log::info( "invalid timestep line" );
+        MDAL::Log::debug( "invalid timestep line" );
       }
     }
   }

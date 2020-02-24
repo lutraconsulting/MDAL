@@ -242,7 +242,7 @@ float HdfDataset::readFloat() const
 {
   if ( elementCount() != 1 )
   {
-    MDAL::Log::info( "Not scalar!" );
+    MDAL::Log::debug( "Not scalar!" );
     return 0;
   }
 
@@ -250,7 +250,7 @@ float HdfDataset::readFloat() const
   herr_t status = H5Dread( d->id, H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, &value );
   if ( status < 0 )
   {
-    MDAL::Log::info( "Failed to read data!" );
+    MDAL::Log::debug( "Failed to read data!" );
     return 0;
   }
   return value;
@@ -305,7 +305,7 @@ std::string HdfDataset::readString() const
 {
   if ( elementCount() != 1 )
   {
-    MDAL::Log::info( "Not scalar!" );
+    MDAL::Log::debug( "Not scalar!" );
     return std::string();
   }
 
@@ -314,7 +314,7 @@ std::string HdfDataset::readString() const
   herr_t status = H5Dread( d->id, datatype.id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, name );
   if ( status < 0 )
   {
-    MDAL::Log::info( "Failed to read data!" );
+    MDAL::Log::debug( "Failed to read data!" );
     return std::string();
   }
   return std::string( name );
@@ -346,7 +346,7 @@ void HdfDataspace::selectHyperslab( hsize_t start, hsize_t count )
   herr_t status = H5Sselect_hyperslab( d->id, H5S_SELECT_SET, &start, NULL, &count, NULL );
   if ( status < 0 )
   {
-    MDAL::Log::info( "Failed to select 1D hyperslab!" );
+    MDAL::Log::debug( "Failed to select 1D hyperslab!" );
   }
 }
 
@@ -364,7 +364,7 @@ void HdfDataspace::selectHyperslab( const std::vector<hsize_t> offsets,
                                        NULL );
   if ( status < 0 )
   {
-    MDAL::Log::info( "Failed to select 1D hyperslab!" );
+    MDAL::Log::debug( "Failed to select 1D hyperslab!" );
   }
 }
 

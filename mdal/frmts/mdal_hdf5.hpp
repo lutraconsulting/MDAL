@@ -236,7 +236,7 @@ class HdfDataset
       herr_t status = H5Dread( d->id, mem_type_id, H5S_ALL, H5S_ALL, H5P_DEFAULT, data.data() );
       if ( status < 0 )
       {
-        MDAL::Log::info( "Failed to read data!" );
+        MDAL::Log::debug( "Failed to read data!" );
         return std::vector<T>();
       }
       return data;
@@ -261,7 +261,7 @@ class HdfDataset
       herr_t status = H5Dread( d->id, mem_type_id, memspace.id(), dataspace.id(), H5P_DEFAULT, data.data() );
       if ( status < 0 )
       {
-        MDAL::Log::info( "Failed to read data!" );
+        MDAL::Log::debug( "Failed to read data!" );
         return std::vector<T>();
       }
       return data;

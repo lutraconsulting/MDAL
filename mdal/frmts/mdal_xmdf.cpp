@@ -203,7 +203,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
        !MDAL::contains( gDataNames, "Mins" ) ||
        !MDAL::contains( gDataNames, "Maxs" ) )
   {
-    MDAL::Log::info( "ignoring dataset " + groupName + " - not having required arrays" );
+    MDAL::Log::debug( "ignoring dataset " + groupName + " - not having required arrays" );
     return group;
   }
 
@@ -226,7 +226,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
        dimMaxs.size() != 1
      )
   {
-    MDAL::Log::info( "ignoring dataset " + groupName + " - arrays not having correct dimension counts" );
+    MDAL::Log::debug( "ignoring dataset " + groupName + " - arrays not having correct dimension counts" );
     return group;
   }
   hsize_t nTimeSteps = dimTimes[0];
@@ -236,12 +236,12 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
        dimMins[0] != nTimeSteps ||
        dimMaxs[0] != nTimeSteps )
   {
-    MDAL::Log::info( "ignoring dataset " + groupName + " - arrays not having correct dimension sizes" );
+    MDAL::Log::debug( "ignoring dataset " + groupName + " - arrays not having correct dimension sizes" );
     return group;
   }
   if ( dimValues[1] != vertexCount || dimActive[1] != faceCount )
   {
-    MDAL::Log::info( "ignoring dataset " + groupName + " - not aligned with the used mesh" );
+    MDAL::Log::debug( "ignoring dataset " + groupName + " - not aligned with the used mesh" );
     return group;
   }
 
