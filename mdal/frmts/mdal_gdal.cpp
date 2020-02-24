@@ -543,6 +543,11 @@ bool MDAL::DriverGdal::canReadMesh( const std::string &uri )
   {
     return false;
   }
+  catch ( MDAL::Error )
+  {
+    return false;
+  }
+
   return true;
 }
 
@@ -605,6 +610,11 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName 
   catch ( MDAL_Status error )
   {
     MDAL::Log::error( error, name(), "error occured while loading " + fileName );
+    mMesh.reset();
+  }
+  catch ( MDAL::Error err )
+  {
+    MDAL::Log::error( err, name() );
     mMesh.reset();
   }
 

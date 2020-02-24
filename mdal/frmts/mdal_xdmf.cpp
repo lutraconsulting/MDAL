@@ -631,6 +631,10 @@ bool MDAL::DriverXdmf::canReadDatasets( const std::string &uri )
   {
     return false;
   }
+  catch ( MDAL::Error )
+  {
+    return false;
+  }
   return true;
 }
 
@@ -663,5 +667,9 @@ void MDAL::DriverXdmf::load( const std::string &datFile,
   catch ( MDAL_Status err )
   {
     MDAL::Log::error( err, "Error occured while loading file " + mDatFile );
+  }
+  catch ( MDAL::Error err )
+  {
+    MDAL::Log::error( err, name() );
   }
 }

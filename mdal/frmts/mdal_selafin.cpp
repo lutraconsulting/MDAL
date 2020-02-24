@@ -608,5 +608,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFi
     MDAL::Log::error( error, name(), "Error while loading file " + meshFile );
     mMesh.reset();
   }
+  catch ( MDAL::Error err )
+  {
+    MDAL::Log::error( err, name() );
+    mMesh.reset();
+  }
   return std::unique_ptr<Mesh>( mMesh.release() );
 }

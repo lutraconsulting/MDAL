@@ -22,9 +22,9 @@ namespace MDAL
   namespace Log
   {
     void error( MDAL::Error );
+    void error( MDAL::Error err, std::string driver );
     void error( MDAL_Status status, std::string mssg );
     void error( MDAL_Status status, std::string driverName, std::string mssg );
-    void warning( MDAL::Error );
     void warning( MDAL_Status status, std::string mssg );
     void warning( MDAL_Status status, std::string driverName, std::string mssg );
     void info( std::string mssg );

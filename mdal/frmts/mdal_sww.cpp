@@ -49,6 +49,10 @@ bool MDAL::DriverSWW::canReadMesh( const std::string &uri )
   {
     return false;
   }
+  catch ( MDAL::Error )
+  {
+    return false;
+  }
   return true;
 }
 
@@ -465,6 +469,11 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSWW::load(
   catch ( MDAL_Status err )
   {
     MDAL::Log::error( err, "Error while loading file " + resultsFile );
+    return std::unique_ptr< MDAL::Mesh >();
+  }
+  catch ( MDAL::Error err )
+  {
+    MDAL::Log::error( err, name() );
     return std::unique_ptr< MDAL::Mesh >();
   }
 }

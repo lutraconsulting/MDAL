@@ -22,16 +22,37 @@ void _log( MDAL_LogLevel logLevel, MDAL_Status status, std::string mssg )
   }
 }
 
+void MDAL::Log::error( MDAL::Error e )
+{
+  error( e.status, "Driver: " + e.driver + ": " + e.mssg );
+}
+
+void MDAL::Log::error( MDAL::Error err, std::string driver )
+{
+  err.setDriver( driver );
+  error( err );
+}
+
 void MDAL::Log::error( MDAL_Status status, std::string mssg )
 {
   sLastStatus = status;
   _log( MDAL_LogLevel::Error, status, mssg );
 }
 
+void MDAL::Log::error( MDAL_Status status, std::string driverName, std::string mssg )
+{
+  error( status, "Driver: " + driverName + ": " + mssg );
+}
+
 void MDAL::Log::warning( MDAL_Status status, std::string mssg )
 {
   sLastStatus = status;
   _log( MDAL_LogLevel::Warn, status, mssg );
+}
+
+void MDAL::Log::warning( MDAL_Status status, std::string driverName, std::string mssg )
+{
+  warning( status, "Driver: " + driverName + ": " + mssg );
 }
 
 void MDAL::Log::info( std::string mssg )
@@ -82,24 +103,4 @@ void _standardStdout( MDAL_LogLevel logLevel, MDAL_Status status, const char *ms
       break;
     default: break;
   }
-}
-
-void MDAL::Log::error( MDAL_Status status, std::string driverName, std::string mssg )
-{
-  error( status, "Driver: " + driverName + ": " + mssg );
-}
-
-void MDAL::Log::warning( MDAL_Status status, std::string driverName, std::string mssg )
-{
-  warning( status, "Driver: " + driverName + ": " + mssg );
-}
-
-void MDAL::Log::error( MDAL::Error e )
-{
-  error( e.status, "Driver: " + e.driver + ": " + e.mssg );
-}
-
-void MDAL::Log::warning( MDAL::Error e )
-{
-  warning( e.status, "Driver: " + e.driver + ": " + e.mssg );
 }

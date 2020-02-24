@@ -318,6 +318,10 @@ bool MDAL::DriverCF::canReadMesh( const std::string &uri )
   {
     return false;
   }
+  catch ( MDAL::Error )
+  {
+    return false;
+  }
   return true;
 }
 
@@ -377,6 +381,10 @@ void MDAL::DriverCF::setProjection( MDAL::Mesh *mesh )
   {
     return;
   }
+  catch ( MDAL::Error )
+  {
+    return;
+  }
 }
 
 std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName )
@@ -432,6 +440,11 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName 
   catch ( MDAL_Status error )
   {
     MDAL::Log::error( error, name(), "error while loading file " + fileName );
+    return std::unique_ptr<Mesh>();
+  }
+  catch ( MDAL::Error err )
+  {
+    MDAL::Log::error( err, name() );
     return std::unique_ptr<Mesh>();
   }
 }

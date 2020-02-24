@@ -35,8 +35,7 @@ void NetCDFFile::openFile( const std::string &fileName )
   int res = nc_open( fileName.c_str(), NC_NOWRITE, &mNcid );
   if ( res != NC_NOERR )
   {
-    MDAL::Log::debug( nc_strerror( res ) );
-    throw MDAL_Status::Err_UnknownFormat;
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not open file " + fileName );
   }
 }
 
@@ -44,9 +43,9 @@ std::vector<int> NetCDFFile::readIntArr( const std::string &name, size_t dim ) c
 {
   assert( mNcid != 0 );
   int arr_id;
-  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+  if ( nc_inq_varid( mNcid, name.c_str(), &arr_id ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Internal error in Netcfd" );
   std::vector<int> arr_val( dim );
-  if ( nc_get_var_int( mNcid, arr_id, arr_val.data() ) != NC_NOERR ) throw MDAL_Status::Err_UnknownFormat;
+  if ( nc_get_var_int( mNcid, arr_id, arr_val.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Internal error in Netcfd" );
   return arr_val;
 }
 
