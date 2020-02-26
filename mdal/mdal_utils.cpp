@@ -36,7 +36,7 @@ std::string MDAL::readFileToString( const std::string &filename )
 
 bool MDAL::startsWith( const std::string &str, const std::string &substr, ContainsBehaviour behaviour )
 {
-  if ( str.size() < substr.size() )
+  if ( ( str.size() < substr.size() ) || substr.empty() )
     return false;
 
   if ( behaviour == ContainsBehaviour::CaseSensitive )
@@ -47,7 +47,7 @@ bool MDAL::startsWith( const std::string &str, const std::string &substr, Contai
 
 bool MDAL::endsWith( const std::string &str, const std::string &substr, ContainsBehaviour behaviour )
 {
-  if ( str.size() < substr.size() )
+  if ( ( str.size() < substr.size() ) || substr.empty() )
     return false;
 
   if ( behaviour == ContainsBehaviour::CaseSensitive )
