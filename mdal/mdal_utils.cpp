@@ -789,3 +789,10 @@ bool MDAL::getHeaderLine( std::ifstream &stream, std::string &line )
   line = std::string( b );
   return true;
 }
+
+MDAL::Error::Error( MDAL_Status s, std::string m, std::string d ): status( s ), mssg( m ), driver( d ) {}
+
+void MDAL::Error::setDriver( std::string d )
+{
+  driver = d;
+}

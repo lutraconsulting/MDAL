@@ -29,8 +29,7 @@ namespace MDAL
       ~DriverXmsTin() override;
       DriverXmsTin *create() override;
 
-      int faceVerticesMaximumCount() const override
-      {return MAX_VERTICES_PER_FACE_TIN;}
+      int faceVerticesMaximumCount() const override;
 
       bool canReadMesh( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &meshFile ) override;

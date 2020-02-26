@@ -11,6 +11,15 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 
+TEST( MeshFlo2dTest, missing_required_file )
+{
+  std::string path = test_file( "/flo2d/missing_required_file/BASE.OUT" );
+  MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_EQ( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
+}
+
 TEST( MeshFlo2dTest, WriteBarnHDF5_New )
 {
   std::string path = test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" );
