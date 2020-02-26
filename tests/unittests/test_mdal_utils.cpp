@@ -158,7 +158,8 @@ TEST( MdalUtilsTest, StartsWidth )
     { "cccc", false },
     { "ABC", false }
   };
-  for ( const auto &test : tests ) {
+  for ( const auto &test : tests )
+  {
     EXPECT_EQ( test.second, MDAL::startsWith( test.first, "abc" ) );
     EXPECT_EQ( test.second, MDAL::startsWith( test.first, "abc", MDAL::ContainsBehaviour::CaseSensitive ) );
   }
@@ -176,7 +177,8 @@ TEST( MdalUtilsTest, StartsWidth )
     { "ABC", true },
     { "AbC", true }
   };
-  for ( const auto &test : tests ) {
+  for ( const auto &test : tests )
+  {
     EXPECT_EQ( test.second, MDAL::startsWith( test.first, "abc", MDAL::ContainsBehaviour::CaseInsensitive ) );
   }
 }
@@ -196,7 +198,8 @@ TEST( MdalUtilsTest, EndsWidth )
     { "cccc", false },
     { "aa ABCD", false }
   };
-  for ( const auto &test : tests ) {
+  for ( const auto &test : tests )
+  {
     EXPECT_EQ( test.second, MDAL::endsWith( test.first, "cd", MDAL::ContainsBehaviour::CaseSensitive ) );
   }
 
@@ -213,7 +216,8 @@ TEST( MdalUtilsTest, EndsWidth )
     { "ABCD", true },
     { "aa AbcD", true }
   };
-  for ( const auto &test : tests ) {
+  for ( const auto &test : tests )
+  {
     EXPECT_EQ( test.second, MDAL::endsWith( test.first, "cd", MDAL::ContainsBehaviour::CaseInsensitive ) );
   }
 }
