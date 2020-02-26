@@ -281,6 +281,7 @@ std::string MDAL::DriverEsriTin::crsFile( const std::string &uri ) const
   return pathJoin( dirName( uri ), "prj.adf" );
 }
 
+/*
 void MDAL::DriverEsriTin::readSuperpoints( const std::string &uri, std::list<int> &superpointsIndexes ) const
 {
   superpointsIndexes.clear();
@@ -312,7 +313,7 @@ std::string MDAL::DriverEsriTin::getTinName( const std::string &uri ) const
 
   return tinName;
 }
-
+*/
 
 std::string MDAL::DriverEsriTin::getCrsWkt( const std::string &uri ) const
 {

@@ -36,6 +36,11 @@ MDAL::DriverXmsTin *MDAL::DriverXmsTin::create()
   return new DriverXmsTin();
 }
 
+int MDAL::DriverXmsTin::faceVerticesMaximumCount() const
+{
+  return MAX_VERTICES_PER_FACE_TIN;
+}
+
 MDAL::DriverXmsTin::~DriverXmsTin() = default;
 
 bool MDAL::DriverXmsTin::canReadMesh( const std::string &uri )
@@ -55,11 +60,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverXmsTin::load( const std::string &meshFil
 
   std::ifstream in( meshFile, std::ifstream::in );
   std::string line;
-  if ( !std::getline( in, line ) || !startsWith( line, "TIN" ) )
-  {
-    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), meshFile + " does not start with TIN keyword" );
-    return nullptr;
-  }
+  // skip first line with "TIN" already checked in the canReadMesh
+  std::getline( in, line );
 
   // Read vertices
   if ( !std::getline( in, line ) || !startsWith( line, "BEGT" ) )

@@ -261,8 +261,8 @@ TEST( ApiTest, DatasetsApi )
   MDAL_D_minimumMaximum( nullptr, nullptr, &b );
 }
 
-std::string receivedLogMessage;
-MDAL_LogLevel receivedLogLevel;
+static std::string receivedLogMessage;
+static MDAL_LogLevel receivedLogLevel;
 
 void _testLoggerCallback( MDAL_LogLevel logLevel, MDAL_Status, const char *mssg )
 {

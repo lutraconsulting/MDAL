@@ -9,6 +9,15 @@
 #include "mdal_testutils.hpp"
 #include "mdal_utils.hpp"
 
+TEST( MeshTinTest, WrongFiles )
+{
+  for ( int i = 0; i < 9; ++i )
+  {
+    std::string fileName = test_file( "/xms_tin/invalid/invalid" + std::to_string( i ) + ".tin" );
+    MeshH m = MDAL_LoadMesh( fileName.c_str() );
+    EXPECT_EQ( m, nullptr );
+  }
+}
 
 TEST( MeshTinTest, ParaboloidFile )
 {

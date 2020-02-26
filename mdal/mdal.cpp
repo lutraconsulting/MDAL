@@ -1142,4 +1142,3 @@ bool MDAL_D_hasActiveFlagCapability( DatasetH dataset )
   MDAL::Dataset *ds = static_cast< MDAL::Dataset * >( dataset );
   return ds->supportsActiveFlag();
 }
-
