@@ -118,6 +118,7 @@ int main( int argc, char *argv[] )
     std::cout << "  Vertex count: " << MDAL_M_vertexCount( m ) <<  std::endl;
     std::cout << "  Edge count: " << MDAL_M_edgeCount( m ) <<  std::endl;
     std::cout << "  Face count: " << MDAL_M_faceCount( m ) << std::endl;
+    std::cout << "  Edge count: " << MDAL_M_edgeCount( m ) << std::endl;
     std::string projection = MDAL_M_projection( m );
     if ( projection.empty() )
       projection = "undefined";
@@ -168,8 +169,11 @@ int main( int argc, char *argv[] )
         case MDAL_DataLocation::DataOnVolumes:
           definedOn = "volumes";
           break;
-        default:
-          definedOn = "unknown";
+        case MDAL_DataLocation::DataOnEdges:
+          definedOn = "edges";
+          break;
+        case MDAL_DataLocation::DataInvalidLocation:
+          definedOn = "invalid";
           break;
       }
       std::cout << std::endl << "    driver:        " << MDAL_G_driverName( group );
