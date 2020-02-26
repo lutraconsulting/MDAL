@@ -62,6 +62,25 @@ void printFormats()
   }
 }
 
+class Mesh
+{
+  public:
+    Mesh( const std::string &path )
+    {
+      mPointer = MDAL_LoadMesh( path.c_str() );
+    }
+    ~Mesh()
+    {
+      if ( mPointer )
+        MDAL_CloseMesh( mPointer );
+    }
+    MeshH get() const
+    {
+      return mPointer;
+    }
+  private:
+    MeshH mPointer;
+};
 
 int main( int argc, char *argv[] )
 {
@@ -110,16 +129,16 @@ int main( int argc, char *argv[] )
 
   // MESH
   std::cout << "Mesh File: " << mesh_file << std::endl;
-  MeshH m = MDAL_LoadMesh( mesh_file.c_str() );
-  if ( m )
+  Mesh mesh( mesh_file );
+  if ( mesh.get() )
   {
     std::cout << "Mesh loaded: OK" << std::endl;
-    std::cout << "  Driver: " << MDAL_M_driverName( m ) <<  std::endl;
-    std::cout << "  Vertex count: " << MDAL_M_vertexCount( m ) <<  std::endl;
-    std::cout << "  Edge count: " << MDAL_M_edgeCount( m ) <<  std::endl;
-    std::cout << "  Face count: " << MDAL_M_faceCount( m ) << std::endl;
-    std::cout << "  Edge count: " << MDAL_M_edgeCount( m ) << std::endl;
-    std::string projection = MDAL_M_projection( m );
+    std::cout << "  Driver: " << MDAL_M_driverName( mesh.get() ) <<  std::endl;
+    std::cout << "  Vertex count: " << MDAL_M_vertexCount( mesh.get() ) <<  std::endl;
+    std::cout << "  Edge count: " << MDAL_M_edgeCount( mesh.get() ) <<  std::endl;
+    std::cout << "  Face count: " << MDAL_M_faceCount( mesh.get() ) << std::endl;
+    std::cout << "  Edge count: " << MDAL_M_edgeCount( mesh.get() ) << std::endl;
+    std::string projection = MDAL_M_projection( mesh.get() );
     if ( projection.empty() )
       projection = "undefined";
     std::cout << "  Projection: " << projection << std::endl;
@@ -135,7 +154,7 @@ int main( int argc, char *argv[] )
   for ( const std::string &dataset : extraDatasets )
   {
     std::cout << "Dataset File: " << dataset << std::endl;
-    MDAL_M_LoadDatasets( m, dataset.c_str() );
+    MDAL_M_LoadDatasets( mesh.get(), dataset.c_str() );
     if ( MDAL_LastStatus() != MDAL_Status::None )
     {
       std::cout << "Dataset loaded: ERR" << std::endl;
@@ -145,10 +164,10 @@ int main( int argc, char *argv[] )
   }
 
   std::cout << "Datasets loaded: OK" << std::endl;
-  std::cout << "  Groups count: " << MDAL_M_datasetGroupCount( m ) <<  std::endl;
-  for ( int i = 0; i < MDAL_M_datasetGroupCount( m ); ++i )
+  std::cout << "  Groups count: " << MDAL_M_datasetGroupCount( mesh.get() ) <<  std::endl;
+  for ( int i = 0; i < MDAL_M_datasetGroupCount( mesh.get() ); ++i )
   {
-    auto group = MDAL_M_datasetGroup( m, i );
+    auto group = MDAL_M_datasetGroup( mesh.get(), i );
     std::cout << "  " << MDAL_G_name( group );
     if ( !MDAL_G_hasScalarData( group ) )
       std::cout << " ( Vector ) ";
@@ -185,7 +204,5 @@ int main( int argc, char *argv[] )
     }
     std::cout << std::endl;
   }
-
-  MDAL_CloseMesh( m );
   return EXIT_SUCCESS;
 }
