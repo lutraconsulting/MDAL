@@ -142,3 +142,78 @@ TEST( MdalUtilsTest, CF_ReferenceTimePArsing )
   }
 }
 
+TEST( MdalUtilsTest, StartsWidth )
+{
+  // case sensitive
+  EXPECT_EQ( false, MDAL::startsWith( "abcs", "" ) );
+  EXPECT_EQ( false, MDAL::startsWith( "abcs", "", MDAL::ContainsBehaviour::CaseSensitive ) );
+
+  std::vector<std::pair<std::string, bool>> tests =
+  {
+    { "abcd", true },
+    { " abcd", false },
+    { "ab", false },
+    { "", false },
+    { "abc ", true },
+    { "cccc", false },
+    { "ABC", false }
+  };
+  for ( const auto &test : tests ) {
+    EXPECT_EQ( test.second, MDAL::startsWith( test.first, "abc" ) );
+    EXPECT_EQ( test.second, MDAL::startsWith( test.first, "abc", MDAL::ContainsBehaviour::CaseSensitive ) );
+  }
+
+  // case insensitive
+  EXPECT_EQ( false, MDAL::startsWith( "abcs", "", MDAL::ContainsBehaviour::CaseInsensitive ) );
+  tests =
+  {
+    { "abcd", true },
+    { " abcd", false },
+    { "ab", false },
+    { "", false },
+    { "abc ", true },
+    { "cccc", false },
+    { "ABC", true },
+    { "AbC", true }
+  };
+  for ( const auto &test : tests ) {
+    EXPECT_EQ( test.second, MDAL::startsWith( test.first, "abc", MDAL::ContainsBehaviour::CaseInsensitive ) );
+  }
+}
+
+TEST( MdalUtilsTest, EndsWidth )
+{
+  // case sensitive
+  EXPECT_EQ( false, MDAL::endsWith( "abcs", "", MDAL::ContainsBehaviour::CaseSensitive ) );
+
+  std::vector<std::pair<std::string, bool>> tests =
+  {
+    { "abcd", true },
+    { " abcd", true },
+    { "ab", false },
+    { "", false },
+    { "abcd ", false },
+    { "cccc", false },
+    { "aa ABCD", false }
+  };
+  for ( const auto &test : tests ) {
+    EXPECT_EQ( test.second, MDAL::endsWith( test.first, "cd", MDAL::ContainsBehaviour::CaseSensitive ) );
+  }
+
+  // case insensitive
+  EXPECT_EQ( false, MDAL::endsWith( "abcs", "", MDAL::ContainsBehaviour::CaseInsensitive ) );
+  tests =
+  {
+    { "abCd", true },
+    { " abcd", true },
+    { "ab", false },
+    { "", false },
+    { "abcd ", false },
+    { "cccc", false },
+    { "ABCD", true },
+    { "aa AbcD", true }
+  };
+  for ( const auto &test : tests ) {
+    EXPECT_EQ( test.second, MDAL::endsWith( test.first, "cd", MDAL::ContainsBehaviour::CaseInsensitive ) );
+  }
+}
