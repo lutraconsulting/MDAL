@@ -114,17 +114,32 @@ ENDFOREACH(TESTSRC)
 ADD_TEST(NAME mdalinfo_test COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/regular_grid.2dm" "${TESTDATA_DIR}/xmdf/regular_grid.xmdf" )
 SET_TESTS_PROPERTIES(mdalinfo_test PROPERTIES PASS_REGULAR_EXPRESSION "Groups count: 9")
 
-ADD_TEST(NAME mdalinfo_test2 COMMAND $<TARGET_FILE:mdalinfo> "--formats" )
-SET_TESTS_PROPERTIES(mdalinfo_test2 PROPERTIES PASS_REGULAR_EXPRESSION "2DM Mesh File")
+ADD_TEST(NAME mdalinfo_test1 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/lines.2dm" "${TESTDATA_DIR}/ascii_dat/lines_vertex_scalar.dat" )
+SET_TESTS_PROPERTIES(mdalinfo_test1 PROPERTIES PASS_REGULAR_EXPRESSION "Groups count: 2")
 
-ADD_TEST(NAME mdalinfo_test3 COMMAND $<TARGET_FILE:mdalinfo> "-h" )
-SET_TESTS_PROPERTIES(mdalinfo_test3 PROPERTIES PASS_REGULAR_EXPRESSION "mdalinfo mesh_file")
+ADD_TEST(NAME mdalinfo_test2 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/quad_and_triangle.2dm" "${TESTDATA_DIR}/ascii_dat/quad_and_triangle_vertex_scalar.dat" )
+SET_TESTS_PROPERTIES(mdalinfo_test2 PROPERTIES PASS_REGULAR_EXPRESSION "Groups count: 2")
 
-ADD_TEST(NAME mdalinfo_test4 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/flo2d/BarnHDF5/BASE.OUT" "--stats" )
-SET_TESTS_PROPERTIES(mdalinfo_test4 PROPERTIES PASS_REGULAR_EXPRESSION "defined on:    faces")
+ADD_TEST(NAME mdalinfo_test3 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/tuflowfv/withMaxes/trap_steady_05_3D.nc" )
+SET_TESTS_PROPERTIES(mdalinfo_test3 PROPERTIES PASS_REGULAR_EXPRESSION "Groups count: 21")
+
+ADD_TEST(NAME mdalinfo_test4 COMMAND $<TARGET_FILE:mdalinfo> "--formats" )
+SET_TESTS_PROPERTIES(mdalinfo_test4 PROPERTIES PASS_REGULAR_EXPRESSION "2DM Mesh File")
+
+ADD_TEST(NAME mdalinfo_test5 COMMAND $<TARGET_FILE:mdalinfo> "-h" )
+SET_TESTS_PROPERTIES(mdalinfo_test5 PROPERTIES PASS_REGULAR_EXPRESSION "mdalinfo mesh_file")
+
+ADD_TEST(NAME mdalinfo_test6 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/flo2d/BarnHDF5/BASE.OUT" "--stats" )
+SET_TESTS_PROPERTIES(mdalinfo_test6 PROPERTIES PASS_REGULAR_EXPRESSION "defined on:    faces")
 
 ADD_TEST(NAME mdalinfo_test_err1 COMMAND $<TARGET_FILE:mdalinfo> )
 SET_TESTS_PROPERTIES(mdalinfo_test_err1 PROPERTIES WILL_FAIL TRUE)
+
+ADD_TEST(NAME mdalinfo_test_err2 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/not_a_mesh_file.2dm")
+SET_TESTS_PROPERTIES(mdalinfo_test_err2 PROPERTIES WILL_FAIL TRUE)
+
+ADD_TEST(NAME mdalinfo_test_err3 COMMAND $<TARGET_FILE:mdalinfo> "${TESTDATA_DIR}/2dm/regular_grid.2dm" "${TESTDATA_DIR}/ascii_dat/not_a_data_file.dat")
+SET_TESTS_PROPERTIES(mdalinfo_test_err3 PROPERTIES WILL_FAIL TRUE)
 
 #########################################################################
 # UNITTESTING
