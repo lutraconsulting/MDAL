@@ -158,7 +158,7 @@ namespace MDAL
 
   struct Error
   {
-    Error( MDAL_Status s, std::string m, std::string d = "" );
+    Error( MDAL_Status status, std::string message, std::string driverName = "" );
     void setDriver( std::string d );
     MDAL_Status status;
     std::string mssg;
