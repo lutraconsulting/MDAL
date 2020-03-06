@@ -26,11 +26,10 @@ namespace MDAL
       enum Type
       {
         UnknownType = 0, //!< Unknown
-        Vertex1D, //!< Vertex in 1D mesh
-        Vertex2D, //!< Vertex in 2D mesh
-        Line1D, //!< Line joining 1D vertices
+        Vertex, //!< Mesh vertex ( node )
+        Edge, //!< Line joining 2 vertices ( edge )
         Face2DEdge, //!< Edge of 2D Face
-        Face2D, //!< 2D (Polygon) Face
+        Face, //!< 2D (Polygon) Face
         Volume3D, //!< 3D (stacked) volumes
         StackedFace3D, //! 3D (stacked) Faces
         Time, //!< Time steps
