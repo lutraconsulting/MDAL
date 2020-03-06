@@ -300,6 +300,7 @@ std::set<std::string> MDAL::DriverUgrid::ignoreNetCDFVariables()
     parse2VariablesFromAttribute( mesh, "node_coordinates", xName, yName, true );
     ignore_variables.insert( xName );
     ignore_variables.insert( yName );
+    ignore_variables.insert( nodeZVariableName() );
     ignore_variables.insert( mNcFile->getAttrStr( mesh, "edge_node_connectivity" ) );
     parse2VariablesFromAttribute( mesh, "edge_coordinates", xName, yName, true );
     if ( !xName.empty() )

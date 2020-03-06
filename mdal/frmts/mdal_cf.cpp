@@ -143,8 +143,6 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
   }
   while ( true );
 
-  if ( dsinfo_map.size() == 0 ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Could not parse dataset group info" );
-
   return dsinfo_map;
 }
 
