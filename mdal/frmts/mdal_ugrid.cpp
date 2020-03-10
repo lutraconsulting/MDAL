@@ -369,16 +369,18 @@ std::set<std::string> MDAL::DriverUgrid::ignoreNetCDFVariables()
   ignoreVariables.insert( "time" );
   ignoreVariables.insert( "timestep" );
 
-  std::vector<std::string> meshes;
-  if ( mNcFile->hasArr( mMesh1dName ) )
-    meshes.push_back( mMesh1dName );
-  meshes.push_back( mMesh2dName );
-
-  for ( const std::string &mesh : meshes )
+  for ( const std::string &mesh : mAllMeshNames )
   {
     std::string xName, yName;
-    parse2VariablesFromAttribute( mesh, "node_coordinates", xName, yName, true );
     ignoreVariables.insert( mesh );
+
+    // find out dimension of the mesh topology
+    int dim = mNcFile->getAttrInt( mesh, "topology_dimension" );
+    if ( dim == 1 )
+      parseNodeCoordinatesFrom1dMesh( mesh, xName, yName );
+    else
+      parse2VariablesFromAttribute( mesh, "node_coordinates", xName, yName, true );
+
     ignoreVariables.insert( xName );
     ignoreVariables.insert( yName );
     ignoreVariables.insert( nodeZVariableName() );
