@@ -59,7 +59,8 @@ enum MDAL_Status
   Warn_InvalidElements,
   Warn_ElementWithInvalidNode,
   Warn_ElementNotUnique,
-  Warn_NodeNotUnique
+  Warn_NodeNotUnique,
+  Warn_MultipleMeshesInFile
 };
 
 /** Log levels */
