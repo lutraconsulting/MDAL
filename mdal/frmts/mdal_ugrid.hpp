@@ -43,10 +43,17 @@ namespace MDAL
       void parse2VariablesFromAttribute( const std::string &name, const std::string &attr_name,
                                          std::string &var1, std::string &var2,
                                          bool optional ) const;
-      std::string findMeshName( int dimension, bool optional ) const;
-      std::string mMesh2dName;
-      std::string mMesh1dName;
+      void parseNodeCoordinatesFrom1dMesh( const std::string &meshName,
+                                           std::string &var1, std::string &var2 );
+
+      std::vector<std::string> findMeshesNames() const;
+      std::vector<std::string> mAllMeshNames; // all mesh names in file
+      std::string mMeshName; // processed mesh name
+      int mMeshDimension;
       std::string nodeZVariableName() const;
+
+      void populate1DMeshDimensions( MDAL::CFDimensions &dims );
+      void populate2DMeshDimensions( MDAL::CFDimensions &dims, int &ncid );
 
       void writeDimensions( MDAL::Mesh *mesh );
       void writeVariables( MDAL::Mesh *mesh );
