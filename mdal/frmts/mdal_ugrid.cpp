@@ -32,7 +32,7 @@ std::vector<std::string> MDAL::DriverUgrid::findMeshesNames() const
   std::vector<std::string> meshesInFile;
 
   const std::vector<std::string> variables = mNcFile->readArrNames();
-  for ( const auto &var : variables )
+  for ( const std::string &var : variables )
   {
     bool isMeshTopology = mNcFile->getAttrStr( var, "cf_role" ) == "mesh_topology";
     if ( isMeshTopology )
@@ -71,10 +71,10 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
   size_t count;
   int ncid;
 
-  /* getting mesh name */
   std::vector<std::string> mAllMeshesNames = findMeshesNames();
 
-  if ( mAllMeshesNames.empty() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, name(), "Did not find any mesh name in file" );
+  if ( mAllMeshesNames.empty() )
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, name(), "File " + mFileName + " does not contain any valid mesh definition" );
   if ( mAllMeshesNames.size() == 1 )
     mMeshName = mAllMeshesNames.at( 0 );
   else // there are more meshes in file
@@ -89,7 +89,6 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
 
   if ( mMeshName.empty() ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Unable to parse mesh name from file" );
 
-  /* set the corresponding topology dimension */
   mMeshDimension = mNcFile->getAttrInt( mMeshName, "topology_dimension" );
 
   if ( ( mMeshDimension < 1 ) || ( mMeshDimension > 2 ) )
