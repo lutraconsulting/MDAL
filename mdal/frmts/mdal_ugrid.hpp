@@ -30,9 +30,10 @@ namespace MDAL
 
     private:
       CFDimensions populateDimensions( ) override;
-      void populateFacesAndVertices( Vertices &vertices, Faces &faces ) override;
+      void populateElements( Vertices &vertices, Edges& edges, Faces &faces ) override;
       void populateVertices( Vertices &vertices );
       void populateFaces( Faces &faces );
+      void populateEdges( Edges &edges );
       void addBedElevation( MemoryMesh *mesh ) override;
       std::string getCoordinateSystemVariableName() override;
       std::set<std::string> ignoreNetCDFVariables() override;

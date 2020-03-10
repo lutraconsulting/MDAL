@@ -216,10 +216,14 @@ void MDAL::DriverUgrid::populate2DMeshDimensions( MDAL::CFDimensions &dims, int 
   }
 }
 
-void MDAL::DriverUgrid::populateFacesAndVertices( Vertices &vertices, Faces &faces )
+void MDAL::DriverUgrid::populateElements( Vertices &vertices, Edges& edges, Faces &faces )
 {
   populateVertices( vertices );
-  populateFaces( faces );
+
+  if ( mMeshDimension == 1 )
+    populateEdges( edges ); // 1D mesh
+  else
+    populateFaces( faces ); // 2D mesh
 }
 
 void MDAL::DriverUgrid::populateVertices( MDAL::Vertices &vertices )
@@ -229,25 +233,56 @@ void MDAL::DriverUgrid::populateVertices( MDAL::Vertices &vertices )
   vertices.resize( vertexCount );
   Vertex *vertexPtr = vertices.data();
 
-  // Parse 2D Mesh
   // node_coordinates should be something like Mesh2D_node_x Mesh2D_node_y
   std::string verticesXName, verticesYName;
-  parse2VariablesFromAttribute( mMesh2dName, "node_coordinates", verticesXName, verticesYName, false );
-  const std::vector<double> vertices2D_x = mNcFile->readDoubleArr( verticesXName, vertexCount );
-  const std::vector<double> vertices2D_y = mNcFile->readDoubleArr( verticesYName, vertexCount );
+  if ( mMeshDimension == 1 )
+    parseNodeCoordinatesFrom1dMesh( mMeshName, verticesXName, verticesYName );
+  else
+    parse2VariablesFromAttribute( mMeshName, "node_coordinates", verticesXName, verticesYName, false );
 
-  std::vector<double> vertices2D_z;
+  const std::vector<double> vertices_x = mNcFile->readDoubleArr( verticesXName, vertexCount );
+  const std::vector<double> vertices_y = mNcFile->readDoubleArr( verticesYName, vertexCount );
+
+  std::vector<double> vertices_z;
   if ( mNcFile->hasArr( nodeZVariableName() ) )
   {
-    vertices2D_z = mNcFile->readDoubleArr( nodeZVariableName(), vertexCount );
+    vertices_z = mNcFile->readDoubleArr( nodeZVariableName(), vertexCount );
   }
 
   for ( size_t i = 0; i < vertexCount; ++i, ++vertexPtr )
   {
-    vertexPtr->x = vertices2D_x[i];
-    vertexPtr->y = vertices2D_y[i];
-    if ( !vertices2D_z.empty() )
-      vertexPtr->z = vertices2D_z[i];
+    vertexPtr->x = vertices_x[i];
+    vertexPtr->y = vertices_y[i];
+    if ( !vertices_z.empty() )
+      vertexPtr->z = vertices_z[i];
+  }
+}
+
+void MDAL::DriverUgrid::populateEdges( MDAL::Edges &edges )
+{
+  assert( edges.empty() );
+
+  // number of edges
+  size_t edgesCount = mDimensions.size( CFDimensions::Edge );
+  edges.resize( edgesCount );
+
+  const std::string edgeNodeConnectivityVar = mNcFile->getAttrStr( mMeshName, "edge_node_connectivity" );
+  if ( edgeNodeConnectivityVar.empty() )
+    MDAL::Log::error(MDAL_Status::Err_MissingDriver, "Unable to find edge_node_connectivity attribute of " + mMeshName);
+
+  // load edges
+  std::vector<int> edge_nodes_idxs = mNcFile->readIntArr( edgeNodeConnectivityVar, edgesCount * 2); // two nodes per edge
+  int start_index = mNcFile->getAttrInt( edgeNodeConnectivityVar, "start_index" );
+
+  // iterate over all edge_nodes coordinates - those are indexes for nodes
+  for (size_t edge_i = 0; edge_i < edgesCount; ++edge_i ) {
+    std::vector<size_t> edge_i_inxs;
+
+    int start_edge_ix = edge_i * 2;
+    int end_edge_ix = edge_i * 2 + 1;
+
+    edges[edge_i].startVertex = edge_nodes_idxs[start_edge_ix] - start_index;
+    edges[edge_i].endVertex = edge_nodes_idxs[end_edge_ix] - start_index;
   }
 }
 

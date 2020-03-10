@@ -408,13 +408,14 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName 
 
     // Create mMesh
     Faces faces;
+    Edges edges;
     Vertices vertices;
-    populateFacesAndVertices( vertices, faces );
+    populateElements( vertices, edges, faces );
     std::unique_ptr< MemoryMesh > mesh(
       new MemoryMesh(
         name(),
         vertices.size(),
-        0,
+        edges.size(),
         faces.size(),
         mDimensions.size( mDimensions.MaxVerticesInFace ),
         computeExtent( vertices ),
@@ -422,6 +423,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName 
       )
     );
     mesh->faces = faces;
+    mesh->edges = edges;
     mesh->vertices = vertices;
     addBedElevation( mesh.get() );
     setProjection( mesh.get() );

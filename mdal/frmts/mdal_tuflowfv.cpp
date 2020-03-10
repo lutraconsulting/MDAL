@@ -335,7 +335,7 @@ MDAL::CFDimensions MDAL::DriverTuflowFV::populateDimensions( )
   return dims;
 }
 
-void MDAL::DriverTuflowFV::populateFacesAndVertices( Vertices &vertices, Faces &faces )
+void MDAL::DriverTuflowFV::populateElements( Vertices &vertices, Edges&, Faces &faces )
 {
   populateVertices( vertices );
   populateFaces( faces );

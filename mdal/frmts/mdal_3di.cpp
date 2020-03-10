@@ -34,7 +34,7 @@ MDAL::CFDimensions MDAL::Driver3Di::populateDimensions( )
   mNcFile->getDimension( "nCorner_Nodes", &count, &ncid );
   dims.setDimension( CFDimensions::MaxVerticesInFace, count, ncid );
 
-  // Vertices count is populated later in populateFacesAndVertices
+  // Vertices count is populated later in populateElements
   // it is not known from the array dimensions
 
   // Time
@@ -44,7 +44,7 @@ MDAL::CFDimensions MDAL::Driver3Di::populateDimensions( )
   return dims;
 }
 
-void MDAL::Driver3Di::populateFacesAndVertices( Vertices &vertices, Faces &faces )
+void MDAL::Driver3Di::populateElements( Vertices &vertices, Edges&, Faces &faces )
 {
   assert( vertices.empty() );
   size_t faceCount = mDimensions.size( CFDimensions::Face );
