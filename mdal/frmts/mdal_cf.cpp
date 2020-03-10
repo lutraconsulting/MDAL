@@ -178,7 +178,7 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Relat
 
     if ( dsi.outputType == CFDimensions::Vertex )
       group->setDataLocation( MDAL_DataLocation::DataOnVertices );
-    else if (dsi.outputType == CFDimensions::Edge )
+    else if ( dsi.outputType == CFDimensions::Edge )
       group->setDataLocation( MDAL_DataLocation::DataOnEdges );
     else if ( dsi.outputType == CFDimensions::Face )
       group->setDataLocation( MDAL_DataLocation::DataOnFaces );

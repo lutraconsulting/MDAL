@@ -44,7 +44,7 @@ MDAL::CFDimensions MDAL::Driver3Di::populateDimensions( )
   return dims;
 }
 
-void MDAL::Driver3Di::populateElements( Vertices &vertices, Edges&, Faces &faces )
+void MDAL::Driver3Di::populateElements( Vertices &vertices, Edges &, Faces &faces )
 {
   assert( vertices.empty() );
   size_t faceCount = mDimensions.size( CFDimensions::Face );

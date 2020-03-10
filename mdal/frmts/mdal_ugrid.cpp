@@ -29,20 +29,20 @@ MDAL::DriverUgrid *MDAL::DriverUgrid::create()
 
 std::vector<std::string> MDAL::DriverUgrid::findMeshesNames() const
 {
-  std::vector<std::string> meshes_in_file;
+  std::vector<std::string> meshesInFile;
 
   const std::vector<std::string> variables = mNcFile->readArrNames();
   for ( const auto &var : variables )
   {
-    bool is_mesh_topology = mNcFile->getAttrStr( var, "cf_role" ) == "mesh_topology";
-    if ( is_mesh_topology )
+    bool isMeshTopology = mNcFile->getAttrStr( var, "cf_role" ) == "mesh_topology";
+    if ( isMeshTopology )
     {
       // file can include more meshes
-      meshes_in_file.push_back( var );
+      meshesInFile.push_back( var );
     }
   }
 
-  return meshes_in_file;
+  return meshesInFile;
 }
 
 std::string MDAL::DriverUgrid::nodeZVariableName() const
@@ -79,7 +79,7 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
     mMeshName = mAllMeshesNames.at( 0 );
   else // there are more meshes in file
   {
-    if ( MDAL::contains( mAllMeshesNames.at(0), "network" ) ) // ignore the network variable for a moment
+    if ( MDAL::contains( mAllMeshesNames.at( 0 ), "network" ) ) // ignore the network variable for a moment
       mMeshName = mAllMeshesNames.at( 1 );
     else
       mMeshName = mAllMeshesNames.at( 0 );
@@ -100,8 +100,8 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
   /* node dimensions - learn many nodes are in mesh */
   std::string nodeXVariable, nodeYVariable;
 
-  if ( mMeshDimension == 1)
-    parseNodeCoordinatesFrom1dMesh( mMeshName, nodeXVariable, nodeYVariable);
+  if ( mMeshDimension == 1 )
+    parseNodeCoordinatesFrom1dMesh( mMeshName, nodeXVariable, nodeYVariable );
   else
     parse2VariablesFromAttribute( mMeshName, "node_coordinates", nodeXVariable, nodeYVariable, false );
 
@@ -147,8 +147,8 @@ void MDAL::DriverUgrid::populate1DMeshDimensions( MDAL::CFDimensions &dims )
   if ( edgeDimension.size() != 2 )
     throw MDAL::Error( MDAL_Status::Err_InvalidData, name(), "Unable to parse dimensions for edge_nodes_connectivity variable" );
 
-  size_t edgesCount = edgeDimension.at(0); // Only interested in first value, edge will always have only 2 nodes
-  int edgesCountId = edgeDimensionId.at(0);
+  size_t edgesCount = edgeDimension.at( 0 ); // Only interested in first value, edge will always have only 2 nodes
+  int edgesCountId = edgeDimensionId.at( 0 );
 
   dims.setDimension( CFDimensions::Edge, edgesCount, edgesCountId );
 }
@@ -216,7 +216,7 @@ void MDAL::DriverUgrid::populate2DMeshDimensions( MDAL::CFDimensions &dims, int 
   }
 }
 
-void MDAL::DriverUgrid::populateElements( Vertices &vertices, Edges& edges, Faces &faces )
+void MDAL::DriverUgrid::populateElements( Vertices &vertices, Edges &edges, Faces &faces )
 {
   populateVertices( vertices );
 
@@ -240,21 +240,21 @@ void MDAL::DriverUgrid::populateVertices( MDAL::Vertices &vertices )
   else
     parse2VariablesFromAttribute( mMeshName, "node_coordinates", verticesXName, verticesYName, false );
 
-  const std::vector<double> vertices_x = mNcFile->readDoubleArr( verticesXName, vertexCount );
-  const std::vector<double> vertices_y = mNcFile->readDoubleArr( verticesYName, vertexCount );
+  const std::vector<double> verticesX = mNcFile->readDoubleArr( verticesXName, vertexCount );
+  const std::vector<double> verticesY = mNcFile->readDoubleArr( verticesYName, vertexCount );
 
-  std::vector<double> vertices_z;
+  std::vector<double> verticesZ;
   if ( mNcFile->hasArr( nodeZVariableName() ) )
   {
-    vertices_z = mNcFile->readDoubleArr( nodeZVariableName(), vertexCount );
+    verticesZ = mNcFile->readDoubleArr( nodeZVariableName(), vertexCount );
   }
 
   for ( size_t i = 0; i < vertexCount; ++i, ++vertexPtr )
   {
-    vertexPtr->x = vertices_x[i];
-    vertexPtr->y = vertices_y[i];
-    if ( !vertices_z.empty() )
-      vertexPtr->z = vertices_z[i];
+    vertexPtr->x = verticesX[i];
+    vertexPtr->y = verticesY[i];
+    if ( !verticesZ.empty() )
+      vertexPtr->z = verticesZ[i];
   }
 }
 
@@ -268,21 +268,21 @@ void MDAL::DriverUgrid::populateEdges( MDAL::Edges &edges )
 
   const std::string edgeNodeConnectivityVar = mNcFile->getAttrStr( mMeshName, "edge_node_connectivity" );
   if ( edgeNodeConnectivityVar.empty() )
-    MDAL::Log::error(MDAL_Status::Err_MissingDriver, "Unable to find edge_node_connectivity attribute of " + mMeshName);
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Unable to find edge_node_connectivity attribute of " + mMeshName );
 
   // load edges
-  std::vector<int> edge_nodes_idxs = mNcFile->readIntArr( edgeNodeConnectivityVar, edgesCount * 2); // two nodes per edge
-  int start_index = mNcFile->getAttrInt( edgeNodeConnectivityVar, "start_index" );
+  std::vector<int> edgeNodesIdxs = mNcFile->readIntArr( edgeNodeConnectivityVar, edgesCount * 2 ); // two nodes per edge
+  int startIndex = mNcFile->getAttrInt( edgeNodeConnectivityVar, "start_index" );
 
   // iterate over all edge_nodes coordinates - those are indexes for nodes
-  for (size_t edge_i = 0; edge_i < edgesCount; ++edge_i ) {
-    std::vector<size_t> edge_i_inxs;
+  for ( size_t i = 0; i < edgesCount; ++i )
+  {
 
-    int start_edge_ix = edge_i * 2;
-    int end_edge_ix = edge_i * 2 + 1;
+    int startEdgeIx = i * 2;
+    int endEdgeIx = i * 2 + 1;
 
-    edges[edge_i].startVertex = edge_nodes_idxs[start_edge_ix] - start_index;
-    edges[edge_i].endVertex = edge_nodes_idxs[end_edge_ix] - start_index;
+    edges[i].startVertex = edgeNodesIdxs[startEdgeIx] - startIndex;
+    edges[i].endVertex = edgeNodesIdxs[endEdgeIx] - startIndex;
   }
 }
 
@@ -297,11 +297,11 @@ void MDAL::DriverUgrid::populateFaces( MDAL::Faces &faces )
   const std::string mesh2dFaceNodeConnectivity = mNcFile->getAttrStr( mMeshName, "face_node_connectivity" );
 
   size_t verticesInFace = mDimensions.size( CFDimensions::MaxVerticesInFace );
-  int fill_val = -1;
+  int fillVal = -1;
   if ( mNcFile->hasAttrInt( mesh2dFaceNodeConnectivity, "_FillValue" ) )
-    fill_val = mNcFile->getAttrInt( mesh2dFaceNodeConnectivity, "_FillValue" );
-  int start_index = mNcFile->getAttrInt( mesh2dFaceNodeConnectivity, "start_index" );
-  std::vector<int> face_nodes_conn = mNcFile->readIntArr( mesh2dFaceNodeConnectivity, faceCount * verticesInFace );
+    fillVal = mNcFile->getAttrInt( mesh2dFaceNodeConnectivity, "_FillValue" );
+  int startIndex = mNcFile->getAttrInt( mesh2dFaceNodeConnectivity, "start_index" );
+  std::vector<int> faceNodesConn = mNcFile->readIntArr( mesh2dFaceNodeConnectivity, faceCount * verticesInFace );
 
   for ( size_t i = 0; i < faceCount; ++i )
   {
@@ -311,9 +311,9 @@ void MDAL::DriverUgrid::populateFaces( MDAL::Faces &faces )
     for ( size_t j = 0; j < verticesInFace; ++j )
     {
       size_t idx = verticesInFace * i + j;
-      int val = face_nodes_conn[idx];
+      int val = faceNodesConn[idx];
 
-      if ( fill_val == val )
+      if ( fillVal == val )
       {
         // found fill val
         nVertices = j;
@@ -322,12 +322,11 @@ void MDAL::DriverUgrid::populateFaces( MDAL::Faces &faces )
       }
       else
       {
-        idxs.push_back( static_cast<size_t>( val - start_index ) );
+        idxs.push_back( static_cast<size_t>( val - startIndex ) );
       }
     }
     faces[i] = idxs;
   }
-
 }
 
 void MDAL::DriverUgrid::addBedElevation( MDAL::MemoryMesh *mesh )
@@ -337,7 +336,7 @@ void MDAL::DriverUgrid::addBedElevation( MDAL::MemoryMesh *mesh )
 
 std::string MDAL::DriverUgrid::getCoordinateSystemVariableName()
 {
-  std::string coordinate_system_variable;
+  std::string coordinateSystemVariable;
 
   // first try to get the coordinate system variable from grid definition
   std::vector<std::string> nodeVariablesName = MDAL::split( mNcFile->getAttrStr( mMeshName, "node_coordinates" ), ' ' );
@@ -345,31 +344,31 @@ std::string MDAL::DriverUgrid::getCoordinateSystemVariableName()
   {
     if ( mNcFile->hasArr( nodeVariablesName[0] ) )
     {
-      coordinate_system_variable = mNcFile->getAttrStr( nodeVariablesName[0], "grid_mapping" );
+      coordinateSystemVariable = mNcFile->getAttrStr( nodeVariablesName[0], "grid_mapping" );
     }
   }
 
 
   // if automatic discovery fails, try to check some hardcoded common variables that store projection
-  if ( coordinate_system_variable.empty() )
+  if ( coordinateSystemVariable.empty() )
   {
     if ( mNcFile->hasArr( "projected_coordinate_system" ) )
-      coordinate_system_variable = "projected_coordinate_system";
+      coordinateSystemVariable = "projected_coordinate_system";
     else if ( mNcFile->hasArr( "wgs84" ) )
-      coordinate_system_variable = "wgs84";
+      coordinateSystemVariable = "wgs84";
   }
 
   // return, may be empty
-  return coordinate_system_variable;
+  return coordinateSystemVariable;
 }
 
 std::set<std::string> MDAL::DriverUgrid::ignoreNetCDFVariables()
 {
-  std::set<std::string> ignore_variables;
+  std::set<std::string> ignoreVariables;
 
-  ignore_variables.insert( "projected_coordinate_system" );
-  ignore_variables.insert( "time" );
-  ignore_variables.insert( "timestep" );
+  ignoreVariables.insert( "projected_coordinate_system" );
+  ignoreVariables.insert( "time" );
+  ignoreVariables.insert( "timestep" );
 
   std::vector<std::string> meshes;
   if ( mNcFile->hasArr( mMesh1dName ) )
@@ -379,91 +378,91 @@ std::set<std::string> MDAL::DriverUgrid::ignoreNetCDFVariables()
   for ( const std::string &mesh : meshes )
   {
     std::string xName, yName;
-    ignore_variables.insert( mesh );
     parse2VariablesFromAttribute( mesh, "node_coordinates", xName, yName, true );
-    ignore_variables.insert( xName );
-    ignore_variables.insert( yName );
-    ignore_variables.insert( nodeZVariableName() );
-    ignore_variables.insert( mNcFile->getAttrStr( mesh, "edge_node_connectivity" ) );
+    ignoreVariables.insert( mesh );
+    ignoreVariables.insert( xName );
+    ignoreVariables.insert( yName );
+    ignoreVariables.insert( nodeZVariableName() );
+    ignoreVariables.insert( mNcFile->getAttrStr( mesh, "edge_node_connectivity" ) );
     parse2VariablesFromAttribute( mesh, "edge_coordinates", xName, yName, true );
     if ( !xName.empty() )
     {
-      ignore_variables.insert( xName );
-      ignore_variables.insert( mNcFile->getAttrStr( xName, "bounds" ) );
+      ignoreVariables.insert( xName );
+      ignoreVariables.insert( mNcFile->getAttrStr( xName, "bounds" ) );
     }
     if ( !yName.empty() )
     {
-      ignore_variables.insert( yName );
-      ignore_variables.insert( mNcFile->getAttrStr( yName, "bounds" ) );
+      ignoreVariables.insert( yName );
+      ignoreVariables.insert( mNcFile->getAttrStr( yName, "bounds" ) );
     }
-    ignore_variables.insert( mNcFile->getAttrStr( mesh, "face_node_connectivity" ) );
+    ignoreVariables.insert( mNcFile->getAttrStr( mesh, "face_node_connectivity" ) );
     parse2VariablesFromAttribute( mesh, "face_coordinates", xName, yName, true );
     if ( !xName.empty() )
     {
-      ignore_variables.insert( xName );
-      ignore_variables.insert( mNcFile->getAttrStr( xName, "bounds" ) );
+      ignoreVariables.insert( xName );
+      ignoreVariables.insert( mNcFile->getAttrStr( xName, "bounds" ) );
     }
     if ( !yName.empty() )
     {
-      ignore_variables.insert( yName );
-      ignore_variables.insert( mNcFile->getAttrStr( yName, "bounds" ) );
+      ignoreVariables.insert( yName );
+      ignoreVariables.insert( mNcFile->getAttrStr( yName, "bounds" ) );
     }
-    ignore_variables.insert( mNcFile->getAttrStr( mesh, "edge_face_connectivity" ) );
+    ignoreVariables.insert( mNcFile->getAttrStr( mesh, "edge_face_connectivity" ) );
   }
 
-  return ignore_variables;
+  return ignoreVariables;
 }
 
-void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid, const std::string &variableName, std::string &name, bool *is_vector, bool *is_x )
+void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid, const std::string &variableName, std::string &name, bool *isVector, bool *isX )
 {
-  *is_vector = false;
-  *is_x = true;
+  *isVector = false;
+  *isX = true;
 
-  std::string long_name = mNcFile->getAttrStr( "long_name", varid );
-  if ( long_name.empty() )
+  std::string longName = mNcFile->getAttrStr( "long_name", varid );
+  if ( longName.empty() )
   {
-    std::string standard_name = mNcFile->getAttrStr( "standard_name", varid );
-    if ( standard_name.empty() )
+    std::string standardName = mNcFile->getAttrStr( "standard_name", varid );
+    if ( standardName.empty() )
     {
       name = variableName;
     }
     else
     {
-      if ( MDAL::contains( standard_name, "_x_" ) )
+      if ( MDAL::contains( standardName, "_x_" ) )
       {
-        *is_vector = true;
-        name = MDAL::replace( standard_name, "_x_", "" );
+        *isVector = true;
+        name = MDAL::replace( standardName, "_x_", "" );
       }
-      else if ( MDAL::contains( standard_name, "_y_" ) )
+      else if ( MDAL::contains( standardName, "_y_" ) )
       {
-        *is_vector = true;
-        *is_x = false;
-        name = MDAL::replace( standard_name, "_y_", "" );
+        *isVector = true;
+        *isX = false;
+        name = MDAL::replace( standardName, "_y_", "" );
       }
       else
       {
-        name = standard_name;
+        name = standardName;
       }
     }
   }
   else
   {
-    if ( MDAL::contains( long_name, ", x-component" ) || MDAL::contains( long_name, "u component of " ) )
+    if ( MDAL::contains( longName, ", x-component" ) || MDAL::contains( longName, "u component of " ) )
     {
-      *is_vector = true;
-      name = MDAL::replace( long_name, ", x-component", "" );
+      *isVector = true;
+      name = MDAL::replace( longName, ", x-component", "" );
       name = MDAL::replace( name, "u component of ", "" );
     }
-    else if ( MDAL::contains( long_name, ", y-component" ) || MDAL::contains( long_name, "v component of " ) )
+    else if ( MDAL::contains( longName, ", y-component" ) || MDAL::contains( longName, "v component of " ) )
     {
-      *is_vector = true;
-      *is_x = false;
-      name = MDAL::replace( long_name, ", y-component", "" );
+      *isVector = true;
+      *isX = false;
+      name = MDAL::replace( longName, ", y-component", "" );
       name = MDAL::replace( name, "v component of ", "" );
     }
     else
     {
-      name = long_name;
+      name = longName;
     }
   }
 }
@@ -489,7 +488,8 @@ void MDAL::DriverUgrid::parseNodeCoordinatesFrom1dMesh( const std::string &meshN
       if ( MDAL::contains( nodeVar, "_x" ) )
       {
         var1 = nodeVar;
-      } else if ( MDAL::contains( nodeVar, "_y" ) )
+      }
+      else if ( MDAL::contains( nodeVar, "_y" ) )
       {
         var2 = nodeVar;
       }
