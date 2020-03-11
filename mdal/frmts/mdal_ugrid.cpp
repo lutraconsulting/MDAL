@@ -71,18 +71,18 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
   size_t count;
   int ncid;
 
-  std::vector<std::string> mAllMeshesNames = findMeshesNames();
+  mAllMeshNames = findMeshesNames();
 
-  if ( mAllMeshesNames.empty() )
+  if ( mAllMeshNames.empty() )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, name(), "File " + mFileName + " does not contain any valid mesh definition" );
-  if ( mAllMeshesNames.size() == 1 )
-    mMeshName = mAllMeshesNames.at( 0 );
+  if ( mAllMeshNames.size() == 1 )
+    mMeshName = mAllMeshNames.at( 0 );
   else // there are more meshes in file
   {
-    if ( MDAL::contains( mAllMeshesNames.at( 0 ), "network" ) ) // ignore the network variable for a moment
-      mMeshName = mAllMeshesNames.at( 1 );
+    if ( MDAL::contains( mAllMeshNames.at( 0 ), "network" ) ) // ignore the network variable for a moment
+      mMeshName = mAllMeshNames.at( 1 );
     else
-      mMeshName = mAllMeshesNames.at( 0 );
+      mMeshName = mAllMeshNames.at( 0 );
 
     MDAL::Log::warning( MDAL_Status::Warn_MultipleMeshesInFile, name(), "Found multiple meshes in file, working with: " + mMeshName );
   }
@@ -96,9 +96,7 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
 
   MDAL::Log::info( "Parsing " + std::to_string( mMeshDimension ) + "D mesh" );
 
-  /* node dimensions - learn many nodes are in mesh */
   std::string nodeXVariable, nodeYVariable;
-
   if ( mMeshDimension == 1 )
     parseCoordinatesFrom1DMesh( mMeshName, "node_coordinates", nodeXVariable, nodeYVariable );
   else
@@ -176,7 +174,6 @@ void MDAL::DriverUgrid::populate2DMeshDimensions( MDAL::CFDimensions &dims, int 
   // if face_dimension is not present in file, get it from dimension element
   if ( faceDimensionLocation != "" )
   {
-    MDAL::Log::info( "face_dimension attribute not present in mesh, trying to parse it from dimensions" );
     mNcFile->getDimension( faceDimensionLocation, &facesCount, &ncid );
     if ( facesCount == faceDimension.at( 0 ) )
     {
@@ -520,6 +517,9 @@ void MDAL::DriverUgrid::parseCoordinatesFrom1DMesh( const std::string &meshName,
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while parsing node coordinates" );
   else if ( nodeVariablesName.size() > 3 )
   {
+    // format does not follow UGRID convention and have extra variables in coordinate attribute
+    // tring to parse coordinate variables, it usually ends with _x and _y, e.g. mesh1d_node_x, mesh1d_node_y
+
     MDAL::Log::warning( MDAL_Status::Warn_InvalidElements, name(),
                         "Node coordinates consists of more than 3 variables, taking variable with _x in name by default" );
 
