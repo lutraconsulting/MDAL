@@ -100,7 +100,7 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
   std::string nodeXVariable, nodeYVariable;
 
   if ( mMeshDimension == 1 )
-    parseNodeCoordinatesFrom1dMesh( mMeshName, nodeXVariable, nodeYVariable );
+    parseCoordinatesFrom1DMesh( mMeshName, "node_coordinates", nodeXVariable, nodeYVariable );
   else
     parse2VariablesFromAttribute( mMeshName, "node_coordinates", nodeXVariable, nodeYVariable, false );
 
@@ -235,7 +235,7 @@ void MDAL::DriverUgrid::populateVertices( MDAL::Vertices &vertices )
   // node_coordinates should be something like Mesh2D_node_x Mesh2D_node_y
   std::string verticesXName, verticesYName;
   if ( mMeshDimension == 1 )
-    parseNodeCoordinatesFrom1dMesh( mMeshName, verticesXName, verticesYName );
+    parseCoordinatesFrom1DMesh( mMeshName, "node_coordinates", verticesXName, verticesYName );
   else
     parse2VariablesFromAttribute( mMeshName, "node_coordinates", verticesXName, verticesYName, false );
 
@@ -371,47 +371,86 @@ std::set<std::string> MDAL::DriverUgrid::ignoreNetCDFVariables()
 
   for ( const std::string &mesh : mAllMeshNames )
   {
-    std::string xName, yName;
     ignoreVariables.insert( mesh );
 
-    // find out dimension of the mesh topology
     int dim = mNcFile->getAttrInt( mesh, "topology_dimension" );
     if ( dim == 1 )
-      parseNodeCoordinatesFrom1dMesh( mesh, xName, yName );
+      ignore1DMeshVariables( mesh, ignoreVariables );
     else
-      parse2VariablesFromAttribute( mesh, "node_coordinates", xName, yName, true );
-
-    ignoreVariables.insert( xName );
-    ignoreVariables.insert( yName );
-    ignoreVariables.insert( nodeZVariableName() );
-    ignoreVariables.insert( mNcFile->getAttrStr( mesh, "edge_node_connectivity" ) );
-    parse2VariablesFromAttribute( mesh, "edge_coordinates", xName, yName, true );
-    if ( !xName.empty() )
-    {
-      ignoreVariables.insert( xName );
-      ignoreVariables.insert( mNcFile->getAttrStr( xName, "bounds" ) );
-    }
-    if ( !yName.empty() )
-    {
-      ignoreVariables.insert( yName );
-      ignoreVariables.insert( mNcFile->getAttrStr( yName, "bounds" ) );
-    }
-    ignoreVariables.insert( mNcFile->getAttrStr( mesh, "face_node_connectivity" ) );
-    parse2VariablesFromAttribute( mesh, "face_coordinates", xName, yName, true );
-    if ( !xName.empty() )
-    {
-      ignoreVariables.insert( xName );
-      ignoreVariables.insert( mNcFile->getAttrStr( xName, "bounds" ) );
-    }
-    if ( !yName.empty() )
-    {
-      ignoreVariables.insert( yName );
-      ignoreVariables.insert( mNcFile->getAttrStr( yName, "bounds" ) );
-    }
-    ignoreVariables.insert( mNcFile->getAttrStr( mesh, "edge_face_connectivity" ) );
+      ignore2DMeshVariables( mesh, ignoreVariables );
   }
 
   return ignoreVariables;
+}
+
+void MDAL::DriverUgrid::ignore1DMeshVariables( const std::string &mesh, std::set<std::string> &ignoreVariables )
+{
+  // ignore all variables with network in name
+  // network topology does not contain any data
+  if ( MDAL::contains( mesh, "network" ) )
+  {
+    std::vector<std::string> variables = mNcFile->readArrNames();
+    for (const std::string &var : variables)
+    {
+      if ( MDAL::contains( var, "network" ) )
+        ignoreVariables.insert( var );
+    }
+    return;
+  }
+
+  ignoreVariables.insert( mNcFile->getAttrStr( mesh, "edge_node_connectivity" ) );
+  ignoreVariables.insert( mNcFile->getAttrStr( mesh, "node_id" ) );
+  ignoreVariables.insert( mNcFile->getAttrStr( mesh, "node_long_name" ) );
+
+  std::vector<std::string> coordinateVarsToIgnore {"node_coordinates", "edge_coordinates"};
+
+  for ( const std::string &coordinateIt : coordinateVarsToIgnore )
+  {
+    std::string coordinatesVar = mNcFile->getAttrStr( mesh, coordinateIt );
+    std::vector<std::string> allCoords = MDAL::split( coordinatesVar, " " );
+
+    for ( const std::string &var : allCoords )
+    {
+      ignoreVariables.insert( var );
+      ignoreVariables.insert( mNcFile->getAttrStr( var, "bounds" ) );
+    }
+  }
+}
+
+void MDAL::DriverUgrid::ignore2DMeshVariables( const std::string &mesh, std::set<std::string> &ignoreVariables )
+{
+  std::string xName, yName;
+  parse2VariablesFromAttribute( mesh, "node_coordinates", xName, yName, true );
+  ignoreVariables.insert( xName );
+  ignoreVariables.insert( yName );
+  ignoreVariables.insert( nodeZVariableName() );
+  ignoreVariables.insert( mNcFile->getAttrStr( mesh, "edge_node_connectivity" ) );
+  parse2VariablesFromAttribute( mesh, "edge_coordinates", xName, yName, true );
+
+  if ( !xName.empty() )
+  {
+    ignoreVariables.insert( xName );
+    ignoreVariables.insert( mNcFile->getAttrStr( xName, "bounds" ) );
+  }
+  if ( !yName.empty() )
+  {
+    ignoreVariables.insert( yName );
+    ignoreVariables.insert( mNcFile->getAttrStr( yName, "bounds" ) );
+  }
+
+  ignoreVariables.insert( mNcFile->getAttrStr( mesh, "face_node_connectivity" ) );
+  parse2VariablesFromAttribute( mesh, "face_coordinates", xName, yName, true );
+  if ( !xName.empty() )
+  {
+    ignoreVariables.insert( xName );
+    ignoreVariables.insert( mNcFile->getAttrStr( xName, "bounds" ) );
+  }
+  if ( !yName.empty() )
+  {
+    ignoreVariables.insert( yName );
+    ignoreVariables.insert( mNcFile->getAttrStr( yName, "bounds" ) );
+  }
+  ignoreVariables.insert( mNcFile->getAttrStr( mesh, "edge_face_connectivity" ) );
 }
 
 void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid, const std::string &variableName, std::string &name, bool *isVector, bool *isX )
@@ -473,9 +512,9 @@ std::string MDAL::DriverUgrid::getTimeVariableName() const
   return "time";
 }
 
-void MDAL::DriverUgrid::parseNodeCoordinatesFrom1dMesh( const std::string &meshName, std::string &var1, std::string &var2 )
+void MDAL::DriverUgrid::parseCoordinatesFrom1DMesh( const std::string &meshName, const std::string &attr_name, std::string &var1, std::string &var2 )
 {
-  std::vector<std::string> nodeVariablesName = MDAL::split( mNcFile->getAttrStr( meshName, "node_coordinates" ), ' ' );
+  std::vector<std::string> nodeVariablesName = MDAL::split( mNcFile->getAttrStr( meshName, attr_name ), ' ' );
 
   if ( nodeVariablesName.size() < 2 )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while parsing node coordinates" );
