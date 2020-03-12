@@ -37,6 +37,7 @@ jobs:
       - script: |
           set -e
           cd docs
+          ls -la
           make html
         displayName: 'Make html'
       - script: |
