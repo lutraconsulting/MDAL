@@ -30,7 +30,6 @@ debian/*.debhelper
 debian/*.substvars
 desktop.ini
 i18n/*.qm
-Makefile
 qgis.kdev4
 qgis.supp
 qgis-test.ctest
