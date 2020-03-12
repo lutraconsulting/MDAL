@@ -31,17 +31,17 @@ jobs:
         displayName: 'Sphinx version'
       - script: |
           set -e
-          cd mdal/docs
+          cd docs
           if find . -name '*.rst' | xargs grep -P '\t'; then echo 'Tabs are bad, please use four spaces in .rst files.'; false; fi
         displayName: 'Lint .rst files'
       - script: |
           set -e
-          cd mdal/docs
+          cd docs
           make html
         displayName: 'Make html'
       - script: |
           set -e
-          cd mdal/docs
+          cd docs
           make latexpdf
         displayName: 'Make pdf'
       - task: DownloadSecureFile@1
@@ -58,9 +58,9 @@ jobs:
         condition: notin(variables['Build.Reason'], 'PullRequest')
       - script: |
           set -e
-          mv mdal/docs/build/html mdal-docs
+          mv docs/build/html mdal-docs
           rm mdal-docs/mdal.pdf
-          cp mdal/docs/build/latex/mdal.pdf mdal-docs
+          cp docs/build/latex/mdal.pdf mdal-docs
           cp mdal/data/mdalicon.png mdal-docs # For GDAL autotest...
           cd mdal-docs
           git init
