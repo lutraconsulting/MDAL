@@ -17,15 +17,4 @@ Mesh gives us information about the spatial structure. In addition to the mesh w
 
 Here is an example of a triangular mesh with numbered vertices:
 
-mesh-vertex-numbers
-
-The following table gives an idea what information is stored in datasets. Table columns represent indices of mesh vertices, each row represents one dataset. The first two are scalar datasets, the latter two are datasets with 2D vectors.
-
- 	1	2	3	…	13
-Water depth at time=0s	5	5	5	…	2
-Water depth at time=60s	6	5	3	…	4
-Water flow at time=0s	[1,2]	[2,2]	[3,2]	…	[1,2]
-Water flow at time=60s	[3,2]	[3,2]	[2,2]	…	[4,2]
-In some cases datasets assign values to faces or edges instead of assigning values to vertices.
-
 We can visualize the data by assigning colors to values (similarly to how it is done with “Singleband pseudocolor” raster rendering) and interpolating data between vertices according to the mesh topology. It is common that some quantities are 2D vectors rather than being simple scalar values (e.g. wind direction). For such quantities it is very desired to display arrows indicating vector direction.
