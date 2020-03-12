@@ -36,12 +36,10 @@ jobs:
         displayName: 'Lint .rst files'
       - script: |
           set -e
-          cd docs
           make html
         displayName: 'Make html'
       - script: |
           set -e
-          cd docs
           make latexpdf
         displayName: 'Make pdf'
       - task: DownloadSecureFile@1
@@ -58,10 +56,9 @@ jobs:
         condition: notin(variables['Build.Reason'], 'PullRequest')
       - script: |
           set -e
-          mv docs/build/html mdal-docs
+          mv build/html mdal-docs
           rm mdal-docs/mdal.pdf
-          cp docs/build/latex/mdal.pdf mdal-docs
-          cp mdal/data/mdalicon.png mdal-docs # For GDAL autotest...
+          cp build/latex/mdal.pdf mdal-docs
           cd mdal-docs
           git init
           git config user.email "mdal@lutraconsulting.co.uk"
