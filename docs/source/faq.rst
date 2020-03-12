@@ -48,7 +48,7 @@ You can use MDAL on all modern flavors of Unix: Linux, FreeBSD, Mac OS X; all su
 Is there a graphical user interface to MDAL?
 ++++++++++++++++++++++++++++++++++++++++++++++++
 
-See :ref:`software_using_gdal`
+See :ref:`software_using_mdal`
 
 .. toctree::
    :hidden:
