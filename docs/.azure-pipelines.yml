@@ -1,0 +1,76 @@
+# Azure Pipelines to build MDAL documentation
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+    - master
+
+variables:
+  #system.debug: true
+  configuration: release
+
+jobs:
+  - job: 'Documentation'
+    pool:
+      vmImage: 'ubuntu-16.04'
+    container:
+      image: osgeo/proj-docs
+      options: --privileged
+    steps:
+      - script: |
+          set -e
+          python3 --version
+          sphinx-build --version
+        displayName: 'Sphinx version'
+      - script: |
+          set -e
+          cd mdal/docs
+          if find . -name '*.rst' | xargs grep -P '\t'; then echo 'Tabs are bad, please use four spaces in .rst files.'; false; fi
+        displayName: 'Lint .rst files'
+      - script: |
+          set -e
+          cd mdal/docs
+          make html
+        displayName: 'Make html'
+      - script: |
+          set -e
+          cd mdal/docs
+          make latexpdf
+        displayName: 'Make pdf'
+      - task: DownloadSecureFile@1
+        inputs:
+          secureFile: 'mdal-docs-ssh-key'
+        displayName: 'Get the deploy key'
+        condition: notin(variables['Build.Reason'], 'PullRequest')
+      - script: |
+          set -e
+          mkdir ~/.ssh && mv $DOWNLOADSECUREFILE_SECUREFILEPATH ~/.ssh/id_rsa
+          chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+        displayName: 'Deploy the key'
+        condition: notin(variables['Build.Reason'], 'PullRequest')
+      - script: |
+          set -e
+          mv mdal/docs/build/html mdal-docs
+          rm mdal-docs/mdal.pdf
+          cp mdal/docs/build/latex/mdal.pdf mdal-docs
+          cp mdal/data/mdalicon.png mdal-docs # For GDAL autotest...
+          cd mdal-docs
+          git init
+          git config user.email "mdal@lutraconsulting.co.uk"
+          git config user.name "MDAL Bot"
+          git remote add origin git@github.com:lutraconsulting/mdal-docs.git
+          echo "mdal.xyz" > CNAME
+          touch .nojekyll
+          git add -A
+          git commit -m "Update with https://github.com/lutraconsulting/MDAL/commit/$BUILD_SOURCEVERSION"
+          git push -f origin master
+        displayName: 'Deploy the docs'
+        condition: notin(variables['Build.Reason'], 'PullRequest')
