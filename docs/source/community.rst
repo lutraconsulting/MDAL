@@ -4,7 +4,7 @@
 Community
 ================================================================================
 
-GDAL's community interacts through `GitHub`_.
+MDAL's community interacts through `GitHub`_.
 Please feel welcome to ask questions and participate in all of the
 venues.  The `GitHub`_ communication channel is
 for development activities, bug reports, and testing.

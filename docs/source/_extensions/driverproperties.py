@@ -191,7 +191,7 @@ class CreateDirective(Directive):
     def run(self):
 
         if not self.content:
-            self.content = docutils.statemachine.StringList(['This driver supports the :cpp:func:`GDALDriver::Create` operation'])
+            self.content = docutils.statemachine.StringList(['This driver supports the :cpp:func:`MDALDriver::Create` operation'])
         node = supports_create('\n'.join(self.content))
         node += nodes.title(_('Supports Create()'), _('Supports Create()'))
 
@@ -205,7 +205,7 @@ class CreateCopyDirective(Directive):
     def run(self):
 
         if not self.content:
-            self.content = docutils.statemachine.StringList(['This driver supports the :cpp:func:`GDALDriver::CreateCopy` operation'])
+            self.content = docutils.statemachine.StringList(['This driver supports the :cpp:func:`MDALDriver::CreateCopy` operation'])
         node = supports_createcopy('\n'.join(self.content))
         node += nodes.title(_('Supports CreateCopy()'), _('Supports CreateCopy()'))
 
