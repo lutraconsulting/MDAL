@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/lutraconsulting/MDAL.svg?branch=master)](https://travis-ci.org/lutraconsulting/MDAL)
 [![CircleCI](https://circleci.com/gh/lutraconsulting/MDAL.svg?style=svg)](https://circleci.com/gh/lutraconsulting/MDAL)
 [![Coverage Status](https://img.shields.io/coveralls/lutraconsulting/MDAL.svg)](https://coveralls.io/github/lutraconsulting/MDAL?branch=master)
+[![Docs Build](https://dev.azure.com/lutraconsulting/MDAL/_apis/build/status/lutraconsulting.MDAL?branchName=master)](https://dev.azure.com/lutraconsulting/MDAL/_build/latest?definitionId=1&branchName=master)
+
 <!-- [<img src="https://my.cdash.org/images/cdash.gif" alt="cdash" width="20"/>](https://my.cdash.org/index.php?project=MDAL) -->
 
 # MDAL
