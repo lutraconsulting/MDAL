@@ -796,3 +796,70 @@ void MDAL::Error::setDriver( std::string driverName )
 {
   driver = driverName;
 }
+
+void parseDriverFromUri( const std::string &uri, std::string &driver )
+{
+  bool hasDriverSet = ( uri.find( ":\"" ) != std::string::npos );
+  driver = "";
+
+  if ( !hasDriverSet )
+    return;
+
+  driver = MDAL::split( uri, ":\"" )[0];
+}
+
+void parseSpecificMeshFromUri( const std::string &uri, std::string &meshName, int &meshID )
+{
+  bool hasSpecificMeshSet = ( uri.find( "\":" ) != std::string::npos );
+  meshName = "";
+  meshID = 0;
+
+  if ( !hasSpecificMeshSet )
+    return;
+
+  std::vector<std::string> tokens = MDAL::split( uri, "\":" );
+  if ( tokens.size() > 1 )
+  {
+    if ( isdigit( tokens.at( 1 ).c_str()[0] ) ) // number as specific mesh - meshID
+    {
+      char *end;
+      meshID = std::strtol( tokens.at( 1 ).c_str(), &end, 10 );
+    }
+    else // string as specific mesh - meshName
+    {
+      meshName = tokens.at( 1 );
+    }
+  }
+}
+
+void parseMeshFileFromUri( const std::string &uri, std::string &meshFile )
+{
+  bool hasDriverSet = ( uri.find( ":\"" ) != std::string::npos );
+  bool hasSpecificMeshSet = ( uri.find( "\":" ) != std::string::npos );
+
+  if ( !hasDriverSet && !hasSpecificMeshSet )
+    meshFile = MDAL::trim( uri, "\"" );
+  else if ( hasDriverSet && hasSpecificMeshSet )
+  {
+    std::string token = MDAL::split( uri, ":\"" )[1]; // split from driver
+    token = MDAL::split( token, "\":" )[0]; // split from specific mesh
+    meshFile = MDAL::trim( token, "\"" );
+  }
+  else if ( hasDriverSet )
+  {
+    std::string token = MDAL::split( uri, ":\"" )[1]; // split from driver
+    meshFile = MDAL::trim( token, "\"" );
+  }
+  else if ( hasSpecificMeshSet )
+  {
+    std::string token = MDAL::split( uri, "\":" )[0]; // split from specific mesh
+    meshFile = MDAL::trim( token, "\"" );
+  }
+}
+
+void MDAL::parseDriverAndMeshFromUri( const std::string &uri, std::string &driver, std::string &meshFile, std::string &meshName, int &meshID )
+{
+  parseDriverFromUri( uri, driver );
+  parseMeshFileFromUri( uri, meshFile );
+  parseSpecificMeshFromUri( uri, meshName, meshID );
+}

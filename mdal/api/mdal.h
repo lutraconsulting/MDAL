@@ -194,8 +194,12 @@ MDAL_EXPORT const char *MDAL_DR_filters( DriverH driver );
  * Loads mesh file. On error see MDAL_LastStatus for error type
  * This may effectively load whole mesh in-memory for some providers
  * Caller must free memory with MDAL_CloseMesh() afterwards
+ *
+ * \since MDAL X.X.X const char parameter is renamed to uri and might contain
+ * following:  <DriverName>:"<MeshFilePath>":<SpecificMeshName or Id>
+ * examples: Ugrid:"mesh.nc":0, Ugrid:"mesh.nc":mesh1d, "mesh.nc":mesh1d, Ugrid:"mesh.nc", "mesh.nc", mesh.nc
  */
-MDAL_EXPORT MeshH MDAL_LoadMesh( const char *meshFile );
+MDAL_EXPORT MeshH MDAL_LoadMesh( const char *uri );
 
 /**
  * Closes mesh, frees the memory

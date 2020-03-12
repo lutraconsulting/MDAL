@@ -156,6 +156,8 @@ namespace MDAL
   //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
   MDAL::DateTime parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
 
+  void parseDriverAndMeshFromUri( const std::string &uri, std::string &driver, std::string &meshFile, std::string &meshName, int &meshId );
+
   struct Error
   {
     Error( MDAL_Status status, std::string message, std::string driverName = "" );
