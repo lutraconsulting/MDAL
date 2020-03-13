@@ -155,7 +155,7 @@ breathe_projects = {
 breathe_default_project = "api"
 
 # Tell sphinx what the primary language being documented is.
-primary_domain = 'cpp'
+primary_domain = 'c'
 
 import redirects
 redirect_files = redirects.gather_redirects()
