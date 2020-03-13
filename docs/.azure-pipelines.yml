@@ -63,7 +63,7 @@ jobs:
           git config user.email "mdal@lutraconsulting.co.uk"
           git config user.name "MDAL Bot"
           git remote add origin git@github.com:lutraconsulting/mdal-docs.git
-          echo "mdal.xyz" > CNAME
+          echo "www.mdal.xyz" > CNAME
           touch .nojekyll
           git add -A
           git commit -m "Update with https://github.com/lutraconsulting/MDAL/commit/$BUILD_SOURCEVERSION"
