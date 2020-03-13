@@ -44,26 +44,14 @@ jobs:
           cd docs
           make latexpdf
         displayName: 'Make pdf'
-      - task: DownloadSecureFile@1
-        inputs:
-          secureFile: 'mdal-docs-ssh-key'
-        displayName: 'Get the deploy key'
-        condition: notin(variables['Build.Reason'], 'PullRequest')
       - task: InstallSSHKey@0
         inputs:
           knownHostsEntry: github.com,192.30.253.112 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
           sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYilTQz0B1OXm8ylVFNX1i6cJdveN+g0YDLqeqBzsIIj1PUwWV+vVcQyKXlqyr1pvpIQXoYxImSh8LjnMJzjJ/Csw+tOuxD0wKssEdpPyNRGu+tTYdhI5tNvpMCnkbyA/Sg0vWZgiqUcHxSpwJu/nsX9k4TUYAFlqu/WxJGtu6F8mkgIaEOizmvjjusOtn3/lZCMkZMDascsexEXuVjbwgN8Zb5A5cvfZXm6TJ8oZ8wDxybTDvSCdDtIWuySwCkdlL5/qbzV/zFyTvbPIfSW6Iz/CSlG0Tu6e9jImWCsUI81ttxsxsnf75wUAXdSE2sdd0/hAK/H6rG+B7YCZlhaaj mdal@lutraconsulting.co.uk
           sshPassphrase: $(MDAL_SSH_PASS)
-          sshKeySecureFile:
+          sshKeySecureFile: 'mdal-docs-ssh-key'
         displayName: 'Install the key'
         condition: notin(variables['Build.Reason'], 'PullRequest')
-      # - script: |
-      #    set -e
-      #   mkdir ~/.ssh && mv $DOWNLOADSECUREFILE_SECUREFILEPATH ~/.ssh/id_rsa
-      #    chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_rsa
-      #    ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-      #  displayName: 'Deploy the key'
-      #  condition: notin(variables['Build.Reason'], 'PullRequest')
       - script: |
           set -e
           mv docs/build/html mdal-docs
