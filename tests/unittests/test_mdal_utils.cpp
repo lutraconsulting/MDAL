@@ -224,43 +224,40 @@ TEST( MdalUtilsTest, EndsWidth )
 
 struct LoadMeshUri
 {
-  LoadMeshUri( std::string u, std::string d, std::string mf, std::string mn, int mid ) :
+  LoadMeshUri( std::string u, std::string d, std::string mf, std::string mn ) :
     uri( u ),
     expectedDriver( d ),
     expectedMeshFile( mf ),
-    expectedMeshName( mn ),
-    expectedMeshID( mid ) {};
+    expectedMeshName( mn ) {};
 
   std::string uri;
   std::string expectedDriver;
   std::string expectedMeshFile;
   std::string expectedMeshName;
-  int expectedMeshID;
 };
 
 TEST( MdalUtilsTest, ParseLoadMeshUri )
 {
   std::string inputUri, driverName, meshFile, specificMeshName;
-  int specificMeshID;
 
   std::vector<LoadMeshUri> tests
   {
-    LoadMeshUri( "Ugrid:\"mesh.nc\":mesh1d", "Ugrid", "mesh.nc", "mesh1d", 0 ),
-    LoadMeshUri( "Ugrid:\"mesh.nc\":1", "Ugrid", "mesh.nc", "", 1 ),
-    LoadMeshUri( "\"mesh.nc\":mesh1d", "", "mesh.nc", "mesh1d", 0 ),
-    LoadMeshUri( "\"mesh.nc\":1", "", "mesh.nc", "", 1 ),
-    LoadMeshUri( "Ugrid:\"mesh.nc\"", "Ugrid", "mesh.nc", "", 0 ),
-    LoadMeshUri( "\"mesh.nc\"", "", "mesh.nc", "", 0 ),
-    LoadMeshUri( "mesh.nc", "", "mesh.nc", "", 0 )
+    LoadMeshUri( "Ugrid:\"mesh.nc\":mesh1d", "Ugrid", "mesh.nc", "mesh1d" ),
+    LoadMeshUri( "Ugrid:\"mesh.nc\":1", "Ugrid", "mesh.nc", "1" ),
+    LoadMeshUri( "\"mesh.nc\":mesh1d", "", "mesh.nc", "mesh1d" ),
+    LoadMeshUri( "\"mesh.nc\":1", "", "mesh.nc", "1" ),
+    LoadMeshUri( "Ugrid:\"mesh.nc\"", "Ugrid", "mesh.nc", "" ),
+    LoadMeshUri( "\"mesh.nc\"", "", "mesh.nc", "" ),
+    LoadMeshUri( "mesh.nc", "", "mesh.nc", "" ),
+    LoadMeshUri( "Ugrid:\"C:\\myfile. \\with spaces\\hi.nc\":\"incredible mesh\"", "Ugrid", "C:\\myfile. \\with spaces\\hi.nc", "incredible mesh" )
   };
 
   for ( const LoadMeshUri &it : tests )
   {
-    MDAL::parseDriverAndMeshFromUri( it.uri, driverName, meshFile, specificMeshName, specificMeshID );
+    MDAL::parseDriverAndMeshFromUri( it.uri, driverName, meshFile, specificMeshName );
 
     EXPECT_EQ( driverName, it.expectedDriver );
     EXPECT_EQ( meshFile, it.expectedMeshFile );
     EXPECT_EQ( specificMeshName, it.expectedMeshName );
-    EXPECT_EQ( specificMeshID, it.expectedMeshID );
   }
 }
