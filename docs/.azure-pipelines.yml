@@ -13,9 +13,9 @@ pr:
     - master
 
 variables:
-  #system.debug: true
-  configuration: release
-  - group: 'MDAL_VAR_GROUP'
+- group: 'MDAL_VAR_GROUP' # variable group
+- name: 'configuration' # new variable defined in YAML
+  value: 'release'
 
 jobs:
   - job: 'Documentation'
