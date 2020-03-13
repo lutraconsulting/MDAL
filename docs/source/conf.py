@@ -83,7 +83,7 @@ html_theme_options = {
 # If true, links to the reST sources are added to the pages.
 html_show_sourcelink = False
 
-html_logo = '../images/LogoHorizontal_01_color_105x32.png'
+html_logo = '../images/LogoHorizontal_01_color_400x123.png'
 
 # -- Options for manual page output ---------------------------------------
 
