@@ -162,12 +162,16 @@ MeshH MDAL_LoadMesh( const char *uri )
     return nullptr;
   }
 
-  std::string uriString( uri ), driver, meshFile, meshName;
-  int meshId;
+  std::string uriString( uri ), driverName, meshFile, meshName;
 
-  MDAL::parseDriverAndMeshFromUri( uriString, driver, meshFile, meshName, meshId );
+  MDAL::parseDriverAndMeshFromUri( uriString, driverName, meshFile, meshName );
 
-  return static_cast< MeshH >( MDAL::DriverManager::instance().load( meshFile ).release() );
+  if ( !driverName.empty() )
+  {
+    return static_cast< MeshH >( MDAL::DriverManager::instance().load( driverName, meshFile, meshName ).release() );
+  }
+  else
+    return static_cast< MeshH >( MDAL::DriverManager::instance().load( meshFile, meshName ).release() );
 }
 
 void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )

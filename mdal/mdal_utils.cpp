@@ -808,30 +808,6 @@ void parseDriverFromUri( const std::string &uri, std::string &driver )
   driver = MDAL::split( uri, ":\"" )[0];
 }
 
-void parseSpecificMeshFromUri( const std::string &uri, std::string &meshName, int &meshID )
-{
-  bool hasSpecificMeshSet = ( uri.find( "\":" ) != std::string::npos );
-  meshName = "";
-  meshID = 0;
-
-  if ( !hasSpecificMeshSet )
-    return;
-
-  std::vector<std::string> tokens = MDAL::split( uri, "\":" );
-  if ( tokens.size() > 1 )
-  {
-    if ( isdigit( tokens.at( 1 ).c_str()[0] ) ) // number as specific mesh - meshID
-    {
-      char *end;
-      meshID = std::strtol( tokens.at( 1 ).c_str(), &end, 10 );
-    }
-    else // string as specific mesh - meshName
-    {
-      meshName = tokens.at( 1 );
-    }
-  }
-}
-
 void parseMeshFileFromUri( const std::string &uri, std::string &meshFile )
 {
   bool hasDriverSet = ( uri.find( ":\"" ) != std::string::npos );
@@ -857,9 +833,24 @@ void parseMeshFileFromUri( const std::string &uri, std::string &meshFile )
   }
 }
 
-void MDAL::parseDriverAndMeshFromUri( const std::string &uri, std::string &driver, std::string &meshFile, std::string &meshName, int &meshID )
+void parseSpecificMeshFromUri( const std::string &uri, std::string &meshName )
+{
+  bool hasSpecificMeshSet = ( uri.find( "\":" ) != std::string::npos );
+  meshName = "";
+
+  if ( !hasSpecificMeshSet )
+    return;
+
+  std::vector<std::string> tokens = MDAL::split( uri, "\":" );
+  if ( tokens.size() > 1 )
+  {
+    meshName = MDAL::trim( tokens.at( 1 ), "\"" );
+  }
+}
+
+void MDAL::parseDriverAndMeshFromUri( const std::string &uri, std::string &driver, std::string &meshFile, std::string &meshName )
 {
   parseDriverFromUri( uri, driver );
   parseMeshFileFromUri( uri, meshFile );
-  parseSpecificMeshFromUri( uri, meshName, meshID );
+  parseSpecificMeshFromUri( uri, meshName );
 }

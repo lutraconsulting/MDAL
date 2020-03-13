@@ -45,7 +45,7 @@ namespace MDAL
                                          std::string &var1, std::string &var2,
                                          bool optional ) const;
       void parseCoordinatesFrom1DMesh( const std::string &meshName, const std::string &attr_name,
-                                           std::string &var1, std::string &var2 );
+                                       std::string &var1, std::string &var2 );
 
       std::vector<std::string> findMeshesNames() const;
       std::vector<std::string> mAllMeshNames; // all mesh names in file

@@ -385,11 +385,13 @@ void MDAL::DriverCF::setProjection( MDAL::Mesh *mesh )
   }
 }
 
-std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName )
+std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName, const std::string &meshName )
 {
   mNcFile.reset( new NetCDFFile );
 
   mFileName = fileName;
+
+  mRequestedMeshName = meshName;
 
   MDAL::Log::resetLastStatus();
 

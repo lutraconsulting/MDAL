@@ -49,7 +49,7 @@ namespace MDAL
       virtual int faceVerticesMaximumCount() const;
 
       // loads mesh
-      virtual std::unique_ptr< Mesh > load( const std::string &uri );
+      virtual std::unique_ptr< Mesh > load( const std::string &uri, const std::string &meshName = "" );
       // loads datasets
       virtual void load( const std::string &uri, Mesh *mesh );
       // save mesh

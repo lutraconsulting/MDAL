@@ -387,7 +387,7 @@ void MDAL::DriverUgrid::ignore1DMeshVariables( const std::string &mesh, std::set
   if ( MDAL::contains( mesh, "network" ) )
   {
     std::vector<std::string> variables = mNcFile->readArrNames();
-    for (const std::string &var : variables)
+    for ( const std::string &var : variables )
     {
       if ( MDAL::contains( var, "network" ) )
         ignoreVariables.insert( var );

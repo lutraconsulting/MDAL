@@ -551,7 +551,7 @@ bool MDAL::DriverGdal::canReadMesh( const std::string &uri )
   return true;
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName )
+std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName, const std::string & )
 {
   mFileName = fileName;
   MDAL::Log::resetLastStatus();
