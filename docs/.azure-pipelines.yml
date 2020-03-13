@@ -13,8 +13,9 @@ pr:
     - master
 
 variables:
-  #system.debug: true
-  configuration: release
+  - name: 'configuration'
+   value: release
+  - group: 'MDAL_VAR_GROUP'
 
 jobs:
   - job: 'Documentation'
