@@ -15,7 +15,8 @@ TEST( MeshUgridTest, SaveDFlow11Manzese )
   saveAndCompareMesh(
     test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ),
     tmp_file( "/manzese_1d2d_small_map_saveTest.nc" ),
-    "Ugrid"
+    "Ugrid",
+    "mesh2d"
   );
 }
 
@@ -31,7 +32,8 @@ TEST( MeshUgridTest, SaveQuadAndTriangle )
 TEST( MeshUgridTest, DFlow11Manzese )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  std::string uri = "\"" + path + "\":mesh2d";
+  MeshH m = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -115,7 +117,8 @@ TEST( MeshUgridTest, DFlow11Manzese )
 TEST( MeshUgridTest, DFlow11ManzeseNodeZValue )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  std::string uri = "\"" + path + "\":mesh2d";
+  MeshH m = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -543,6 +546,22 @@ TEST( MeshUgridTest, ADCIRC )
   EXPECT_DOUBLE_EQ( 1.3282330120641679, max );
 
   EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshUgridTest, 1DMeshTest )
+{
+  std::string path = test_file( "/ugrid/1dtest/dflow1d_map.nc" );
+  MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
+
+  std::string uri = "Ugrid:\"" + path + "\":" + "mesh1d";
+
+  MeshH m = MDAL_LoadMesh( uri.c_str() );
+
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::Warn_InvalidElements, s );
 
   MDAL_CloseMesh( m );
 }
