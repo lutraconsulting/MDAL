@@ -790,9 +790,67 @@ bool MDAL::getHeaderLine( std::ifstream &stream, std::string &line )
   return true;
 }
 
-MDAL::Error::Error( MDAL_Status s, std::string m, std::string d ): status( s ), mssg( m ), driver( d ) {}
+MDAL::Error::Error( MDAL_Status status, std::string message, std::string driverName ): status( status ), mssg( message ), driver( driverName ) {}
 
-void MDAL::Error::setDriver( std::string d )
+void MDAL::Error::setDriver( std::string driverName )
 {
-  driver = d;
+  driver = driverName;
+}
+
+void parseDriverFromUri( const std::string &uri, std::string &driver )
+{
+  bool hasDriverSet = ( uri.find( ":\"" ) != std::string::npos );
+  driver = "";
+
+  if ( !hasDriverSet )
+    return;
+
+  driver = MDAL::split( uri, ":\"" )[0];
+}
+
+void parseMeshFileFromUri( const std::string &uri, std::string &meshFile )
+{
+  bool hasDriverSet = ( uri.find( ":\"" ) != std::string::npos );
+  bool hasSpecificMeshSet = ( uri.find( "\":" ) != std::string::npos );
+
+  if ( !hasDriverSet && !hasSpecificMeshSet )
+    meshFile = MDAL::trim( uri, "\"" );
+  else if ( hasDriverSet && hasSpecificMeshSet )
+  {
+    std::string token = MDAL::split( uri, ":\"" )[1]; // split from driver
+    token = MDAL::split( token, "\":" )[0]; // split from specific mesh
+    meshFile = MDAL::trim( token, "\"" );
+  }
+  else if ( hasDriverSet )
+  {
+    std::string token = MDAL::split( uri, ":\"" )[1]; // split from driver
+    meshFile = MDAL::trim( token, "\"" );
+  }
+  else if ( hasSpecificMeshSet )
+  {
+    std::string token = MDAL::split( uri, "\":" )[0]; // split from specific mesh
+    meshFile = MDAL::trim( token, "\"" );
+  }
+}
+
+void parseSpecificMeshFromUri( const std::string &uri, std::string &meshName )
+{
+  bool hasSpecificMeshSet = ( uri.find( "\":" ) != std::string::npos );
+  meshName = "";
+
+  if ( !hasSpecificMeshSet )
+    return;
+
+  std::vector<std::string> tokens = MDAL::split( uri, "\":" );
+  if ( tokens.size() > 1 )
+  {
+    meshName = MDAL::trim( tokens.at( 1 ), "\"" );
+  }
+}
+
+void MDAL::parseDriverAndMeshFromUri( const std::string &uri, std::string &driver, std::string &meshFile, std::string &meshName )
+{
+  parseDriverFromUri( uri, driver );
+  parseMeshFileFromUri( uri, meshFile );
+  parseSpecificMeshFromUri( uri, meshName );
 }

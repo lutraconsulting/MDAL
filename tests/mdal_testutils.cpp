@@ -352,13 +352,18 @@ bool compareReferenceTime( DatasetGroupH group, const char *referenceTime )
   return std::strcmp( MDAL_G_referenceTime( group ), referenceTime ) == 0;
 }
 
-void saveAndCompareMesh( const std::string &filename, const std::string &savedFile, const std::string &driver )
+void saveAndCompareMesh( const std::string &filename, const std::string &savedFile, const std::string &driver, const std::string &meshName )
 {
   //test driver capability
   EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( driver.c_str() ) ) );
 
+  std::string uri ( filename );
+
+  if ( !meshName.empty() )
+    uri = "\"" + uri + "\":" + meshName;
+
   // Open mesh
-  MeshH meshToSave = MDAL_LoadMesh( filename.c_str() );
+  MeshH meshToSave = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( meshToSave, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );

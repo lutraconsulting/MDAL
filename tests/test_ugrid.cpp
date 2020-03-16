@@ -15,7 +15,8 @@ TEST( MeshUgridTest, SaveDFlow11Manzese )
   saveAndCompareMesh(
     test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ),
     tmp_file( "/manzese_1d2d_small_map_saveTest.nc" ),
-    "Ugrid"
+    "Ugrid",
+    "mesh2d"
   );
 }
 
@@ -31,7 +32,8 @@ TEST( MeshUgridTest, SaveQuadAndTriangle )
 TEST( MeshUgridTest, DFlow11Manzese )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  std::string uri = "\"" + path + "\":mesh2d";
+  MeshH m = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -115,7 +117,8 @@ TEST( MeshUgridTest, DFlow11Manzese )
 TEST( MeshUgridTest, DFlow11ManzeseNodeZValue )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  std::string uri = "\"" + path + "\":mesh2d";
+  MeshH m = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -543,6 +546,64 @@ TEST( MeshUgridTest, ADCIRC )
   EXPECT_DOUBLE_EQ( 1.3282330120641679, max );
 
   EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshUgridTest, 1DMeshTest )
+{
+  std::string path = test_file( "/ugrid/1dtest/dflow1d_map.nc" );
+  MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
+
+  std::string uri = "Ugrid:\"" + path + "\":" + "mesh1d";
+
+  MeshH m = MDAL_LoadMesh( uri.c_str() );
+
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::Warn_InvalidElements, s );
+
+  /////////////
+  // Vertices
+  /////////////
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 8 );
+
+  /////////////
+  // Edges
+  /////////////
+  int e_count = MDAL_M_edgeCount( m );
+  EXPECT_EQ( e_count, 7 );
+
+  std::vector<int> startNodeEdgeIndices;
+  std::vector<int> endNodeEdgeIndices;
+  getEdgeVertexIndices( m, e_count, startNodeEdgeIndices, endNodeEdgeIndices );
+
+  std::vector<int> expectedStartNodes {0, 1, 2, 3, 4, 5, 6};
+  std::vector<int> expectedEndNodes {1, 2, 3, 4, 5, 6, 7};
+
+  EXPECT_TRUE( compareVectors( startNodeEdgeIndices, expectedStartNodes ) );
+  EXPECT_TRUE( compareVectors( endNodeEdgeIndices, expectedEndNodes ) );
+
+  DatasetGroupH dg = MDAL_M_datasetGroup( m , 3 );
+  ASSERT_NE( dg, nullptr );
+
+  ASSERT_EQ( std::string( "Flow element center velocity magnitude" ), std::string( MDAL_G_name( dg ) ) );
+  ASSERT_EQ( MDAL_G_hasScalarData( dg ), true );
+
+  MDAL_DataLocation dg_location = MDAL_G_dataLocation( dg );
+  EXPECT_EQ( dg_location, MDAL_DataLocation::DataOnVertices );
+
+  DatasetH ds = MDAL_G_dataset( dg, 15 );
+  ASSERT_NE( ds, nullptr );
+
+  int ds_count = MDAL_D_valueCount( ds );
+  EXPECT_EQ( ds_count, 8 );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max);
+  EXPECT_DOUBLE_EQ( min, 1.4307828088040137e-14 );
+  EXPECT_DOUBLE_EQ( max, 5.90487869582277e-13 );
 
   MDAL_CloseMesh( m );
 }

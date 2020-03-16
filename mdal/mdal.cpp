@@ -154,16 +154,24 @@ const char *MDAL_DR_filters( DriverH driver )
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
 
-MeshH MDAL_LoadMesh( const char *meshFile )
+MeshH MDAL_LoadMesh( const char *uri )
 {
-  if ( !meshFile )
+  if ( !uri )
   {
     MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );
     return nullptr;
   }
 
-  std::string filename( meshFile );
-  return static_cast< MeshH >( MDAL::DriverManager::instance().load( filename ).release() );
+  std::string uriString( uri ), driverName, meshFile, meshName;
+
+  MDAL::parseDriverAndMeshFromUri( uriString, driverName, meshFile, meshName );
+
+  if ( !driverName.empty() )
+  {
+    return static_cast< MeshH >( MDAL::DriverManager::instance().load( driverName, meshFile, meshName ).release() );
+  }
+  else
+    return static_cast< MeshH >( MDAL::DriverManager::instance().load( meshFile, meshName ).release() );
 }
 
 void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
