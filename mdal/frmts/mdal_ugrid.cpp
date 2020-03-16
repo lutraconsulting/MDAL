@@ -75,16 +75,27 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
 
   if ( mAllMeshNames.empty() )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, name(), "File " + mFileName + " does not contain any valid mesh definition" );
-  if ( mAllMeshNames.size() == 1 )
-    mMeshName = mAllMeshNames.at( 0 );
-  else // there are more meshes in file
-  {
-    if ( MDAL::contains( mAllMeshNames.at( 0 ), "network" ) ) // ignore the network variable for a moment
-      mMeshName = mAllMeshNames.at( 1 );
-    else
-      mMeshName = mAllMeshNames.at( 0 );
 
-    MDAL::Log::warning( MDAL_Status::Warn_MultipleMeshesInFile, name(), "Found multiple meshes in file, working with: " + mMeshName );
+  if ( !mRequestedMeshName.empty() )
+  {
+    if ( std::find( std::begin( mAllMeshNames ), std::end( mAllMeshNames ), mRequestedMeshName ) != std::end( mAllMeshNames ) )
+      mMeshName = mRequestedMeshName;
+    else
+      throw MDAL::Error( MDAL_Status::Err_InvalidData, "No such mesh with name: " + mRequestedMeshName, name() );
+  }
+  else
+  {
+    if ( mAllMeshNames.size() == 1 )
+      mMeshName = mAllMeshNames.at( 0 );
+    else // there are more meshes in file
+    {
+      if ( MDAL::contains( mAllMeshNames.at( 0 ), "network" ) ) // ignore the network variable for a moment
+        mMeshName = mAllMeshNames.at( 1 );
+      else
+        mMeshName = mAllMeshNames.at( 0 );
+
+      MDAL::Log::warning( MDAL_Status::Warn_MultipleMeshesInFile, name(), "Found multiple meshes in file, working with: " + mMeshName );
+    }
   }
 
   if ( mMeshName.empty() ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Unable to parse mesh name from file" );
@@ -94,7 +105,7 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
   if ( ( mMeshDimension < 1 ) || ( mMeshDimension > 2 ) )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, name(), "Unable to parse topology dimension from mesh or mesh is 3D" );
 
-  MDAL::Log::info( "Parsing " + std::to_string( mMeshDimension ) + "D mesh" );
+  MDAL::Log::info( "Parsing " + std::to_string( mMeshDimension ) + "D mesh with name: " + mMeshName );
 
   std::string nodeXVariable, nodeYVariable;
   if ( mMeshDimension == 1 )
