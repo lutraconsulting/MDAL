@@ -156,9 +156,11 @@ namespace MDAL
   //! https://www.unidata.ucar.edu/software/netcdf-java/current/CDM/CalendarDateTime.html
   MDAL::DateTime parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
 
-  //! parse information received from load mesh uri
-  //! load mesh uri contains: <drivername>:"meshfile":<meshname>
-  //! drivername and meshname are optional parameters
+  /**
+    * parse information received from load mesh uri
+    * load mesh uri contains: <drivername>:"meshfile":<meshname>
+    * drivername and meshname are optional parameters
+    */
   void parseDriverAndMeshFromUri( const std::string &uri, std::string &driver, std::string &meshFile, std::string &meshName );
 
   struct Error
