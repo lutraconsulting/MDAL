@@ -13,7 +13,7 @@
 TEST( MeshGdalNetCDFTest, OceanCurrents )
 {
   std::string path = test_file( std::string( "/netcdf/Copernicus Ocean Currents Forecast Model/cmems_global-analysis-forecast-phy-001-024.nc" ) );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -27,7 +27,7 @@ TEST( MeshGdalNetCDFTest, OceanCurrents )
 
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -43,7 +43,7 @@ TEST( MeshGdalNetCDFTest, OceanCurrents )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 3, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 1 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 1 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -84,7 +84,7 @@ TEST( MeshGdalNetCDFTest, Indonesia )
   for ( const std::string &file : files )
   {
     std::string path = test_file( std::string( "/netcdf/" ) + file );
-    MeshH m = MDAL_LoadMesh( path.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_Status s = MDAL_LastStatus();
     EXPECT_EQ( MDAL_Status::None, s );
@@ -98,7 +98,7 @@ TEST( MeshGdalNetCDFTest, Indonesia )
 
     ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -114,7 +114,7 @@ TEST( MeshGdalNetCDFTest, Indonesia )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 31, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 10 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 10 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );

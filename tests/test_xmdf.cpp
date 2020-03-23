@@ -11,7 +11,7 @@
 
 TEST( MeshXmdfTest, MissingMesh )
 {
-  MeshH m = nullptr;
+  MDAL_MeshH m = nullptr;
   std::string path = test_file( "/xmdf/xmdf_format.xmdf" );
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
@@ -21,7 +21,7 @@ TEST( MeshXmdfTest, MissingMesh )
 TEST( MeshXmdfTest, RegularGridScalarDataset )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/xmdf/regular_grid.xmdf" );
   MDAL_M_LoadDatasets( m, path.c_str() );
@@ -40,7 +40,7 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   /*
    *  STATIC DATASET (Depth)
    */
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
   ASSERT_NE( g, nullptr );
   ASSERT_EQ( MDAL_G_mesh( g ), m );
 
@@ -60,7 +60,7 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 50 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 50 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -118,7 +118,7 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
 TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/xmdf/regular_grid.xmdf" );
   MDAL_M_LoadDatasets( m, path.c_str() );
@@ -130,7 +130,7 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   /*
    *  VECTOR DATASET (MAXIMUMS)
    */
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -146,7 +146,7 @@ TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -201,7 +201,7 @@ TEST( MeshXmdfTest, CustomGroupsDataset )
   // XMDF created with various TUFLOW utilities
   // where we have missing the standard groups like Temporal
   std::string path = test_file( "/2dm/M01_5m_002.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/xmdf/custom_groups.xmdf" );
   MDAL_M_LoadDatasets( m, path.c_str() );
@@ -210,7 +210,7 @@ TEST( MeshXmdfTest, CustomGroupsDataset )
 
   ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -226,7 +226,7 @@ TEST( MeshXmdfTest, CustomGroupsDataset )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 37, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );

@@ -13,7 +13,7 @@
 TEST( Mesh3DiTest, Mesh2D4cells301steps )
 {
   std::string path = test_file( "/3di/2d_4cells301steps/results_3di.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -70,7 +70,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   // ///////////
   ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -86,7 +86,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -196,7 +196,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
 TEST( Mesh3DiTest, Mesh2D16cells7steps )
 {
   std::string path = test_file( "/3di/2d_16cells7steps/results_3di.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -212,10 +212,10 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
   EXPECT_EQ( 16, f_count );
 
   ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
   ASSERT_NE( g, nullptr );
   ASSERT_EQ( 7, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   EXPECT_TRUE( compareReferenceTime( g, "2014-01-01T00:00:00" ) );

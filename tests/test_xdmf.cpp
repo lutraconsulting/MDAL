@@ -11,7 +11,7 @@
 TEST( XdmfTest, Basement3HumpsTest )
 {
   std::string path = test_file( "/xdmf/basement3/3HumpsTest/3_humps_mesh.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -24,7 +24,7 @@ TEST( XdmfTest, Basement3HumpsTest )
 
   // normal scalar dataset
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -40,7 +40,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 2 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 2 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -71,7 +71,7 @@ TEST( XdmfTest, Basement3HumpsTest )
 
   // FUNCTION: JOIN($0, $1, 0*$1) dataset
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -87,7 +87,7 @@ TEST( XdmfTest, Basement3HumpsTest )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 2 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 2 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -126,7 +126,7 @@ TEST( XdmfTest, Basement3HumpsTest )
 TEST( XdmfTest, Basement3Slopes )
 {
   std::string path = test_file( "/xdmf/basement3/3Slopes/3Slopes_Counter.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -139,7 +139,7 @@ TEST( XdmfTest, Basement3Slopes )
 
   // normal dataset
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -155,7 +155,7 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 1 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 1 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -186,7 +186,7 @@ TEST( XdmfTest, Basement3Slopes )
 
   // FUNCTION: $1 - $0
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -202,7 +202,7 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 1 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 1 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -233,7 +233,7 @@ TEST( XdmfTest, Basement3Slopes )
 
   // FUNCTION: $0 - $1
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -249,7 +249,7 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 1 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 1 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -278,7 +278,7 @@ TEST( XdmfTest, Basement3Slopes )
 
   // FUNCTION: sqrt($0/($2-$3)*$0/($2-$3) + $1/($2-$3)*$1/($2-$3))
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -294,7 +294,7 @@ TEST( XdmfTest, Basement3Slopes )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 1 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 1 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -328,7 +328,7 @@ TEST( XdmfTest, Basement3Slopes )
 TEST( XdmfTest, Basement3SimpleChannel )
 {
   std::string path = test_file( "/xdmf/basement3/SimpleChannel/SimpleChannel.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -340,7 +340,7 @@ TEST( XdmfTest, Basement3SimpleChannel )
   EXPECT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -356,7 +356,7 @@ TEST( XdmfTest, Basement3SimpleChannel )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 11, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 3 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 3 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -392,7 +392,7 @@ TEST( XdmfTest, Basement3SimpleChannel )
 TEST( XdmfTest, Basement3SimpleGeometry )
 {
   std::string path = test_file( "/xdmf/basement3/SimpleGeometry/test.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -404,7 +404,7 @@ TEST( XdmfTest, Basement3SimpleGeometry )
   EXPECT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
 
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -420,7 +420,7 @@ TEST( XdmfTest, Basement3SimpleGeometry )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 3 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 3 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -453,7 +453,7 @@ TEST( XdmfTest, Basement3SimpleGeometry )
 TEST( XdmfTest, Simple )
 {
   std::string path = test_file( "/xdmf/simple/simpleXFMD.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -468,7 +468,7 @@ TEST( XdmfTest, Simple )
   // Scalar Dataset
   // ///////////
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -484,7 +484,7 @@ TEST( XdmfTest, Simple )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 21, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 2 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 2 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -525,7 +525,7 @@ TEST( XdmfTest, Simple )
   // Vector Dataset
   // //////////////
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -541,7 +541,7 @@ TEST( XdmfTest, Simple )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 21, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 2 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 2 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );

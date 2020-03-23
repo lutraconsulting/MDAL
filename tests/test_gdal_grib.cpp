@@ -13,13 +13,13 @@
 TEST( MeshGdalGribTest, ScalarFile )
 {
   std::string path = test_file( "/grib/Madagascar.wave.7days.grb" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
   ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -35,7 +35,7 @@ TEST( MeshGdalGribTest, ScalarFile )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 27, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -62,13 +62,13 @@ TEST( MeshGdalGribTest, ScalarFile )
 TEST( MeshGdalGribTest, VectorFile )
 {
   std::string path = test_file( "/grib/Madagascar.wind.7days.grb" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -84,7 +84,7 @@ TEST( MeshGdalGribTest, VectorFile )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 27, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 15 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 15 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -117,13 +117,13 @@ TEST( MeshGdalGribTest, WithoutNODATA )
 {
   // see https://github.com/lutraconsulting/MDAL/issues/104
   std::string path = test_file( "/grib/saga_flow_without_nodata.grb" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -139,7 +139,7 @@ TEST( MeshGdalGribTest, WithoutNODATA )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -171,13 +171,13 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
 {
   // https://github.com/lutraconsulting/MDAL/issues/79
   std::string path = test_file( "/grib/wind_only_u_component.grib" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -193,7 +193,7 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
