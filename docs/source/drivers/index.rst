@@ -21,3 +21,10 @@ MDAL drivers
    :maxdepth: 1
 
    grib
+   netcdf
+   2dm
+   xdmf
+   xmdf
+   dat
+   sww
+   hecras

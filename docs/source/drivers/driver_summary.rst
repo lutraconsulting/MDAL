@@ -13,8 +13,43 @@
      - Creation
      - Geo-referencing
      - Build requirements
+   * - :ref:`2dm <driver.2dm>`
+     - SMS mesh format
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`DAT <driver.dat>`
+     - ASCII or Binary Dataset Files
+     - No
+     - No
+     - Built-in by default
    * - :ref:`GRIB <driver.grib>`
      - WMO General Regularly-distributed Information in Binary form
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`hecras <driver.hecras>`
+     - HEC-RAS outputs fromat
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`NetCDF <driver.netcdf>`
+     - Network Common Data Form
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`SWW <driver.sww>`
+     - NetCDF format for AnuGA
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`XDMF <driver.xdmf>`
+     - eXtensible Data Model and Format
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`XMDF <driver.xmdf>`
+     - eXtensible Model Data Format
      - No
      - No
      - Built-in by default
