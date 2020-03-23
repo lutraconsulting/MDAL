@@ -14,7 +14,7 @@
 
 void printDriverInfo( int index )
 {
-  DriverH driver = MDAL_driverFromIndex( index );
+  MDAL_DriverH driver = MDAL_driverFromIndex( index );
   std::string name = MDAL_DR_name( driver );
   bool onlyMesh = MDAL_DR_meshLoadCapability( driver );
   std::string meshFlag = onlyMesh ? "-mesh-" : "-data-";
@@ -74,12 +74,12 @@ class Mesh
       if ( mPointer )
         MDAL_CloseMesh( mPointer );
     }
-    MeshH get() const
+    MDAL_MeshH get() const
     {
       return mPointer;
     }
   private:
-    MeshH mPointer;
+    MDAL_MeshH mPointer;
 };
 
 int main( int argc, char *argv[] )

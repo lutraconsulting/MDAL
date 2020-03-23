@@ -14,7 +14,7 @@ TEST( MeshTinTest, WrongFiles )
   for ( int i = 0; i < 9; ++i )
   {
     std::string fileName = test_file( "/xms_tin/invalid/invalid" + std::to_string( i ) + ".tin" );
-    MeshH m = MDAL_LoadMesh( fileName.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( fileName.c_str() );
     EXPECT_EQ( m, nullptr );
   }
 }
@@ -22,7 +22,7 @@ TEST( MeshTinTest, WrongFiles )
 TEST( MeshTinTest, ParaboloidFile )
 {
   std::string path = test_file( "/xms_tin/paraboloid.m.tin" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -64,7 +64,7 @@ TEST( MeshTinTest, ParaboloidFile )
   // Bed elevation dataset
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   const char *name = MDAL_G_name( g );
@@ -77,7 +77,7 @@ TEST( MeshTinTest, ParaboloidFile )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );

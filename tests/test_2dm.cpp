@@ -11,7 +11,7 @@
 
 TEST( Mesh2DMTest, MissingFile )
 {
-  MeshH m = MDAL_LoadMesh( "non/existent/path.2dm" );
+  MDAL_MeshH m = MDAL_LoadMesh( "non/existent/path.2dm" );
   EXPECT_EQ( nullptr, m );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_FileNotFound, s );
@@ -20,7 +20,7 @@ TEST( Mesh2DMTest, MissingFile )
 TEST( Mesh2DMTest, WrongFile )
 {
   std::string path = test_file( "/2dm/not_a_mesh_file.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
@@ -29,7 +29,7 @@ TEST( Mesh2DMTest, WrongFile )
 TEST( Mesh2DMTest, UnsuportedElements )
 {
   std::string path = test_file( "/2dm/unsupported_elements.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
@@ -38,7 +38,7 @@ TEST( Mesh2DMTest, UnsuportedElements )
 TEST( Mesh2DMTest, Mixed1D2D )
 {
   std::string path = test_file( "/2dm/quad_and_line.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -59,7 +59,7 @@ TEST( Mesh2DMTest, MeshWithNumberingGaps )
 {
   //https://github.com/lutraconsulting/MDAL/issues/51
   std::string path = test_file( "/2dm/mesh_with_numbering_gaps.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -73,14 +73,14 @@ TEST( Mesh2DMTest, MeshWithNumberingGaps )
 TEST( Mesh2DMTest, MeshWithUnorderedIds )
 {
   std::string path = test_file( "/2dm/unordered_ids.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
 }
 
 TEST( Mesh2DMTest, QuadAndTriangleFile )
 {
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -123,7 +123,7 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   // Bed elevation dataset
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -139,7 +139,7 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -160,7 +160,7 @@ TEST( Mesh2DMTest, LinesFile )
 {
   std::string path = test_file( "/2dm/lines.2dm" );
 
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -207,7 +207,7 @@ TEST( Mesh2DMTest, LinesFile )
   // Bed elevation dataset
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -223,7 +223,7 @@ TEST( Mesh2DMTest, LinesFile )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -243,7 +243,7 @@ TEST( Mesh2DMTest, LinesFile )
 TEST( Mesh2DMTest, RegularGridFile )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -270,7 +270,7 @@ TEST( Mesh2DMTest, RegularGridFile )
 TEST( Mesh2DMTest, Basement3CellElevationTest )
 {
   std::string path = test_file( "/xdmf/basement3/SimpleChannel/SimpleChannel.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -314,7 +314,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
   ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -330,7 +330,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 0 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -348,7 +348,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
   // Bed elevation dataset and face elevation dataset
   {
 
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -364,7 +364,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 0 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );

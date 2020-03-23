@@ -11,7 +11,7 @@
 
 TEST( MeshBinaryDatTest, MissingMesh )
 {
-  MeshH m = nullptr;
+  MDAL_MeshH m = nullptr;
   std::string path = test_file( "binary_dat/quad_and_triangle_binary.dat" );
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
@@ -22,7 +22,7 @@ TEST( MeshBinaryDatTest, MissingMesh )
 TEST( MeshBinaryDatTest, QuadAndTriangleFile )
 {
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/binary_dat/quad_and_triangle_binary.dat" );
   MDAL_M_LoadDatasets( m, path.c_str() );
@@ -31,7 +31,7 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
 
   ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -47,7 +47,7 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -74,7 +74,7 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
 TEST( MeshBinaryDatTest, RegularGridVectorFile )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/binary_dat/regular_grid_vector.dat" );
   MDAL_M_LoadDatasets( m, path.c_str() );
@@ -82,7 +82,7 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   EXPECT_EQ( MDAL_Status::None, s );
   ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -98,7 +98,7 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 50 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 50 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -124,7 +124,7 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
 TEST( MeshBinaryDatTest, RegularGridScalarFile )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/binary_dat/regular_grid_scalar.dat" );
   MDAL_M_LoadDatasets( m, path.c_str() );
@@ -132,7 +132,7 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
   EXPECT_EQ( MDAL_Status::None, s );
   ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -148,7 +148,7 @@ TEST( MeshBinaryDatTest, RegularGridScalarFile )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 61, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -176,26 +176,26 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
   // Create a new dat file
   {
 
-    MeshH m = MDAL_LoadMesh( path.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
     ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-    DriverH driver = MDAL_driverFromName( "BINARY_DAT" );
+    MDAL_DriverH driver = MDAL_driverFromName( "BINARY_DAT" );
     ASSERT_NE( driver, nullptr );
     ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices ) );
     ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces ) );
     ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVolumes ) );
     ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataInvalidLocation ) );
 
-    DatasetGroupH g = MDAL_M_addDatasetGroup(
-                        m,
-                        "scalarGrp",
-                        MDAL_DataLocation::DataOnVertices,
-                        true,
-                        driver,
-                        scalarPath.c_str()
-                      );
+    MDAL_DatasetGroupH g = MDAL_M_addDatasetGroup(
+                             m,
+                             "scalarGrp",
+                             MDAL_DataLocation::DataOnVertices,
+                             true,
+                             driver,
+                             scalarPath.c_str()
+                           );
     ASSERT_NE( g, nullptr );
 
     ASSERT_EQ( MDAL_G_metadataCount( g ), 1 );
@@ -227,14 +227,14 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
   // file and test the
   // values are there
   {
-    MeshH m = MDAL_LoadMesh( path.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, scalarPath.c_str() );
     MDAL_Status s = MDAL_LastStatus();
     EXPECT_EQ( MDAL_Status::None, s );
     ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -250,7 +250,7 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 0 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -279,23 +279,23 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
   // Create a new dat file
   {
 
-    MeshH m = MDAL_LoadMesh( path.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
     ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-    DriverH driver = MDAL_driverFromName( "BINARY_DAT" );
+    MDAL_DriverH driver = MDAL_driverFromName( "BINARY_DAT" );
     ASSERT_NE( driver, nullptr );
     ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices ) );
 
-    DatasetGroupH g = MDAL_M_addDatasetGroup(
-                        m,
-                        "vectorGrp",
-                        MDAL_DataLocation::DataOnVertices,
-                        false,
-                        driver,
-                        vectorPath.c_str()
-                      );
+    MDAL_DatasetGroupH g = MDAL_M_addDatasetGroup(
+                             m,
+                             "vectorGrp",
+                             MDAL_DataLocation::DataOnVertices,
+                             false,
+                             driver,
+                             vectorPath.c_str()
+                           );
     ASSERT_NE( g, nullptr );
 
     MDAL_G_addDataset( g,
@@ -323,14 +323,14 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
   // file and test the
   // values are there
   {
-    MeshH m = MDAL_LoadMesh( path.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, vectorPath.c_str() );
     MDAL_Status s = MDAL_LastStatus();
     EXPECT_EQ( MDAL_Status::None, s );
     ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -346,7 +346,7 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 0 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );

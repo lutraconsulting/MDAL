@@ -14,7 +14,7 @@
 TEST( MeshSLFTest, MalpassetGeometry )
 {
   std::string path = test_file( "/slf/example.slf" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -63,7 +63,7 @@ TEST( MeshSLFTest, MalpassetGeometry )
   // Datasets
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -79,7 +79,7 @@ TEST( MeshSLFTest, MalpassetGeometry )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -106,7 +106,7 @@ TEST( MeshSLFTest, MalpassetGeometry )
 TEST( MeshSLFTest, MalpassetResultFrench )
 {
   std::string path = test_file( "/slf/example_res_fr.slf" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -140,7 +140,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   // ///////////
   // Scalar Dataset
   // ///////////
-  DatasetGroupH r = MDAL_M_datasetGroup( m, 2 );
+  MDAL_DatasetGroupH r = MDAL_M_datasetGroup( m, 2 );
   ASSERT_NE( r, nullptr );
 
   int meta_count = MDAL_G_metadataCount( r );
@@ -156,7 +156,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( r ) );
-  DatasetH ds = MDAL_G_dataset( r, 1 );
+  MDAL_DatasetH ds = MDAL_G_dataset( r, 1 );
   ASSERT_NE( ds, nullptr );
 
   double time = MDAL_D_time( ds );

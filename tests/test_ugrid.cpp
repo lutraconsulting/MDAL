@@ -33,7 +33,7 @@ TEST( MeshUgridTest, DFlow11Manzese )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
   std::string uri = "\"" + path + "\":mesh2d";
-  MeshH m = MDAL_LoadMesh( uri.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -67,7 +67,7 @@ TEST( MeshUgridTest, DFlow11Manzese )
   // ///////////
   // Dataset
   // ///////////
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -83,7 +83,7 @@ TEST( MeshUgridTest, DFlow11Manzese )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -118,7 +118,7 @@ TEST( MeshUgridTest, DFlow11ManzeseNodeZValue )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
   std::string uri = "\"" + path + "\":mesh2d";
-  MeshH m = MDAL_LoadMesh( uri.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -132,7 +132,7 @@ TEST( MeshUgridTest, DFlow11ManzeseNodeZValue )
 TEST( MeshUgridTest, DFlow11Simplebox )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/simplebox_hex7_map.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -164,7 +164,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   // ///////////
   ASSERT_EQ( 10, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 7 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 7 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -180,7 +180,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 13, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 3 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 3 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -214,7 +214,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
 TEST( MeshUgridTest, DFlow12RivierGridClm )
 {
   std::string path = test_file( "/ugrid/D-Flow1.2/bw_11_zonder_riviergrid_met_1dwtg_clm.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -242,7 +242,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   // ///////////
   ASSERT_EQ( 6, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -258,7 +258,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 45, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 3 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 3 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -297,7 +297,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
 TEST( MeshUgridTest, DFlow12RivierGridMap )
 {
   std::string path = test_file( "/ugrid/D-Flow1.2/bw_11_zonder_riviergrid_met_1dwtg_map.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -325,7 +325,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   // ///////////
   ASSERT_EQ( 6, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -341,7 +341,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 23, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 3 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 3 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -418,7 +418,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
 TEST( MeshUgridTest, UGRIDFormatWithoutTime )
 {
   std::string path = test_file( "/ugrid/without_time/TINUGRID.tin" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -435,7 +435,7 @@ TEST( MeshUgridTest, UGRIDFormatWithoutTime )
 TEST( MeshUgridTest, ADCIRC )
 {
   std::string path = test_file( "/ugrid/ADCIRC/ADCIRC_BG_20190910_1t.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -463,7 +463,7 @@ TEST( MeshUgridTest, ADCIRC )
   // ///////////
   ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -479,7 +479,7 @@ TEST( MeshUgridTest, ADCIRC )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 1 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 1 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -557,7 +557,7 @@ TEST( MeshUgridTest, 1DMeshTest )
 
   std::string uri = "Ugrid:\"" + path + "\":" + "mesh1d";
 
-  MeshH m = MDAL_LoadMesh( uri.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
 
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -585,7 +585,7 @@ TEST( MeshUgridTest, 1DMeshTest )
   EXPECT_TRUE( compareVectors( startNodeEdgeIndices, expectedStartNodes ) );
   EXPECT_TRUE( compareVectors( endNodeEdgeIndices, expectedEndNodes ) );
 
-  DatasetGroupH dg = MDAL_M_datasetGroup( m, 3 );
+  MDAL_DatasetGroupH dg = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( dg, nullptr );
 
   ASSERT_EQ( std::string( "Flow element center velocity magnitude" ), std::string( MDAL_G_name( dg ) ) );
@@ -594,7 +594,7 @@ TEST( MeshUgridTest, 1DMeshTest )
   MDAL_DataLocation dg_location = MDAL_G_dataLocation( dg );
   EXPECT_EQ( dg_location, MDAL_DataLocation::DataOnVertices );
 
-  DatasetH ds = MDAL_G_dataset( dg, 15 );
+  MDAL_DatasetH ds = MDAL_G_dataset( dg, 15 );
   ASSERT_NE( ds, nullptr );
 
   int ds_count = MDAL_D_valueCount( ds );

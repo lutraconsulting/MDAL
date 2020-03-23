@@ -14,7 +14,7 @@
 TEST( MeshFlo2dTest, missing_required_file )
 {
   std::string path = test_file( "/flo2d/missing_required_file/BASE.OUT" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_EQ( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
@@ -35,9 +35,9 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
 
   // Create a new dat file
   {
-    MeshH m = MDAL_LoadMesh( path.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
-    DriverH driver = MDAL_driverFromName( "FLO2D" );
+    MDAL_DriverH driver = MDAL_driverFromName( "FLO2D" );
     ASSERT_NE( driver, nullptr );
     ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnFaces ) );
     ASSERT_FALSE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices ) );
@@ -46,14 +46,14 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
     ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
     // add scalar group
-    DatasetGroupH g = MDAL_M_addDatasetGroup(
-                        m,
-                        "scalarGrp",
-                        MDAL_DataLocation::DataOnFaces,
-                        true,
-                        driver,
-                        newFile.c_str()
-                      );
+    MDAL_DatasetGroupH g = MDAL_M_addDatasetGroup(
+                             m,
+                             "scalarGrp",
+                             MDAL_DataLocation::DataOnFaces,
+                             true,
+                             driver,
+                             newFile.c_str()
+                           );
     ASSERT_NE( g, nullptr );
     MDAL_G_addDataset( g,
                        0.0,
@@ -72,14 +72,14 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
 
     // add vector group
-    DatasetGroupH gV = MDAL_M_addDatasetGroup(
-                         m,
-                         "vectorGrp",
-                         MDAL_DataLocation::DataOnFaces,
-                         false,
-                         driver,
-                         newFile.c_str()
-                       );
+    MDAL_DatasetGroupH gV = MDAL_M_addDatasetGroup(
+                              m,
+                              "vectorGrp",
+                              MDAL_DataLocation::DataOnFaces,
+                              false,
+                              driver,
+                              newFile.c_str()
+                            );
     ASSERT_NE( gV, nullptr );
     MDAL_G_addDataset( gV,
                        0.0,
@@ -104,7 +104,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
   // file and test the
   // values are there
   {
-    MeshH m = MDAL_LoadMesh( path.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
     MDAL_M_LoadDatasets( m, newFile.c_str() );
@@ -114,7 +114,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
 
     // scalar group
     {
-      DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+      MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
       ASSERT_NE( g, nullptr );
 
       const char *name = MDAL_G_name( g );
@@ -127,7 +127,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-      DatasetH ds = MDAL_G_dataset( g, 0 );
+      MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
       ASSERT_NE( ds, nullptr );
 
       bool valid = MDAL_D_isValid( ds );
@@ -144,7 +144,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
 
     // vector group
     {
-      DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+      MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
       ASSERT_NE( g, nullptr );
 
       const char *name = MDAL_G_name( g );
@@ -157,7 +157,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
       EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-      DatasetH ds = MDAL_G_dataset( g, 0 );
+      MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
       ASSERT_NE( ds, nullptr );
 
       bool valid = MDAL_D_isValid( ds );
@@ -207,21 +207,21 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
 
   // Create a new dat file
   {
-    MeshH m = MDAL_LoadMesh( pathOrig.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( pathOrig.c_str() );
     ASSERT_NE( m, nullptr );
-    DriverH driver = MDAL_driverFromName( "FLO2D" );
+    MDAL_DriverH driver = MDAL_driverFromName( "FLO2D" );
     ASSERT_NE( driver, nullptr );
     ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
     // add scalar group
-    DatasetGroupH g = MDAL_M_addDatasetGroup(
-                        m,
-                        "scalarGrp",
-                        MDAL_DataLocation::DataOnFaces,
-                        true,
-                        driver,
-                        appendedFile.c_str()
-                      );
+    MDAL_DatasetGroupH g = MDAL_M_addDatasetGroup(
+                             m,
+                             "scalarGrp",
+                             MDAL_DataLocation::DataOnFaces,
+                             true,
+                             driver,
+                             appendedFile.c_str()
+                           );
     ASSERT_NE( g, nullptr );
     MDAL_G_addDataset( g,
                        0.0,
@@ -240,14 +240,14 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
     ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
 
     // add vector group
-    DatasetGroupH gV = MDAL_M_addDatasetGroup(
-                         m,
-                         "vectorGrp",
-                         MDAL_DataLocation::DataOnFaces,
-                         false,
-                         driver,
-                         appendedFile.c_str()
-                       );
+    MDAL_DatasetGroupH gV = MDAL_M_addDatasetGroup(
+                              m,
+                              "vectorGrp",
+                              MDAL_DataLocation::DataOnFaces,
+                              false,
+                              driver,
+                              appendedFile.c_str()
+                            );
     ASSERT_NE( gV, nullptr );
     MDAL_G_addDataset( gV,
                        0.0,
@@ -272,7 +272,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
   // file and test the
   // values are there
   {
-    MeshH m = MDAL_LoadMesh( appendedFile.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( appendedFile.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_Status s = MDAL_LastStatus();
     EXPECT_EQ( MDAL_Status::None, s );
@@ -280,7 +280,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
 
     // scalar group
     {
-      DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+      MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
       ASSERT_NE( g, nullptr );
 
       const char *name = MDAL_G_name( g );
@@ -293,7 +293,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-      DatasetH ds = MDAL_G_dataset( g, 0 );
+      MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
       ASSERT_NE( ds, nullptr );
 
       bool valid = MDAL_D_isValid( ds );
@@ -316,7 +316,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
 
     // vector group
     {
-      DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+      MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
       ASSERT_NE( g, nullptr );
 
       const char *name = MDAL_G_name( g );
@@ -329,7 +329,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
       EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
       ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
-      DatasetH ds = MDAL_G_dataset( g, 0 );
+      MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
       ASSERT_NE( ds, nullptr );
 
       bool valid = MDAL_D_isValid( ds );
@@ -371,7 +371,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
 TEST( MeshFlo2dTest, BarnHDF5 )
 {
   std::string path = test_file( "/flo2d/BarnHDF5/BASE.OUT" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -421,7 +421,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   // ///////////
   ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -437,7 +437,7 @@ TEST( MeshFlo2dTest, BarnHDF5 )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -555,7 +555,7 @@ TEST( MeshFlo2dTest, basic )
   for ( const std::string &file : files )
   {
     std::string path = test_file( "/flo2d/" + file + "/BASE.OUT" );
-    MeshH m = MDAL_LoadMesh( path.c_str() );
+    MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_Status s = MDAL_LastStatus();
     EXPECT_EQ( MDAL_Status::None, s );
@@ -601,7 +601,7 @@ TEST( MeshFlo2dTest, basic )
     // ///////////
     ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -617,7 +617,7 @@ TEST( MeshFlo2dTest, basic )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 0 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -726,7 +726,7 @@ TEST( MeshFlo2dTest, basic )
 TEST( MeshFlo2dTest, basic_required_files_only )
 {
   std::string path = test_file( "/flo2d/basic_required_files_only/BASE.OUT" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -751,7 +751,7 @@ TEST( MeshFlo2dTest, basic_required_files_only )
   // ///////////
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -767,7 +767,7 @@ TEST( MeshFlo2dTest, basic_required_files_only )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -789,7 +789,7 @@ TEST( MeshFlo2dTest, basic_required_files_only )
 TEST( MeshFlo2dTest, pro_16_02_14 )
 {
   std::string path = test_file( "/flo2d/pro_16_02_14/BASE.OUT" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -815,7 +815,7 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
   // ///////////
   ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -831,7 +831,7 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );

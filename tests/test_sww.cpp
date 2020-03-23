@@ -13,7 +13,7 @@
 TEST( MeshSWWTest, Cairns )
 {
   std::string path = test_file( "/sww/anuga-viewer/cairns.sww" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -65,7 +65,7 @@ TEST( MeshSWWTest, Cairns )
   // ///////////
   ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -81,7 +81,7 @@ TEST( MeshSWWTest, Cairns )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -154,7 +154,7 @@ TEST( MeshSWWTest, Cairns )
 TEST( MeshSWWTest, Flat )
 {
   std::string path = test_file( "/sww/anuga-viewer/flat.sww" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -179,7 +179,7 @@ TEST( MeshSWWTest, Flat )
 TEST( MeshSWWTest, Catchment )
 {
   std::string path = test_file( "/sww/anuga-viewer/Small_catchment_testcase.sww" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -198,19 +198,19 @@ TEST( MeshSWWTest, Catchment )
   ASSERT_EQ( 9, MDAL_M_datasetGroupCount( m ) );
 
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
     EXPECT_EQ( std::string( "momentum" ), std::string( MDAL_G_name( g ) ) );
     EXPECT_EQ( false, MDAL_G_hasScalarData( g ) );
   }
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
     EXPECT_EQ( std::string( "momentum/Maximums" ), std::string( MDAL_G_name( g ) ) );
     EXPECT_EQ( false, MDAL_G_hasScalarData( g ) );
   }
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
     ASSERT_NE( g, nullptr );
     EXPECT_EQ( std::string( "elevation" ), std::string( MDAL_G_name( g ) ) );
     EXPECT_EQ( true, MDAL_G_hasScalarData( g ) );
@@ -221,7 +221,7 @@ TEST( MeshSWWTest, Catchment )
 TEST( MeshSWWTest, Laminar )
 {
   std::string path = test_file( "/sww/anuga-viewer/laminar.sww" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -245,7 +245,7 @@ TEST( MeshSWWTest, Laminar )
 TEST( MeshSWWTest, Wave )
 {
   std::string path = test_file( "/sww/anuga-viewer/holl_bch_wave_mesh_elevation_smooth_ys10.0_ft500.0_size4802.sww" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );

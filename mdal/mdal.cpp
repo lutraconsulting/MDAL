@@ -58,7 +58,7 @@ int MDAL_driverCount()
   return static_cast<int>( count );
 }
 
-DriverH MDAL_driverFromIndex( int index )
+MDAL_DriverH MDAL_driverFromIndex( int index )
 {
   if ( index < 0 )
   {
@@ -68,17 +68,17 @@ DriverH MDAL_driverFromIndex( int index )
 
   size_t idx = static_cast<size_t>( index );
   std::shared_ptr<MDAL::Driver> driver = MDAL::DriverManager::instance().driver( idx );
-  return static_cast<DriverH>( driver.get() );
+  return static_cast<MDAL_DriverH>( driver.get() );
 }
 
-DriverH MDAL_driverFromName( const char *name )
+MDAL_DriverH MDAL_driverFromName( const char *name )
 {
   std::string nm = name;
   std::shared_ptr<MDAL::Driver> driver = MDAL::DriverManager::instance().driver( nm );
-  return static_cast<DriverH>( driver.get() );
+  return static_cast<MDAL_DriverH>( driver.get() );
 }
 
-bool MDAL_DR_meshLoadCapability( DriverH driver )
+bool MDAL_DR_meshLoadCapability( MDAL_DriverH driver )
 {
   if ( !driver )
   {
@@ -90,7 +90,7 @@ bool MDAL_DR_meshLoadCapability( DriverH driver )
   return d->hasCapability( MDAL::Capability::ReadMesh );
 }
 
-bool MDAL_DR_writeDatasetsCapability( DriverH driver, MDAL_DataLocation location )
+bool MDAL_DR_writeDatasetsCapability( MDAL_DriverH driver, MDAL_DataLocation location )
 {
   if ( !driver )
   {
@@ -103,7 +103,7 @@ bool MDAL_DR_writeDatasetsCapability( DriverH driver, MDAL_DataLocation location
   return d->hasWriteDatasetCapability( location );
 }
 
-bool MDAL_DR_saveMeshCapability( DriverH driver )
+bool MDAL_DR_saveMeshCapability( MDAL_DriverH driver )
 {
   if ( !driver )
   {
@@ -115,7 +115,7 @@ bool MDAL_DR_saveMeshCapability( DriverH driver )
   return d->hasCapability( MDAL::Capability::SaveMesh );
 }
 
-const char *MDAL_DR_longName( DriverH driver )
+const char *MDAL_DR_longName( MDAL_DriverH driver )
 {
   if ( !driver )
   {
@@ -127,7 +127,7 @@ const char *MDAL_DR_longName( DriverH driver )
   return _return_str( d->longName() );
 }
 
-const char *MDAL_DR_name( DriverH driver )
+const char *MDAL_DR_name( MDAL_DriverH driver )
 {
   if ( !driver )
   {
@@ -139,7 +139,7 @@ const char *MDAL_DR_name( DriverH driver )
   return _return_str( d->name() );
 }
 
-const char *MDAL_DR_filters( DriverH driver )
+const char *MDAL_DR_filters( MDAL_DriverH driver )
 {
   if ( !driver )
   {
@@ -154,7 +154,7 @@ const char *MDAL_DR_filters( DriverH driver )
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
 
-MeshH MDAL_LoadMesh( const char *uri )
+MDAL_MeshH MDAL_LoadMesh( const char *uri )
 {
   if ( !uri )
   {
@@ -168,13 +168,13 @@ MeshH MDAL_LoadMesh( const char *uri )
 
   if ( !driverName.empty() )
   {
-    return static_cast< MeshH >( MDAL::DriverManager::instance().load( driverName, meshFile, meshName ).release() );
+    return static_cast< MDAL_MeshH >( MDAL::DriverManager::instance().load( driverName, meshFile, meshName ).release() );
   }
   else
-    return static_cast< MeshH >( MDAL::DriverManager::instance().load( meshFile, meshName ).release() );
+    return static_cast< MDAL_MeshH >( MDAL::DriverManager::instance().load( meshFile, meshName ).release() );
 }
 
-void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
+void MDAL_SaveMesh( MDAL_MeshH mesh, const char *meshFile, const char *driver )
 {
   if ( !meshFile )
   {
@@ -208,7 +208,7 @@ void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
 }
 
 
-void MDAL_CloseMesh( MeshH mesh )
+void MDAL_CloseMesh( MDAL_MeshH mesh )
 {
   if ( mesh )
   {
@@ -217,7 +217,7 @@ void MDAL_CloseMesh( MeshH mesh )
   }
 }
 
-const char *MDAL_M_projection( MeshH mesh )
+const char *MDAL_M_projection( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -229,7 +229,7 @@ const char *MDAL_M_projection( MeshH mesh )
   return _return_str( m->crs() );
 }
 
-void MDAL_M_extent( MeshH mesh, double *minX, double *maxX, double *minY, double *maxY )
+void MDAL_M_extent( MDAL_MeshH mesh, double *minX, double *maxX, double *minY, double *maxY )
 {
   if ( !mesh )
   {
@@ -250,7 +250,7 @@ void MDAL_M_extent( MeshH mesh, double *minX, double *maxX, double *minY, double
   }
 }
 
-int MDAL_M_vertexCount( MeshH mesh )
+int MDAL_M_vertexCount( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -264,7 +264,7 @@ int MDAL_M_vertexCount( MeshH mesh )
 }
 
 
-int MDAL_M_edgeCount( MeshH mesh )
+int MDAL_M_edgeCount( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -277,7 +277,7 @@ int MDAL_M_edgeCount( MeshH mesh )
   return len;
 }
 
-int MDAL_M_faceCount( MeshH mesh )
+int MDAL_M_faceCount( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -289,7 +289,7 @@ int MDAL_M_faceCount( MeshH mesh )
   return len;
 }
 
-int MDAL_M_faceVerticesMaximumCount( MeshH mesh )
+int MDAL_M_faceVerticesMaximumCount( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -301,7 +301,7 @@ int MDAL_M_faceVerticesMaximumCount( MeshH mesh )
   return len;
 }
 
-void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile )
+void MDAL_M_LoadDatasets( MDAL_MeshH mesh, const char *datasetFile )
 {
   if ( !datasetFile )
   {
@@ -321,7 +321,7 @@ void MDAL_M_LoadDatasets( MeshH mesh, const char *datasetFile )
   MDAL::DriverManager::instance().loadDatasets( m, datasetFile );
 }
 
-int MDAL_M_datasetGroupCount( MeshH mesh )
+int MDAL_M_datasetGroupCount( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -333,7 +333,7 @@ int MDAL_M_datasetGroupCount( MeshH mesh )
   return len;
 }
 
-DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
+MDAL_DatasetGroupH MDAL_M_datasetGroup( MDAL_MeshH mesh, int index )
 {
   if ( !mesh )
   {
@@ -355,15 +355,15 @@ DatasetGroupH MDAL_M_datasetGroup( MeshH mesh, int index )
     return nullptr;
   }
   size_t i = static_cast<size_t>( index );
-  return static_cast< DatasetH >( m->datasetGroups[i].get() );
+  return static_cast< MDAL_DatasetH >( m->datasetGroups[i].get() );
 }
 
-DatasetGroupH MDAL_M_addDatasetGroup(
-  MeshH mesh,
+MDAL_DatasetGroupH MDAL_M_addDatasetGroup(
+  MDAL_MeshH mesh,
   const char *name,
   MDAL_DataLocation dataLocation,
   bool hasScalarData,
-  DriverH driver,
+  MDAL_DriverH driver,
   const char *datasetGroupFile )
 {
   if ( !mesh )
@@ -407,12 +407,12 @@ DatasetGroupH MDAL_M_addDatasetGroup(
                           datasetGroupFile
                         );
   if ( index < m->datasetGroups.size() ) // we have new dataset group
-    return static_cast< DatasetGroupH >( m->datasetGroups[ index ].get() );
+    return static_cast< MDAL_DatasetGroupH >( m->datasetGroups[ index ].get() );
   else
     return nullptr;
 }
 
-const char *MDAL_M_driverName( MeshH mesh )
+const char *MDAL_M_driverName( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -428,7 +428,7 @@ const char *MDAL_M_driverName( MeshH mesh )
 /// MESH VERTICES
 ///////////////////////////////////////////////////////////////////////////////////////
 
-MeshVertexIteratorH MDAL_M_vertexIterator( MeshH mesh )
+MDAL_MeshVertexIteratorH MDAL_M_vertexIterator( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -437,10 +437,10 @@ MeshVertexIteratorH MDAL_M_vertexIterator( MeshH mesh )
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   std::unique_ptr<MDAL::MeshVertexIterator> it = m->readVertices();
-  return static_cast< MeshVertexIteratorH >( it.release() );
+  return static_cast< MDAL_MeshVertexIteratorH >( it.release() );
 }
 
-int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coordinates )
+int MDAL_VI_next( MDAL_MeshVertexIteratorH iterator, int verticesCount, double *coordinates )
 {
   if ( verticesCount < 1 )
     return 0;
@@ -461,7 +461,7 @@ int MDAL_VI_next( MeshVertexIteratorH iterator, int verticesCount, double *coord
   return static_cast<int>( ret );
 }
 
-void MDAL_VI_close( MeshVertexIteratorH iterator )
+void MDAL_VI_close( MDAL_MeshVertexIteratorH iterator )
 {
   if ( iterator )
   {
@@ -474,7 +474,7 @@ void MDAL_VI_close( MeshVertexIteratorH iterator )
 /// MESH EDGES
 ///////////////////////////////////////////////////////////////////////////////////////
 
-MeshEdgeIteratorH MDAL_M_edgeIterator( MeshH mesh )
+MDAL_MeshEdgeIteratorH MDAL_M_edgeIterator( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -483,10 +483,10 @@ MeshEdgeIteratorH MDAL_M_edgeIterator( MeshH mesh )
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   std::unique_ptr<MDAL::MeshEdgeIterator> it = m->readEdges();
-  return static_cast< MeshEdgeIteratorH >( it.release() );
+  return static_cast< MDAL_MeshEdgeIteratorH >( it.release() );
 }
 
-int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIndices, int *endVertexIndices )
+int MDAL_EI_next( MDAL_MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIndices, int *endVertexIndices )
 {
   if ( edgesCount < 1 )
     return 0;
@@ -509,7 +509,7 @@ int MDAL_EI_next( MeshEdgeIteratorH iterator, int edgesCount, int *startVertexIn
   return static_cast<int>( ret );
 }
 
-void MDAL_EI_close( MeshEdgeIteratorH iterator )
+void MDAL_EI_close( MDAL_MeshEdgeIteratorH iterator )
 {
   if ( iterator )
   {
@@ -522,7 +522,7 @@ void MDAL_EI_close( MeshEdgeIteratorH iterator )
 /// MESH FACES
 ///////////////////////////////////////////////////////////////////////////////////////
 
-MeshFaceIteratorH MDAL_M_faceIterator( MeshH mesh )
+MDAL_MeshFaceIteratorH MDAL_M_faceIterator( MDAL_MeshH mesh )
 {
   if ( !mesh )
   {
@@ -531,10 +531,10 @@ MeshFaceIteratorH MDAL_M_faceIterator( MeshH mesh )
   }
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   std::unique_ptr<MDAL::MeshFaceIterator > it = m->readFaces();
-  return static_cast< MeshFaceIteratorH >( it.release() );
+  return static_cast< MDAL_MeshFaceIteratorH >( it.release() );
 }
 
-int MDAL_FI_next( MeshFaceIteratorH iterator,
+int MDAL_FI_next( MDAL_MeshFaceIteratorH iterator,
                   int faceOffsetsBufferLen,
                   int *faceOffsetsBuffer,
                   int vertexIndicesBufferLen,
@@ -557,7 +557,7 @@ int MDAL_FI_next( MeshFaceIteratorH iterator,
 }
 
 
-void MDAL_FI_close( MeshFaceIteratorH iterator )
+void MDAL_FI_close( MDAL_MeshFaceIteratorH iterator )
 {
   if ( iterator )
   {
@@ -571,7 +571,7 @@ void MDAL_FI_close( MeshFaceIteratorH iterator )
 /// DATASET GROUPS
 ///////////////////////////////////////////////////////////////////////////////////////
 
-MeshH MDAL_G_mesh( DatasetGroupH group )
+MDAL_MeshH MDAL_G_mesh( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -580,10 +580,10 @@ MeshH MDAL_G_mesh( DatasetGroupH group )
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
   MDAL::Mesh *m = g->mesh();
-  return static_cast< MeshH >( m );
+  return static_cast< MDAL_MeshH >( m );
 }
 
-int MDAL_G_datasetCount( DatasetGroupH group )
+int MDAL_G_datasetCount( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -595,7 +595,7 @@ int MDAL_G_datasetCount( DatasetGroupH group )
   return len;
 }
 
-DatasetH MDAL_G_dataset( DatasetGroupH group, int index )
+MDAL_DatasetH MDAL_G_dataset( MDAL_DatasetGroupH group, int index )
 {
   if ( !group )
   {
@@ -617,10 +617,10 @@ DatasetH MDAL_G_dataset( DatasetGroupH group, int index )
     return nullptr;
   }
   size_t i = static_cast<size_t>( index );
-  return static_cast< DatasetH >( g->datasets[i].get() );
+  return static_cast< MDAL_DatasetH >( g->datasets[i].get() );
 }
 
-int MDAL_G_metadataCount( DatasetGroupH group )
+int MDAL_G_metadataCount( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -632,7 +632,7 @@ int MDAL_G_metadataCount( DatasetGroupH group )
   return len;
 }
 
-const char *MDAL_G_metadataKey( DatasetGroupH group, int index )
+const char *MDAL_G_metadataKey( MDAL_DatasetGroupH group, int index )
 {
   if ( !group )
   {
@@ -650,7 +650,7 @@ const char *MDAL_G_metadataKey( DatasetGroupH group, int index )
   return _return_str( g->metadata[i].first );
 }
 
-const char *MDAL_G_metadataValue( DatasetGroupH group, int index )
+const char *MDAL_G_metadataValue( MDAL_DatasetGroupH group, int index )
 {
   if ( !group )
   {
@@ -668,7 +668,7 @@ const char *MDAL_G_metadataValue( DatasetGroupH group, int index )
   return _return_str( g->metadata[i].second );
 }
 
-const char *MDAL_G_name( DatasetGroupH group )
+const char *MDAL_G_name( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -679,7 +679,7 @@ const char *MDAL_G_name( DatasetGroupH group )
   return _return_str( g->name() );
 }
 
-bool MDAL_G_hasScalarData( DatasetGroupH group )
+bool MDAL_G_hasScalarData( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -690,7 +690,7 @@ bool MDAL_G_hasScalarData( DatasetGroupH group )
   return g->isScalar();
 }
 
-MDAL_DataLocation MDAL_G_dataLocation( DatasetGroupH group )
+MDAL_DataLocation MDAL_G_dataLocation( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -701,7 +701,7 @@ MDAL_DataLocation MDAL_G_dataLocation( DatasetGroupH group )
   return g->dataLocation();
 }
 
-int MDAL_G_maximumVerticalLevelCount( DatasetGroupH group )
+int MDAL_G_maximumVerticalLevelCount( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -713,7 +713,7 @@ int MDAL_G_maximumVerticalLevelCount( DatasetGroupH group )
   return len;
 }
 
-void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max )
+void MDAL_G_minimumMaximum( MDAL_DatasetGroupH group, double *min, double *max )
 {
   if ( !min || !max )
   {
@@ -735,7 +735,7 @@ void MDAL_G_minimumMaximum( DatasetGroupH group, double *min, double *max )
   *max = stats.maximum;
 }
 
-DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *values, const int *active )
+MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group, double time, const double *values, const int *active )
 {
   if ( !group )
   {
@@ -790,12 +790,12 @@ DatasetH MDAL_G_addDataset( DatasetGroupH group, double time, const double *valu
                      active
                    );
   if ( index < g->datasets.size() ) // we have new dataset
-    return static_cast< DatasetGroupH >( g->datasets[ index ].get() );
+    return static_cast< MDAL_DatasetGroupH >( g->datasets[ index ].get() );
   else
     return nullptr;
 }
 
-bool MDAL_G_isInEditMode( DatasetGroupH group )
+bool MDAL_G_isInEditMode( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -806,7 +806,7 @@ bool MDAL_G_isInEditMode( DatasetGroupH group )
   return g->isInEditMode();
 }
 
-void MDAL_G_closeEditMode( DatasetGroupH group )
+void MDAL_G_closeEditMode( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -844,7 +844,7 @@ void MDAL_G_closeEditMode( DatasetGroupH group )
   }
 }
 
-const char *MDAL_G_referenceTime( DatasetGroupH group )
+const char *MDAL_G_referenceTime( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -855,7 +855,7 @@ const char *MDAL_G_referenceTime( DatasetGroupH group )
   return _return_str( g->referenceTime().toStandartCalendarISO8601() );
 }
 
-void MDAL_G_setMetadata( DatasetGroupH group, const char *key, const char *val )
+void MDAL_G_setMetadata( MDAL_DatasetGroupH group, const char *key, const char *val )
 {
   if ( !group )
   {
@@ -880,7 +880,7 @@ void MDAL_G_setMetadata( DatasetGroupH group, const char *key, const char *val )
   g->setMetadata( k, v );
 }
 
-const char *MDAL_G_driverName( DatasetGroupH group )
+const char *MDAL_G_driverName( MDAL_DatasetGroupH group )
 {
   if ( !group )
   {
@@ -895,7 +895,7 @@ const char *MDAL_G_driverName( DatasetGroupH group )
 /// DATASETS
 ///////////////////////////////////////////////////////////////////////////////////////
 
-DatasetGroupH MDAL_D_group( DatasetH dataset )
+MDAL_DatasetGroupH MDAL_D_group( MDAL_DatasetH dataset )
 {
   if ( !dataset )
   {
@@ -906,7 +906,7 @@ DatasetGroupH MDAL_D_group( DatasetH dataset )
   return static_cast< MDAL::DatasetGroup * >( d->group() );
 }
 
-double MDAL_D_time( DatasetH dataset )
+double MDAL_D_time( MDAL_DatasetH dataset )
 {
   if ( !dataset )
   {
@@ -917,7 +917,7 @@ double MDAL_D_time( DatasetH dataset )
   return d->time( MDAL::RelativeTimestamp::hours );
 }
 
-int MDAL_D_volumesCount( DatasetH dataset )
+int MDAL_D_volumesCount( MDAL_DatasetH dataset )
 {
   if ( !dataset )
   {
@@ -929,7 +929,7 @@ int MDAL_D_volumesCount( DatasetH dataset )
   return len;
 }
 
-int MDAL_D_maximumVerticalLevelCount( DatasetH dataset )
+int MDAL_D_maximumVerticalLevelCount( MDAL_DatasetH dataset )
 {
   if ( !dataset )
   {
@@ -941,7 +941,7 @@ int MDAL_D_maximumVerticalLevelCount( DatasetH dataset )
   return len;
 }
 
-int MDAL_D_valueCount( DatasetH dataset )
+int MDAL_D_valueCount( MDAL_DatasetH dataset )
 {
   if ( !dataset )
   {
@@ -953,7 +953,7 @@ int MDAL_D_valueCount( DatasetH dataset )
   return len;
 }
 
-bool MDAL_D_isValid( DatasetH dataset )
+bool MDAL_D_isValid( MDAL_DatasetH dataset )
 {
   if ( !dataset )
   {
@@ -964,7 +964,7 @@ bool MDAL_D_isValid( DatasetH dataset )
   return d->isValid();
 }
 
-int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer )
+int MDAL_D_data( MDAL_DatasetH dataset, int indexStart, int count, MDAL_DataType dataType, void *buffer )
 {
   if ( !dataset )
   {
@@ -1117,7 +1117,7 @@ int MDAL_D_data( DatasetH dataset, int indexStart, int count, MDAL_DataType data
   return static_cast<int>( writtenValuesCount );
 }
 
-void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max )
+void MDAL_D_minimumMaximum( MDAL_DatasetH dataset, double *min, double *max )
 {
   if ( !min || !max )
   {
@@ -1139,7 +1139,7 @@ void MDAL_D_minimumMaximum( DatasetH dataset, double *min, double *max )
   *max = stats.maximum;
 }
 
-bool MDAL_D_hasActiveFlagCapability( DatasetH dataset )
+bool MDAL_D_hasActiveFlagCapability( MDAL_DatasetH dataset )
 {
   if ( !dataset )
   {

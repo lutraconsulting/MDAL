@@ -55,7 +55,7 @@ bool fileExists( const std::string &filename )
   return in.good();
 }
 
-int getActive( DatasetH dataset, int index )
+int getActive( MDAL_DatasetH dataset, int index )
 {
   bool hasFlag = MDAL_D_hasActiveFlagCapability( dataset );
   if ( hasFlag )
@@ -72,7 +72,7 @@ int getActive( DatasetH dataset, int index )
   }
 }
 
-double getValue( DatasetH dataset, int index )
+double getValue( MDAL_DatasetH dataset, int index )
 {
   double val;
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::SCALAR_DOUBLE, &val );
@@ -82,7 +82,7 @@ double getValue( DatasetH dataset, int index )
   return val;
 }
 
-double getValueX( DatasetH dataset, int index )
+double getValueX( MDAL_DatasetH dataset, int index )
 {
   double val[2];
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VECTOR_2D_DOUBLE, &val );
@@ -92,7 +92,7 @@ double getValueX( DatasetH dataset, int index )
   return val[0];
 }
 
-double getValueY( DatasetH dataset, int index )
+double getValueY( MDAL_DatasetH dataset, int index )
 {
   double val[2];
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VECTOR_2D_DOUBLE, &val );
@@ -102,7 +102,7 @@ double getValueY( DatasetH dataset, int index )
   return val[1];
 }
 
-int getLevelsCount3D( DatasetH dataset, int index )
+int getLevelsCount3D( MDAL_DatasetH dataset, int index )
 {
   int count;
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, &count );
@@ -112,7 +112,7 @@ int getLevelsCount3D( DatasetH dataset, int index )
   return count;
 }
 
-double getLevelZ3D( DatasetH dataset, int index )
+double getLevelZ3D( MDAL_DatasetH dataset, int index )
 {
   double z;
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, &z );
@@ -122,7 +122,7 @@ double getLevelZ3D( DatasetH dataset, int index )
   return z;
 }
 
-double getValue3D( DatasetH dataset, int index )
+double getValue3D( MDAL_DatasetH dataset, int index )
 {
   double val;
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::SCALAR_VOLUMES_DOUBLE, &val );
@@ -132,7 +132,7 @@ double getValue3D( DatasetH dataset, int index )
   return val;
 }
 
-double getValue3DX( DatasetH dataset, int index )
+double getValue3DX( MDAL_DatasetH dataset, int index )
 {
   double val[2];
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE, &val );
@@ -142,7 +142,7 @@ double getValue3DX( DatasetH dataset, int index )
   return val[0];
 }
 
-double getValue3DY( DatasetH dataset, int index )
+double getValue3DY( MDAL_DatasetH dataset, int index )
 {
   double val[2];
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE, &val );
@@ -152,7 +152,7 @@ double getValue3DY( DatasetH dataset, int index )
   return val[1];
 }
 
-int get3DFrom2D( DatasetH dataset, int index )
+int get3DFrom2D( MDAL_DatasetH dataset, int index )
 {
   int index3d;
   int nValuesRead = MDAL_D_data( dataset, index, 1, MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER, &index3d );
@@ -187,7 +187,7 @@ bool compareVectors( const std::vector<double> &a, const std::vector<double> &b 
   return true;
 }
 
-void compareMeshFrames( MeshH meshA, MeshH meshB )
+void compareMeshFrames( MDAL_MeshH meshA, MDAL_MeshH meshB )
 {
   // Vertices
   int orignal_v_count = MDAL_M_vertexCount( meshA );
@@ -224,18 +224,18 @@ void compareMeshFrames( MeshH meshA, MeshH meshB )
   EXPECT_TRUE( compareVectors( verticesA, verticesB ) );
 }
 
-std::vector<double> getCoordinates( MeshH mesh, int verticesCount )
+std::vector<double> getCoordinates( MDAL_MeshH mesh, int verticesCount )
 {
-  MeshVertexIteratorH iterator = MDAL_M_vertexIterator( mesh );
+  MDAL_MeshVertexIteratorH iterator = MDAL_M_vertexIterator( mesh );
   std::vector<double> coordinates( static_cast<size_t>( 3 * verticesCount ) );
   MDAL_VI_next( iterator, verticesCount, coordinates.data() );
   MDAL_VI_close( iterator );
   return coordinates;
 }
 
-void getEdgeVertexIndices( MeshH mesh, int edgesCount, std::vector<int> &start, std::vector<int> &end )
+void getEdgeVertexIndices( MDAL_MeshH mesh, int edgesCount, std::vector<int> &start, std::vector<int> &end )
 {
-  MeshEdgeIteratorH iterator = MDAL_M_edgeIterator( mesh );
+  MDAL_MeshEdgeIteratorH iterator = MDAL_M_edgeIterator( mesh );
   start.clear();
   start.resize( static_cast<size_t>( edgesCount ) );
   end.clear();
@@ -244,7 +244,7 @@ void getEdgeVertexIndices( MeshH mesh, int edgesCount, std::vector<int> &start, 
   MDAL_EI_close( iterator );
 }
 
-double _getVertexCoordinatesAt( MeshH mesh, int index, int coordIndex )
+double _getVertexCoordinatesAt( MDAL_MeshH mesh, int index, int coordIndex )
 {
   // coordIndex = 0 x
   // coordIndex = 1 y
@@ -254,24 +254,24 @@ double _getVertexCoordinatesAt( MeshH mesh, int index, int coordIndex )
   return val;
 }
 
-double getVertexXCoordinatesAt( MeshH mesh, int index )
+double getVertexXCoordinatesAt( MDAL_MeshH mesh, int index )
 {
   return _getVertexCoordinatesAt( mesh, index, 0 );
 }
 
-double getVertexYCoordinatesAt( MeshH mesh, int index )
+double getVertexYCoordinatesAt( MDAL_MeshH mesh, int index )
 {
   return _getVertexCoordinatesAt( mesh, index, 1 );
 }
 
-double getVertexZCoordinatesAt( MeshH mesh, int index )
+double getVertexZCoordinatesAt( MDAL_MeshH mesh, int index )
 {
   return _getVertexCoordinatesAt( mesh, index, 2 );
 }
 
-std::vector<int> faceVertexIndices( MeshH mesh, int faceCount )
+std::vector<int> faceVertexIndices( MDAL_MeshH mesh, int faceCount )
 {
-  MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
+  MDAL_MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
   int faceOffsetsBufferLen = faceCount + 1;
   int vertexIndicesBufferLen = faceOffsetsBufferLen * MDAL_M_faceVerticesMaximumCount( mesh );
   std::vector<int> faceOffsetsBuffer( static_cast<size_t>( faceOffsetsBufferLen ) );
@@ -282,9 +282,9 @@ std::vector<int> faceVertexIndices( MeshH mesh, int faceCount )
   return vertexIndicesBuffer;
 }
 
-int getFaceVerticesCountAt( MeshH mesh, int faceIndex )
+int getFaceVerticesCountAt( MDAL_MeshH mesh, int faceIndex )
 {
-  MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
+  MDAL_MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
   int faceOffsetsBufferLen = faceIndex + 1;
   int vertexIndicesBufferLen = faceOffsetsBufferLen * MDAL_M_faceVerticesMaximumCount( mesh );
   std::vector<int> faceOffsetsBuffer( static_cast<size_t>( faceOffsetsBufferLen ) );
@@ -304,9 +304,9 @@ int getFaceVerticesCountAt( MeshH mesh, int faceIndex )
   return count;
 }
 
-int getFaceVerticesIndexAt( MeshH mesh, int faceIndex, int index )
+int getFaceVerticesIndexAt( MDAL_MeshH mesh, int faceIndex, int index )
 {
-  MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
+  MDAL_MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
   int faceOffsetsBufferLen = faceIndex + 1;
   int vertexIndicesBufferLen = faceOffsetsBufferLen * MDAL_M_faceVerticesMaximumCount( mesh );
   std::vector<int> faceOffsetsBuffer( static_cast<size_t>( faceOffsetsBufferLen ) );
@@ -342,12 +342,12 @@ bool compareDurationInHours( double h1, double h2 )
   return fabs( h1 - h2 ) < 1.0 / 3600 / 1000;
 }
 
-bool hasReferenceTime( DatasetGroupH group )
+bool hasReferenceTime( MDAL_DatasetGroupH group )
 {
   return std::strcmp( MDAL_G_referenceTime( group ), "" ) != 0;
 }
 
-bool compareReferenceTime( DatasetGroupH group, const char *referenceTime )
+bool compareReferenceTime( MDAL_DatasetGroupH group, const char *referenceTime )
 {
   return std::strcmp( MDAL_G_referenceTime( group ), referenceTime ) == 0;
 }
@@ -363,7 +363,7 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
     uri = "\"" + uri + "\":" + meshName;
 
   // Open mesh
-  MeshH meshToSave = MDAL_LoadMesh( uri.c_str() );
+  MDAL_MeshH meshToSave = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( meshToSave, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -374,7 +374,7 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
   ASSERT_EQ( MDAL_Status::None, s );
 
   // Load saved mesh
-  MeshH savedMesh = MDAL_LoadMesh( savedFile.c_str() );
+  MDAL_MeshH savedMesh = MDAL_LoadMesh( savedFile.c_str() );
   EXPECT_NE( savedMesh, nullptr );
   s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );

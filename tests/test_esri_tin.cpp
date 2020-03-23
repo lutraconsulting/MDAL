@@ -19,7 +19,7 @@ TEST( MeshEsriTinTest, load_mesh_simple )
 {
   std::string path = test_file( "/esri_tin/mesh_simple/tnxy.adf" );
 
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   ASSERT_TRUE( nullptr != m );
 
@@ -60,7 +60,7 @@ TEST( MeshEsriTinTest, test_dem_tintriangle )
 {
   std::string path = test_file( "/esri_tin/dem/tnxy.adf" );
 
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   ASSERT_TRUE( nullptr != m );
 
@@ -85,7 +85,7 @@ TEST( MeshEsriTinTest, test_dem_with_holes_tintriangle )
 {
   std::string path = test_file( "/esri_tin/dem_with_holes/tnxy.adf" );
 
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   ASSERT_TRUE( nullptr != m );
 
@@ -110,7 +110,7 @@ TEST( MeshEsriTinTest, test_Islands_tintriangle )
 {
   std::string path = test_file( "/esri_tin/islands/tnxy.adf" );
 
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   ASSERT_TRUE( nullptr != m );
 
@@ -131,7 +131,7 @@ TEST( MeshEsriTinTest, test_Islands_tintriangle )
   // Bed elevation dataset
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -147,7 +147,7 @@ TEST( MeshEsriTinTest, test_Islands_tintriangle )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 0 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );

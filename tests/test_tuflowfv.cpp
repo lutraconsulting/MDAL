@@ -13,7 +13,7 @@
 TEST( MeshTuflowFVTest, TrapSteady053D )
 {
   std::string path = test_file( "/tuflowfv/withoutMaxes/trap_steady_05_3D.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -52,7 +52,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
   // Dataset: Bed Elevation
   // /////////////////////////////////
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -68,7 +68,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 0 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -110,7 +110,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
   // Dataset: scalar on volumes
   // /////////////////////////////////
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -126,7 +126,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes );
 
     ASSERT_EQ( 37, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 3 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 3 );
     ASSERT_NE( ds, nullptr );
 
     int maxLevels = MDAL_D_maximumVerticalLevelCount( ds );
@@ -182,7 +182,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
   // Dataset: vector on volumes
   // /////////////////////////////////
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -198,7 +198,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes );
 
     ASSERT_EQ( 37, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 4 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 4 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -240,7 +240,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
   // Dataset: scalar on faces
   // /////////////////////////////////
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -256,7 +256,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
     ASSERT_EQ( 37, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 7 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 7 );
     ASSERT_NE( ds, nullptr );
 
     bool valid = MDAL_D_isValid( ds );
@@ -295,7 +295,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
 TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
 {
   std::string path = test_file( "/tuflowfv/withMaxes/trap_steady_05_3D.nc" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -321,7 +321,7 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
   // Dataset: maximums dataset
   // /////////////////////////////////
   {
-    DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -337,7 +337,7 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
     EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes );
 
     ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-    DatasetH ds = MDAL_G_dataset( g, 0 );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
     ASSERT_NE( ds, nullptr );
 
     double min, max;
