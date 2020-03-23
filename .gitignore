@@ -37,3 +37,4 @@ qgis-test.ctest
 qtcreator-build/
 scripts/Debug
 Thumb.db
+cmake-build-debug/*

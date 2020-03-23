@@ -284,6 +284,30 @@ TEST( ApitTest, LoggerApi )
   EXPECT_EQ( receivedLogMessage, "No driver with index: -1" );
 }
 
+TEST( ApitTest, BuildUrisApi )
+{
+  MDAL_SetLoggerCallback( &_testLoggerCallback );
+  MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
+
+  std::vector<std::pair<std::string, std::string>> testScenarios
+  {
+    {
+      test_file( "/2dm/regular_grid.2dm" ),
+      "2DM:\"" + test_file( "/2dm/regular_grid.2dm" ) + "\""
+    },
+    {
+      test_file( "/ugrid/1dtest/dflow1d_map.nc" ),
+      "Ugrid:\"" + test_file( "/ugrid/1dtest/dflow1d_map.nc" ) + "\":" + "network" + ";;"
+      + "Ugrid:\"" + test_file( "/ugrid/1dtest/dflow1d_map.nc" ) + "\":" + "mesh1d"
+    }
+  };
+
+  for ( const std::pair<std::string, std::string> &test : testScenarios )
+  {
+    EXPECT_EQ( MDAL_MeshNames( test.first.c_str() ), test.second );
+  }
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
