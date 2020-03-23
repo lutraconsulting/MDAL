@@ -299,6 +299,18 @@ TEST( ApitTest, BuildUrisApi )
       test_file( "/ugrid/1dtest/dflow1d_map.nc" ),
       "Ugrid:\"" + test_file( "/ugrid/1dtest/dflow1d_map.nc" ) + "\":" + "network" + ";;"
       + "Ugrid:\"" + test_file( "/ugrid/1dtest/dflow1d_map.nc" ) + "\":" + "mesh1d"
+    },
+    {
+      test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ),
+      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
+    },
+    {
+      "Invalid_File_Path",
+      ""
+    },
+    {
+      test_file( "/flo2d/BarnyHDF5/TIMP.HDF5" ),
+      ""
     }
   };
 
