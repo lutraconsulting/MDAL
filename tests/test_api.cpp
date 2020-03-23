@@ -19,7 +19,7 @@ TEST( ApiTest, DriversApi )
 {
   int driversCount = MDAL_driverCount();
   ASSERT_TRUE( driversCount > 2 ); // variable based on the available drivers on system
-  DriverH dr = MDAL_driverFromIndex( 0 );
+  MDAL_DriverH dr = MDAL_driverFromIndex( 0 );
   ASSERT_TRUE( dr );
 
   std::string name = MDAL_DR_name( dr );
@@ -64,14 +64,14 @@ TEST( ApiTest, MeshApi )
   EXPECT_EQ( MDAL_M_driverName( nullptr ), nullptr );
 }
 
-void _populateFaces( MeshH m, std::vector<int> &ret, size_t faceOffsetsBufferLen, size_t vertexIndicesBufferLen )
+void _populateFaces( MDAL_MeshH m, std::vector<int> &ret, size_t faceOffsetsBufferLen, size_t vertexIndicesBufferLen )
 {
   int facesCount = MDAL_M_faceCount( m );
   ret.resize( 0 );
   std::vector<int> faceOffsetsBuffer( faceOffsetsBufferLen );
   std::vector<int> vertexIndicesBuffer( vertexIndicesBufferLen );
 
-  MeshFaceIteratorH it = MDAL_M_faceIterator( m );
+  MDAL_MeshFaceIteratorH it = MDAL_M_faceIterator( m );
   int faceIndex = 0;
   while ( faceIndex < facesCount )
   {
@@ -99,7 +99,7 @@ void _populateFaces( MeshH m, std::vector<int> &ret, size_t faceOffsetsBufferLen
 TEST( ApiTest, FacesApi )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
@@ -152,13 +152,13 @@ TEST( ApiTest, FacesApi )
   EXPECT_EQ( MDAL_VI_next( nullptr, 0, nullptr ), 0 );
 }
 
-void _populateVertices( MeshH m, std::vector<double> &ret, size_t itemsLen )
+void _populateVertices( MDAL_MeshH m, std::vector<double> &ret, size_t itemsLen )
 {
   int verticesCount = MDAL_M_vertexCount( m );
   ret.resize( 0 );
   std::vector<double> coordsBuffer( itemsLen * 3 );
 
-  MeshVertexIteratorH it = MDAL_M_vertexIterator( m );
+  MDAL_MeshVertexIteratorH it = MDAL_M_vertexIterator( m );
   int vertexIndex = 0;
   while ( vertexIndex < verticesCount )
   {
@@ -182,7 +182,7 @@ void _populateVertices( MeshH m, std::vector<double> &ret, size_t itemsLen )
 TEST( ApiTest, VerticesApi )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );

@@ -15,7 +15,7 @@
 TEST( MeshHec2dTest, simpleArea )
 {
   std::string path = test_file( "/hec2d/1area/test.p01.hdf" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -62,7 +62,7 @@ TEST( MeshHec2dTest, simpleArea )
   // ///////////
   ASSERT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -80,7 +80,7 @@ TEST( MeshHec2dTest, simpleArea )
 
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -149,7 +149,7 @@ TEST( MeshHec2dTest, simpleArea )
 TEST( MeshHec2dTest, MultiAreas )
 {
   std::string path = test_file( "/hec2d/2areas/baldeagle_multi2d.hdf" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -174,7 +174,7 @@ TEST( MeshHec2dTest, MultiAreas )
   // ///////////
   ASSERT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -190,7 +190,7 @@ TEST( MeshHec2dTest, MultiAreas )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
@@ -263,7 +263,7 @@ TEST( MeshHec2dTest, MultiAreas )
 TEST( MeshHec2dTest, model_505 )
 {
   std::string path = test_file( "/hec2d/2dmodel_5.0.5/temp.p01.hdf" );
-  MeshH m = MDAL_LoadMesh( path.c_str() );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
 
   const char *projection = MDAL_M_projection( m );
@@ -285,7 +285,7 @@ TEST( MeshHec2dTest, model_505 )
   // ///////////
   ASSERT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
 
-  DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
@@ -301,7 +301,7 @@ TEST( MeshHec2dTest, model_505 )
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
-  DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
 
   bool valid = MDAL_D_isValid( ds );
