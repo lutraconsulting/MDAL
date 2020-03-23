@@ -45,6 +45,27 @@ std::vector<std::string> MDAL::DriverUgrid::findMeshesNames() const
   return meshesInFile;
 }
 
+std::string MDAL::DriverUgrid::buildUri( const std::string & )
+{
+  std::vector<std::string> meshNames = findMeshesNames();
+  if ( !meshNames.size() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "No meshes found in file" + mFileName );
+    return std::string( "" );
+  }
+
+  std::string meshUris( "" );
+
+  for ( size_t it = 0; it < meshNames.size(); ++it )
+  {
+    meshUris += name() + ":\"" + mFileName + "\":" + meshNames.at( it );
+    if ( ( it + 1 ) < meshNames.size() ) // If this is not the last mesh in array, add separator
+      meshUris += MDAL_URI_SEPARATOR;
+  }
+
+  return meshUris;
+}
+
 std::string MDAL::DriverUgrid::nodeZVariableName() const
 {
   const std::vector<std::string> variables = mNcFile->readArrNames();
@@ -602,27 +623,6 @@ void MDAL::DriverUgrid::save( const std::string &uri, MDAL::Mesh *mesh )
   {
     MDAL::Log::error( err, name() );
   }
-}
-
-std::string MDAL::DriverUgrid::buildUri( const std::string & )
-{
-  std::vector<std::string> meshNames = findMeshesNames();
-  if ( !meshNames.size() )
-  {
-    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "No meshes found in file" + mFileName );
-    return std::string( "" );
-  }
-
-  std::string meshUris( "" );
-
-  for ( size_t it = 0; it < meshNames.size(); ++it )
-  {
-    meshUris += name() + ":\"" + mFileName + "\":" + meshNames.at( it );
-    if ( ( it + 1 ) < meshNames.size() ) // If this is not the last mesh in array, add separator
-      meshUris += MDAL_URI_SEPARATOR;
-  }
-
-  return meshUris;
 }
 
 void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
