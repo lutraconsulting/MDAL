@@ -64,6 +64,11 @@ bool MDAL::Driver::hasWriteDatasetCapability( MDAL_DataLocation location ) const
 
 int MDAL::Driver::faceVerticesMaximumCount() const { return -1; }
 
+std::string MDAL::Driver::buildUri( const std::string &meshFile )
+{
+  return this->name() + ":\"" + meshFile + "\"";
+}
+
 std::unique_ptr< MDAL::Mesh > MDAL::Driver::load( const std::string &, const std::string & ) { return std::unique_ptr< MDAL::Mesh >(); }
 
 void MDAL::Driver::load( const std::string &, Mesh * ) {}

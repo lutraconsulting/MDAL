@@ -38,6 +38,32 @@
 #include "frmts/mdal_xdmf.hpp"
 #endif
 
+std::string MDAL::DriverManager::getUris( const std::string &file ) const
+{
+  if ( !MDAL::fileExists( file ) )
+  {
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "File " + file + " could not be found" );
+    return std::string();
+  }
+
+  for ( const auto &driver : mDrivers )
+  {
+    if ( ( driver->hasCapability( Capability::ReadMesh ) ) &&
+         driver->canReadMesh( file ) )
+    {
+      std::unique_ptr<Driver> drv( driver->create() );
+
+      if ( drv->load( file ) )
+      {
+        // driver can read the mesh file
+        return drv->buildUri( file );
+      }
+    }
+  }
+
+  return std::string();
+}
+
 std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFile, const std::string &meshName ) const
 {
   std::unique_ptr<MDAL::Mesh> mesh;

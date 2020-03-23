@@ -23,6 +23,8 @@
 #define MDAL_UNUSED(x) (void)x;
 #define MDAL_NAN std::numeric_limits<double>::quiet_NaN()
 
+#define MDAL_URI_SEPARATOR ";;"
+
 namespace MDAL
 {
   // endianness

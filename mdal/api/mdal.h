@@ -202,6 +202,17 @@ MDAL_EXPORT const char *MDAL_DR_filters( DriverH driver );
 MDAL_EXPORT MeshH MDAL_LoadMesh( const char *uri );
 
 /**
+ * Returns uris that the resource contains (mesh names)
+ * Uris are separated by ;; and have form <DriverName>:"<MeshFilePath>"[:<SpecificMeshName>]
+ * not thread-safe and valid only till next call
+ *
+ * The uris can be used directly in MDAL_LoadMesh to load particular meshes
+ *
+ * \since MDAL 0.6.0
+ */
+MDAL_EXPORT const char *MDAL_MeshNames( const char *filePath );
+
+/**
  * Closes mesh, frees the memory
  */
 MDAL_EXPORT void MDAL_CloseMesh( MeshH mesh );

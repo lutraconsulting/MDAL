@@ -174,6 +174,14 @@ MeshH MDAL_LoadMesh( const char *uri )
     return static_cast< MeshH >( MDAL::DriverManager::instance().load( meshFile, meshName ).release() );
 }
 
+const char *MDAL_MeshNames( const char *filePath )
+{
+  std::string file( filePath );
+  std::string uris = MDAL::DriverManager::instance().getUris( file );
+
+  return _return_str( uris );
+}
+
 void MDAL_SaveMesh( MeshH mesh, const char *meshFile, const char *driver )
 {
   if ( !meshFile )

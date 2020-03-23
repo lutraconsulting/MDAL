@@ -29,6 +29,7 @@ namespace MDAL
       void save( const std::string &uri, Mesh *mesh ) override;
 
     private:
+      std::string buildUri( const std::string &meshFile ) override;
       CFDimensions populateDimensions( ) override;
       void populateElements( Vertices &vertices, Edges &edges, Faces &faces ) override;
       void populateVertices( Vertices &vertices );
