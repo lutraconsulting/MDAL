@@ -357,7 +357,7 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
   //test driver capability
   EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( driver.c_str() ) ) );
 
-  std::string uri ( filename );
+  std::string uri( filename );
 
   if ( !meshName.empty() )
     uri = "\"" + uri + "\":" + meshName;

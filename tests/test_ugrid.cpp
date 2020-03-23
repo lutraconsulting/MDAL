@@ -585,7 +585,7 @@ TEST( MeshUgridTest, 1DMeshTest )
   EXPECT_TRUE( compareVectors( startNodeEdgeIndices, expectedStartNodes ) );
   EXPECT_TRUE( compareVectors( endNodeEdgeIndices, expectedEndNodes ) );
 
-  DatasetGroupH dg = MDAL_M_datasetGroup( m , 3 );
+  DatasetGroupH dg = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( dg, nullptr );
 
   ASSERT_EQ( std::string( "Flow element center velocity magnitude" ), std::string( MDAL_G_name( dg ) ) );
@@ -601,7 +601,7 @@ TEST( MeshUgridTest, 1DMeshTest )
   EXPECT_EQ( ds_count, 8 );
 
   double min, max;
-  MDAL_D_minimumMaximum( ds, &min, &max);
+  MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( min, 1.4307828088040137e-14 );
   EXPECT_DOUBLE_EQ( max, 5.90487869582277e-13 );
 
