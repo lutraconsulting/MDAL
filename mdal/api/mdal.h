@@ -278,12 +278,13 @@ MDAL_EXPORT MDAL_DatasetGroupH MDAL_M_datasetGroup( MDAL_MeshH mesh, int index )
  * \param datasetGroupFile file to store the new dataset group
  * \returns empty pointer if not possible to create group, otherwise handle to new group
  */
-MDAL_EXPORT MDAL_DatasetGroupH MDAL_M_addDatasetGroup( MDAL_MeshH mesh,
-    const char *name,
-    MDAL_DataLocation dataLocation,
-    bool hasScalarData,
-    MDAL_DriverH driver,
-    const char *datasetGroupFile );
+MDAL_EXPORT MDAL_DatasetGroupH MDAL_M_addDatasetGroup(
+  MDAL_MeshH mesh,
+  const char *name,
+  MDAL_DataLocation dataLocation,
+  bool hasScalarData,
+  MDAL_DriverH driver,
+  const char *datasetGroupFile );
 
 /**
  * Returns name of MDAL driver
@@ -478,11 +479,12 @@ MDAL_EXPORT void MDAL_G_minimumMaximum( MDAL_DatasetGroupH group, double *min, d
  * \param active if null pointer, MDAL_D_hasActiveFlagCapability returns false. Otherwise size must be equal to face count.
  * \returns empty pointer if not possible to create dataset (e.g. group opened in read mode), otherwise handle to new dataset
  */
-MDAL_EXPORT MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group,
-    double time,
-    const double *values,
-    const int *active
-                                           );
+MDAL_EXPORT MDAL_DatasetH MDAL_G_addDataset(
+  MDAL_DatasetGroupH group,
+  double time,
+  const double *values,
+  const int *active
+);
 
 /**
  * Returns whether dataset group is in edit mode
