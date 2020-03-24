@@ -30,5 +30,9 @@ MDAL drivers
    hecras
    3di
    ugrid
-   tin
+   esri-tin
    flo2d
+   selafin
+   saga
+   adcirc
+   xms-tin

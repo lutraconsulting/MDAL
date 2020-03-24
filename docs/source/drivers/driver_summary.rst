@@ -23,8 +23,18 @@
      - No
      - No
      - Built-in by default
+   * - :ref:`ADCIRC <driver.adcirc>`
+     - NetCDF outputs from ADCIRC
+     - No
+     - No
+     - Built-in by default
    * - :ref:`DAT <driver.dat>`
      - ASCII or Binary Dataset Files
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`Esri TIN <driver.esri-tin>`
+     - Elevation model as TIN
      - No
      - No
      - Built-in by default
@@ -39,7 +49,7 @@
      - No
      - Built-in by default
    * - :ref:`HEC-RAS <driver.hecras>`
-     - HEC-RAS outputs fromat
+     - HEC-RAS outputs format
      - No
      - No
      - Built-in by default
@@ -48,13 +58,18 @@
      - No
      - No
      - Built-in by default
-   * - :ref:`SWW <driver.sww>`
-     - NetCDF format for AnuGA
+   * - :ref:`SAGA Flow <driver.saga>`
+     - Raster flow directions from SAGA GIS
      - No
      - No
      - Built-in by default
-   * - :ref:`Esri TIN <driver.tin>`
-     - Elevation model as TIN
+   * - :ref:`TELEMAC <driver.selafin>`
+     - TELEMAC outputs format
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`SWW <driver.sww>`
+     - NetCDF format for AnuGA
      - No
      - No
      - Built-in by default
@@ -70,6 +85,11 @@
      - Built-in by default
    * - :ref:`XMDF <driver.xmdf>`
      - eXtensible Model Data Format
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`XMS TIN <driver.xms-tin>`
+     - ASCII TIN
      - No
      - No
      - Built-in by default
