@@ -226,15 +226,16 @@ struct LoadMeshUri
 {
   LoadMeshUri( std::string u, std::string d, std::string mf, std::string mn ) :
     uri( u ),
-    expectedDriver( d ),
-    expectedMeshFile( mf ),
-    expectedMeshName( mn ) {};
+    driver( d ),
+    meshFile( mf ),
+    meshName( mn ) {};
 
   std::string uri;
-  std::string expectedDriver;
-  std::string expectedMeshFile;
-  std::string expectedMeshName;
+  std::string driver;
+  std::string meshFile;
+  std::string meshName;
 };
+
 
 TEST( MdalUtilsTest, ParseLoadMeshUri )
 {
@@ -252,12 +253,67 @@ TEST( MdalUtilsTest, ParseLoadMeshUri )
     LoadMeshUri( "Ugrid:\"C:\\myfile. \\with spaces\\hi.nc\":\"incredible mesh\"", "Ugrid", "C:\\myfile. \\with spaces\\hi.nc", "incredible mesh" )
   };
 
-  for ( const LoadMeshUri &it : tests )
+  for ( const LoadMeshUri &test : tests )
   {
-    MDAL::parseDriverAndMeshFromUri( it.uri, driverName, meshFile, specificMeshName );
+    MDAL::parseDriverAndMeshFromUri( test.uri, driverName, meshFile, specificMeshName );
 
-    EXPECT_EQ( driverName, it.expectedDriver );
-    EXPECT_EQ( meshFile, it.expectedMeshFile );
-    EXPECT_EQ( specificMeshName, it.expectedMeshName );
+    EXPECT_EQ( driverName, test.driver );
+    EXPECT_EQ( meshFile, test.meshFile );
+    EXPECT_EQ( specificMeshName, test.meshName );
+  }
+}
+
+TEST( MdalUtilsTest, BuildMeshUri )
+{
+  std::string uri;
+
+  std::vector<LoadMeshUri> tests
+  {
+    LoadMeshUri( "Ugrid:\"mesh.nc\":mesh1d", "Ugrid", "mesh.nc", "mesh1d" ),
+    LoadMeshUri( "Ugrid:\"mesh.nc\":1", "Ugrid", "mesh.nc", "1" ),
+    LoadMeshUri( "\"mesh.nc\":mesh1d", "", "mesh.nc", "mesh1d" ),
+    LoadMeshUri( "\"mesh.nc\":1", "", "mesh.nc", "1" ),
+    LoadMeshUri( "Ugrid:\"mesh.nc\"", "Ugrid", "mesh.nc", "" ),
+    LoadMeshUri( "\"mesh.nc\"", "", "mesh.nc", "" ),
+    LoadMeshUri( "Ugrid:\"C:\\myfile. \\with spaces\\hi.nc\":\"incredible mesh\"", "Ugrid", "C:\\myfile. \\with spaces\\hi.nc", "\"incredible mesh\"" )
+  };
+
+  for ( const LoadMeshUri &test : tests )
+  {
+    uri = MDAL::buildMeshUri( test.meshFile, test.meshName, test.driver );
+    EXPECT_EQ( uri, test.uri );
+  }
+}
+
+struct BuildMeshUri
+{
+  BuildMeshUri( std::string u, std::string d, std::string mf, std::vector<std::string> mn ) :
+    mergedUris( u ),
+    driver( d ),
+    meshFile( mf ),
+    meshNames( mn ) {};
+
+  std::string mergedUris;
+  std::string driver;
+  std::string meshFile;
+  std::vector<std::string> meshNames;
+};
+
+TEST( MdalUtilsTest, BuildAndMergeMeshUri )
+{
+  std::string uris;
+
+  std::vector<BuildMeshUri> tests
+  {
+    BuildMeshUri( "2DM:\"meshFile\":mesh1;;2DM:\"meshFile\":mesh2", "2DM", "meshFile", {"mesh1", "mesh2"} ),
+    BuildMeshUri( "\"meshFile\":mesh1;;\"meshFile\":mesh2", "", "meshFile", {"mesh1", "mesh2"} ),
+    BuildMeshUri( "2DM:\"meshFile\"", "2DM", "meshFile", {} ),
+    BuildMeshUri( "", "2DM", "", {"v"} ),
+  };
+
+  for ( const BuildMeshUri &test : tests )
+  {
+    MDAL::buildAndMergeMeshUris( uris, test.meshFile, test.meshNames, test.driver );
+    EXPECT_EQ( uris, test.mergedUris );
   }
 }

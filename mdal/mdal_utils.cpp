@@ -868,7 +868,7 @@ std::string MDAL::buildMeshUri( const std::string &meshFile, const std::string &
   if ( hasDriverName && hasMeshName )
     uri = driver + ":\"" + meshFile + "\":" + meshName;
   else if ( !hasDriverName && !hasMeshName )
-    uri = meshFile;
+    uri = "\"" + meshFile + "\"";
   else if ( hasDriverName ) // only driver
     uri = driver + ":\"" + meshFile + "\"";
   else if ( hasMeshName ) // only mesh name
@@ -889,4 +889,7 @@ void MDAL::buildAndMergeMeshUris( std::string &mergedUris, const std::string &me
     if ( ( it + 1 ) < meshNamesCount ) // If this is not the last mesh in array, add separator
       mergedUris += MDAL_URI_SEPARATOR;
   }
+
+  if ( meshNamesCount == 0 )
+    mergedUris = buildMeshUri( meshFile, "", driver );
 }

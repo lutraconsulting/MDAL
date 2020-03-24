@@ -58,7 +58,7 @@ std::string MDAL::DriverUgrid::buildUri( const std::string &meshFile )
   }
 
   std::string meshUris( "" );
-  MDAL::mergeMeshUris( meshUris, meshFile, meshNames, name() );
+  MDAL::buildAndMergeMeshUris( meshUris, meshFile, meshNames, name() );
 
   return meshUris;
 }

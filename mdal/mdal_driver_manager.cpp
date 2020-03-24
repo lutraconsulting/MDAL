@@ -60,7 +60,7 @@ std::string MDAL::DriverManager::getUris( const std::string &file, const std::st
       return drv->buildUri( file );
     else
     {
-      MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Requested driver " + driverName + " can not read the file " + file);
+      MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Requested driver " + driverName + " can not read the file " + file );
       return std::string();
     }
   }
