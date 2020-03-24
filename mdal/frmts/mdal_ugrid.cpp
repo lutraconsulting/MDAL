@@ -45,8 +45,11 @@ std::vector<std::string> MDAL::DriverUgrid::findMeshesNames() const
   return meshesInFile;
 }
 
-std::string MDAL::DriverUgrid::buildUri( const std::string & )
+std::string MDAL::DriverUgrid::buildUri( const std::string &meshFile )
 {
+  mNcFile.reset( new NetCDFFile );
+  mNcFile->openFile( meshFile );
+
   std::vector<std::string> meshNames = findMeshesNames();
   if ( !meshNames.size() )
   {
@@ -58,7 +61,7 @@ std::string MDAL::DriverUgrid::buildUri( const std::string & )
 
   for ( size_t it = 0; it < meshNames.size(); ++it )
   {
-    meshUris += name() + ":\"" + mFileName + "\":" + meshNames.at( it );
+    meshUris += name() + ":\"" + meshFile + "\":" + meshNames.at( it );
     if ( ( it + 1 ) < meshNames.size() ) // If this is not the last mesh in array, add separator
       meshUris += MDAL_URI_SEPARATOR;
   }

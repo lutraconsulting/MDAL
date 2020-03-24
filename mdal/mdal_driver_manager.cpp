@@ -52,12 +52,7 @@ std::string MDAL::DriverManager::getUris( const std::string &file ) const
          driver->canReadMesh( file ) )
     {
       std::unique_ptr<Driver> drv( driver->create() );
-
-      if ( drv->load( file ) )
-      {
-        // driver can read the mesh file
-        return drv->buildUri( file );
-      }
+      return drv->buildUri( file );
     }
   }
 
