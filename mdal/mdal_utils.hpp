@@ -166,14 +166,26 @@ namespace MDAL
   void parseDriverAndMeshFromUri( const std::string &uri, std::string &driver, std::string &meshFile, std::string &meshName );
 
   /**
-    *
+    * parse only driver information from URI
+    */
+  void parseDriverFromUri( const std::string &uri, std::string &driver );
+
+  /**
+    * build uri from provided information about meshfile, driver and meshname
+    * only required field is meshFile
+    * returns string in formats:
+    *  - if both driver and meshname are provided:    <driver>:"meshfile":<meshname>
+    *  - if only driver is provided:                  <driver>:"meshfile"
+    *  - if only meshname is provided:                "meshfile":meshname
+    *  - if neither driver nor meshname is provided:  "meshname"
+    *  - if not even meshfile is provided:            ""
     */
   std::string buildMeshUri( const std::string &meshFile, const std::string &meshName, const std::string &driver );
 
   /**
-   *
-   */
-  void mergeMeshUris( std::string &mergedUris, const std::string &meshfile, const std::vector<std::string> &meshNames, const std::string &driver = "" );
+    * helper function to build and merge uris in the same time without the need of cycle
+    */
+  void buildAndMergeMeshUris( std::string &mergedUris, const std::string &meshfile, const std::vector<std::string> &meshNames, const std::string &driver = "" );
 
   struct Error
   {
