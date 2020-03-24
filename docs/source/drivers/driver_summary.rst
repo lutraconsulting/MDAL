@@ -18,8 +18,18 @@
      - No
      - No
      - Built-in by default
+   * - :ref:`3Di <driver.3di>`
+     - NetCDF with Climate and Forecast (CF) metadata
+     - No
+     - No
+     - Built-in by default
    * - :ref:`DAT <driver.dat>`
      - ASCII or Binary Dataset Files
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`FLO-2D <driver.flo2d>`
+     - FLO-2D outputs format
      - No
      - No
      - Built-in by default
@@ -28,7 +38,7 @@
      - No
      - No
      - Built-in by default
-   * - :ref:`hecras <driver.hecras>`
+   * - :ref:`HEC-RAS <driver.hecras>`
      - HEC-RAS outputs fromat
      - No
      - No
@@ -40,6 +50,16 @@
      - Built-in by default
    * - :ref:`SWW <driver.sww>`
      - NetCDF format for AnuGA
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`Esri TIN <driver.tin>`
+     - Elevation model as TIN
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`UGRID <driver.ugrid>`
+     - NetCDF with Climate and Forecast (CF) metadata
      - No
      - No
      - Built-in by default

@@ -28,3 +28,7 @@ MDAL drivers
    dat
    sww
    hecras
+   3di
+   ugrid
+   tin
+   flo2d
