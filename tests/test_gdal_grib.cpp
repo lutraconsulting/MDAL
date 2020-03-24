@@ -13,6 +13,7 @@
 TEST( MeshGdalGribTest, ScalarFile )
 {
   std::string path = test_file( "/grib/Madagascar.wave.7days.grb" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "GRIB:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -62,6 +63,7 @@ TEST( MeshGdalGribTest, ScalarFile )
 TEST( MeshGdalGribTest, VectorFile )
 {
   std::string path = test_file( "/grib/Madagascar.wind.7days.grb" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "GRIB:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -117,6 +119,7 @@ TEST( MeshGdalGribTest, WithoutNODATA )
 {
   // see https://github.com/lutraconsulting/MDAL/issues/104
   std::string path = test_file( "/grib/saga_flow_without_nodata.grb" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "GRIB:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -171,6 +174,7 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
 {
   // https://github.com/lutraconsulting/MDAL/issues/79
   std::string path = test_file( "/grib/wind_only_u_component.grib" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "GRIB:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
