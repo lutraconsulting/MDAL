@@ -205,11 +205,14 @@ MDAL_EXPORT MDAL_MeshH MDAL_LoadMesh( const char *uri );
  * Uris are separated by ;; and have form <DriverName>:"<MeshFilePath>"[:<SpecificMeshName>]
  * not thread-safe and valid only till next call
  *
+ * Parameter uri can be in format:
+ *  - <drivername>:"meshfile" - function then returns uris with provided driver and meshfile
+ *  - "meshfile" or meshfile  - function then finds proper driver and returns uris with it
  * The uris can be used directly in MDAL_LoadMesh to load particular meshes
  *
  * \since MDAL 0.6.0
  */
-MDAL_EXPORT const char *MDAL_MeshNames( const char *filePath );
+MDAL_EXPORT const char *MDAL_MeshNames( const char *uri );
 
 /**
  * Closes mesh, frees the memory

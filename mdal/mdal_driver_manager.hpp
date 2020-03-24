@@ -30,7 +30,7 @@ namespace MDAL
       DriverManager( DriverManager const & )   = delete;
       void operator=( DriverManager const & )  = delete;
 
-      std::string getUris( const std::string &file ) const;
+      std::string getUris( const std::string &file, const std::string &driverName = "" ) const;
 
       std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName ) const;
       std::unique_ptr< Mesh > load( const std::string &driverName,
