@@ -270,7 +270,7 @@ void _testLoggerCallback( MDAL_LogLevel logLevel, MDAL_Status, const char *mssg 
   receivedLogLevel = logLevel;
 }
 
-TEST( ApitTest, LoggerApi )
+TEST( ApiTest, LoggerApi )
 {
   MDAL_SetLoggerCallback( &_testLoggerCallback );
   MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
@@ -284,7 +284,7 @@ TEST( ApitTest, LoggerApi )
   EXPECT_EQ( receivedLogMessage, "No driver with index: -1" );
 }
 
-TEST( ApitTest, BuildUrisApi )
+TEST( ApiTest, BuildUrisApi )
 {
   MDAL_SetLoggerCallback( &_testLoggerCallback );
   MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
@@ -318,6 +318,7 @@ TEST( ApitTest, BuildUrisApi )
   {
     EXPECT_EQ( MDAL_MeshNames( test.first.c_str() ), test.second );
   }
+  EXPECT_EQ( MDAL_MeshNames( nullptr ), nullptr );
 }
 
 int main( int argc, char **argv )

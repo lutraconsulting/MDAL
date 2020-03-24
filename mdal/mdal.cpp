@@ -176,6 +176,12 @@ MDAL_MeshH MDAL_LoadMesh( const char *uri )
 
 const char *MDAL_MeshNames( const char *filePath )
 {
+  if ( !filePath )
+  {
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );
+    return nullptr;
+  }
+
   std::string file( filePath );
   std::string uris = MDAL::DriverManager::instance().getUris( file );
 
