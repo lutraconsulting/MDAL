@@ -58,13 +58,7 @@ std::string MDAL::DriverUgrid::buildUri( const std::string &meshFile )
   }
 
   std::string meshUris( "" );
-
-  for ( size_t it = 0; it < meshNames.size(); ++it )
-  {
-    meshUris += name() + ":\"" + meshFile + "\":" + meshNames.at( it );
-    if ( ( it + 1 ) < meshNames.size() ) // If this is not the last mesh in array, add separator
-      meshUris += MDAL_URI_SEPARATOR;
-  }
+  MDAL::mergeMeshUris( meshUris, meshFile, meshNames, name() );
 
   return meshUris;
 }

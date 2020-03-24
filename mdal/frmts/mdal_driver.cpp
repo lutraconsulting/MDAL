@@ -66,7 +66,7 @@ int MDAL::Driver::faceVerticesMaximumCount() const { return -1; }
 
 std::string MDAL::Driver::buildUri( const std::string &meshFile )
 {
-  return this->name() + ":\"" + meshFile + "\"";
+  return MDAL::buildMeshUri( meshFile, "", this->name() );
 }
 
 std::unique_ptr< MDAL::Mesh > MDAL::Driver::load( const std::string &, const std::string & ) { return std::unique_ptr< MDAL::Mesh >(); }

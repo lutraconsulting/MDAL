@@ -854,3 +854,39 @@ void MDAL::parseDriverAndMeshFromUri( const std::string &uri, std::string &drive
   parseMeshFileFromUri( uri, meshFile );
   parseSpecificMeshFromUri( uri, meshName );
 }
+
+std::string MDAL::buildMeshUri( const std::string &meshFile, const std::string &meshName, const std::string &driver )
+{
+  if ( meshFile.empty() )
+    return std::string();
+
+  std::string uri( "" );
+
+  bool hasDriverName = !driver.empty();
+  bool hasMeshName = !meshName.empty();
+
+  if ( hasDriverName && hasMeshName )
+    uri = driver + ":\"" + meshFile + "\":" + meshName;
+  else if ( !hasDriverName && !hasMeshName)
+    uri = meshFile;
+  else if ( hasDriverName ) // only driver
+    uri = driver + ":\"" + meshFile + "\"";
+  else if ( hasMeshName ) // only mesh name
+    uri = "\"" + meshFile + "\":" + meshName;
+
+  return uri;
+}
+
+void MDAL::mergeMeshUris( std::string &mergedUris, const std::string &meshFile, const std::vector<std::string> &meshNames, const std::string &driver )
+{
+  mergedUris.clear();
+  size_t meshNamesCount = meshNames.size();
+
+  for ( size_t it = 0; it < meshNamesCount; ++it )
+  {
+    mergedUris += buildMeshUri( meshFile, meshNames.at(it), driver );
+
+    if ( ( it + 1 ) < meshNamesCount ) // If this is not the last mesh in array, add separator
+      mergedUris += MDAL_URI_SEPARATOR;
+  }
+}

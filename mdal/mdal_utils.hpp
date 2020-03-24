@@ -165,6 +165,16 @@ namespace MDAL
     */
   void parseDriverAndMeshFromUri( const std::string &uri, std::string &driver, std::string &meshFile, std::string &meshName );
 
+  /**
+    *
+    */
+  std::string buildMeshUri( const std::string &meshFile, const std::string &meshName, const std::string &driver );
+
+  /**
+   *
+   */
+  void mergeMeshUris( std::string &mergedUris, const std::string &meshfile, const std::vector<std::string> &meshNames, const std::string &driver = "" );
+
   struct Error
   {
     Error( MDAL_Status status, std::string message, std::string driverName = "" );
