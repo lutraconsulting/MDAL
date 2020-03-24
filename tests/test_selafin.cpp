@@ -14,6 +14,7 @@
 TEST( MeshSLFTest, MalpassetGeometry )
 {
   std::string path = test_file( "/slf/example.slf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -106,6 +107,7 @@ TEST( MeshSLFTest, MalpassetGeometry )
 TEST( MeshSLFTest, MalpassetResultFrench )
 {
   std::string path = test_file( "/slf/example_res_fr.slf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();

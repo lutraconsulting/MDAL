@@ -13,6 +13,7 @@
 TEST( MeshGdalNetCDFTest, OceanCurrents )
 {
   std::string path = test_file( std::string( "/netcdf/Copernicus Ocean Currents Forecast Model/cmems_global-analysis-forecast-phy-001-024.nc" ) );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "NETCDF:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -84,6 +85,7 @@ TEST( MeshGdalNetCDFTest, Indonesia )
   for ( const std::string &file : files )
   {
     std::string path = test_file( std::string( "/netcdf/" ) + file );
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "NETCDF:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_Status s = MDAL_LastStatus();

@@ -14,6 +14,12 @@ TEST( MeshTinTest, WrongFiles )
   for ( int i = 0; i < 9; ++i )
   {
     std::string fileName = test_file( "/xms_tin/invalid/invalid" + std::to_string( i ) + ".tin" );
+
+    if ( i == 0 )
+      EXPECT_TRUE( std::string( MDAL_MeshNames( fileName.c_str() ) ).empty() );
+    else
+      EXPECT_EQ( MDAL_MeshNames( fileName.c_str() ), "XMS_TIN:\"" + fileName + "\"" );
+
     MDAL_MeshH m = MDAL_LoadMesh( fileName.c_str() );
     EXPECT_EQ( m, nullptr );
   }
@@ -22,6 +28,7 @@ TEST( MeshTinTest, WrongFiles )
 TEST( MeshTinTest, ParaboloidFile )
 {
   std::string path = test_file( "/xms_tin/paraboloid.m.tin" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "XMS_TIN:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();

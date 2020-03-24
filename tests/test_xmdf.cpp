@@ -13,6 +13,7 @@ TEST( MeshXmdfTest, MissingMesh )
 {
   MDAL_MeshH m = nullptr;
   std::string path = test_file( "/xmdf/xmdf_format.xmdf" );
+  EXPECT_TRUE( std::string( MDAL_MeshNames( path.c_str() ) ).empty() );
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
@@ -21,6 +22,7 @@ TEST( MeshXmdfTest, MissingMesh )
 TEST( MeshXmdfTest, RegularGridScalarDataset )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/xmdf/regular_grid.xmdf" );
@@ -118,6 +120,7 @@ TEST( MeshXmdfTest, RegularGridScalarDataset )
 TEST( MeshXmdfTest, RegularGridVectorMaxDataset )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/xmdf/regular_grid.xmdf" );
@@ -201,6 +204,7 @@ TEST( MeshXmdfTest, CustomGroupsDataset )
   // XMDF created with various TUFLOW utilities
   // where we have missing the standard groups like Temporal
   std::string path = test_file( "/2dm/M01_5m_002.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/xmdf/custom_groups.xmdf" );

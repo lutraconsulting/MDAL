@@ -13,6 +13,7 @@
 TEST( MeshTuflowFVTest, TrapSteady053D )
 {
   std::string path = test_file( "/tuflowfv/withoutMaxes/trap_steady_05_3D.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "TUFLOWFV:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -295,6 +296,7 @@ TEST( MeshTuflowFVTest, TrapSteady053D )
 TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
 {
   std::string path = test_file( "/tuflowfv/withMaxes/trap_steady_05_3D.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "TUFLOWFV:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();

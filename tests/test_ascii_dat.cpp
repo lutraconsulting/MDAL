@@ -12,6 +12,7 @@
 static MDAL_MeshH mesh()
 {
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   return m;
@@ -20,6 +21,7 @@ static MDAL_MeshH mesh()
 static MDAL_MeshH lines_mesh()
 {
   std::string path = test_file( "/2dm/lines.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   return m;
@@ -822,6 +824,7 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
   // Create a new dat file
   {
 
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
@@ -870,6 +873,7 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, scalarPath.c_str() );
@@ -927,6 +931,7 @@ TEST( MeshAsciiDatTest, WriteScalarFaceTest )
   // Create a new dat file
   {
 
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
@@ -975,6 +980,7 @@ TEST( MeshAsciiDatTest, WriteScalarFaceTest )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, scalarPath.c_str() );
@@ -1025,6 +1031,7 @@ TEST( MeshAsciiDatTest, WriteScalarEdgeTest )
   // Create a new dat file
   {
 
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
@@ -1073,6 +1080,7 @@ TEST( MeshAsciiDatTest, WriteScalarEdgeTest )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, scalarPath.c_str() );
@@ -1124,6 +1132,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTest )
   // Create a new dat file
   {
 
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
@@ -1168,6 +1177,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTest )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, vectorPath.c_str() );
@@ -1222,6 +1232,7 @@ TEST( MeshAsciiDatTest, WriteVectorFaceTest )
   // Create a new dat file
   {
 
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
@@ -1266,6 +1277,7 @@ TEST( MeshAsciiDatTest, WriteVectorFaceTest )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, vectorPath.c_str() );
@@ -1318,7 +1330,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTestNoActive )
 
   // Create a new dat file
   {
-
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
@@ -1363,6 +1375,7 @@ TEST( MeshAsciiDatTest, WriteVectorVertexTestNoActive )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, vectorPath.c_str() );

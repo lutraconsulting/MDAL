@@ -11,12 +11,14 @@
 TEST( XdmfTest, Basement3HumpsTest )
 {
   std::string path = test_file( "/xdmf/basement3/3HumpsTest/3_humps_mesh.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
 
   std::string path2 = test_file( "/xdmf/basement3/3HumpsTest/three_humps.xdmf" );
+  EXPECT_TRUE( std::string( MDAL_MeshNames( path2.c_str() ) ).empty() );
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -126,12 +128,14 @@ TEST( XdmfTest, Basement3HumpsTest )
 TEST( XdmfTest, Basement3Slopes )
 {
   std::string path = test_file( "/xdmf/basement3/3Slopes/3Slopes_Counter.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
 
   std::string path2 = test_file( "/xdmf/basement3/3Slopes/7_J_run.XMDF" );
+  EXPECT_TRUE( std::string( MDAL_MeshNames( path2.c_str() ) ).empty() );
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -328,12 +332,14 @@ TEST( XdmfTest, Basement3Slopes )
 TEST( XdmfTest, Basement3SimpleChannel )
 {
   std::string path = test_file( "/xdmf/basement3/SimpleChannel/SimpleChannel.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
 
   std::string path2 = test_file( "/xdmf/basement3/SimpleChannel/SimpleChannel.xdmf" );
+  EXPECT_TRUE( std::string( MDAL_MeshNames( path2.c_str() ) ).empty() );
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -392,12 +398,14 @@ TEST( XdmfTest, Basement3SimpleChannel )
 TEST( XdmfTest, Basement3SimpleGeometry )
 {
   std::string path = test_file( "/xdmf/basement3/SimpleGeometry/test.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
 
   std::string path2 = test_file( "/xdmf/basement3/SimpleGeometry/test.xmf" );
+  EXPECT_TRUE( std::string( MDAL_MeshNames( path2.c_str() ) ).empty() );
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
@@ -453,12 +461,14 @@ TEST( XdmfTest, Basement3SimpleGeometry )
 TEST( XdmfTest, Simple )
 {
   std::string path = test_file( "/xdmf/simple/simpleXFMD.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
 
   std::string path2 = test_file( "/xdmf/simple/simpleXFMD.xmf" );
+  EXPECT_TRUE( std::string( MDAL_MeshNames( path2.c_str() ) ).empty() );
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );

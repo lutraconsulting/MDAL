@@ -15,6 +15,7 @@
 TEST( MeshHec2dTest, simpleArea )
 {
   std::string path = test_file( "/hec2d/1area/test.p01.hdf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "HEC2D:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -149,6 +150,7 @@ TEST( MeshHec2dTest, simpleArea )
 TEST( MeshHec2dTest, MultiAreas )
 {
   std::string path = test_file( "/hec2d/2areas/baldeagle_multi2d.hdf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "HEC2D:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -263,6 +265,7 @@ TEST( MeshHec2dTest, MultiAreas )
 TEST( MeshHec2dTest, model_505 )
 {
   std::string path = test_file( "/hec2d/2dmodel_5.0.5/temp.p01.hdf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "HEC2D:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
 

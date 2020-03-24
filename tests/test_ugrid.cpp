@@ -33,6 +33,9 @@ TEST( MeshUgridTest, DFlow11Manzese )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
   std::string uri = "\"" + path + "\":mesh2d";
+
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":mesh1d;;Ugrid:\"" + path + "\":mesh2d" );
+
   MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -118,6 +121,7 @@ TEST( MeshUgridTest, DFlow11ManzeseNodeZValue )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" );
   std::string uri = "\"" + path + "\":mesh2d";
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":mesh1d;;Ugrid:\"" + path + "\":mesh2d" );
   MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -132,6 +136,7 @@ TEST( MeshUgridTest, DFlow11ManzeseNodeZValue )
 TEST( MeshUgridTest, DFlow11Simplebox )
 {
   std::string path = test_file( "/ugrid/D-Flow1.1/simplebox_hex7_map.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":mesh2d" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -214,6 +219,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
 TEST( MeshUgridTest, DFlow12RivierGridClm )
 {
   std::string path = test_file( "/ugrid/D-Flow1.2/bw_11_zonder_riviergrid_met_1dwtg_clm.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":Mesh2D" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -297,6 +303,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
 TEST( MeshUgridTest, DFlow12RivierGridMap )
 {
   std::string path = test_file( "/ugrid/D-Flow1.2/bw_11_zonder_riviergrid_met_1dwtg_map.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":Mesh2D" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -418,6 +425,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
 TEST( MeshUgridTest, UGRIDFormatWithoutTime )
 {
   std::string path = test_file( "/ugrid/without_time/TINUGRID.tin" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":TIN" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -435,6 +443,7 @@ TEST( MeshUgridTest, UGRIDFormatWithoutTime )
 TEST( MeshUgridTest, ADCIRC )
 {
   std::string path = test_file( "/ugrid/ADCIRC/ADCIRC_BG_20190910_1t.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":mesh_topology" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -557,6 +566,7 @@ TEST( MeshUgridTest, 1DMeshTest )
 
   std::string uri = "Ugrid:\"" + path + "\":" + "mesh1d";
 
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":network;;Ugrid:\"" + path + "\":mesh1d" );
   MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
 
   EXPECT_NE( m, nullptr );
