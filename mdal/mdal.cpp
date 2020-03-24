@@ -182,10 +182,12 @@ const char *MDAL_MeshNames( const char *uri )
     return nullptr;
   }
 
-  std::string uriString( uri ), driver, uris;
+  std::string uriString( uri ), driver, file, uris;
 
-  MDAL::parseDriverFromUri( uri, driver );
-  uris = MDAL::DriverManager::instance().getUris( uriString, driver );
+  MDAL::parseDriverFromUri( uriString, driver );
+  MDAL::parseMeshFileFromUri( uriString, file );
+
+  uris = MDAL::DriverManager::instance().getUris( file, driver );
 
   return _return_str( uris );
 }

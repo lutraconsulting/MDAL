@@ -172,6 +172,11 @@ namespace MDAL
   void parseDriverFromUri( const std::string &uri, std::string &driver );
 
   /**
+    * parse only meshfile name from URI
+    */
+  void parseMeshFileFromUri( const std::string &uri, std::string &meshFile );
+
+  /**
     * build uri from provided information about meshfile, driver and meshname
     * only required field is meshFile
     * returns string in formats:

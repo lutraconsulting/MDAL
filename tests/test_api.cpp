@@ -297,8 +297,7 @@ TEST( ApiTest, BuildUrisApi )
     },
     {
       test_file( "/ugrid/1dtest/dflow1d_map.nc" ),
-      "Ugrid:\"" + test_file( "/ugrid/1dtest/dflow1d_map.nc" ) + "\":" + "network" + ";;"
-      + "Ugrid:\"" + test_file( "/ugrid/1dtest/dflow1d_map.nc" ) + "\":" + "mesh1d"
+      "Ugrid:\"" + test_file( "/ugrid/1dtest/dflow1d_map.nc" ) + "\":" + "mesh1d"
     },
     {
       test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ),
@@ -314,6 +313,11 @@ TEST( ApiTest, BuildUrisApi )
     },
     {
       test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ),
+      "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh1d" + ";;"
+      + "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh2d"
+    },
+    {
+      "\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\"",
       "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh1d" + ";;"
       + "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh2d"
     }

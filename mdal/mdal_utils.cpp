@@ -826,10 +826,11 @@ void MDAL::parseDriverFromUri( const std::string &uri, std::string &driver )
   driver = MDAL::split( uri, ":\"" )[0];
 }
 
-void parseMeshFileFromUri( const std::string &uri, std::string &meshFile )
+void MDAL::parseMeshFileFromUri( const std::string &uri, std::string &meshFile )
 {
   bool hasDriverSet = ( uri.find( ":\"" ) != std::string::npos );
   bool hasSpecificMeshSet = ( uri.find( "\":" ) != std::string::npos );
+  meshFile = "";
 
   if ( !hasDriverSet && !hasSpecificMeshSet )
     meshFile = MDAL::trim( uri, "\"" );

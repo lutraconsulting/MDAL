@@ -565,8 +565,9 @@ TEST( MeshUgridTest, 1DMeshTest )
   MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
 
   std::string uri = "Ugrid:\"" + path + "\":" + "mesh1d";
+  std::string uriToMeshNames = "Ugrid:\"" + path + "\"";
 
-  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":network;;Ugrid:\"" + path + "\":mesh1d" );
+  EXPECT_EQ( MDAL_MeshNames( uriToMeshNames.c_str() ), "Ugrid:\"" + path + "\":mesh1d" ); // ignores network variable
   MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
 
   EXPECT_NE( m, nullptr );
