@@ -13,8 +13,83 @@
      - Creation
      - Geo-referencing
      - Build requirements
+   * - :ref:`2dm <driver.2dm>`
+     - SMS mesh format
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`3Di <driver.3di>`
+     - NetCDF with Climate and Forecast (CF) metadata
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`ADCIRC <driver.adcirc>`
+     - NetCDF outputs from ADCIRC
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`DAT <driver.dat>`
+     - ASCII or Binary Dataset Files
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`Esri TIN <driver.esri-tin>`
+     - Elevation model as TIN
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`FLO-2D <driver.flo2d>`
+     - FLO-2D outputs format
+     - No
+     - No
+     - Built-in by default
    * - :ref:`GRIB <driver.grib>`
      - WMO General Regularly-distributed Information in Binary form
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`HEC-RAS <driver.hecras>`
+     - HEC-RAS outputs format
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`NetCDF <driver.netcdf>`
+     - Network Common Data Form
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`SAGA Flow <driver.saga>`
+     - Raster flow directions from SAGA GIS
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`TELEMAC <driver.selafin>`
+     - TELEMAC outputs format
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`SWW <driver.sww>`
+     - NetCDF format for AnuGA
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`UGRID <driver.ugrid>`
+     - NetCDF with Climate and Forecast (CF) metadata
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`XDMF <driver.xdmf>`
+     - eXtensible Data Model and Format
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`XMDF <driver.xmdf>`
+     - eXtensible Model Data Format
+     - No
+     - No
+     - Built-in by default
+   * - :ref:`XMS TIN <driver.xms-tin>`
+     - ASCII TIN
      - No
      - No
      - Built-in by default

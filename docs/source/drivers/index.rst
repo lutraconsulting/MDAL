@@ -21,3 +21,18 @@ MDAL drivers
    :maxdepth: 1
 
    grib
+   netcdf
+   2dm
+   xdmf
+   xmdf
+   dat
+   sww
+   hecras
+   3di
+   ugrid
+   esri-tin
+   flo2d
+   selafin
+   saga
+   adcirc
+   xms-tin
