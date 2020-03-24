@@ -57,6 +57,10 @@ std::string MDAL::DriverUgrid::buildUri( const std::string &meshFile )
     return std::string( "" );
   }
 
+  std::vector<std::string>::iterator position = std::find(meshNames.begin(), meshNames.end(), "network");
+  if (position != meshNames.end())
+      meshNames.erase(position);
+
   std::string meshUris( "" );
   MDAL::buildAndMergeMeshUris( meshUris, meshFile, meshNames, name() );
 
