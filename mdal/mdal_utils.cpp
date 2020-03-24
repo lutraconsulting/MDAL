@@ -130,7 +130,7 @@ int MDAL::toInt( const std::string &str )
   return atoi( str.c_str() );
 }
 
-std::string MDAL::baseName( const std::string &filename )
+std::string MDAL::baseName( const std::string &filename, const bool &keepExtension )
 {
   // https://stackoverflow.com/a/8520815/2838364
   std::string fname( filename );
@@ -143,13 +143,31 @@ std::string MDAL::baseName( const std::string &filename )
     fname.erase( 0, last_slash_idx + 1 );
   }
 
-  // Remove extension if present.
-  const size_t period_idx = fname.rfind( '.' );
-  if ( std::string::npos != period_idx )
+  if ( !keepExtension )
   {
-    fname.erase( period_idx );
+    // Remove extension if present.
+    const size_t period_idx = fname.rfind( '.' );
+    if ( std::string::npos != period_idx )
+    {
+      fname.erase( period_idx );
+    }
   }
   return fname;
+}
+
+std::string MDAL::fileExtension(const std::string &path)
+{
+  std::string filename = MDAL::baseName( path, true );
+
+  const size_t lastDotIx = filename.find_last_of(".");
+  if ( std::string::npos == lastDotIx )
+  {
+    return std::string();
+  }
+
+  std::string extension = filename.substr( lastDotIx );
+
+  return extension;
 }
 
 std::string MDAL::pathJoin( const std::string &path1, const std::string &path2 )

@@ -38,7 +38,8 @@ namespace MDAL
 
   /** Return whether file exists */
   bool fileExists( const std::string &filename );
-  std::string baseName( const std::string &filename );
+  std::string baseName( const std::string &filename, const bool &keepExtension = false );
+  std::string fileExtension( const std::string &path );
   std::string dirName( const std::string &filename );
   std::string pathJoin( const std::string &path1, const std::string &path2 );
   std::string readFileToString( const std::string &filename );

@@ -317,3 +317,21 @@ TEST( MdalUtilsTest, BuildAndMergeMeshUri )
     EXPECT_EQ( uris, test.mergedUris );
   }
 }
+
+TEST( MdalUtilsTest, FileExtensionTest )
+{
+  std::string extension;
+
+  std::vector<std::pair<std::string, std::string>> tests
+  {
+    {"C:\\myfile. \\with spaces\\hi.nc", ".nc"},
+    {"/home/test/param.txt", ".txt"},
+    {"/impossible \f/dfd/ test.2dm", ".2dm"},
+    {"/home/no/extension", ""}
+  };
+
+  for ( const std::pair<std::string, std::string> &test : tests )
+  {
+    EXPECT_EQ( MDAL::fileExtension( test.first ), test.second );
+  }
+}
