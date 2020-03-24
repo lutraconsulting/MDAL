@@ -311,6 +311,11 @@ TEST( ApiTest, BuildUrisApi )
     {
       test_file( "/flo2d/BarnyHDF5/TIMP.HDF5" ),
       ""
+    },
+    {
+      test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ),
+      "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh1d" + ";;"
+      + "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh2d"
     }
   };
 
