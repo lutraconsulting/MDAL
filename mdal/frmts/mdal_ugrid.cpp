@@ -48,12 +48,22 @@ std::vector<std::string> MDAL::DriverUgrid::findMeshesNames() const
 std::string MDAL::DriverUgrid::buildUri( const std::string &meshFile )
 {
   mNcFile.reset( new NetCDFFile );
-  mNcFile->openFile( meshFile );
+
+  try
+  {
+    mNcFile->openFile( meshFile );
+  }
+  catch ( MDAL::Error &err )
+  {
+    err.setDriver( name() );
+    MDAL::Log::error( err );
+    return std::string();
+  }
 
   std::vector<std::string> meshNames = findMeshesNames();
   if ( !meshNames.size() )
   {
-    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "No meshes found in file" + mFileName );
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "No meshes found in file" + meshFile );
     return std::string( "" );
   }
 

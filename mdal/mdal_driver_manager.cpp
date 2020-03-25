@@ -56,13 +56,7 @@ std::string MDAL::DriverManager::getUris( const std::string &file, const std::st
     }
 
     std::unique_ptr<MDAL::Driver> drv( requestedDriver->create() );
-    if ( drv->hasCapability( Capability::ReadMesh ) && drv->canReadMesh( file ) )
-      return drv->buildUri( file );
-    else
-    {
-      MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Requested driver " + driverName + " can not read the file " + file );
-      return std::string();
-    }
+    return drv->buildUri( file );
   }
   else
   {
@@ -131,8 +125,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load(
   }
 
   std::unique_ptr<Driver> drv( requestedDriver->create() );
-  if ( drv->hasCapability( Capability::ReadMesh ) && drv->canReadMesh( meshFile ) )
-    mesh = drv->load( meshFile, meshName );
+  mesh = drv->load( meshFile, meshName );
 
   return mesh;
 }

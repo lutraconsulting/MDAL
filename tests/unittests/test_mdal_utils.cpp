@@ -274,7 +274,7 @@ TEST( MdalUtilsTest, BuildMeshUri )
     LoadMeshUri( "\"mesh.nc\":mesh1d", "", "mesh.nc", "mesh1d" ),
     LoadMeshUri( "\"mesh.nc\":1", "", "mesh.nc", "1" ),
     LoadMeshUri( "Ugrid:\"mesh.nc\"", "Ugrid", "mesh.nc", "" ),
-    LoadMeshUri( "\"mesh.nc\"", "", "mesh.nc", "" ),
+    LoadMeshUri( "mesh.nc", "", "mesh.nc", "" ),
     LoadMeshUri( "Ugrid:\"C:\\myfile. \\with spaces\\hi.nc\":\"incredible mesh\"", "Ugrid", "C:\\myfile. \\with spaces\\hi.nc", "\"incredible mesh\"" )
   };
 

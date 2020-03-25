@@ -336,7 +336,11 @@ TEST( ApiTest, MeshNamesApi )
     {
       "\"\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"\"",
       "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
-    }
+    },
+    {
+      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMP.HDF5" ) + "\"",
+      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMP.HDF5" ) + "\""
+    },
   };
 
   for ( const std::pair<std::string, std::string> &test : testScenarios )
