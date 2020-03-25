@@ -338,8 +338,8 @@ TEST( ApiTest, MeshNamesApi )
       "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
     },
     {
-      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMP.HDF5" ) + "\"",
-      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMP.HDF5" ) + "\""
+      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"",
+      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
     },
   };
 
