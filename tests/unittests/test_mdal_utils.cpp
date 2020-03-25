@@ -313,7 +313,7 @@ TEST( MdalUtilsTest, BuildAndMergeMeshUri )
 
   for ( const BuildMeshUri &test : tests )
   {
-    MDAL::buildAndMergeMeshUris( uris, test.meshFile, test.meshNames, test.driver );
+    uris = MDAL::buildAndMergeMeshUris( test.meshFile, test.meshNames, test.driver );
     EXPECT_EQ( uris, test.mergedUris );
   }
 }

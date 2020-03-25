@@ -130,7 +130,7 @@ int MDAL::toInt( const std::string &str )
   return atoi( str.c_str() );
 }
 
-std::string MDAL::baseName( const std::string &filename, const bool &keepExtension )
+std::string MDAL::baseName( const std::string &filename, bool keepExtension )
 {
   // https://stackoverflow.com/a/8520815/2838364
   std::string fname( filename );
@@ -887,7 +887,7 @@ std::string MDAL::buildMeshUri( const std::string &meshFile, const std::string &
   if ( hasDriverName && hasMeshName )
     uri = driver + ":\"" + meshFile + "\":" + meshName;
   else if ( !hasDriverName && !hasMeshName )
-    uri = "\"" + meshFile + "\"";
+    uri = meshFile;
   else if ( hasDriverName ) // only driver
     uri = driver + ":\"" + meshFile + "\"";
   else if ( hasMeshName ) // only mesh name
@@ -896,19 +896,21 @@ std::string MDAL::buildMeshUri( const std::string &meshFile, const std::string &
   return uri;
 }
 
-void MDAL::buildAndMergeMeshUris( std::string &mergedUris, const std::string &meshFile, const std::vector<std::string> &meshNames, const std::string &driver )
+std::string MDAL::buildAndMergeMeshUris( const std::string &meshFile, const std::vector<std::string> &meshNames, const std::string &driver )
 {
-  mergedUris.clear();
+  std::string mergedUris;
   size_t meshNamesCount = meshNames.size();
 
-  for ( size_t it = 0; it < meshNamesCount; ++it )
+  for ( size_t i = 0; i < meshNamesCount; ++i )
   {
-    mergedUris += buildMeshUri( meshFile, meshNames.at( it ), driver );
+    mergedUris += buildMeshUri( meshFile, meshNames.at( i ), driver );
 
-    if ( ( it + 1 ) < meshNamesCount ) // If this is not the last mesh in array, add separator
-      mergedUris += MDAL_URI_SEPARATOR;
+    if ( ( i + 1 ) < meshNamesCount ) // If this is not the last mesh in array, add separator
+      mergedUris += ";;";
   }
 
   if ( meshNamesCount == 0 )
     mergedUris = buildMeshUri( meshFile, "", driver );
+
+  return mergedUris;
 }

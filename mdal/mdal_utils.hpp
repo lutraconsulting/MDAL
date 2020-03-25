@@ -23,8 +23,6 @@
 #define MDAL_UNUSED(x) (void)x;
 #define MDAL_NAN std::numeric_limits<double>::quiet_NaN()
 
-#define MDAL_URI_SEPARATOR ";;"
-
 namespace MDAL
 {
   // endianness
@@ -38,7 +36,7 @@ namespace MDAL
 
   /** Return whether file exists */
   bool fileExists( const std::string &filename );
-  std::string baseName( const std::string &filename, const bool &keepExtension = false );
+  std::string baseName( const std::string &filename, bool keepExtension = false );
   std::string fileExtension( const std::string &path );
   std::string dirName( const std::string &filename );
   std::string pathJoin( const std::string &path1, const std::string &path2 );
@@ -160,19 +158,19 @@ namespace MDAL
   MDAL::DateTime parseCFReferenceTime( const std::string &timeInformation, const std::string &calendarString );
 
   /**
-    * parse information received from load mesh uri
+    * parses information received from load mesh uri
     * load mesh uri contains: <drivername>:"meshfile":<meshname>
     * drivername and meshname are optional parameters
     */
   void parseDriverAndMeshFromUri( const std::string &uri, std::string &driver, std::string &meshFile, std::string &meshName );
 
   /**
-    * parse only driver information from URI
+    * parses only driver information from URI
     */
   void parseDriverFromUri( const std::string &uri, std::string &driver );
 
   /**
-    * parse only meshfile name from URI
+    * parses only meshfile name from URI
     */
   void parseMeshFileFromUri( const std::string &uri, std::string &meshFile );
 
@@ -183,7 +181,7 @@ namespace MDAL
     *  - if both driver and meshname are provided:    <driver>:"meshfile":<meshname>
     *  - if only driver is provided:                  <driver>:"meshfile"
     *  - if only meshname is provided:                "meshfile":meshname
-    *  - if neither driver nor meshname is provided:  "meshname"
+    *  - if neither driver nor meshname is provided:  meshfile
     *  - if not even meshfile is provided:            ""
     */
   std::string buildMeshUri( const std::string &meshFile, const std::string &meshName, const std::string &driver );
@@ -191,7 +189,7 @@ namespace MDAL
   /**
     * helper function to build and merge uris in the same time without the need of cycle
     */
-  void buildAndMergeMeshUris( std::string &mergedUris, const std::string &meshfile, const std::vector<std::string> &meshNames, const std::string &driver = "" );
+  std::string buildAndMergeMeshUris( const std::string &meshfile, const std::vector<std::string> &meshNames, const std::string &driver = "" );
 
   struct Error
   {

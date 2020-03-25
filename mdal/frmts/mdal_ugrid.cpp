@@ -57,14 +57,12 @@ std::string MDAL::DriverUgrid::buildUri( const std::string &meshFile )
     return std::string( "" );
   }
 
+  // ignore network variable
   std::vector<std::string>::iterator position = std::find(meshNames.begin(), meshNames.end(), "network");
   if (position != meshNames.end())
       meshNames.erase(position);
 
-  std::string meshUris( "" );
-  MDAL::buildAndMergeMeshUris( meshUris, meshFile, meshNames, name() );
-
-  return meshUris;
+  return MDAL::buildAndMergeMeshUris( meshFile, meshNames, name() );
 }
 
 std::string MDAL::DriverUgrid::nodeZVariableName() const
