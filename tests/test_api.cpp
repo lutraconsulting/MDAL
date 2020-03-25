@@ -284,7 +284,7 @@ TEST( ApiTest, LoggerApi )
   EXPECT_EQ( receivedLogMessage, "No driver with index: -1" );
 }
 
-TEST( ApiTest, BuildUrisApi )
+TEST( ApiTest, MeshNamesApi )
 {
   MDAL_SetLoggerCallback( &_testLoggerCallback );
   MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
@@ -320,6 +320,22 @@ TEST( ApiTest, BuildUrisApi )
       "\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\"",
       "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh1d" + ";;"
       + "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh2d"
+    },
+    {
+      "nonExistingDriver:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\"",
+      ""
+    },
+    {
+      "Ugrid:\"" + test_file( "/2dm/regular_grid.2dm" ) + "\"",
+      ""
+    },
+    {
+      "",
+      ""
+    },
+    {
+      "\"\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"\"",
+      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
     }
   };
 
