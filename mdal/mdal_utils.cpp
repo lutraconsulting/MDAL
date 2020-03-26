@@ -155,11 +155,11 @@ std::string MDAL::baseName( const std::string &filename, bool keepExtension )
   return fname;
 }
 
-std::string MDAL::fileExtension(const std::string &path)
+std::string MDAL::fileExtension( const std::string &path )
 {
   std::string filename = MDAL::baseName( path, true );
 
-  const size_t lastDotIx = filename.find_last_of(".");
+  const size_t lastDotIx = filename.find_last_of( "." );
   if ( std::string::npos == lastDotIx )
   {
     return std::string();
