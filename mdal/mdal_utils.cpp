@@ -130,7 +130,7 @@ int MDAL::toInt( const std::string &str )
   return atoi( str.c_str() );
 }
 
-std::string MDAL::baseName( const std::string &filename )
+std::string MDAL::baseName( const std::string &filename, bool keepExtension )
 {
   // https://stackoverflow.com/a/8520815/2838364
   std::string fname( filename );
@@ -143,13 +143,31 @@ std::string MDAL::baseName( const std::string &filename )
     fname.erase( 0, last_slash_idx + 1 );
   }
 
-  // Remove extension if present.
-  const size_t period_idx = fname.rfind( '.' );
-  if ( std::string::npos != period_idx )
+  if ( !keepExtension )
   {
-    fname.erase( period_idx );
+    // Remove extension if present.
+    const size_t period_idx = fname.rfind( '.' );
+    if ( std::string::npos != period_idx )
+    {
+      fname.erase( period_idx );
+    }
   }
   return fname;
+}
+
+std::string MDAL::fileExtension(const std::string &path)
+{
+  std::string filename = MDAL::baseName( path, true );
+
+  const size_t lastDotIx = filename.find_last_of(".");
+  if ( std::string::npos == lastDotIx )
+  {
+    return std::string();
+  }
+
+  std::string extension = filename.substr( lastDotIx );
+
+  return extension;
 }
 
 std::string MDAL::pathJoin( const std::string &path1, const std::string &path2 )
@@ -797,7 +815,7 @@ void MDAL::Error::setDriver( std::string driverName )
   driver = driverName;
 }
 
-void parseDriverFromUri( const std::string &uri, std::string &driver )
+void MDAL::parseDriverFromUri( const std::string &uri, std::string &driver )
 {
   bool hasDriverSet = ( uri.find( ":\"" ) != std::string::npos );
   driver = "";
@@ -808,10 +826,11 @@ void parseDriverFromUri( const std::string &uri, std::string &driver )
   driver = MDAL::split( uri, ":\"" )[0];
 }
 
-void parseMeshFileFromUri( const std::string &uri, std::string &meshFile )
+void MDAL::parseMeshFileFromUri( const std::string &uri, std::string &meshFile )
 {
   bool hasDriverSet = ( uri.find( ":\"" ) != std::string::npos );
   bool hasSpecificMeshSet = ( uri.find( "\":" ) != std::string::npos );
+  meshFile = "";
 
   if ( !hasDriverSet && !hasSpecificMeshSet )
     meshFile = MDAL::trim( uri, "\"" );
@@ -853,4 +872,45 @@ void MDAL::parseDriverAndMeshFromUri( const std::string &uri, std::string &drive
   parseDriverFromUri( uri, driver );
   parseMeshFileFromUri( uri, meshFile );
   parseSpecificMeshFromUri( uri, meshName );
+}
+
+std::string MDAL::buildMeshUri( const std::string &meshFile, const std::string &meshName, const std::string &driver )
+{
+  if ( meshFile.empty() )
+    return std::string();
+
+  std::string uri( "" );
+
+  bool hasDriverName = !driver.empty();
+  bool hasMeshName = !meshName.empty();
+
+  if ( hasDriverName && hasMeshName )
+    uri = driver + ":\"" + meshFile + "\":" + meshName;
+  else if ( !hasDriverName && !hasMeshName )
+    uri = meshFile;
+  else if ( hasDriverName ) // only driver
+    uri = driver + ":\"" + meshFile + "\"";
+  else if ( hasMeshName ) // only mesh name
+    uri = "\"" + meshFile + "\":" + meshName;
+
+  return uri;
+}
+
+std::string MDAL::buildAndMergeMeshUris( const std::string &meshFile, const std::vector<std::string> &meshNames, const std::string &driver )
+{
+  std::string mergedUris;
+  size_t meshNamesCount = meshNames.size();
+
+  for ( size_t i = 0; i < meshNamesCount; ++i )
+  {
+    mergedUris += buildMeshUri( meshFile, meshNames.at( i ), driver );
+
+    if ( ( i + 1 ) < meshNamesCount ) // If this is not the last mesh in array, add separator
+      mergedUris += ";;";
+  }
+
+  if ( meshNamesCount == 0 )
+    mergedUris = buildMeshUri( meshFile, "", driver );
+
+  return mergedUris;
 }

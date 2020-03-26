@@ -38,6 +38,42 @@
 #include "frmts/mdal_xdmf.hpp"
 #endif
 
+std::string MDAL::DriverManager::getUris( const std::string &file, const std::string &driverName ) const
+{
+  if ( !MDAL::fileExists( file ) )
+  {
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "File " + file + " could not be found" );
+    return std::string();
+  }
+
+  if ( !driverName.empty() )
+  {
+    std::shared_ptr<MDAL::Driver> requestedDriver = driver( driverName );
+    if ( !requestedDriver )
+    {
+      MDAL::Log::error( MDAL_Status::Err_MissingDriver, "No such driver with name " + driverName );
+      return std::string();
+    }
+
+    std::unique_ptr<MDAL::Driver> drv( requestedDriver->create() );
+    return drv->buildUri( file );
+  }
+  else
+  {
+    for ( const auto &driver : mDrivers )
+    {
+      if ( ( driver->hasCapability( Capability::ReadMesh ) ) &&
+           driver->canReadMesh( file ) )
+      {
+        std::unique_ptr<MDAL::Driver> drv( driver->create() );
+        return drv->buildUri( file );
+      }
+    }
+  }
+
+  return std::string();
+}
+
 std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFile, const std::string &meshName ) const
 {
   std::unique_ptr<MDAL::Mesh> mesh;
@@ -53,7 +89,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFi
     if ( ( driver->hasCapability( Capability::ReadMesh ) ) &&
          driver->canReadMesh( meshFile ) )
     {
-      std::unique_ptr<Driver> drv( driver->create() );
+      std::unique_ptr<MDAL::Driver> drv( driver->create() );
 
       mesh = drv->load( meshFile, meshName );
       if ( mesh ) // stop if he have the mesh
@@ -80,15 +116,17 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load(
     return mesh;
   }
 
-  std::shared_ptr<MDAL::Driver> dr;
-  dr = driver( driverName );
-  if ( !dr )
+  std::shared_ptr<MDAL::Driver> requestedDriver;
+  requestedDriver = driver( driverName );
+  if ( !requestedDriver )
   {
     MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Could not find driver with name: " + driverName );
     return mesh;
   }
 
-  mesh = dr->load( meshFile, meshName );
+  std::unique_ptr<Driver> drv( requestedDriver->create() );
+  mesh = drv->load( meshFile, meshName );
+
   return mesh;
 }
 

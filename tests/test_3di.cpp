@@ -13,6 +13,7 @@
 TEST( Mesh3DiTest, Mesh2D4cells301steps )
 {
   std::string path = test_file( "/3di/2d_4cells301steps/results_3di.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "3Di:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -196,6 +197,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
 TEST( Mesh3DiTest, Mesh2D16cells7steps )
 {
   std::string path = test_file( "/3di/2d_16cells7steps/results_3di.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "3Di:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();

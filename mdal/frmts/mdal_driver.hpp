@@ -48,6 +48,8 @@ namespace MDAL
       //! returns the maximum vertices per face
       virtual int faceVerticesMaximumCount() const;
 
+      // constructs loading uri / uris
+      virtual std::string buildUri( const std::string &meshFile );
       // loads mesh
       virtual std::unique_ptr< Mesh > load( const std::string &uri, const std::string &meshName = "" );
       // loads datasets

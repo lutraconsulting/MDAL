@@ -270,7 +270,7 @@ void _testLoggerCallback( MDAL_LogLevel logLevel, MDAL_Status, const char *mssg 
   receivedLogLevel = logLevel;
 }
 
-TEST( ApitTest, LoggerApi )
+TEST( ApiTest, LoggerApi )
 {
   MDAL_SetLoggerCallback( &_testLoggerCallback );
   MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
@@ -282,6 +282,72 @@ TEST( ApitTest, LoggerApi )
   EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_MissingDriver );
   EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Error );
   EXPECT_EQ( receivedLogMessage, "No driver with index: -1" );
+}
+
+TEST( ApiTest, MeshNamesApi )
+{
+  MDAL_SetLoggerCallback( &_testLoggerCallback );
+  MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
+
+  std::vector<std::pair<std::string, std::string>> testScenarios
+  {
+    {
+      test_file( "/2dm/regular_grid.2dm" ),
+      "2DM:\"" + test_file( "/2dm/regular_grid.2dm" ) + "\""
+    },
+    {
+      test_file( "/ugrid/1dtest/dflow1d_map.nc" ),
+      "Ugrid:\"" + test_file( "/ugrid/1dtest/dflow1d_map.nc" ) + "\":" + "mesh1d"
+    },
+    {
+      test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ),
+      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
+    },
+    {
+      "Invalid_File_Path",
+      ""
+    },
+    {
+      test_file( "/flo2d/BarnyHDF5/TIMP.HDF5" ),
+      ""
+    },
+    {
+      test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ),
+      "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh1d" + ";;"
+      + "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh2d"
+    },
+    {
+      "\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\"",
+      "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh1d" + ";;"
+      + "Ugrid:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\":" + "mesh2d"
+    },
+    {
+      "nonExistingDriver:\"" + test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ) + "\"",
+      ""
+    },
+    {
+      "Ugrid:\"" + test_file( "/2dm/regular_grid.2dm" ) + "\"",
+      ""
+    },
+    {
+      "",
+      ""
+    },
+    {
+      "\"\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"\"",
+      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
+    },
+    {
+      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"",
+      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
+    },
+  };
+
+  for ( const std::pair<std::string, std::string> &test : testScenarios )
+  {
+    EXPECT_EQ( MDAL_MeshNames( test.first.c_str() ), test.second );
+  }
+  EXPECT_EQ( MDAL_MeshNames( nullptr ), nullptr );
 }
 
 int main( int argc, char **argv )

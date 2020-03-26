@@ -45,6 +45,36 @@ std::vector<std::string> MDAL::DriverUgrid::findMeshesNames() const
   return meshesInFile;
 }
 
+std::string MDAL::DriverUgrid::buildUri( const std::string &meshFile )
+{
+  mNcFile.reset( new NetCDFFile );
+
+  try
+  {
+    mNcFile->openFile( meshFile );
+  }
+  catch ( MDAL::Error &err )
+  {
+    err.setDriver( name() );
+    MDAL::Log::error( err );
+    return std::string();
+  }
+
+  std::vector<std::string> meshNames = findMeshesNames();
+  if ( !meshNames.size() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "No meshes found in file" + meshFile );
+    return std::string( "" );
+  }
+
+  // ignore network variable
+  std::vector<std::string>::iterator position = std::find(meshNames.begin(), meshNames.end(), "network");
+  if (position != meshNames.end())
+      meshNames.erase(position);
+
+  return MDAL::buildAndMergeMeshUris( meshFile, meshNames, name() );
+}
+
 std::string MDAL::DriverUgrid::nodeZVariableName() const
 {
   const std::vector<std::string> variables = mNcFile->readArrNames();
@@ -603,7 +633,6 @@ void MDAL::DriverUgrid::save( const std::string &uri, MDAL::Mesh *mesh )
     MDAL::Log::error( err, name() );
   }
 }
-
 
 void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
 {

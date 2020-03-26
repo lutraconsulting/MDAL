@@ -14,6 +14,7 @@
 TEST( MeshFlo2dTest, missing_required_file )
 {
   std::string path = test_file( "/flo2d/missing_required_file/BASE.OUT" );
+  EXPECT_TRUE( std::string( MDAL_MeshNames( path.c_str() ) ).empty() );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_EQ( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -35,6 +36,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
 
   // Create a new dat file
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "FLO2D:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_DriverH driver = MDAL_driverFromName( "FLO2D" );
@@ -104,6 +106,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_New )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "FLO2D:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
@@ -207,6 +210,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
 
   // Create a new dat file
   {
+    EXPECT_EQ( MDAL_MeshNames( pathOrig.c_str() ), "FLO2D:\"" + pathOrig + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( pathOrig.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_DriverH driver = MDAL_driverFromName( "FLO2D" );
@@ -272,6 +276,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( appendedFile.c_str() ), "FLO2D:\"" + appendedFile + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( appendedFile.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_Status s = MDAL_LastStatus();
@@ -371,6 +376,7 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
 TEST( MeshFlo2dTest, BarnHDF5 )
 {
   std::string path = test_file( "/flo2d/BarnHDF5/BASE.OUT" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "FLO2D:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -555,6 +561,7 @@ TEST( MeshFlo2dTest, basic )
   for ( const std::string &file : files )
   {
     std::string path = test_file( "/flo2d/" + file + "/BASE.OUT" );
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "FLO2D:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_Status s = MDAL_LastStatus();
@@ -726,6 +733,7 @@ TEST( MeshFlo2dTest, basic )
 TEST( MeshFlo2dTest, basic_required_files_only )
 {
   std::string path = test_file( "/flo2d/basic_required_files_only/BASE.OUT" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "FLO2D:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -789,6 +797,7 @@ TEST( MeshFlo2dTest, basic_required_files_only )
 TEST( MeshFlo2dTest, pro_16_02_14 )
 {
   std::string path = test_file( "/flo2d/pro_16_02_14/BASE.OUT" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "FLO2D:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();

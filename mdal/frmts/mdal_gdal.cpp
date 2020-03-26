@@ -538,6 +538,9 @@ bool MDAL::DriverGdal::canReadMesh( const std::string &uri )
   {
     registerDriver();
     parseDatasetNames( uri );
+
+    if ( !MDAL::contains( filters(), MDAL::fileExtension( uri ) ) )
+      return false;
   }
   catch ( MDAL_Status )
   {

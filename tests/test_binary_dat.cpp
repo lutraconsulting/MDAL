@@ -22,6 +22,7 @@ TEST( MeshBinaryDatTest, MissingMesh )
 TEST( MeshBinaryDatTest, QuadAndTriangleFile )
 {
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/binary_dat/quad_and_triangle_binary.dat" );
@@ -74,6 +75,7 @@ TEST( MeshBinaryDatTest, QuadAndTriangleFile )
 TEST( MeshBinaryDatTest, RegularGridVectorFile )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/binary_dat/regular_grid_vector.dat" );
@@ -124,6 +126,7 @@ TEST( MeshBinaryDatTest, RegularGridVectorFile )
 TEST( MeshBinaryDatTest, RegularGridScalarFile )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   path = test_file( "/binary_dat/regular_grid_scalar.dat" );
@@ -176,6 +179,7 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
   // Create a new dat file
   {
 
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
@@ -227,6 +231,7 @@ TEST( MeshBinaryDatTest, WriteScalarTest )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, scalarPath.c_str() );
@@ -279,6 +284,7 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
   // Create a new dat file
   {
 
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
 
@@ -323,6 +329,7 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
   // file and test the
   // values are there
   {
+    EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
     MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_M_LoadDatasets( m, vectorPath.c_str() );

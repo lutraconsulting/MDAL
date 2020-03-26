@@ -13,6 +13,7 @@
 TEST( MeshSWWTest, Cairns )
 {
   std::string path = test_file( "/sww/anuga-viewer/cairns.sww" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SWW:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -154,6 +155,7 @@ TEST( MeshSWWTest, Cairns )
 TEST( MeshSWWTest, Flat )
 {
   std::string path = test_file( "/sww/anuga-viewer/flat.sww" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SWW:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -179,6 +181,7 @@ TEST( MeshSWWTest, Flat )
 TEST( MeshSWWTest, Catchment )
 {
   std::string path = test_file( "/sww/anuga-viewer/Small_catchment_testcase.sww" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SWW:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -221,6 +224,7 @@ TEST( MeshSWWTest, Catchment )
 TEST( MeshSWWTest, Laminar )
 {
   std::string path = test_file( "/sww/anuga-viewer/laminar.sww" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SWW:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -245,6 +249,7 @@ TEST( MeshSWWTest, Laminar )
 TEST( MeshSWWTest, Wave )
 {
   std::string path = test_file( "/sww/anuga-viewer/holl_bch_wave_mesh_elevation_smooth_ys10.0_ft500.0_size4802.sww" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SWW:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();

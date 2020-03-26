@@ -38,6 +38,7 @@ TEST( Mesh2DMTest, UnsuportedElements )
 TEST( Mesh2DMTest, Mixed1D2D )
 {
   std::string path = test_file( "/2dm/quad_and_line.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -59,6 +60,7 @@ TEST( Mesh2DMTest, MeshWithNumberingGaps )
 {
   //https://github.com/lutraconsulting/MDAL/issues/51
   std::string path = test_file( "/2dm/mesh_with_numbering_gaps.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -73,6 +75,7 @@ TEST( Mesh2DMTest, MeshWithNumberingGaps )
 TEST( Mesh2DMTest, MeshWithUnorderedIds )
 {
   std::string path = test_file( "/2dm/unordered_ids.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
 }
@@ -80,6 +83,7 @@ TEST( Mesh2DMTest, MeshWithUnorderedIds )
 TEST( Mesh2DMTest, QuadAndTriangleFile )
 {
   std::string path = test_file( "/2dm/quad_and_triangle.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -160,6 +164,7 @@ TEST( Mesh2DMTest, LinesFile )
 {
   std::string path = test_file( "/2dm/lines.2dm" );
 
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -243,6 +248,7 @@ TEST( Mesh2DMTest, LinesFile )
 TEST( Mesh2DMTest, RegularGridFile )
 {
   std::string path = test_file( "/2dm/regular_grid.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   EXPECT_NE( m, nullptr );
@@ -270,6 +276,7 @@ TEST( Mesh2DMTest, RegularGridFile )
 TEST( Mesh2DMTest, Basement3CellElevationTest )
 {
   std::string path = test_file( "/xdmf/basement3/SimpleChannel/SimpleChannel.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();

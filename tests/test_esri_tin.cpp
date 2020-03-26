@@ -19,6 +19,7 @@ TEST( MeshEsriTinTest, load_mesh_simple )
 {
   std::string path = test_file( "/esri_tin/mesh_simple/tnxy.adf" );
 
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "ESRI_TIN:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   ASSERT_TRUE( nullptr != m );
@@ -60,6 +61,7 @@ TEST( MeshEsriTinTest, test_dem_tintriangle )
 {
   std::string path = test_file( "/esri_tin/dem/tnxy.adf" );
 
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "ESRI_TIN:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   ASSERT_TRUE( nullptr != m );
@@ -85,6 +87,7 @@ TEST( MeshEsriTinTest, test_dem_with_holes_tintriangle )
 {
   std::string path = test_file( "/esri_tin/dem_with_holes/tnxy.adf" );
 
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "ESRI_TIN:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   ASSERT_TRUE( nullptr != m );
@@ -110,6 +113,7 @@ TEST( MeshEsriTinTest, test_Islands_tintriangle )
 {
   std::string path = test_file( "/esri_tin/islands/tnxy.adf" );
 
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "ESRI_TIN:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
 
   ASSERT_TRUE( nullptr != m );
