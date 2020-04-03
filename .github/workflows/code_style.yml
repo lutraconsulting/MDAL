@@ -1,11 +1,11 @@
 name: Code Style
-on: [push]
+on: [push, pull_request]
 jobs:
-  build:
+  code_style:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Install Astyle
       run: sudo apt-get install astyle
     - name: Run Astyle
-      run: ./scripts/ci/linux/codestyle.bash
+      run: ./scripts/check_all.bash

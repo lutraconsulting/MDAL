@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 if [ "$#" -ne 1 ] ; then 
   echo "QGIS directory argument required" 
   exit 1

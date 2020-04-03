@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/lutraconsulting/MDAL.svg?branch=master)](https://travis-ci.org/lutraconsulting/MDAL)
-[![CircleCI](https://circleci.com/gh/lutraconsulting/MDAL.svg?style=svg)](https://circleci.com/gh/lutraconsulting/MDAL)
+![Code Style](https://github.com/lutraconsulting/MDAL/workflows/Code%20Style/badge.svg)
 [![Coverage Status](https://img.shields.io/coveralls/lutraconsulting/MDAL.svg)](https://coveralls.io/github/lutraconsulting/MDAL?branch=master)
 [![Docs Build](https://dev.azure.com/lutraconsulting/MDAL/_apis/build/status/lutraconsulting.MDAL?branchName=master)](https://dev.azure.com/lutraconsulting/MDAL/_build/latest?definitionId=1&branchName=master)
 
@@ -133,12 +133,12 @@ run ctest command in build directory `ctest -VV`
 format code:
 ```
 cd scripts
-./check_all.sh
+./check_all.bash
 ```
 
 or use git pre-commit hook
 ```
 cd MDAL
-ln -s ./scripts/mdal_astyle.sh .git/hooks/pre-commit
+ln -s ./scripts/mdal_astyle.bash .git/hooks/pre-commit
 ```
 

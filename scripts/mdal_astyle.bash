@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # files to check
 if [ $# -eq 0 ]; then
