@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+set -e
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PWD=`pwd`
 cd $DIR
-CI=0 mdal_astyle.bash `find .. -name \*.h* -print -o -name \*.c* -print`
+./mdal_astyle.bash `find .. -name \*.h* -print -o -name \*.c* -print`
 cd $PWD
