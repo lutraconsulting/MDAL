@@ -81,7 +81,7 @@ IF (WITH_NETCDF)
 ENDIF(WITH_NETCDF)
 
 IF (WITH_XML)
-  FIND_PACKAGE(Xml2 REQUIRED)
+  FIND_PACKAGE(LibXml2 REQUIRED)
   IF (LIBXML2_FOUND)
     # following variable is used in mdal_config.h
     SET (XML_FOUND TRUE)
