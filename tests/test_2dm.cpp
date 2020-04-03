@@ -157,6 +157,8 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   double value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 30, value );
 
+  EXPECT_FALSE( MDAL_G_isTemporal( g ) );
+
   MDAL_CloseMesh( m );
 }
 
@@ -350,6 +352,8 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
 
     double value = getValue( ds, 1 );
     EXPECT_DOUBLE_EQ( 0, value );
+
+    EXPECT_FALSE( MDAL_G_isTemporal( g ) );
   }
 
   // Bed elevation dataset and face elevation dataset

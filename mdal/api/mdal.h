@@ -519,6 +519,13 @@ MDAL_EXPORT void MDAL_G_closeEditMode( MDAL_DatasetGroupH group );
  */
 MDAL_EXPORT const char *MDAL_G_referenceTime( MDAL_DatasetGroupH group );
 
+/**
+ * Returns whether the dataset group is temporal, i.e. has time-related datasets
+ *
+ * \since MDAL 0.6.0
+ */
+MDAL_EXPORT bool MDAL_G_isTemporal( MDAL_DatasetGroupH group );
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS
 ///////////////////////////////////////////////////////////////////////////////////////

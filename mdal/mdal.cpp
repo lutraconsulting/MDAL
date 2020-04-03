@@ -1168,3 +1168,14 @@ bool MDAL_D_hasActiveFlagCapability( MDAL_DatasetH dataset )
   MDAL::Dataset *ds = static_cast< MDAL::Dataset * >( dataset );
   return ds->supportsActiveFlag();
 }
+
+bool MDAL_G_isTemporal( MDAL_DatasetGroupH group )
+{
+  if ( !group )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
+    return false;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  return g->datasets.size() > 1;
+}
