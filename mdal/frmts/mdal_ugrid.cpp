@@ -491,7 +491,13 @@ void MDAL::DriverUgrid::ignore2DMeshVariables( const std::string &mesh, std::set
   ignoreVariables.insert( mNcFile->getAttrStr( mesh, "edge_face_connectivity" ) );
 }
 
-void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid, const std::string &variableName, std::string &name, bool *isVector, bool *isX )
+void MDAL::DriverUgrid::parseNetCDFVariableMetadata(
+  int varid,
+  const std::string &variableName,
+  std::string &name,
+  bool *isVector,
+  bool *isX,
+  std::map<std::string, std::string> &options )
 {
   *isVector = false;
   *isX = true;
@@ -543,6 +549,44 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid, const std::strin
       name = longName;
     }
   }
+
+  std::string flagBoundVarName = mNcFile->getAttrStr( "flag_bounds", varid );
+  if ( !flagBoundVarName.empty() )
+  {
+    MDAL::Log::info( variableName + " has classified values, parsing class bounds" );
+    try
+    {
+      int boundsVarId = mNcFile->getVarId( flagBoundVarName );
+      std::vector<size_t> classDims;
+      std::vector<int> classDimIds;
+      mNcFile->getDimensions( flagBoundVarName, classDims, classDimIds );
+      std::vector<double> boundValues = mNcFile->readDoubleArr( boundsVarId, 0, 0, classDims[0], classDims[1] );
+
+      if ( classDims[1] != 2 || classDims[0] <= 0 )
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Invalid classification dimension" );
+
+      std::string optionKey = "classification";
+      std::string classificationOption;
+      for ( size_t i = 0; i < classDims[0]; ++i )
+      {
+        if ( boundValues[i * 2] != NC_FILL_DOUBLE )
+          classificationOption.append( MDAL::doubleToString( boundValues[i * 2] ) );
+        if ( boundValues[i * 2 + 1] != NC_FILL_DOUBLE )
+        {
+          classificationOption.append( ";" );
+          classificationOption.append( MDAL::doubleToString( boundValues[i * 2 + 1] ) );
+        }
+        classificationOption.append( "\n" );
+      }
+
+      options[optionKey] = classificationOption;
+    }
+    catch ( MDAL::Error &err )
+    {
+      MDAL::Log::warning( err.status, err.driver, "Error when parsing class bounds: " + err.mssg + ", classification ignored" );
+    }
+  }
+
 }
 
 std::string MDAL::DriverUgrid::getTimeVariableName() const

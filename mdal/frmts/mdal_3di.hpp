@@ -51,7 +51,8 @@ namespace MDAL
       std::string getTimeVariableName() const override;
       std::set<std::string> ignoreNetCDFVariables() override;
       void parseNetCDFVariableMetadata( int varid, const std::string &variableName,
-                                        std::string &name, bool *is_vector, bool *is_x ) override;
+                                        std::string &name, bool *is_vector, bool *is_x,
+                                        std::map<std::string, std::string> &option ) override;
 
       //! Returns number of vertices
       size_t parse2DMesh();

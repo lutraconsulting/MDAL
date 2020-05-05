@@ -619,6 +619,24 @@ TEST( MeshUgridTest, 1DMeshTest )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshUgridTest, classifiedVariable )
+{
+  std::string path = test_file( "/ugrid/classified/simplebox_clm.nc" );
+  MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
+  MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
+
+  EXPECT_FALSE( mesh == nullptr );
+
+  MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 1 );
+  ASSERT_EQ( std::string( "Water depth at pressure points" ), std::string( MDAL_G_name( group ) ) );
+
+  int metaDataCount = MDAL_G_metadataCount( group );
+  EXPECT_EQ( 2, metaDataCount );
+  ASSERT_EQ( std::string( "classification" ), std::string( MDAL_G_metadataKey( group, 1 ) ) );
+  std::string classification( "0;0.5\n0.5;1\n1;5\n5;10\n10\n" );
+  ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 1 ) ), classification );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
