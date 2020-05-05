@@ -74,7 +74,7 @@ TEST( MeshUgridTest, DFlow11Manzese )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Total bed shear stress" ), std::string( name ) );
@@ -173,7 +173,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "water depth at pressure points" ), std::string( name ) );
@@ -252,7 +252,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water level" ), std::string( name ) );
@@ -336,7 +336,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water level" ), std::string( name ) );
@@ -381,7 +381,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Flow element center velocity vector" ), std::string( name ) );
@@ -476,7 +476,7 @@ TEST( MeshUgridTest, ADCIRC )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "sea surface height" ), std::string( name ) );
@@ -521,7 +521,7 @@ TEST( MeshUgridTest, ADCIRC )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "barotropic current" ), std::string( name ) );
