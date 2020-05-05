@@ -15,5 +15,3 @@ Coordinate reference system is not relevant here.
 * "mesh2d_waterdepth": Water depth in cell centres, as classes.
 
 *Time:*   24 snapshots in time.
-
-NOTE: replaced on 6th April 2020, now it has new “:flag_bounds” attribute that specifies the connection 

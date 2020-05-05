@@ -150,6 +150,7 @@ namespace MDAL
 
       std::string getMetadata( const std::string &key );
       void setMetadata( const std::string &key, const std::string &val );
+      void setMetadata( const Metadata &metadata );
 
       std::string name();
       void setName( const std::string &name );

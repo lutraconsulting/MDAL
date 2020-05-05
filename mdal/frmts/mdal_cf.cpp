@@ -104,8 +104,8 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
       std::string name;
       bool is_vector = true;
       bool is_x = false;
-      std::map<std::string, std::string> options;
-      parseNetCDFVariableMetadata( varid, variable_name, name, &is_vector, &is_x, options );
+      Metadata meta;
+      parseNetCDFVariableMetadata( varid, variable_name, name, &is_vector, &is_x, meta );
 
       // Add it to the map
       auto it = dsinfo_map.find( name );
@@ -137,7 +137,7 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
         dsInfo.name = name;
         dsInfo.nValues = mDimensions.size( mDimensions.type( dimid ) );
         dsInfo.timeLocation = timeLocation;
-        dsInfo.options = options;
+        dsInfo.metadata = meta;
         dsinfo_map[name] = dsInfo;
       }
     }
@@ -176,9 +176,7 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Relat
           dsi.name
         );
     group->setIsScalar( !dsi.is_vector );
-
-    for ( auto const &elem : dsi.options )
-      group->setMetadata( elem.first, elem.second );
+    group->setMetadata( dsi.metadata );
 
     if ( dsi.outputType == CFDimensions::Vertex )
       group->setDataLocation( MDAL_DataLocation::DataOnVertices );

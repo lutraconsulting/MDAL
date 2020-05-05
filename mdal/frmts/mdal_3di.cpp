@@ -194,14 +194,15 @@ std::set<std::string> MDAL::Driver3Di::ignoreNetCDFVariables()
   return ignore_variables;
 }
 
-void MDAL::Driver3Di::parseNetCDFVariableMetadata(
-  int varid,
-  const std::string &variableName,
-  std::string &name,
-  bool *is_vector,
-  bool *is_x,
-  std::map<std::string, std::string> & )
+void MDAL::Driver3Di::parseNetCDFVariableMetadata( int varid,
+    const std::string &variableName,
+    std::string &name,
+    bool *is_vector,
+    bool *is_x,
+    Metadata &meta )
 {
+  MDAL_UNUSED( meta )
+
   *is_vector = false;
   *is_x = true;
 

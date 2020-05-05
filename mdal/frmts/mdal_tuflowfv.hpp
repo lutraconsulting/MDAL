@@ -122,9 +122,12 @@ namespace MDAL
       void addBedElevation( MemoryMesh *mesh ) override;
       std::string getCoordinateSystemVariableName() override;
       std::set<std::string> ignoreNetCDFVariables() override;
-      void parseNetCDFVariableMetadata( int varid, const std::string &variableName,
-                                        std::string &name, bool *is_vector, bool *is_x,
-                                        std::map<std::string, std::string> &option ) override;
+      void parseNetCDFVariableMetadata( int varid,
+                                        const std::string &variableName,
+                                        std::string &name,
+                                        bool *is_vector,
+                                        bool *is_x,
+                                        Metadata &meta ) override;
       std::string getTimeVariableName() const override;
       std::shared_ptr<MDAL::Dataset> create2DDataset(
         std::shared_ptr<MDAL::DatasetGroup> group,

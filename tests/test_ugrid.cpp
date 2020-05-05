@@ -562,7 +562,6 @@ TEST( MeshUgridTest, ADCIRC )
 TEST( MeshUgridTest, 1DMeshTest )
 {
   std::string path = test_file( "/ugrid/1dtest/dflow1d_map.nc" );
-  MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
 
   std::string uri = "Ugrid:\"" + path + "\":" + "mesh1d";
   std::string uriToMeshNames = "Ugrid:\"" + path + "\"";
@@ -622,19 +621,22 @@ TEST( MeshUgridTest, 1DMeshTest )
 TEST( MeshUgridTest, classifiedVariable )
 {
   std::string path = test_file( "/ugrid/classified/simplebox_clm.nc" );
-  MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
   MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
 
-  EXPECT_FALSE( mesh == nullptr );
+  EXPECT_NE( mesh, nullptr );
 
   MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 1 );
   ASSERT_EQ( std::string( "Water depth at pressure points" ), std::string( MDAL_G_name( group ) ) );
 
   int metaDataCount = MDAL_G_metadataCount( group );
-  EXPECT_EQ( 2, metaDataCount );
+  EXPECT_EQ( 3, metaDataCount );
   ASSERT_EQ( std::string( "classification" ), std::string( MDAL_G_metadataKey( group, 1 ) ) );
-  std::string classification( "0;0.5\n0.5;1\n1;5\n5;10\n10\n" );
+  std::string classification( "0,0.5;;0.5,1;;1,5;;5,10;;10" );
   ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 1 ) ), classification );
+
+  ASSERT_EQ( std::string( "units" ), std::string( MDAL_G_metadataKey( group, 2 ) ) );
+  ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 2 ) ), std::string( "m" ) );
+
 
   MDAL_CloseMesh( mesh );
 }

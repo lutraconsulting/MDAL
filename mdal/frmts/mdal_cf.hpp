@@ -66,7 +66,7 @@ namespace MDAL
     size_t nValues;
     int ncid_x; //!< NetCDF variable id
     int ncid_y; //!< NetCDF variable id
-    std::map<std::string, std::string> options;
+    Metadata metadata;
   };
   typedef std::map<std::string, CFDatasetGroupInfo> cfdataset_info_map; // name -> DatasetInfo
 
@@ -122,7 +122,7 @@ namespace MDAL
       virtual std::string getCoordinateSystemVariableName() = 0;
       virtual std::set<std::string> ignoreNetCDFVariables() = 0;
       virtual void parseNetCDFVariableMetadata( int varid, const std::string &variableName,
-          std::string &name, bool *is_vector, bool *is_x, std::map<std::string, std::string> &option ) = 0;
+          std::string &name, bool *is_vector, bool *is_x, Metadata &meta ) = 0;
       virtual std::string getTimeVariableName() const = 0;
       virtual std::shared_ptr<MDAL::Dataset> create2DDataset(
         std::shared_ptr<MDAL::DatasetGroup> group,

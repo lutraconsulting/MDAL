@@ -491,14 +491,14 @@ void MDAL::DriverUgrid::ignore2DMeshVariables( const std::string &mesh, std::set
   ignoreVariables.insert( mNcFile->getAttrStr( mesh, "edge_face_connectivity" ) );
 }
 
-void MDAL::DriverUgrid::parseNetCDFVariableMetadata(
-  int varid,
-  const std::string &variableName,
-  std::string &name,
-  bool *isVector,
-  bool *isX,
-  std::map<std::string, std::string> &options )
+void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
+    const std::string &variableName,
+    std::string &name,
+    bool *isVector,
+    bool *isX,
+    Metadata &meta )
 {
+
   *isVector = false;
   *isX = true;
 
@@ -565,21 +565,25 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata(
       if ( classDims[1] != 2 || classDims[0] <= 0 )
         throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Invalid classification dimension" );
 
-      std::string optionKey = "classification";
-      std::string classificationOption;
+      std::pair<std::string, std::string> classificationMeta;
+      classificationMeta.first = "classification";
+      std::string classification;
       for ( size_t i = 0; i < classDims[0]; ++i )
       {
         if ( boundValues[i * 2] != NC_FILL_DOUBLE )
-          classificationOption.append( MDAL::doubleToString( boundValues[i * 2] ) );
+          classification.append( MDAL::doubleToString( boundValues[i * 2] ) );
         if ( boundValues[i * 2 + 1] != NC_FILL_DOUBLE )
         {
-          classificationOption.append( ";" );
-          classificationOption.append( MDAL::doubleToString( boundValues[i * 2 + 1] ) );
+          classification.append( "," );
+          classification.append( MDAL::doubleToString( boundValues[i * 2 + 1] ) );
         }
-        classificationOption.append( "\n" );
+        if ( i < classDims[0] - 1 )
+          classification.append( ";;" );
       }
 
-      options[optionKey] = classificationOption;
+      classificationMeta.second = classification;
+
+      meta.push_back( classificationMeta );
     }
     catch ( MDAL::Error &err )
     {
@@ -587,6 +591,17 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata(
     }
   }
 
+  // check for units
+  try
+  {
+    std::string units = mNcFile->getAttrStr( "units", varid );
+    std::pair<std::string, std::string> unitMeta;
+    unitMeta.first = "units";
+    unitMeta.second = units;
+    meta.push_back( unitMeta );
+  }
+  catch ( MDAL::Error & )
+  {}
 }
 
 std::string MDAL::DriverUgrid::getTimeVariableName() const
