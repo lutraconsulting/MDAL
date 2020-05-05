@@ -635,6 +635,8 @@ TEST( MeshUgridTest, classifiedVariable )
   ASSERT_EQ( std::string( "classification" ), std::string( MDAL_G_metadataKey( group, 1 ) ) );
   std::string classification( "0;0.5\n0.5;1\n1;5\n5;10\n10\n" );
   ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 1 ) ), classification );
+
+  MDAL_CloseMesh( mesh );
 }
 
 int main( int argc, char **argv )
