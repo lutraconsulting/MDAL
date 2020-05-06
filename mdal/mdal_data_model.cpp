@@ -187,6 +187,12 @@ void MDAL::DatasetGroup::setMetadata( const std::string &key, const std::string 
     metadata.push_back( std::make_pair( key, val ) );
 }
 
+void MDAL::DatasetGroup::setMetadata( const MDAL::Metadata &metadata )
+{
+  for ( const auto &meta : metadata )
+    setMetadata( meta.first, meta.second );
+}
+
 std::string MDAL::DatasetGroup::name()
 {
   return getMetadata( "name" );

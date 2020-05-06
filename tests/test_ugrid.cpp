@@ -74,7 +74,7 @@ TEST( MeshUgridTest, DFlow11Manzese )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Total bed shear stress" ), std::string( name ) );
@@ -173,7 +173,7 @@ TEST( MeshUgridTest, DFlow11Simplebox )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "water depth at pressure points" ), std::string( name ) );
@@ -252,7 +252,7 @@ TEST( MeshUgridTest, DFlow12RivierGridClm )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water level" ), std::string( name ) );
@@ -336,7 +336,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Water level" ), std::string( name ) );
@@ -381,7 +381,7 @@ TEST( MeshUgridTest, DFlow12RivierGridMap )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Flow element center velocity vector" ), std::string( name ) );
@@ -476,7 +476,7 @@ TEST( MeshUgridTest, ADCIRC )
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "sea surface height" ), std::string( name ) );
@@ -521,7 +521,7 @@ TEST( MeshUgridTest, ADCIRC )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "barotropic current" ), std::string( name ) );
@@ -562,7 +562,6 @@ TEST( MeshUgridTest, ADCIRC )
 TEST( MeshUgridTest, 1DMeshTest )
 {
   std::string path = test_file( "/ugrid/1dtest/dflow1d_map.nc" );
-  MDAL_SetLogVerbosity( MDAL_LogLevel::Debug );
 
   std::string uri = "Ugrid:\"" + path + "\":" + "mesh1d";
   std::string uriToMeshNames = "Ugrid:\"" + path + "\"";
@@ -617,6 +616,29 @@ TEST( MeshUgridTest, 1DMeshTest )
   EXPECT_DOUBLE_EQ( max, 5.90487869582277e-13 );
 
   MDAL_CloseMesh( m );
+}
+
+TEST( MeshUgridTest, classifiedVariable )
+{
+  std::string path = test_file( "/ugrid/classified/simplebox_clm.nc" );
+  MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
+
+  EXPECT_NE( mesh, nullptr );
+
+  MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 1 );
+  ASSERT_EQ( std::string( "Water depth at pressure points" ), std::string( MDAL_G_name( group ) ) );
+
+  int metaDataCount = MDAL_G_metadataCount( group );
+  EXPECT_EQ( 3, metaDataCount );
+  ASSERT_EQ( std::string( "classification" ), std::string( MDAL_G_metadataKey( group, 1 ) ) );
+  std::string classification( "0,0.5;;0.5,1;;1,5;;5,10;;10" );
+  ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 1 ) ), classification );
+
+  ASSERT_EQ( std::string( "units" ), std::string( MDAL_G_metadataKey( group, 2 ) ) );
+  ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 2 ) ), std::string( "m" ) );
+
+
+  MDAL_CloseMesh( mesh );
 }
 
 int main( int argc, char **argv )
