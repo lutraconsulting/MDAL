@@ -114,7 +114,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "waterlevel" ), std::string( name ) );
@@ -156,7 +156,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
-  ASSERT_EQ( 1, meta_count );
+  ASSERT_EQ( 2, meta_count );
 
   name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "flow velocity in cell centre" ), std::string( name ) );
