@@ -301,7 +301,7 @@ static void fromClassificationToValue( const MDAL::Classification &classificatio
       bound1 = bound2;
     if ( bound2 == NC_FILL_DOUBLE )
       bound2 = bound1;
-    if ( bound1 == NC_FILL_DOUBLE == bound2 == NC_FILL_DOUBLE )
+    if ( bound1 == NC_FILL_DOUBLE || bound2 == NC_FILL_DOUBLE )
       values[i] = std::numeric_limits<double>::quiet_NaN();
     else
       values[i] = ( bound1 + bound2 ) / 2;
