@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 #include <netcdf.h>
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 #include <assert.h>
 #include <cstring>
