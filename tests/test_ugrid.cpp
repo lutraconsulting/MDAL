@@ -11,6 +11,10 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846264338327
+#endif
+
 TEST( MeshUgridTest, SaveDFlow11Manzese )
 {
   saveAndCompareMesh(
