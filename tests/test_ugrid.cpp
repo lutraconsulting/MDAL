@@ -5,10 +5,15 @@
 #include "gtest/gtest.h"
 #include <string>
 #include <vector>
+#include <math.h>
 
 //mdal
 #include "mdal.h"
 #include "mdal_testutils.hpp"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846264338327
+#endif
 
 TEST( MeshUgridTest, SaveDFlow11Manzese )
 {
@@ -598,7 +603,7 @@ TEST( MeshUgridTest, 1DMeshTest )
   MDAL_DatasetGroupH dg = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( dg, nullptr );
 
-  ASSERT_EQ( std::string( "Flow element center velocity magnitude" ), std::string( MDAL_G_name( dg ) ) );
+  ASSERT_EQ( std::string( "Flow element center velocity" ), std::string( MDAL_G_name( dg ) ) );
   ASSERT_EQ( MDAL_G_hasScalarData( dg ), true );
 
   MDAL_DataLocation dg_location = MDAL_G_dataLocation( dg );
@@ -630,13 +635,47 @@ TEST( MeshUgridTest, classifiedVariable )
 
   int metaDataCount = MDAL_G_metadataCount( group );
   EXPECT_EQ( 3, metaDataCount );
-  ASSERT_EQ( std::string( "classification" ), std::string( MDAL_G_metadataKey( group, 1 ) ) );
+  ASSERT_EQ( std::string( "units" ), std::string( MDAL_G_metadataKey( group, 1 ) ) );
+  ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 1 ) ), std::string( "m" ) );
+  ASSERT_EQ( std::string( "classification" ), std::string( MDAL_G_metadataKey( group, 2 ) ) );
   std::string classification( "0,0.5;;0.5,1;;1,5;;5,10;;10" );
-  ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 1 ) ), classification );
+  ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 2 ) ), classification );
 
-  ASSERT_EQ( std::string( "units" ), std::string( MDAL_G_metadataKey( group, 2 ) ) );
-  ASSERT_EQ( std::string( MDAL_G_metadataValue( group, 2 ) ), std::string( "m" ) );
+  MDAL_CloseMesh( mesh );
+}
 
+TEST( MeshUgridTest, magnitude_direction )
+{
+  std::string path = test_file( "/ugrid/magnitude_direction/simplebox_clm.nc" );
+  MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
+
+  EXPECT_NE( mesh, nullptr );
+
+  ASSERT_EQ( 6, MDAL_M_datasetGroupCount( mesh ) );
+
+  MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 2 );
+  ASSERT_EQ( std::string( "Flow element center velocity direction" ), std::string( MDAL_G_name( group ) ) );
+  MDAL_DatasetH dataset = MDAL_G_dataset( group, 10 );
+  int directionIndex = getValue( dataset, 20 );
+  EXPECT_EQ( directionIndex, 36 );
+
+  group = MDAL_M_datasetGroup( mesh, 3 );
+  ASSERT_EQ( std::string( "Flow element center velocity magnitude" ), std::string( MDAL_G_name( group ) ) );
+  dataset = MDAL_G_dataset( group, 10 );
+  int magIndex = getValue( dataset, 20 );
+  EXPECT_EQ( magIndex, 3 );
+
+  double direction = ( directionIndex - 1 ) * 10 + 5;
+  double magnitude = ( magIndex - 1 ) * 0.2 + 0.1;
+
+  group = MDAL_M_datasetGroup( mesh, 1 );
+  ASSERT_EQ( std::string( "Flow element center velocity" ), std::string( MDAL_G_name( group ) ) );
+  dataset = MDAL_G_dataset( group, 10 );
+  double x = getValueX( dataset, 20 );
+  double y = getValueY( dataset, 20 );
+
+  EXPECT_EQ( x, magnitude * cos( 2 * M_PI * direction / 360 ) );
+  EXPECT_EQ( y, magnitude * sin( 2 * M_PI * direction / 360 ) );
 
   MDAL_CloseMesh( mesh );
 }

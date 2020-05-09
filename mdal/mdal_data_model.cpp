@@ -260,6 +260,26 @@ void MDAL::DatasetGroup::stopEditing()
   mInEditMode = false;
 }
 
+void MDAL::DatasetGroup::setReferenceAngles( const std::pair<double, double> &referenceAngle )
+{
+  mReferenceAngles = referenceAngle;
+}
+
+bool MDAL::DatasetGroup::isPolar() const
+{
+  return mIsPolar;
+}
+
+void MDAL::DatasetGroup::setIsPolar( bool isPolar )
+{
+  mIsPolar = isPolar;
+}
+
+std::pair<double, double> MDAL::DatasetGroup::referenceAngles() const
+{
+  return mReferenceAngles;
+}
+
 MDAL_DataLocation MDAL::DatasetGroup::dataLocation() const
 {
   return mDataLocation;

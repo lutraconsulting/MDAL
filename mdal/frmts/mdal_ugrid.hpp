@@ -39,11 +39,11 @@ namespace MDAL
       std::string getCoordinateSystemVariableName() override;
       std::set<std::string> ignoreNetCDFVariables() override;
       void parseNetCDFVariableMetadata( int varid,
-                                        const std::string &variableName,
+                                        std::string &variableName,
                                         std::string &name,
-                                        bool *is_vector,
-                                        bool *is_x,
-                                        Metadata &meta ) override;
+                                        bool *is_vector, bool *isPolar,
+                                        bool *is_x ) override;
+      std::vector<std::pair<double, double>> parseClassification( int varid ) const override;
       std::string getTimeVariableName() const override;
 
       void parse2VariablesFromAttribute( const std::string &name, const std::string &attr_name,
