@@ -222,6 +222,10 @@ MDAL::DriverManager::DriverManager()
   mDrivers.push_back( std::make_shared<MDAL::DriverGdalGrib>() );
 #endif
 
+#ifdef HAVE_SQLITE3
+  // TADA!!!
+#endif
+
   // DATASET DRIVERS
   mDrivers.push_back( std::make_shared<MDAL::DriverAsciiDat>() );
   mDrivers.push_back( std::make_shared<MDAL::DriverBinaryDat>() );
