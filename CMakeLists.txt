@@ -22,6 +22,7 @@ SET (WITH_HDF5 TRUE CACHE BOOL "Build providers that require HDF5 (e.g. XMDF, XD
 SET (WITH_GDAL TRUE CACHE BOOL "Build providers that require GDAL (e.g. GRIB)")
 SET (WITH_NETCDF TRUE CACHE BOOL "Build providers that require NETCDF (e.g. 3Di)")
 SET (WITH_XML TRUE CACHE BOOL "Build providers that require LIBXML2 (e.g. XDMF)")
+SET (WITH_SQLITE3 TRUE CACHE BOOL "Build providers that require SQLITE3 (e.g. 3Di 1D)")
 SET (BUILD_STATIC FALSE CACHE BOOL "Build static mdal library" )
 SET (BUILD_SHARED TRUE CACHE BOOL "Build shared mdal library" )
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables")
@@ -88,6 +89,14 @@ IF (WITH_XML)
     SET (HAVE_XML TRUE)
   ENDIF (LIBXML2_FOUND)
 ENDIF(WITH_XML)
+
+IF (WITH_SQLITE3)
+  FIND_PACKAGE(SQLite3 REQUIRED)
+  IF (SQLite3_FOUND)
+    # following variable is used in mdal_config.h
+    SET (HAVE_SQLITE3 TRUE)
+  ENDIF (SQLite3_FOUND)
+ENDIF(WITH_SQLITE3)
 
 #############################################################
 # create mdal_config.h
