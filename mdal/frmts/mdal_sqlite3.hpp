@@ -22,16 +22,10 @@ class Sqlite3Db
     bool open( const std::string &fileName );
     void close();
 
-    sqlite3 *get()
-    {
-      return mDb;
-    }
+    sqlite3 *get();
 
   private:
     sqlite3 *mDb = nullptr;
 };
-
-
-
 
 #endif // MDAL_SQLITE3_HPP
