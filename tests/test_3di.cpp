@@ -4,16 +4,18 @@
 */
 #include "gtest/gtest.h"
 #include <string>
+#include <math.h>
 #include <vector>
 
 //mdal
 #include "mdal.h"
+#include "mdal_config.hpp"
 #include "mdal_testutils.hpp"
 
 TEST( Mesh3DiTest, Mesh2D4cells301steps )
 {
   std::string path = test_file( "/3di/2d_4cells301steps/results_3di.nc" );
-  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "3Di:\"" + path + "\"" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "3Di:\"" + path + "\":Mesh2D" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -197,7 +199,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
 TEST( Mesh3DiTest, Mesh2D16cells7steps )
 {
   std::string path = test_file( "/3di/2d_16cells7steps/results_3di.nc" );
-  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "3Di:\"" + path + "\"" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "3Di:\"" + path + "\":Mesh2D" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -228,6 +230,39 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
 
   MDAL_CloseMesh( m );
 }
+
+#ifdef HAVE_SQLITE3
+TEST( Mesh3DiTest, Mesh1D )
+{
+  std::string path = test_file( "/3di/1d_loon/results_3di.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "3Di:\"" + path + "\":Mesh1D;;3Di:\"" + path + "\":Mesh2D" );
+  std::string uri = path + "\":Mesh1D";
+  MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "EPSG:28992" ), std::string( projection ) );
+
+  EXPECT_EQ( MDAL_M_vertexCount( m ), 109 );
+  EXPECT_EQ( MDAL_M_edgeCount( m ), 204 );
+  EXPECT_EQ( MDAL_M_faceCount( m ), 0 );
+
+  EXPECT_EQ( getVertexXCoordinatesAt( m, 1 ), 237014 ) ;
+  EXPECT_EQ( getVertexYCoordinatesAt( m, 1 ), 559119.1 );
+  EXPECT_EQ( getVertexZCoordinatesAt( m, 1 ), 7.12 );
+
+  ASSERT_EQ( 14, MDAL_M_datasetGroupCount( m ) );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 11 );
+  ASSERT_NE( g, nullptr );
+  ASSERT_EQ( 3, MDAL_G_datasetCount( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  MDAL_CloseMesh( m );
+}
+#endif //HAVE_SQLITE3
 
 int main( int argc, char **argv )
 {
