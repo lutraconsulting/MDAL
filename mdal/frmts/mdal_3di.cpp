@@ -119,7 +119,6 @@ void MDAL::Driver3Di::populateElements( Vertices &vertices, Edges &edges, Faces 
   else
 #endif
     populateMesh2DElements( vertices, faces );
-
 }
 
 void MDAL::Driver3Di::populateMesh2DElements( MDAL::Vertices &vertices, MDAL::Faces &faces )

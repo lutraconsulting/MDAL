@@ -7,9 +7,7 @@
 #include <sqlite3.h>
 
 
-Sqlite3Db::Sqlite3Db()
-{
-}
+Sqlite3Db::Sqlite3Db() = default;
 
 Sqlite3Db::~Sqlite3Db()
 {
@@ -33,4 +31,9 @@ void Sqlite3Db::close()
     sqlite3_close( mDb );
     mDb = nullptr;
   }
+}
+
+sqlite3 *Sqlite3Db::get()
+{
+  return mDb;
 }
