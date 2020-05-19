@@ -64,7 +64,6 @@ ENDIF(GDAL_FOUND)
 IF(NETCDF_FOUND)
   SET(MDAL_SOURCES ${MDAL_SOURCES}
     frmts/mdal_cf.cpp
-    frmts/mdal_3di.cpp
     frmts/mdal_ugrid.cpp
     frmts/mdal_netcdf.cpp
     frmts/mdal_sww.cpp
@@ -72,7 +71,6 @@ IF(NETCDF_FOUND)
   )
   SET(MDAL_HEADERS ${MDAL_HEADERS}
     frmts/mdal_cf.hpp
-    frmts/mdal_3di.hpp
     frmts/mdal_ugrid.hpp
     frmts/mdal_netcdf.hpp
     frmts/mdal_sww.hpp
@@ -107,14 +105,16 @@ IF(HDF5_FOUND AND XML_FOUND)
   )
 ENDIF(HDF5_FOUND AND XML_FOUND)
 
-IF(SQLite3_FOUND)
+IF(SQLITE3_FOUND AND NETCDF_FOUND)
   SET(MDAL_SOURCES ${MDAL_SOURCES}
     frmts/mdal_sqlite3.cpp
+    frmts/mdal_3di.cpp
   )
   SET(MDAL_HEADERS ${MDAL_HEADERS}
     frmts/mdal_sqlite3.hpp
+    frmts/mdal_3di.hpp
   )
-ENDIF(SQLite3_FOUND)
+ENDIF(SQLITE3_FOUND AND NETCDF_FOUND)
 
 SET(MDAL_LIBS)
 
@@ -176,9 +176,8 @@ FOREACH(LIB_NAME ${MDAL_LIBS})
   ENDIF(XML_FOUND)
 
   IF(SQLITE3_FOUND)
-    TARGET_INCLUDE_DIRECTORIES(${LIB_NAME} PRIVATE ${SQLite3_INCLUDE_DIR})
-    TARGET_LINK_LIBRARIES(${LIB_NAME} PUBLIC ${SQLite3_LIBRARIES} )
-    TARGET_COMPILE_DEFINITIONS(${LIB_NAME} PRIVATE ${SQLite3_DEFINITIONS})
+    TARGET_INCLUDE_DIRECTORIES(${LIB_NAME} PRIVATE ${SQLITE3_INCLUDE_DIR})
+    TARGET_LINK_LIBRARIES(${LIB_NAME} PUBLIC ${SQLITE3_LIBRARIES} )
   ENDIF(SQLITE3_FOUND)
 ENDFOREACH(LIB_NAME ${MDAL_LIBS})
 
