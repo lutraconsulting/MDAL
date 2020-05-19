@@ -28,4 +28,23 @@ class Sqlite3Db
     sqlite3 *mDb = nullptr;
 };
 
+class Sqlite3Statement
+{
+  public:
+    Sqlite3Statement();
+    ~Sqlite3Statement();
+
+    bool prepare( Sqlite3Db *db, const std::string &statementString );
+    void close();
+
+    int columnCount() const;
+
+    bool next();
+
+    int getInt( int column ) const;
+
+  private:
+    sqlite3_stmt *mStatement = nullptr;
+};
+
 #endif // MDAL_SQLITE3_HPP
