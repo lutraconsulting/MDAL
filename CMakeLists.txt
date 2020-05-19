@@ -92,10 +92,10 @@ ENDIF(WITH_XML)
 
 IF (WITH_SQLITE3)
   FIND_PACKAGE(SQLite3 REQUIRED)
-  IF (SQLite3_FOUND)
+  IF (SQLITE3_FOUND)
     # following variable is used in mdal_config.h
     SET (HAVE_SQLITE3 TRUE)
-  ENDIF (SQLite3_FOUND)
+  ENDIF (SQLITE3_FOUND)
 ENDIF(WITH_SQLITE3)
 
 #############################################################

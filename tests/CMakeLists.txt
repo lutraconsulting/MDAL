@@ -87,12 +87,17 @@ ENDIF(GDAL_FOUND)
 
 IF(NETCDF_FOUND)
   SET(TESTS ${TESTS}
-    test_3di.cpp
     test_sww.cpp
     test_ugrid.cpp
     test_tuflowfv.cpp
   )
 ENDIF(NETCDF_FOUND)
+
+IF(SQLITE3_FOUND AND NETCDF_FOUND)
+  SET(TESTS ${TESTS}
+    test_3di.cpp
+  )
+ENDIF(SQLITE3_FOUND AND NETCDF_FOUND)
 
 IF(GDAL_FOUND AND NETCDF_FOUND)
   SET(TESTS ${TESTS}
