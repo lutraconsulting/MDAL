@@ -11,6 +11,7 @@
 #include "mdal.h"
 #include "mdal_config.hpp"
 #include "mdal_testutils.hpp"
+#include "mdal_utils.hpp"
 
 TEST( Mesh3DiTest, Mesh2D4cells301steps )
 {
@@ -231,7 +232,6 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
   MDAL_CloseMesh( m );
 }
 
-#ifdef HAVE_SQLITE3
 TEST( Mesh3DiTest, Mesh1D )
 {
   std::string path = test_file( "/3di/1d_loon/results_3di.nc" );
@@ -256,13 +256,22 @@ TEST( Mesh3DiTest, Mesh1D )
   ASSERT_EQ( 14, MDAL_M_datasetGroupCount( m ) );
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 11 );
   ASSERT_NE( g, nullptr );
+  ASSERT_EQ( DataOnVertices, MDAL_G_dataLocation( g ) );
   ASSERT_EQ( 3, MDAL_G_datasetCount( g ) );
-  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 2 );
   ASSERT_NE( ds, nullptr );
+  ASSERT_TRUE( MDAL::equals( 8.162201881408691, getValue( ds, ( 5 ) ) ) );
+
+  g = MDAL_M_datasetGroup( m, 10 );
+  ASSERT_NE( g, nullptr );
+  ASSERT_EQ( DataOnEdges, MDAL_G_dataLocation( g ) );
+  ASSERT_EQ( 3, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 2 );
+  ASSERT_NE( ds, nullptr );
+  ASSERT_TRUE( MDAL::equals( -0.44919684529304504, getValue( ds, ( 5 ) ) ) );
 
   MDAL_CloseMesh( m );
 }
-#endif //HAVE_SQLITE3
 
 int main( int argc, char **argv )
 {

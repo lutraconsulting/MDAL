@@ -5,12 +5,11 @@
 
 #include "mdal_3di.hpp"
 #include "mdal_logger.hpp"
+#include <cmath>
 #include <netcdf.h>
 #include <assert.h>
-
-#ifdef HAVE_SQLITE3
 #include "mdal_sqlite3.hpp"
-#endif
+
 
 MDAL::Driver3Di::Driver3Di()
   : DriverCF(
@@ -44,8 +43,6 @@ std::string MDAL::Driver3Di::buildUri( const std::string &meshFile )
   std::vector<std::string> meshNames;
 
   CFDimensions dims;
-
-#ifdef HAVE_SQLITE3
   bool sqliteFileExist = check1DConnection( meshFile );
   if ( sqliteFileExist )
   {
@@ -55,7 +52,6 @@ std::string MDAL::Driver3Di::buildUri( const std::string &meshFile )
       meshNames.push_back( "Mesh1D" );
     }
   }
-#endif
 
   populate2DMeshDimensions( dims );
   if ( dims.size( CFDimensions::Face ) > 0 )
@@ -92,13 +88,11 @@ MDAL::CFDimensions MDAL::Driver3Di::populateDimensions( )
   size_t count;
   int ncid;
 
-#ifdef HAVE_SQLITE3
   if ( mRequestedMeshName == "Mesh1D" )
   {
     populate1DMeshDimensions( dims );
   }
   else
-#endif
   {
     // Default loaded mesh is the 2D mesh
     populate2DMeshDimensions( dims );
@@ -113,11 +107,9 @@ MDAL::CFDimensions MDAL::Driver3Di::populateDimensions( )
 
 void MDAL::Driver3Di::populateElements( Vertices &vertices, Edges &edges, Faces &faces )
 {
-#ifdef HAVE_SQLITE3
   if ( mRequestedMeshName == "Mesh1D" )
     populateMesh1DElements( vertices, edges );
   else
-#endif
     populateMesh2DElements( vertices, faces );
 }
 
@@ -337,7 +329,6 @@ std::vector<std::pair<double, double>> MDAL::Driver3Di::parseClassification( int
   return std::vector<std::pair<double, double>>();
 }
 
-#ifdef HAVE_SQLITE3
 void MDAL::Driver3Di::populate1DMeshDimensions( MDAL::CFDimensions &dims )
 {
   size_t count;
@@ -402,8 +393,6 @@ void MDAL::Driver3Di::populateMesh1DElements( MDAL::Vertices &vertices, MDAL::Ed
   }
 
   parse1DConnection( verticesId, edgesId, edges );
-
-  // here we check if there are some edges without
 }
 
 
@@ -437,23 +426,22 @@ void MDAL::Driver3Di::parse1DConnection( const std::vector<int> &nodesId,
 
   Sqlite3Db db;
   if ( !db.open( sqliteFileName ) || !( db.get() ) )
-    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unknown format" );
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open sqlite database" );
 
-  sqlite3_stmt *stmt;
-  int rc = sqlite3_prepare_v2( db.get(), "SELECT id, start_node_idx, end_node_idx FROM flowlines", -1, &stmt, nullptr );
+  Sqlite3Statement stmt;
 
-  if ( rc )
-    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unknown format" );
+  if ( ! stmt.prepare( &db, "SELECT id, start_node_idx, end_node_idx FROM flowlines" ) )
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to read edges connectivity from sqlite database" );
 
-  if ( sqlite3_column_count( stmt ) != 3 )
-    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unknown format" );
+  if ( std::isnan( stmt.columnCount() ) || stmt.columnCount() != 3 )
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Invalid edges connectivity schema in sqlite database" );
 
-  while ( SQLITE_ROW == sqlite3_step( stmt ) )
+  while ( stmt.next() )
   {
     int idEdge, idStartNode, idEndNode;
-    idEdge = sqlite3_column_int( stmt, 0 );
-    idStartNode = sqlite3_column_int( stmt, 1 );
-    idEndNode = sqlite3_column_int( stmt, 2 );
+    idEdge = stmt.getInt( 0 );
+    idStartNode = stmt.getInt( 1 );
+    idEndNode = stmt.getInt( 2 );
 
     auto itEdge = edgeMap.find( idEdge );
     auto itStart = nodeMap.find( idStartNode );
@@ -466,5 +454,3 @@ void MDAL::Driver3Di::parse1DConnection( const std::vector<int> &nodesId,
     }
   }
 }
-
-#endif //HAVE_SQLITE3

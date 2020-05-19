@@ -66,12 +66,10 @@ namespace MDAL
 
       void addBedElevationDatasetOnFaces();
 
-#ifdef HAVE_SQLITE3
       void populate1DMeshDimensions( MDAL::CFDimensions &dims );
       void populateMesh1DElements( Vertices &vertices, Edges &edges );
       bool check1DConnection( std::string fileName );
       void parse1DConnection( const std::vector<int> &nodesId, const std::vector<int> &edgesId, Edges &edges );
-#endif
   };
 
 } // namespace MDAL
