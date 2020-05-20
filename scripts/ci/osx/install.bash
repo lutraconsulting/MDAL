@@ -1,24 +1,10 @@
 #!/usr/bin/env bash
 
-brew upgrade
+export THIS_DIR=`pwd`
+wget https://qgis.org/downloads/macos/deps/qgis-deps-${QGIS_DEPS_VERSION}.tar.gz
 
-echo "tap"
-brew tap osgeo/osgeo4mac
+sudo mkdir -p /opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/
+cd /opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/
+sudo tar -xvzf $THIS_DIR/qgis-deps-${QGIS_DEPS_VERSION}.tar.gz
 
-echo "uninstall"
-brew uninstall --ignore-dependencies gdal
-brew uninstall --ignore-dependencies proj
-brew uninstall --ignore-dependencies libgeotiff
-brew uninstall --ignore-dependencies libspatialite
-brew uninstall --ignore-dependencies postgresql
-brew uninstall --ignore-dependencies netcdf
-
-echo "install"
-brew install hdf5
-brew install libxml2
-brew install osgeo-netcdf
-brew install osgeo-gdal
-brew install osgeo-gdal
-
-ls -la /usr/local/opt
-ls -la /usr/local/Cellar
+/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/bin/gdalinfo --formats

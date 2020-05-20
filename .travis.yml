@@ -25,7 +25,8 @@ env:
     - CTEST_BUILD_FLAGS=-j4
     - TRAVIS=1
     - CTEST_MODEL=Nightly
-
+    - QGIS_DEPS_VERSION=0.4.0 
+ 
 before_install:
   - ./scripts/ci/"$TRAVIS_OS_NAME"/install.bash
 
