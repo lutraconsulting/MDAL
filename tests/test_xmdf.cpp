@@ -275,6 +275,27 @@ TEST( MeshXmdfTest, CustomGroupsDataset )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshXmdfTest, withReferenceTime )
+{
+  // XMDF created with various TUFLOW utilities
+  std::string path = test_file( "/xmdf/withReferenceTime/hydraul_006.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  path = test_file( "/xmdf/withReferenceTime/PTM_005_QGIS_Axis.xmdf" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  ASSERT_EQ( 11, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  EXPECT_TRUE( hasReferenceTime( g ) );
+  EXPECT_TRUE( compareReferenceTime( g, "1990-01-01T00:00:00" ) );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );

@@ -264,7 +264,14 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
   if ( refTime.isValid() )
   {
     std::string referenceTimeJulianDay = rootGroup.attribute( "Reftime" ).readString();
-    group->setReferenceTime( DateTime( MDAL::toDouble( referenceTimeJulianDay ), DateTime::JulianDay ) );
+    double refTime;
+    if ( referenceTimeJulianDay.empty() )
+      refTime = rootGroup.attribute( "Reftime" ).readDouble();
+    else
+      refTime = MDAL::toDouble( referenceTimeJulianDay );
+
+    if ( ! std::isnan( refTime ) )
+      group->setReferenceTime( DateTime( refTime, DateTime::JulianDay ) );
   }
 
   // lazy loading of min and max of the dataset group
