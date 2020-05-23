@@ -294,6 +294,8 @@ TEST( MeshXmdfTest, withReferenceTime )
 
   EXPECT_TRUE( hasReferenceTime( g ) );
   EXPECT_TRUE( compareReferenceTime( g, "1990-01-01T00:00:00" ) );
+ 
+  MDAL_CloseMesh( m );
 }
 
 int main( int argc, char **argv )
