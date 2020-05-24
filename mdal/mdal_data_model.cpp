@@ -307,18 +307,10 @@ void MDAL::DatasetGroup::setIsScalar( bool isScalar )
 }
 
 MDAL::Mesh::Mesh( const std::string &driverName,
-                  size_t verticesCount,
-                  size_t edgesCount,
-                  size_t facesCount,
                   size_t faceVerticesMaximumCount,
-                  MDAL::BBox extent,
                   const std::string &uri )
   : mDriverName( driverName )
-  , mVerticesCount( verticesCount )
-  , mEdgesCount( edgesCount )
-  , mFacesCount( facesCount )
   , mFaceVerticesMaximumCount( faceVerticesMaximumCount )
-  , mExtent( extent )
   , mUri( uri )
 {
 }
@@ -361,29 +353,9 @@ void MDAL::Mesh::setSourceCrsFromPrjFile( const std::string &filename )
   setSourceCrs( proj );
 }
 
-size_t MDAL::Mesh::verticesCount() const
-{
-  return mVerticesCount;
-}
-
-size_t MDAL::Mesh::edgesCount() const
-{
-  return mEdgesCount;
-}
-
-size_t MDAL::Mesh::facesCount() const
-{
-  return mFacesCount;
-}
-
 std::string MDAL::Mesh::uri() const
 {
   return mUri;
-}
-
-MDAL::BBox MDAL::Mesh::extent() const
-{
-  return mExtent;
 }
 
 std::string MDAL::Mesh::crs() const

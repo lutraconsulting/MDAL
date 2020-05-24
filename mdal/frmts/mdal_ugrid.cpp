@@ -368,7 +368,7 @@ void MDAL::DriverUgrid::populateFaces( MDAL::Faces &faces )
 
 void MDAL::DriverUgrid::addBedElevation( MDAL::MemoryMesh *mesh )
 {
-  if ( mNcFile->hasArr( nodeZVariableName() ) ) MDAL::addBedElevationDatasetGroup( mesh, mesh->vertices );
+  if ( mNcFile->hasArr( nodeZVariableName() ) ) MDAL::addBedElevationDatasetGroup( mesh, mesh->vertices() );
 }
 
 std::string MDAL::DriverUgrid::getCoordinateSystemVariableName()

@@ -402,16 +402,12 @@ void MDAL::DriverSelafin::createMesh(
   mMesh.reset(
     new MemoryMesh(
       "SELAFIN",
-      nodes.size(),
-      0,
-      elements.size(),
       3, //Triangles
-      computeExtent( nodes ),
       mFileName
     )
   );
-  mMesh->faces = elements;
-  mMesh->vertices = nodes;
+  mMesh->setFaces( std::move( elements ) );
+  mMesh->setVertices( std::move( nodes ) );
 }
 
 void MDAL::DriverSelafin::addData( const std::vector<std::string> &var_names,
