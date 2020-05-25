@@ -119,8 +119,7 @@ MDAL::MemoryMesh::MemoryMesh( const std::string &driverName,
                               const std::string &uri )
   : MDAL::Mesh( driverName,
                 faceVerticesMaximumCount,
-                uri ),
-    mIsExtentUpToDate( false )
+                uri )
 {}
 
 std::unique_ptr<MDAL::MeshVertexIterator> MDAL::MemoryMesh::readVertices()
@@ -141,10 +140,10 @@ std::unique_ptr<MDAL::MeshFaceIterator> MDAL::MemoryMesh::readFaces()
   return it;
 }
 
-void MDAL::MemoryMesh::setVertices( MDAL::Vertices vertices )
+void MDAL::MemoryMesh::setVertices( Vertices vertices )
 {
+  mExtent = MDAL::computeExtent( vertices );
   mVertices = std::move( vertices );
-  mIsExtentUpToDate = false;
 }
 
 void MDAL::MemoryMesh::setFaces( MDAL::Faces faces )
@@ -159,10 +158,6 @@ void MDAL::MemoryMesh::setEdges( MDAL::Edges edges )
 
 MDAL::BBox MDAL::MemoryMesh::extent() const
 {
-  if ( !mIsExtentUpToDate )
-    mExtent = MDAL::computeExtent( mVertices );
-  mIsExtentUpToDate = true;
-
   return mExtent;
 }
 
@@ -273,6 +268,7 @@ size_t MDAL::MemoryMeshFaceIterator::next(
   size_t faceVerticesMaximumCount = mMemoryMesh->faceVerticesMaximumCount();
   size_t vertexIndex = 0;
   size_t faceIndex = 0;
+  const Faces &faces = mMemoryMesh->faces();
 
   while ( true )
   {
@@ -285,7 +281,7 @@ size_t MDAL::MemoryMeshFaceIterator::next(
     if ( mLastFaceIndex + faceIndex >= maxFaces )
       break;
 
-    const Face &f = mMemoryMesh->faces()[mLastFaceIndex + faceIndex];
+    const Face &f = faces[mLastFaceIndex + faceIndex];
     const std::size_t faceSize = f.size();
     for ( size_t faceVertexIndex = 0; faceVertexIndex < faceSize; ++faceVertexIndex )
     {

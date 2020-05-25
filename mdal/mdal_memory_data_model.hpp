@@ -171,7 +171,7 @@ namespace MDAL
   class MemoryMesh: public Mesh
   {
     public:
-      //! Construct an empty mesh
+      //! Constructs an empty mesh
       MemoryMesh( const std::string &driverName,
                   size_t faceVerticesMaximumCount,
                   const std::string &uri );
@@ -196,8 +196,7 @@ namespace MDAL
       BBox extent() const override;
 
     private:
-      mutable BBox mExtent;
-      mutable bool mIsExtentUpToDate = false;
+      BBox mExtent;
       Vertices mVertices;
       Faces mFaces;
       Edges mEdges;
