@@ -665,7 +665,11 @@ size_t MDAL::MeshSelafinEdgeIterator::next( size_t edgeCount, int *startVertexIn
   return 0;
 }
 
-MDAL::MeshSelafinFaceIterator::MeshSelafinFaceIterator( std::shared_ptr<MDAL::SerafinStreamReader> reader, std::streampos start, ssize_t verticesCount, size_t facesCount, size_t verticesPerFace ):
+MDAL::MeshSelafinFaceIterator::MeshSelafinFaceIterator(
+  std::shared_ptr<MDAL::SerafinStreamReader> reader, std::streampos start,
+  size_t verticesCount,
+  size_t facesCount,
+  size_t verticesPerFace ):
   mReader( reader )
   , mStart( start )
   , mTotalVerticesCount( verticesCount )

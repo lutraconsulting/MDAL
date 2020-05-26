@@ -122,7 +122,7 @@ namespace MDAL
     public:
       MeshSelafinFaceIterator( std::shared_ptr<SerafinStreamReader> reader,
                                std::streampos start,
-                               ssize_t verticesCount,
+                               size_t verticesCount,
                                size_t facesCount,
                                size_t verticesPerFace );
 
