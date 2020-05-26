@@ -48,9 +48,9 @@ void MDAL::SerafinStreamReader::initialize( const std::string &fileName )
 
 bool MDAL::SerafinStreamReader::getStreamPrecision( )
 {
-  ignore_array_length( );
+  ignoreArrayLength( );
   ignore( 72 );
-  std::string varType = read_string_without_length( 8 );
+  std::string varType = readStringWithoutLength( 8 );
   bool ret;
   if ( varType == "SERAFIN" )
   {
@@ -64,22 +64,22 @@ bool MDAL::SerafinStreamReader::getStreamPrecision( )
   {
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Not found stream precision" );
   }
-  ignore_array_length( );
+  ignoreArrayLength( );
   return ret;
 }
 
-std::string MDAL::SerafinStreamReader::read_string( size_t len )
+std::string MDAL::SerafinStreamReader::readString( size_t len )
 {
-  size_t length = read_sizet();
+  size_t length = readSizet();
   if ( length != len ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to read string" );
-  std::string ret = read_string_without_length( len );
-  ignore_array_length();
+  std::string ret = readStringWithoutLength( len );
+  ignoreArrayLength();
   return ret;
 }
 
-std::vector<double> MDAL::SerafinStreamReader::read_double_arr( size_t len )
+std::vector<double> MDAL::SerafinStreamReader::readDoubleArr( size_t len )
 {
-  size_t length = read_sizet();
+  size_t length = readSizet();
   if ( mStreamInFloatPrecision )
   {
     if ( length != len * 4 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading double array" );
@@ -91,13 +91,13 @@ std::vector<double> MDAL::SerafinStreamReader::read_double_arr( size_t len )
   std::vector<double> ret( len );
   for ( size_t i = 0; i < len; ++i )
   {
-    ret[i] = read_double();
+    ret[i] = readDouble();
   }
-  ignore_array_length();
+  ignoreArrayLength();
   return ret;
 }
 
-std::vector<double> MDAL::SerafinStreamReader::read_double_arr( const std::streampos &position, size_t offset, size_t len )
+std::vector<double> MDAL::SerafinStreamReader::readDoubleArr( const std::streampos &position, size_t offset, size_t len )
 {
   std::vector<double> ret( len );
   std::streamoff off;
@@ -108,50 +108,50 @@ std::vector<double> MDAL::SerafinStreamReader::read_double_arr( const std::strea
 
   mIn.seekg( position + off );
   for ( size_t i = 0; i < len; ++i )
-    ret[i] = read_double();
+    ret[i] = readDouble();
 
   return ret;
 }
 
-std::vector<int> MDAL::SerafinStreamReader::read_int_arr( size_t len )
+std::vector<int> MDAL::SerafinStreamReader::readIntArr( size_t len )
 {
-  size_t length = read_sizet();
+  size_t length = readSizet();
   if ( length != len * 4 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading int array" );
   std::vector<int> ret( len );
   for ( size_t i = 0; i < len; ++i )
   {
-    ret[i] = read_int();
+    ret[i] = readInt();
   }
-  ignore_array_length();
+  ignoreArrayLength();
   return ret;
 }
 
-std::vector<int> MDAL::SerafinStreamReader::read_int_arr( const std::streampos &position, size_t offset, size_t len )
+std::vector<int> MDAL::SerafinStreamReader::readIntArr( const std::streampos &position, size_t offset, size_t len )
 {
   std::vector<int> ret( len );
   std::streamoff off = offset * 4;
 
   mIn.seekg( position + off );
   for ( size_t i = 0; i < len; ++i )
-    ret[i] = read_int();
+    ret[i] = readInt();
 
   return ret;
 }
 
-std::vector<size_t> MDAL::SerafinStreamReader::read_size_t_arr( size_t len )
+std::vector<size_t> MDAL::SerafinStreamReader::readSizeTArr( size_t len )
 {
-  size_t length = read_sizet();
+  size_t length = readSizet();
   if ( length != len * 4 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading sizet array" );
   std::vector<size_t> ret( len );
   for ( size_t i = 0; i < len; ++i )
   {
-    ret[i] = read_sizet();
+    ret[i] = readSizet();
   }
-  ignore_array_length();
+  ignoreArrayLength();
   return ret;
 }
 
-std::string MDAL::SerafinStreamReader::read_string_without_length( size_t len )
+std::string MDAL::SerafinStreamReader::readStringWithoutLength( size_t len )
 {
   std::vector<char> ptr( len );
   mIn.read( ptr.data(), static_cast<int>( len ) );
@@ -171,7 +171,7 @@ std::string MDAL::SerafinStreamReader::read_string_without_length( size_t len )
   return ret;
 }
 
-double MDAL::SerafinStreamReader::read_double( )
+double MDAL::SerafinStreamReader::readDouble( )
 {
   double ret;
 
@@ -191,7 +191,7 @@ double MDAL::SerafinStreamReader::read_double( )
 }
 
 
-int MDAL::SerafinStreamReader::read_int( )
+int MDAL::SerafinStreamReader::readInt( )
 {
   unsigned char data[4];
 
@@ -209,26 +209,26 @@ int MDAL::SerafinStreamReader::read_int( )
   return var;
 }
 
-size_t MDAL::SerafinStreamReader::read_sizet()
+size_t MDAL::SerafinStreamReader::readSizet()
 {
-  int var = read_int( );
+  int var = readInt( );
   return static_cast<size_t>( var );
 }
 
 bool MDAL::SerafinStreamReader::checkIntArraySize( size_t len )
 {
-  return ( len * 4 == read_sizet() );
+  return ( len * 4 == readSizet() );
 }
 
 bool MDAL::SerafinStreamReader::checkDoubleArraySize( size_t len )
 {
   if ( mStreamInFloatPrecision )
   {
-    return ( len * 4 ) == read_sizet();
+    return ( len * 4 ) == readSizet();
   }
   else
   {
-    return ( len * 8 ) == read_sizet();
+    return ( len * 8 ) == readSizet();
   }
 }
 
@@ -241,7 +241,7 @@ std::streampos MDAL::SerafinStreamReader::passThroughIntArray( size_t size )
 {
   std::streampos pos = mIn.tellg();
   mIn.seekg( size * 4, std::ios_base::cur );
-  ignore_array_length();
+  ignoreArrayLength();
   return pos;
 }
 
@@ -254,7 +254,7 @@ std::streampos MDAL::SerafinStreamReader::passThroughDoubleArray( size_t size )
     size *= 8;
 
   mIn.seekg( size, std::ios_base::cur );
-  ignore_array_length();
+  ignoreArrayLength();
   return pos;
 }
 
@@ -265,7 +265,7 @@ void MDAL::SerafinStreamReader::ignore( int len )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to ignore characters (invalid stream)" );
 }
 
-void MDAL::SerafinStreamReader::ignore_array_length( )
+void MDAL::SerafinStreamReader::ignoreArrayLength( )
 {
   ignore( 4 );
 }
@@ -310,14 +310,14 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
      and quadratic variables, NBV(2) with the value of 0 for Telemac, as
      quadratic values are not saved so far), numbered from 1 in docs
   */
-  std::vector<size_t> nbv = mReader->read_size_t_arr( 2 );
+  std::vector<size_t> nbv = mReader->readSizeTArr( 2 );
 
   /* NBV(1) records containing the names and units of each variab
      le (over 32 characters)
   */
   for ( size_t i = 0; i < nbv[0]; ++i )
   {
-    var_names.push_back( mReader->read_string( 32 ) );
+    var_names.push_back( mReader->readString( 32 ) );
   }
 
   /* 1 record containing the integers table IPARAM (10 integers, of which only
@@ -342,7 +342,7 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
       by the array KNOLG (total initial number of points). All the other
       numbers are local to the sub-domain, including IKLE
   */
-  std::vector<int> params = mReader->read_int_arr( 10 );
+  std::vector<int> params = mReader->readIntArr( 10 );
   *xOrigin = static_cast<double>( params[2] );
   *yOrigin = static_cast<double>( params[3] );
 
@@ -358,14 +358,14 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
 
   if ( params[9] == 1 )
   {
-    std::vector<int> datetime = mReader->read_int_arr( 6 );
+    std::vector<int> datetime = mReader->readIntArr( 6 );
     referenceTime = DateTime( datetime[0], datetime[1], datetime[2], datetime[3], datetime[4], double( datetime[5] ) );
   }
 
   /* 1 record containing the integers NELEM,NPOIN,NDP,1 (number of
      elements, number of points, number of points per element and the value 1)
    */
-  std::vector<size_t> numbers = mReader->read_size_t_arr( 4 );
+  std::vector<size_t> numbers = mReader->readSizeTArr( 4 );
   *nElem = numbers[0];
   *nPoint = numbers[1];
   *nPointsPerElem = numbers[2];
@@ -412,7 +412,7 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
   size_t nTimesteps = mReader->remainingBytes() / ( 12 + ( 4 + ( *nPoint ) * 4 + 4 ) * var_names.size() );
   for ( size_t nT = 0; nT < nTimesteps; ++nT )
   {
-    std::vector<double> times = mReader->read_double_arr( 1 );
+    std::vector<double> times = mReader->readDoubleArr( 1 );
     double time = times[0];
 
     for ( size_t i = 0; i < var_names.size(); ++i )
@@ -639,8 +639,8 @@ size_t MDAL::MeshSelafinVertexIterator::next( size_t vertexCount, double *coordi
   if ( count == 0 )
     return 0;
 
-  std::vector<double> xValues = mReader->read_double_arr( mStartX, mPosition, count );
-  std::vector<double> yValues = mReader->read_double_arr( mStartY, mPosition, count );
+  std::vector<double> xValues = mReader->readDoubleArr( mStartX, mPosition, count );
+  std::vector<double> yValues = mReader->readDoubleArr( mStartY, mPosition, count );
 
   if ( xValues.size() != count || yValues.size() != count )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading vertices" );
@@ -690,7 +690,7 @@ size_t MDAL::MeshSelafinFaceIterator::next( size_t faceOffsetsBufferLen, int *fa
   if ( count == 0 )
     return 0;
 
-  std::vector<int> indexes = mReader->read_int_arr( mStart, mPosition * mVerticesPerFace, count * mVerticesPerFace );
+  std::vector<int> indexes = mReader->readIntArr( mStart, mPosition * mVerticesPerFace, count * mVerticesPerFace );
 
   if ( indexes.size() != count * mVerticesPerFace )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading faces" );
@@ -806,7 +806,7 @@ MDAL::SelafinDataset::SelafinDataset( MDAL::DatasetGroup *parent,
 size_t MDAL::SelafinDataset::scalarData( size_t indexStart, size_t count, double *buffer )
 {
   count = std::min( mSize - indexStart, count );
-  std::vector<double> values = mReader->read_double_arr( mXStreamPosition, indexStart, count );
+  std::vector<double> values = mReader->readDoubleArr( mXStreamPosition, indexStart, count );
   if ( values.size() != count )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading dataset value" );
 
@@ -818,8 +818,8 @@ size_t MDAL::SelafinDataset::scalarData( size_t indexStart, size_t count, double
 size_t MDAL::SelafinDataset::vectorData( size_t indexStart, size_t count, double *buffer )
 {
   count = std::min( mSize - indexStart, count );
-  std::vector<double> xValues = mReader->read_double_arr( mXStreamPosition, indexStart, count );
-  std::vector<double> yValues = mReader->read_double_arr( mYStreamPosition, indexStart, count );
+  std::vector<double> xValues = mReader->readDoubleArr( mXStreamPosition, indexStart, count );
+  std::vector<double> yValues = mReader->readDoubleArr( mYStreamPosition, indexStart, count );
 
   if ( xValues.size() != count  || yValues.size() != count )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading dataset value" );

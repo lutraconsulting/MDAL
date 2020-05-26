@@ -25,16 +25,16 @@ namespace MDAL
       SerafinStreamReader();
       void initialize( const std::string &fileName );
 
-      std::string read_string( size_t len );
-      std::vector<double> read_double_arr( size_t len );
-      std::vector<double> read_double_arr( const std::streampos &position, size_t offset, size_t len );
-      std::vector<int> read_int_arr( size_t len );
-      std::vector<int> read_int_arr( const std::streampos &position, size_t offset, size_t len );
-      std::vector<size_t> read_size_t_arr( size_t len );
+      std::string readString( size_t len );
+      std::vector<double> readDoubleArr( size_t len );
+      std::vector<double> readDoubleArr( const std::streampos &position, size_t offset, size_t len );
+      std::vector<int> readIntArr( size_t len );
+      std::vector<int> readIntArr( const std::streampos &position, size_t offset, size_t len );
+      std::vector<size_t> readSizeTArr( size_t len );
 
-      double read_double( );
-      int read_int( );
-      size_t read_sizet( );
+      double readDouble( );
+      int readInt( );
+      size_t readSizet( );
 
       bool checkIntArraySize( size_t len );
       bool checkDoubleArraySize( size_t len );
@@ -47,8 +47,8 @@ namespace MDAL
       std::streampos passThroughDoubleArray( size_t size );
 
     private:
-      void ignore_array_length( );
-      std::string read_string_without_length( size_t len );
+      void ignoreArrayLength( );
+      std::string readStringWithoutLength( size_t len );
       void ignore( int len );
       bool getStreamPrecision();
 
