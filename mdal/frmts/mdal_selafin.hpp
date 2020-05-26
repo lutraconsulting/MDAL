@@ -41,31 +41,10 @@ namespace MDAL
 
       size_t remainingBytes();
 
-      std::streampos posistion()
-      {
-        return mIn.tellg();
-      }
-
-      std::streampos passThroughIntArray( size_t size )
-      {
-        std::streampos pos = mIn.tellg();
-        mIn.seekg( size * 4, std::ios_base::cur );
-        ignore_array_length();
-        return pos;
-      }
-
-      std::streampos passThroughDoubleArray( size_t size )
-      {
-        std::streampos pos = mIn.tellg();
-        if ( mStreamInFloatPrecision )
-          size *= 4;
-        else
-          size *= 8;
-
-        mIn.seekg( size, std::ios_base::cur );
-        ignore_array_length();
-        return pos;
-      }
+      //! seeks after the int array, returns position of the beginning of the array
+      std::streampos passThroughIntArray( size_t size );
+      //! seeks after the double array, returns position of the beginning of the array
+      std::streampos passThroughDoubleArray( size_t size );
 
     private:
       void ignore_array_length( );
@@ -80,6 +59,33 @@ namespace MDAL
       std::ifstream mIn;
   };
 
+  class SelafinDataset : public Dataset2D
+  {
+    public:
+      SelafinDataset( DatasetGroup *parent,
+                      std::shared_ptr<SerafinStreamReader> reader,
+                      size_t size );
+
+      size_t scalarData( size_t indexStart, size_t count, double *buffer );
+      size_t vectorData( size_t indexStart, size_t count, double *buffer );
+
+      void setXStreamPosition( const std::streampos &xStreamPosition );
+      void setYStreamPosition( const std::streampos &yStreamPosition );
+
+    private:
+
+      std::shared_ptr<SerafinStreamReader> mReader;
+
+      const size_t mSize;
+
+      std::streampos mXStreamPosition = 0;
+      std::streampos mYStreamPosition = 0;
+
+      std::vector<double> mValues;
+
+      bool mLoaded = false;
+  };
+
   class MeshSelafinVertexIterator: public MeshVertexIterator
   {
     public:
@@ -89,14 +95,7 @@ namespace MDAL
                                  std::streampos startY,
                                  size_t verticesCount,
                                  double xOrigin,
-                                 double yOrigin ):
-        mReader( reader )
-        , mStartX( startX )
-        , mStartY( startY )
-        , mTotalVerticesCount( verticesCount )
-        , mXOrigin( xOrigin )
-        , mYOrigin( yOrigin )
-      {}
+                                 double yOrigin );
 
       size_t next( size_t vertexCount, double *coordinates ) override;
 
@@ -123,11 +122,9 @@ namespace MDAL
     public:
       MeshSelafinFaceIterator( std::shared_ptr<SerafinStreamReader> reader,
                                std::streampos start,
-                               size_t facesCount ):
-        mReader( reader )
-        , mStart( start )
-        , mTotalFacesCount( facesCount )
-      {}
+                               ssize_t verticesCount,
+                               size_t facesCount,
+                               size_t verticesPerFace );
 
       size_t next( size_t faceOffsetsBufferLen, int *faceOffsetsBuffer, size_t vertexIndicesBufferLen, int *vertexIndicesBuffer );
 
@@ -135,7 +132,9 @@ namespace MDAL
       std::shared_ptr<SerafinStreamReader> mReader;
       std::streampos mStart;
       size_t mPosition = 0;
+      size_t mTotalVerticesCount;
       size_t mTotalFacesCount;
+      size_t mVerticesPerFace;
   };
 
   class MeshSelafin: public Mesh
@@ -148,19 +147,10 @@ namespace MDAL
                    const std::streampos &ikleTableStart,
                    size_t verticesCount,
                    size_t facesCount,
+                   size_t verticesPerFace,
                    double xOrigin,
                    double yOrigin
-                 ):
-        Mesh( "SELAFIN", 3, uri )
-        , mReader( reader )
-        , mXVerticesStart( verticesXStart )
-        , mYVerticesStart( verticesYStart )
-        , mIkleTableStart( ikleTableStart )
-        , mVerticesCount( verticesCount )
-        , mFacesCount( facesCount )
-        , mXOrigin( xOrigin )
-        , mYOrigin( yOrigin )
-      {}
+                 );
 
       std::unique_ptr<MeshVertexIterator> readVertices();
       std::unique_ptr<MeshEdgeIterator> readEdges();
@@ -180,6 +170,7 @@ namespace MDAL
       std::streampos mIkleTableStart;
       size_t mVerticesCount = 0;
       size_t mFacesCount = 0;
+      size_t mVerticesPerFace = 0;
       double mXOrigin;
       double mYOrigin;
 
@@ -204,16 +195,8 @@ namespace MDAL
       std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName = "" ) override;
 
     private:
-      typedef std::map<double, std::vector<double> > timestep_map; //TIME (sorted), nodeVal
+      typedef std::map<double, std::streampos > timestep_map; //TIME (sorted), position in the stream file
 
-      void createMesh( double xOrigin,
-                       double yOrigin,
-                       size_t nElems,
-                       size_t nPoints,
-                       size_t nPointsPerElem,
-                       std::vector<size_t> &ikle,
-                       std::vector<double> &x,
-                       std::vector<double> &y );
       void addData( const std::vector<std::string> &var_names,
                     const std::vector<timestep_map> &data,
                     size_t nPoints,
@@ -226,9 +209,6 @@ namespace MDAL
                       size_t *nElem,
                       size_t *nPoint,
                       size_t *nPointsPerElem,
-                      std::vector<size_t> &ikle,
-                      std::vector<double> &x,
-                      std::vector<double> &y,
                       std::vector<timestep_map> &data,
                       DateTime &referenceTime );
 
