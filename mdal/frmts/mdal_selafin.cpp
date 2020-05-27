@@ -373,8 +373,6 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
   /* 1 record containing table IKLE (integer array
      of dimension (NDP,NELEM)
      which is the connectivity table.
-
-     Attention: in TELEMAC-2D, the dimensions of this array are (NELEM,NDP))
   */
   size_t size = ( *nElem ) * ( *nPointsPerElem );
   if ( ! mReader->checkIntArraySize( size ) ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading connectivity table" );
@@ -401,7 +399,6 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
   size = *nPoint;
   if ( ! mReader->checkDoubleArraySize( size ) ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading abscisse values" );
   streamPositions["ordinate"] = mReader->passThroughDoubleArray( size );
-
 
   /* Next, for each time step, the following are found:
      - 1 record containing time T (real),
@@ -657,14 +654,6 @@ size_t MDAL::MeshSelafinVertexIterator::next( size_t vertexCount, double *coordi
   return count;
 }
 
-size_t MDAL::MeshSelafinEdgeIterator::next( size_t edgeCount, int *startVertexIndices, int *endVertexIndices )
-{
-  MDAL_UNUSED( edgeCount )
-  MDAL_UNUSED( startVertexIndices )
-  MDAL_UNUSED( endVertexIndices )
-  return 0;
-}
-
 MDAL::MeshSelafinFaceIterator::MeshSelafinFaceIterator(
   std::shared_ptr<MDAL::SerafinStreamReader> reader, std::streampos start,
   size_t verticesCount,
@@ -745,7 +734,7 @@ std::unique_ptr<MDAL::MeshVertexIterator> MDAL::MeshSelafin::readVertices()
 
 std::unique_ptr<MDAL::MeshEdgeIterator> MDAL::MeshSelafin::readEdges()
 {
-  return std::unique_ptr<MDAL::MeshEdgeIterator>( new MeshSelafinEdgeIterator );
+  return std::unique_ptr<MDAL::MeshEdgeIterator>();
 }
 
 std::unique_ptr<MDAL::MeshFaceIterator> MDAL::MeshSelafin::readFaces()

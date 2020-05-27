@@ -213,7 +213,7 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   EXPECT_DOUBLE_EQ( -0.97271907329559326, value );
 
   MDAL_D_minimumMaximum( ds, &min, &max );
-  //EXPECT_DOUBLE_EQ( 2.3694833011052991e-12, min );
+  EXPECT_DOUBLE_EQ( 2.3694833011052991e-12, min );
   EXPECT_DOUBLE_EQ( 7.5673562379016834, max );
 
   EXPECT_TRUE( compareReferenceTime( r, "1900-01-01T00:00:00" ) );
