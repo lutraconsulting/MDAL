@@ -57,6 +57,16 @@ TEST( MeshSLFTest, MalpassetGeometry )
   // ///////////
   EXPECT_EQ( 0, MDAL_M_edgeCount( m ) );
 
+  // ///////////
+  // Extent
+  // ///////////
+  double xmin, xmax, ymin, ymax;
+  MDAL_M_extent( m, &xmin, &xmax, &ymin, &ymax );
+  EXPECT_EQ( xmin, 0 );
+  EXPECT_EQ( xmax, 17763.0703125 );
+  EXPECT_EQ( ymin, -2343.5400390625 );
+  EXPECT_EQ( ymax, 6837.7900390625 );
+
   // test face 1
   int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( 3, f_v_count ); //only triangles!
