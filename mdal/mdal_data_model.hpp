@@ -193,7 +193,7 @@ namespace MDAL
       const std::string mDriverName;
       Mesh *mParent = nullptr;
       bool mIsScalar = true;
-      bool mIsPolar = true;
+      bool mIsPolar = false;
       std::pair<double, double> mReferenceAngles = {360, 0};
       MDAL_DataLocation mDataLocation = MDAL_DataLocation::DataOnVertices;
       std::string mUri; // file/uri from where it came
