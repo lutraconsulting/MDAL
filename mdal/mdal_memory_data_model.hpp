@@ -186,8 +186,13 @@ namespace MDAL
       const Faces &faces() const {return mFaces;}
       const Edges &edges() const {return mEdges;}
 
+      //! Sets all vertices using std::move if possible
       void setVertices( Vertices vertices );
+
+      //! Sets all faces using std::move if possible
       void setFaces( Faces faces );
+
+      //! Sets all edges using std::move if possible
       void setEdges( Edges edges );
 
       size_t verticesCount() const override {return mVertices.size();}
