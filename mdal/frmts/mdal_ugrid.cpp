@@ -493,12 +493,14 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
     std::string &name,
     bool *isVector,
     bool *isPolar,
+    bool *invertedDirection,
     bool *isX )
 {
 
   *isVector = false;
   *isX = true;
   *isPolar = false;
+  *invertedDirection = false;
 
   std::string longName = mNcFile->getAttrStr( "long_name", varid );
   if ( longName.empty() )
@@ -521,6 +523,27 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
         *isVector = true;
         *isX = false;
         name = MDAL::replace( standardName, "_y_", "" );
+      }
+      else if ( MDAL::contains( standardName, "_speed" ) )
+      {
+        *isVector = true;
+        *isPolar = true;
+        name = MDAL::replace( standardName, "_speed", "" );
+      }
+      else if ( MDAL::contains( standardName, "_from_direction" ) )
+      {
+        *isVector = true;
+        *isPolar = true;
+        *isX = false;
+        *invertedDirection = true;
+        name = MDAL::replace( standardName, "_from_direction", "" );
+      }
+      else if ( MDAL::contains( standardName, "_to_direction" ) )
+      {
+        *isVector = true;
+        *isPolar = true;
+        *isX = false;
+        name = MDAL::replace( standardName, "_to_direction", "" );
       }
       else
       {
@@ -557,6 +580,11 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
       *isPolar = true;
       *isX = false;
       name = MDAL::replace( longName, " direction", "" );
+
+      // check from_/to_direction in standart_name
+      std::string standardName = mNcFile->getAttrStr( "standard_name", varid );
+      *invertedDirection = MDAL::contains( standardName, "from_direction" );
+
     }
     else
     {

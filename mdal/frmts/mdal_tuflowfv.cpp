@@ -466,8 +466,10 @@ void MDAL::DriverTuflowFV::parseNetCDFVariableMetadata( int varid,
     std::string &name,
     bool *is_vector,
     bool *isPolar,
+    bool *invertedDirection,
     bool *is_x )
 {
+  MDAL_UNUSED( invertedDirection );
   *is_vector = false;
   *is_x = true;
   *isPolar = false;

@@ -665,7 +665,7 @@ TEST( MeshUgridTest, magnitude_direction )
   int magIndex = getValue( dataset, 20 );
   EXPECT_EQ( magIndex, 3 );
 
-  double direction = ( directionIndex - 1 ) * 10 + 5;
+  double direction = -( ( directionIndex - 1 ) * 10 + 5 ); //supposed to be clokcwise angle
   double magnitude = ( magIndex - 1 ) * 0.2 + 0.1;
 
   group = MDAL_M_datasetGroup( mesh, 1 );
