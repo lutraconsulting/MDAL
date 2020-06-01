@@ -21,20 +21,48 @@ namespace MDAL
 {
   /**
    * This class is used to read the selafin file format.
-   * The file is opened with initialize() and stay opened until this object is destructed
+   * The file is opened with initialize() and stay opened until this object is destroyed
    *
    * \note SerafinStreamReader object is shared between different datasets, with the mesh and its iterators.
    *       As SerafinStreamReader is not thread safe, it has to be shared in the same thread.
    *
    * Each record of the stream has a int (4 bytes) at the beginning and the end of the record, this int is the size of the record
   */
-  class SerafinStreamReader
+  class SelafinFile
   {
     public:
       //! Constructs the reader
-      SerafinStreamReader();
+      SelafinFile( const std::string &fileName );
+
+      //! Read the header of the file and return the project name
+      std::string readHeader();
+
+      //! Returns the vertices count in the mesh stored in the file
+      size_t verticesCount() const;
+      //! Returns the faces count in the mesh stored in the file
+      size_t facesCount() const;
+      //! Returns the vertices count per face for the mesh stored in the file
+      size_t verticesPerFace() const;
+
+      //! Creates and returns a mesh with the file
+      static std::unique_ptr<Mesh> createMesh( const std::string &fileName );
+
+      //! Method used by DatasetSelafin, returns \a count values at \a timeStepIndex and \a variableIndex, and an \a offset from the start
+      std::vector<double> datasetValues( size_t timeStepIndex, size_t variableIndex, size_t offset, size_t count );
+      //! Method used by MeshSelafinFaceIterator, returns \a count vertex indexex in face with an \a offset from the start
+      std::vector<int> connectivityIndex( size_t offset, size_t count );
+      //! Method used by MeshSelafinVertexIterator, returns \a count vertices with an \a offset from the start
+      std::vector<double> vertices( size_t offset, size_t count );
+
+      //! Add the dataset group to the file (persiste), replace dataset in the new group by Selafindataset with lazy loading
+      bool addDatasetGroup( DatasetGroup *datasetGroup );
+
+    private:
       //! Initializes and open the file file with the \a fileName
-      void initialize( const std::string &fileName );
+      void initialize();
+
+      //! Extracts data from files
+      void parseFile();
 
       //! Reads a string record with a size \a len from current position in the stream, throws an exception if the size in not compaitble
       std::string readString( size_t len );
@@ -46,28 +74,22 @@ namespace MDAL
       std::vector<double> readDoubleArr( size_t len );
 
       /**
-       * Reads some values in a double array record. The values count is \a len,
-       * the reading begin at the stream \a position with the \a offset
-       */
-      std::vector<double> readDoubleArr( const std::streampos &position, size_t offset, size_t len );
-
-      /**
        * Reads a int array record with a size \a len from current position in the stream,
        * throws an exception if the size in not compatible
        */
       std::vector<int> readIntArr( size_t len );
 
       /**
+       * Reads some values in a double array record. The values count is \a len,
+       * the reading begin at the stream \a position with the \a offset
+       */
+      std::vector<double> readDoubleArr( const std::streampos &position, size_t offset, size_t len );
+
+      /**
        * Reads some values in a int array record. The values count is \a len,
        * the reading begin at the stream \a position with the \a offset
        */
       std::vector<int> readIntArr( const std::streampos &position, size_t offset, size_t len );
-
-      /**
-       * Reads a size_t array record with a size \a len from current position in the stream,
-       * throws an exception if the size in not compatible
-       */
-      std::vector<size_t> readSizeTArr( size_t len );
 
       //! Returns whether there is a int array with size \a len at the current position in the stream
       bool checkIntArraySize( size_t len );
@@ -90,7 +112,6 @@ namespace MDAL
        */
       std::streampos passThroughDoubleArray( size_t size );
 
-    private:
       double readDouble( );
       int readInt( );
       size_t readSizet( );
@@ -98,16 +119,38 @@ namespace MDAL
       void ignoreArrayLength( );
       std::string readStringWithoutLength( size_t len );
       void ignore( int len );
-      bool getStreamPrecision();
+
+      static void populateDataset( Mesh *mesh, std::shared_ptr<SelafinFile> reader );
+
+      // ///////
+      //  attribute updated by parseFile() method
+      // //////
+      std::vector<int> mParameters;
+      // Dataset
+      DateTime mReferenceTime;
+      std::vector<std::vector<std::streampos>> mVariableStreamPosition; //! [variableIndex][timeStep]
+      std::vector<RelativeTimestamp> mTimeSteps;
+      std::vector<std::string> mVariableNames;
+      // Mesh
+      size_t mVerticesCount;
+      size_t mFacesCount;
+      size_t mVerticesPerFace;
+      std::streampos mXStreamPosition;
+      std::streampos mYStreamPosition;
+      std::streampos mConnectivityStreamPosition;
+      std::streampos mIPOBOStreamPosition;
+      double mXOrigin;
+      double mYOrigin;
 
       std::string mFileName;
       bool mStreamInFloatPrecision = true;
       bool mIsNativeLittleEndian = true;
       long long mFileSize = -1;
+
       std::ifstream mIn;
   };
 
-  class SelafinDataset : public Dataset2D
+  class DatasetSelafin : public Dataset2D
   {
     public:
       /**
@@ -119,122 +162,73 @@ namespace MDAL
        * Position of array(s) in the stream has to be set after construction (default = begin of the stream),
        * see setXStreamPosition() and setYStreamPosition()  (X for scalar dataset, X and Y for vector dataset)
       */
-      SelafinDataset( DatasetGroup *parent,
-                      std::shared_ptr<SerafinStreamReader> reader,
-                      size_t size );
+      DatasetSelafin( DatasetGroup *parent,
+                      std::shared_ptr<SelafinFile> reader,
+                      size_t timeStepIndex );
 
       size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
       size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
 
       //! Sets the position of the X array in the stream
-      void setXStreamPosition( const std::streampos &xStreamPosition );
+      void setXVariableIndex( size_t index );
       //! Sets the position of the Y array in the stream
-      void setYStreamPosition( const std::streampos &yStreamPosition );
+      void setYVariableIndex( size_t index );
 
     private:
-      std::shared_ptr<SerafinStreamReader> mReader;
-      const size_t mSize;
+      std::shared_ptr<SelafinFile> mReader;
 
-      std::streampos mXStreamPosition = 0;
-      std::streampos mYStreamPosition = 0;
-
-      std::vector<double> mValues;
-
-      bool mLoaded = false;
+      size_t mXVariableIndex = 0;
+      size_t mYVariableIndex = 0;
+      size_t mTimeStepIndex = 0;
   };
 
   class MeshSelafinVertexIterator: public MeshVertexIterator
   {
     public:
       /**
-       * Contructs a vertex iterator with:
-       * - SerafinStreamReader object \a reader,
-       * - the position \a startX of the abscisses array in the stream,
-       * - the position \a startY of the ordinates array in the stream,
-       * - the vertices count \a verticesCount,
-       * - \a xOrigin and \a yOrigin, the position of the origin (coordinate are relative to this point).
+       * Contructs a vertex iterator with a SerafinFile instance
        *
-       * \note SerafinStreamReader object is shared between different dataset, with the mesh and its iterators.
+       * \note SerafinFile instance is shared between different dataset, with the mesh and its iterators.
        *       As SerafinStreamReader is not thread safe, it has to be shared in the same thread.
        */
-      MeshSelafinVertexIterator( std::shared_ptr<SerafinStreamReader> reader,
-                                 std::streampos startX,
-                                 std::streampos startY,
-                                 size_t verticesCount,
-                                 double xOrigin,
-                                 double yOrigin );
+      MeshSelafinVertexIterator( std::shared_ptr<SelafinFile> reader );
 
       size_t next( size_t vertexCount, double *coordinates ) override;
 
     private:
-      std::shared_ptr<SerafinStreamReader> mReader;
-      std::streampos mStartX;
-      std::streampos mStartY;
+      std::shared_ptr<SelafinFile> mReader;
       size_t mPosition = 0;
-      size_t mTotalVerticesCount;
-      double mXOrigin;
-      double mYOrigin;
   };
 
   class MeshSelafinFaceIterator: public MeshFaceIterator
   {
     public:
       /**
-       * Contructs a face iterator with:
-       * - a SerafinStreamReader object \a reader,
-       * - the position \a start of connectivity table in the stream,
-       * - the vertices count \a verticesCount,
-       * - the faces count \a facesCount,
-       * - the number of vertices per face \a verticesPerFace.
+       * Contructs a face iterator with a SerafinFile instance
        *
-       * \note SerafinStreamReader object is shared between different dataset, with the mesh and its iterators.
-       *       As SerafinStreamReader is not thread safe, it has to be shared in the same thread.
+       * \note SerafinFile instance is shared between different dataset, with the mesh and its iterators.
+       *       As SerafinFile is not thread safe, it has to be shared in the same thread.
        */
-      MeshSelafinFaceIterator( std::shared_ptr<SerafinStreamReader> reader,
-                               std::streampos start,
-                               size_t verticesCount,
-                               size_t facesCount,
-                               size_t verticesPerFace );
+      MeshSelafinFaceIterator( std::shared_ptr<SelafinFile> reader );
 
       size_t next( size_t faceOffsetsBufferLen, int *faceOffsetsBuffer, size_t vertexIndicesBufferLen, int *vertexIndicesBuffer ) override;
 
     private:
-      std::shared_ptr<SerafinStreamReader> mReader;
-      std::streampos mStart;
+      std::shared_ptr<SelafinFile> mReader;
       size_t mPosition = 0;
-      size_t mTotalVerticesCount;
-      size_t mTotalFacesCount;
-      size_t mVerticesPerFace;
   };
 
   class MeshSelafin: public Mesh
   {
     public:
       /**
-       * Contructs a dataset with:
-       * - a SerafinStreamReader object \a reader,
-       * - the position \a startX of the abscisses array in the stream,
-       * - the position \a startY of the ordinates array in the stream,
-       * - the position \a start of connectivity table in the stream,
-       * - the vertices count \a verticesCount,
-       * - the faces count \a facesCount,
-       * - the number of vertices per face \a verticesPerFace,
-       * - \a xOrigin and \a yOrigin, the position of the origin (coordinate are relative to this point).
+       * Contructs a dataset with a SerafinFile instance \a reader
        *
-       * \note SerafinStreamReader object is shared between different dataset, with the mesh and its iterators.
-       *       As SerafinStreamReader is not thread safe, it has to be shared in the same thread.
+       * \note SerafinFile instance is shared between different dataset, with the mesh and its iterators.
+       *       As SerafinFile is not thread safe, it has to be shared in the same thread.
       */
       MeshSelafin( const std::string &uri,
-                   std::shared_ptr<SerafinStreamReader> reader,
-                   const std::streampos &verticesXStart,
-                   const std::streampos &verticesYStart,
-                   const std::streampos &ikleTableStart,
-                   size_t verticesCount,
-                   size_t facesCount,
-                   size_t verticesPerFace,
-                   double xOrigin,
-                   double yOrigin
-                 );
+                   std::shared_ptr<SelafinFile> reader );
 
       std::unique_ptr<MeshVertexIterator> readVertices() override;
 
@@ -243,24 +237,16 @@ namespace MDAL
 
       std::unique_ptr<MeshFaceIterator> readFaces() override;
 
-      size_t verticesCount() const override {return mVerticesCount;}
+      size_t verticesCount() const override {return mReader->verticesCount();}
       size_t edgesCount() const override {return 0;}
-      size_t facesCount() const override {return mFacesCount;}
+      size_t facesCount() const override {return mReader->facesCount();}
       BBox extent() const override;
 
     private:
       mutable bool mIsExtentUpToDate = false;
       mutable BBox mExtent;
 
-      std::shared_ptr<SerafinStreamReader> mReader;
-      std::streampos mXVerticesStart;
-      std::streampos mYVerticesStart;
-      std::streampos mIkleTableStart;
-      size_t mVerticesCount = 0;
-      size_t mFacesCount = 0;
-      size_t mVerticesPerFace = 0;
-      double mXOrigin;
-      double mYOrigin;
+      std::shared_ptr<SelafinFile> mReader;
 
       void calculateExtent() const;
   };
@@ -285,7 +271,7 @@ namespace MDAL
    *        - if IPARAM (7): the value corresponds to the number of  planes on the vertical (3D computation),
    *        - if IPARAM (8)!=0: the value corresponds to the number of boundary points (in parallel),
    *        - if IPARAM (9)!=0: the value corresponds to the number of interface points (in parallel),
-   *        - if IPARAM(8 )or IPARAM(9) !=0: the array IPOBO below is replaced by the array KNOLG(total initial number of points).
+   *        - if IPARAM(8 ) or IPARAM(9) !=0: the array IPOBO below is replaced by the array KNOLG(total initial number of points).
    *            All the other numbers are local to the sub-domain, including IKLE.
    *
    * - if IPARAM(10)= 1: a record containing the computation starting date,
@@ -307,34 +293,19 @@ namespace MDAL
       DriverSelafin();
       ~DriverSelafin() override;
       DriverSelafin *create() override;
+      //void createDatasetGroup( Mesh *mesh, const std::string &groupName, MDAL_DataLocation dataLocation, bool hasScalarData, const std::string &datasetGroupFile );
+      //void createDataset( DatasetGroup *group, RelativeTimestamp time, const double *values, const int *active );
+      bool persist( DatasetGroup *group );
 
       bool canReadMesh( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName = "" ) override;
+      int faceVerticesMaximumCount() const {return 3;}
+      void save( const std::string &uri, Mesh *mesh ) override;
 
     private:
-      typedef std::map<double, std::streampos > timestep_map; //TIME (sorted), position in the stream file
+      bool saveDatasetGroupOnFile( DatasetGroup *datasetGroup );
 
-      void addData( const std::vector<std::string> &var_names,
-                    const std::vector<timestep_map> &data,
-                    size_t nPoints,
-                    const DateTime &referenceTime );
-
-      void parseFile( std::vector<std::string> &var_names,
-                      std::map<std::string,
-                      std::streampos> &streamPositions,
-                      double *xOrigin,
-                      double *yOrigin,
-                      size_t *nElem,
-                      size_t *nPoint,
-                      size_t *nPointsPerElem,
-                      std::vector<timestep_map> &data,
-                      DateTime &referenceTime );
-
-      bool getStreamPrecision( std::ifstream &in );
-
-      std::unique_ptr< MDAL::Mesh > mMesh;
       std::string mFileName;
-      std::shared_ptr<SerafinStreamReader> mReader;
   };
 
 } // namespace MDAL

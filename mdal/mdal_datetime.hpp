@@ -77,6 +77,9 @@ namespace MDAL
       //! Returns the Julain day value expressed with a string
       std::string toJulianDayString() const;
 
+      //! Returns a array of int with {year,month,day,hours,minutes,seconds} with standart calendar format
+      std::vector<int> toStandartCalendarArray() const;
+
       //! operators
       RelativeTimestamp operator-( const DateTime &other ) const;
       DateTime operator+( const RelativeTimestamp &duration ) const;

@@ -62,6 +62,11 @@ double MDAL::Dataset::time( RelativeTimestamp::Unit unit ) const
   return mTime.value( unit );
 }
 
+MDAL::RelativeTimestamp MDAL::Dataset::timestamp() const
+{
+  return mTime;
+}
+
 void MDAL::Dataset::setTime( double time, RelativeTimestamp::Unit unit )
 {
   mTime = RelativeTimestamp( time, unit );

@@ -71,6 +71,23 @@ std::string MDAL::DateTime::toJulianDayString() const
   return std::to_string( toJulianDay() );
 }
 
+std::vector<int> MDAL::DateTime::toStandartCalendarArray() const
+{
+  std::vector<int> dateTimeArray( 6, 0 );
+  if ( mValid )
+  {
+    DateTimeValues value = dateTimeGregorianProleptic();
+    dateTimeArray[0] = value.year;
+    dateTimeArray[1] = value.month;
+    dateTimeArray[2] = value.day;
+    dateTimeArray[3] = value.hours;
+    dateTimeArray[4] = value.minutes;
+    dateTimeArray[5] = int( value.seconds + 0.5 );
+  }
+
+  return dateTimeArray;
+}
+
 
 MDAL::DateTime MDAL::DateTime::operator+( const MDAL::RelativeTimestamp &duration ) const
 {

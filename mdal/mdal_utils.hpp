@@ -154,6 +154,19 @@ namespace MDAL
     return true;
   }
 
+  //! function used to write all of type of value. Option to change the endianness is provided
+  template<typename T>
+  void writeValue( T &value, std::ofstream &out, bool changeEndianness = false )
+  {
+    T v = value;
+    char *const p = reinterpret_cast<char *>( &v );
+
+    if ( changeEndianness )
+      std::reverse( p, p + sizeof( T ) );
+
+    out.write( p, sizeof( T ) );
+  }
+
   //! Prepend 0 to string to have n char
   std::string prependZero( const std::string &str, size_t length );
 
