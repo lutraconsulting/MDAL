@@ -528,7 +528,7 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
       {
         *isVector = true;
         *isPolar = true;
-        name = MDAL::replace( standardName, "_speed", "" );
+        name = MDAL::replace( standardName, "_speed", "_velocity" );
       }
       else if ( MDAL::contains( standardName, "_from_direction" ) )
       {
@@ -538,7 +538,7 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
         *invertedDirection = true;
         name = MDAL::replace( standardName, "_from_direction", "" );
       }
-      else if ( MDAL::contains( standardName, "_to_direction" ) )
+      else if ( MDAL::contains( standardName, "_velocity_to_direction" ) )
       {
         *isVector = true;
         *isPolar = true;
