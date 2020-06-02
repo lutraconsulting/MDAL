@@ -1,5 +1,4 @@
 MESH2D   #created automatically via meshModel tool
-NUM_MATERIALS_PER_ELEM 2
 E3T       1    8410       3    8411       2   0.000
 E3T       2    8409    8276    8410       2   0.000
 E3T       3    8411    8412    8410       2   0.000
