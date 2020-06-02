@@ -126,7 +126,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   size_t vertexCount = 0;
   size_t edgesCount = 0;
   size_t materialCount = 0;
-  bool newMaterialParser = false;
+  bool hasMaterialsDefinitionsForElements = false;
 
   // Find out how many nodes and elements are contained in the .2dm mesh file
   while ( std::getline( in, line ) )
@@ -155,7 +155,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
     // If specified, update the number of materials of the mesh
     else if ( startsWith( line, "NUM_MATERIALS_PER_ELEM" ) )
     {
-      newMaterialParser = true;
+      hasMaterialsDefinitionsForElements = true;
       materialCount = MDAL::toSizeT( split( line, ' ' )[1] );
     }
   }
@@ -204,7 +204,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
         face[i] = MDAL::toSizeT( chunks[i + 2] ) - 1; // 2dm is numbered from 1
 
       // NUM_MATERIALS_PER_ELEM tag provided, use new MATID parser
-      if ( newMaterialParser )
+      if ( hasMaterialsDefinitionsForElements )
       {
         // This assertion will fail if a mesh has fewer material ID columns than
         // promised by the NUM_MATERIAL_PER_ELEM tag.
@@ -321,7 +321,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   MDAL::addBedElevationDatasetGroup( mesh.get(), vertices );
 
   // Add material IDs
-  if ( newMaterialParser )
+  if ( hasMaterialsDefinitionsForElements )
   {
     // New MATID parser: Add all MATID dataset groups
     std::string dataSetName;
