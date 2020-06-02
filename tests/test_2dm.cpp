@@ -320,10 +320,10 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
   EXPECT_EQ( 0, f_v );
 
   // Bed elevation dataset
-  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
 
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -356,10 +356,10 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     EXPECT_FALSE( MDAL_G_isTemporal( g ) );
   }
 
-  // Bed elevation dataset and face elevation dataset
+  // Face elevation dataset
   {
 
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
