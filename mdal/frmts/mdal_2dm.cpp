@@ -125,6 +125,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   size_t faceCount = 0;
   size_t vertexCount = 0;
   size_t edgesCount = 0;
+  size_t materialCount = 0;
 
   // Find out how many nodes and elements are contained in the .2dm mesh file
   while ( std::getline( in, line ) )
@@ -150,6 +151,11 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
       MDAL::Log::warning( MDAL_Status::Err_UnsupportedElement, name(),  "found unsupported element" );
       return nullptr;
     }
+    // If specified, update the number of materials of the mesh
+    else if ( startsWith( line, "NUM_MATERIALS_PER_ELEM" ) )
+    {
+      materialCount = MDAL::toSizeT( split( line, ' ' )[1] );
+    }
   }
 
   // Allocate memory
@@ -157,8 +163,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   Edges edges( edgesCount );
   Faces faces( faceCount );
 
-  // Basement 3.x supports definition of elevation for cell centers
-  std::vector<double> elementCenteredElevation;
+  // .2dm mesh files may have any number of material ID columns
+  std::vector<std::vector<double>> faceMaterials;
 
   in.clear();
   in.seekg( 0, std::ios::beg );
@@ -187,7 +193,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
       face.resize( faceVertexCount );
 
       // chunks format here
-      // E** id vertex_id1, vertex_id2, ... material_id (elevation - optional)
+      // E** id vertex_id1, vertex_id2, vertex_id3, material_id [, aux_column_1, aux_column_2, ...]
       // vertex ids are numbered from 1
       // Right now we just store node IDs here - we will convert them to node indices afterwards
       assert( chunks.size() > faceVertexCount + 1 );
@@ -195,18 +201,22 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
       for ( size_t i = 0; i < faceVertexCount; ++i )
         face[i] = MDAL::toSizeT( chunks[i + 2] ) - 1; // 2dm is numbered from 1
 
-      // OK, now find out if there is optional cell elevation (BASEMENT 3.x)
-      if ( chunks.size() == faceVertexCount + 4 )
+      // This assertion will fail if a mesh has fewer material ID columns than
+      // promised by the NUM_MATERIAL_PER_ELEM tag.
+      assert( chunks.size() - 5 >= materialCount );
+
+      // Initialize the material ID dataset if it is empty
+      if ( faceMaterials.empty() )
       {
+        faceMaterials = std::vector<std::vector<double>>( materialCount, std::vector<double>(
+                          faceCount, std::numeric_limits<double>::quiet_NaN() ) );
+      }
 
-        // initialize dataset if it is still empty
-        if ( elementCenteredElevation.empty() )
-        {
-          elementCenteredElevation = std::vector<double>( faceCount, std::numeric_limits<double>::quiet_NaN() );
-        }
-
-        // add Bed Elevation (Face) value
-        elementCenteredElevation[faceIndex] = MDAL::toDouble( chunks[ faceVertexCount + 3 ] );
+      // Add material ID values
+      for ( size_t i = 0; i < materialCount; ++i )
+      {
+        // Offset of 2 for E** tag and element ID
+        faceMaterials[i][faceIndex] = MDAL::toDouble( chunks[ faceVertexCount + 2 + i] );
       }
 
       faceIndex++;
@@ -289,9 +299,20 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   mesh->vertices = vertices;
   mesh->edges = edges;
 
-  // Add Bed Elevations
-  MDAL::addFaceScalarDatasetGroup( mesh.get(), elementCenteredElevation, "Bed Elevation (Face)" );
+  // Add Bed Elevation
   MDAL::addBedElevationDatasetGroup( mesh.get(), vertices );
+
+  // Add material IDs
+  std::string dataSetName;
+  for ( size_t i = 0; i < materialCount; ++i )
+  {
+    // The first two columns get special names for convenience
+    if ( i == 0 ) dataSetName = "Material ID";
+    else if ( i == 1 ) dataSetName = "Bed Elevation (Face)";
+    else dataSetName = "Auxiliary Material ID " + std::to_string( i - 1 );
+
+    MDAL::addFaceScalarDatasetGroup( mesh.get(), faceMaterials[i], dataSetName );
+  }
 
   return std::unique_ptr<Mesh>( mesh.release() );
 }
