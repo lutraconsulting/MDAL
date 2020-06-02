@@ -22,11 +22,11 @@ TEST( XdmfTest, Basement3HumpsTest )
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 6, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
   // normal scalar dataset
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -73,7 +73,7 @@ TEST( XdmfTest, Basement3HumpsTest )
 
   // FUNCTION: JOIN($0, $1, 0*$1) dataset
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -139,11 +139,11 @@ TEST( XdmfTest, Basement3Slopes )
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
   // normal dataset
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -190,7 +190,7 @@ TEST( XdmfTest, Basement3Slopes )
 
   // FUNCTION: $1 - $0
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -237,7 +237,7 @@ TEST( XdmfTest, Basement3Slopes )
 
   // FUNCTION: $0 - $1
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 7 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -282,7 +282,7 @@ TEST( XdmfTest, Basement3Slopes )
 
   // FUNCTION: sqrt($0/($2-$3)*$0/($2-$3) + $1/($2-$3)*$1/($2-$3))
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -343,10 +343,10 @@ TEST( XdmfTest, Basement3SimpleChannel )
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 6, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -409,10 +409,10 @@ TEST( XdmfTest, Basement3SimpleGeometry )
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
 
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
