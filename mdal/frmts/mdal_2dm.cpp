@@ -126,6 +126,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   size_t vertexCount = 0;
   size_t edgesCount = 0;
   size_t materialCount = 0;
+  bool newMaterialParser = false;
 
   // Find out how many nodes and elements are contained in the .2dm mesh file
   while ( std::getline( in, line ) )
@@ -154,6 +155,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
     // If specified, update the number of materials of the mesh
     else if ( startsWith( line, "NUM_MATERIALS_PER_ELEM" ) )
     {
+      newMaterialParser = true;
       materialCount = MDAL::toSizeT( split( line, ' ' )[1] );
     }
   }
@@ -201,22 +203,38 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
       for ( size_t i = 0; i < faceVertexCount; ++i )
         face[i] = MDAL::toSizeT( chunks[i + 2] ) - 1; // 2dm is numbered from 1
 
-      // This assertion will fail if a mesh has fewer material ID columns than
-      // promised by the NUM_MATERIAL_PER_ELEM tag.
-      assert( chunks.size() - 5 >= materialCount );
-
-      // Initialize the material ID dataset if it is empty
-      if ( faceMaterials.empty() )
+      // NUM_MATERIALS_PER_ELEM tag provided, use new MATID parser
+      if ( newMaterialParser )
       {
-        faceMaterials = std::vector<std::vector<double>>( materialCount, std::vector<double>(
-                          faceCount, std::numeric_limits<double>::quiet_NaN() ) );
+        // This assertion will fail if a mesh has fewer material ID columns than
+        // promised by the NUM_MATERIAL_PER_ELEM tag.
+        assert( chunks.size() - 5 >= materialCount );
+
+        if ( faceMaterials.empty() ) // Initialize dataset if still empty
+        {
+          faceMaterials = std::vector<std::vector<double>>( materialCount, std::vector<double>(
+                            faceCount, std::numeric_limits<double>::quiet_NaN() ) );
+        }
+
+        // Add material ID values
+        for ( size_t i = 0; i < materialCount; ++i )
+        {
+          // Offset of 2 for E** tag and element ID
+          faceMaterials[i][faceIndex] = MDAL::toDouble( chunks[ faceVertexCount + 2 + i] );
+        }
       }
 
-      // Add material ID values
-      for ( size_t i = 0; i < materialCount; ++i )
+      // No NUM_MATERIALS_PER_ELEM tag provided, use legacy MATID parser
+      else if ( chunks.size() == faceVertexCount + 4 )
       {
-        // Offset of 2 for E** tag and element ID
-        faceMaterials[i][faceIndex] = MDAL::toDouble( chunks[ faceVertexCount + 2 + i] );
+        if ( faceMaterials.empty() ) // Initialize dataset if still empty
+        {
+          // Add a single vector dataset for the "Bed Elevation (Face)" dataset
+          faceMaterials = std::vector<std::vector<double>>( 1, std::vector<double>(
+                            faceCount, std::numeric_limits<double>::quiet_NaN() ) );
+        }
+
+        faceMaterials[0][faceIndex] = MDAL::toDouble( chunks[ faceVertexCount + 3 ] );
       }
 
       faceIndex++;
@@ -303,15 +321,25 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   MDAL::addBedElevationDatasetGroup( mesh.get(), vertices );
 
   // Add material IDs
-  std::string dataSetName;
-  for ( size_t i = 0; i < materialCount; ++i )
+  if ( newMaterialParser )
   {
-    // The first two columns get special names for convenience
-    if ( i == 0 ) dataSetName = "Material ID";
-    else if ( i == 1 ) dataSetName = "Bed Elevation (Face)";
-    else dataSetName = "Auxiliary Material ID " + std::to_string( i - 1 );
+    // New MATID parser: Add all MATID dataset groups
+    std::string dataSetName;
+    for ( size_t i = 0; i < materialCount; ++i )
+    {
+      // The first two columns get special names for convenience
+      if ( i == 0 ) dataSetName = "Material ID";
+      else if ( i == 1 ) dataSetName = "Bed Elevation (Face)";
+      else dataSetName = "Auxiliary Material ID " + std::to_string( i - 1 );
 
-    MDAL::addFaceScalarDatasetGroup( mesh.get(), faceMaterials[i], dataSetName );
+      MDAL::addFaceScalarDatasetGroup( mesh.get(), faceMaterials[i], dataSetName );
+    }
+  }
+  // Add "Bed Elevation (Face)"
+  else if ( !faceMaterials.empty() )
+  {
+    // Legacy MATID parser: "Bed Elevation (Face)" dataset group only
+    MDAL::addFaceScalarDatasetGroup( mesh.get(), faceMaterials[0], "Bed Elevation (Face)" );
   }
 
   return std::unique_ptr<Mesh>( mesh.release() );
