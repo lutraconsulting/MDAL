@@ -870,7 +870,7 @@ const char *MDAL_G_referenceTime( MDAL_DatasetGroupH group )
     return EMPTY_STR;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  return _return_str( g->referenceTime().toStandartCalendarISO8601() );
+  return _return_str( g->referenceTime().toStandardCalendarISO8601() );
 }
 
 void MDAL_G_setMetadata( MDAL_DatasetGroupH group, const char *key, const char *val )

@@ -38,20 +38,22 @@ namespace MDAL
       std::string readHeader();
 
       //! Returns the vertices count in the mesh stored in the file
-      size_t verticesCount() const;
+      size_t verticesCount();
       //! Returns the faces count in the mesh stored in the file
-      size_t facesCount() const;
+      size_t facesCount();
       //! Returns the vertices count per face for the mesh stored in the file
-      size_t verticesPerFace() const;
+      size_t verticesPerFace();
 
-      //! Creates and returns a mesh with the file
+      //! Returns a mesh created with the file
       static std::unique_ptr<Mesh> createMesh( const std::string &fileName );
+      //! Populates the mesh with dataset from the file
+      static void populateDataset( Mesh *mesh, const std::string &fileName );
 
-      //! Method used by DatasetSelafin, returns \a count values at \a timeStepIndex and \a variableIndex, and an \a offset from the start
+      //! Returns \a count values at \a timeStepIndex and \a variableIndex, and an \a offset from the start
       std::vector<double> datasetValues( size_t timeStepIndex, size_t variableIndex, size_t offset, size_t count );
-      //! Method used by MeshSelafinFaceIterator, returns \a count vertex indexex in face with an \a offset from the start
+      //! Returns \a count vertex indexex in face with an \a offset from the start
       std::vector<int> connectivityIndex( size_t offset, size_t count );
-      //! Method used by MeshSelafinVertexIterator, returns \a count vertices with an \a offset from the start
+      //! Returns \a count vertices with an \a offset from the start
       std::vector<double> vertices( size_t offset, size_t count );
 
       //! Add the dataset group to the file (persiste), replace dataset in the new group by Selafindataset with lazy loading
@@ -148,6 +150,7 @@ namespace MDAL
       long long mFileSize = -1;
 
       std::ifstream mIn;
+      bool mParsed = false;
   };
 
   class DatasetSelafin : public Dataset2D
@@ -293,19 +296,20 @@ namespace MDAL
       DriverSelafin();
       ~DriverSelafin() override;
       DriverSelafin *create() override;
-      //void createDatasetGroup( Mesh *mesh, const std::string &groupName, MDAL_DataLocation dataLocation, bool hasScalarData, const std::string &datasetGroupFile );
-      //void createDataset( DatasetGroup *group, RelativeTimestamp time, const double *values, const int *active );
-      bool persist( DatasetGroup *group );
 
       bool canReadMesh( const std::string &uri ) override;
+      bool canReadDatasets( const std::string &uri ) override;
+
       std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName = "" ) override;
+      void load( const std::string &datFile, Mesh *mesh ) override;
+
+      bool persist( DatasetGroup *group ) override;
+
       int faceVerticesMaximumCount() const {return 3;}
       void save( const std::string &uri, Mesh *mesh ) override;
 
     private:
       bool saveDatasetGroupOnFile( DatasetGroup *datasetGroup );
-
-      std::string mFileName;
   };
 
 } // namespace MDAL

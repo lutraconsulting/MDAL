@@ -83,7 +83,7 @@ TEST( MdalDateTimeTest, DateTime )
 
   for ( const std::pair<MDAL::DateTime, std::string> &test : dateStringTests )
   {
-    EXPECT_EQ( test.first.toStandartCalendarISO8601(), test.second );
+    EXPECT_EQ( test.first.toStandardCalendarISO8601(), test.second );
   }
 }
 
@@ -108,7 +108,7 @@ TEST( MdalDateTimeTest, ConvertJulianDay )
 
     MDAL::DateTime dateTime( julianDay, MDAL::DateTime::JulianDay );
 
-    EXPECT_EQ( stringDate, dateTime.toStandartCalendarISO8601() );
+    EXPECT_EQ( stringDate, dateTime.toStandardCalendarISO8601() );
   }
 }
 

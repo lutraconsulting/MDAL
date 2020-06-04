@@ -139,7 +139,7 @@ namespace MDAL
   //! Adds altitude dataset group to mesh
   void addFaceScalarDatasetGroup( MDAL::Mesh *mesh, const std::vector<double> &values, const std::string &name );
 
-  //! function used to read all of type of value. Option to change the endianness is provided
+  //! Reads all of type of value. Option to change the endianness is provided
   template<typename T>
   bool readValue( T &value, std::ifstream &in, bool changeEndianness = false )
   {
@@ -154,7 +154,7 @@ namespace MDAL
     return true;
   }
 
-  //! function used to write all of type of value. Option to change the endianness is provided
+  //! Writes all of type of value. Option to change the endianness is provided
   template<typename T>
   void writeValue( T &value, std::ofstream &out, bool changeEndianness = false )
   {

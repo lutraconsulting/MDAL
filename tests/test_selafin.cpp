@@ -413,6 +413,27 @@ TEST( MeshSLFTest, WriteDatasetInNewFile )
   MDAL_CloseMesh( newMesh );
 }
 
+TEST( MeshSLFTest, loadDatasetFromFile )
+{
+  std::string path = test_file( "/slf/example.slf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  EXPECT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  std::string datasetFile = test_file( "/slf/example_res_fr.slf" );
+  MDAL_M_LoadDatasets( m, datasetFile.c_str() );
+
+
+  EXPECT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+
+  testPreExistingScalarDatasetGroup( MDAL_M_datasetGroup( m, 3 ) );
+  testPreExisitingVectorDatasetGroup( MDAL_M_datasetGroup( m, 1 ) );
+
+  MDAL_CloseMesh( m );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );

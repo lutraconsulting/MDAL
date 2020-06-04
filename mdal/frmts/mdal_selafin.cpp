@@ -50,6 +50,7 @@ void MDAL::SelafinFile::initialize()
   mIn.seekg( 0, mIn.beg );
 
   mIsNativeLittleEndian = MDAL::isNativeLittleEndian();
+  mParsed = false;
 }
 
 void MDAL::SelafinFile::parseFile()
@@ -178,6 +179,8 @@ void MDAL::SelafinFile::parseFile()
       mVariableStreamPosition[i][nT] = passThroughDoubleArray( mVerticesCount );
     }
   }
+
+  mParsed = true;
 }
 
 std::string MDAL::SelafinFile::readHeader()
@@ -242,23 +245,43 @@ std::unique_ptr<MDAL::Mesh> MDAL::SelafinFile::createMesh( const std::string &fi
   return mesh;
 }
 
-size_t MDAL::SelafinFile::facesCount() const
+void MDAL::SelafinFile::populateDataset( MDAL::Mesh *mesh, const std::string &fileName )
 {
+  std::shared_ptr<SelafinFile> reader = std::make_shared<SelafinFile>( fileName );
+  reader->initialize();
+  reader->parseFile();
+
+  if ( mesh->verticesCount() != reader->verticesCount() || mesh->facesCount() != reader->facesCount() )
+    throw MDAL::Error( MDAL_Status::Err_IncompatibleDataset, "Faces or vertices counts in the file are not the same" );
+
+  populateDataset( mesh, reader );
+}
+
+size_t MDAL::SelafinFile::facesCount()
+{
+  if ( !mParsed )
+    parseFile();
   return mFacesCount;
 }
 
-size_t MDAL::SelafinFile::verticesCount() const
+size_t MDAL::SelafinFile::verticesCount()
 {
+  if ( !mParsed )
+    parseFile();
   return mVerticesCount;
 }
 
-size_t MDAL::SelafinFile::verticesPerFace() const
+size_t MDAL::SelafinFile::verticesPerFace()
 {
+  if ( !mParsed )
+    parseFile();
   return mVerticesPerFace;
 }
 
 std::vector<double> MDAL::SelafinFile::datasetValues( size_t timeStepIndex, size_t variableIndex, size_t offset, size_t count )
 {
+  if ( !mParsed )
+    parseFile();
   if ( variableIndex < mVariableStreamPosition.size() &&  timeStepIndex < mVariableStreamPosition[timeStepIndex].size() )
     return readDoubleArr( mVariableStreamPosition[variableIndex][timeStepIndex], offset, count );
   else
@@ -267,6 +290,9 @@ std::vector<double> MDAL::SelafinFile::datasetValues( size_t timeStepIndex, size
 
 void MDAL::SelafinFile::populateDataset( MDAL::Mesh *mesh, std::shared_ptr<MDAL::SelafinFile> reader )
 {
+  std::map<std::string, std::shared_ptr<DatasetGroup>> groupsByName;
+  std::vector< std::shared_ptr<DatasetGroup>> groupsInOrder;
+
   for ( size_t nName = 0; nName < reader->mVariableNames.size(); ++nName )
   {
     std::string var_name( reader->mVariableNames[nName] );
@@ -304,8 +330,9 @@ void MDAL::SelafinFile::populateDataset( MDAL::Mesh *mesh, std::shared_ptr<MDAL:
       var_name =  MDAL::replace( var_name, "suivant y", "" );
     }
 
-    std::shared_ptr<DatasetGroup> group = mesh->group( var_name );
-    if ( !group )
+    std::shared_ptr<DatasetGroup> group;
+    auto it = groupsByName.find( var_name );
+    if ( it == groupsByName.end() )
     {
       group = std::make_shared< DatasetGroup >(
                 mesh->driverName(),
@@ -316,8 +343,11 @@ void MDAL::SelafinFile::populateDataset( MDAL::Mesh *mesh, std::shared_ptr<MDAL:
       group->setDataLocation( MDAL_DataLocation::DataOnVertices );
       group->setIsScalar( !is_vector );
 
-      mesh->datasetGroups.push_back( group );
+      groupsInOrder.push_back( group );
+      groupsByName[var_name] = group;
     }
+    else
+      group = it->second;
 
     group->setReferenceTime( reader->mReferenceTime );
 
@@ -354,7 +384,7 @@ void MDAL::SelafinFile::populateDataset( MDAL::Mesh *mesh, std::shared_ptr<MDAL:
   }
 
   // now calculate statistics
-  for ( auto group : mesh->datasetGroups )
+  for ( auto group : groupsInOrder )
   {
     for ( auto dataset : group->datasets )
     {
@@ -365,6 +395,10 @@ void MDAL::SelafinFile::populateDataset( MDAL::Mesh *mesh, std::shared_ptr<MDAL:
     MDAL::Statistics stats = MDAL::calculateStatistics( group );
     group->setStatistics( stats );
   }
+
+  // As everything seems to be ok (no exception thrown), push the groups in the mesh
+  for ( auto group : groupsInOrder )
+    mesh->datasetGroups.push_back( group );
 }
 
 std::string MDAL::SelafinFile::readString( size_t len )
@@ -568,7 +602,7 @@ MDAL::DriverSelafin::DriverSelafin():
   Driver( "SELAFIN",
           "Selafin File",
           "*.slf",
-          Capability::ReadMesh | Capability::SaveMesh | Capability::WriteDatasetsOnVertices
+          Capability::ReadMesh | Capability::SaveMesh | Capability::WriteDatasetsOnVertices | Capability::ReadDatasets
         )
 {
 }
@@ -581,6 +615,22 @@ MDAL::DriverSelafin *MDAL::DriverSelafin::create()
 }
 
 bool MDAL::DriverSelafin::canReadMesh( const std::string &uri )
+{
+  if ( !MDAL::fileExists( uri ) ) return false;
+
+  try
+  {
+    SelafinFile file( uri );
+    file.readHeader();
+    return true;
+  }
+  catch ( ... )
+  {
+    return false;
+  }
+}
+
+bool MDAL::DriverSelafin::canReadDatasets( const std::string &uri )
 {
   if ( !MDAL::fileExists( uri ) ) return false;
 
@@ -616,6 +666,24 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFi
     mesh.reset();
   }
   return mesh;
+}
+
+void MDAL::DriverSelafin::load( const std::string &datFile, MDAL::Mesh *mesh )
+{
+  MDAL::Log::resetLastStatus();
+
+  try
+  {
+    SelafinFile::populateDataset( mesh, datFile );
+  }
+  catch ( MDAL_Status error )
+  {
+    MDAL::Log::error( error, name(), "Error while loading dataset in file " + datFile );
+  }
+  catch ( MDAL::Error err )
+  {
+    MDAL::Log::error( err, name() );
+  }
 }
 
 bool MDAL::DriverSelafin::persist( MDAL::DatasetGroup *group )
@@ -1126,7 +1194,7 @@ bool MDAL::SelafinFile::addDatasetGroup( MDAL::DatasetGroup *datasetGroup )
 
   if ( mReferenceTime.isValid() )
   {
-    writeValueArrayRecord( out, mReferenceTime.toStandartCalendarArray() );
+    writeValueArrayRecord( out, mReferenceTime.expandToCalendarArray() );
   }
 
   //elems count
