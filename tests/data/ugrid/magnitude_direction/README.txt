@@ -13,3 +13,8 @@ Coordinate reference system is not relevant here.
 *Data:*   Velocity vector as magnitude+direction, origin in cell centres, as classes.
 
 *Time:*   24 snapshots in time.
+
+--------------------------------------
+*File:*           simplebox_from_direction_clm.nc
+
+same as above, but the direction uses "from", so it is reversed 

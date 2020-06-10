@@ -646,38 +646,58 @@ TEST( MeshUgridTest, classifiedVariable )
 
 TEST( MeshUgridTest, magnitude_direction )
 {
-  std::string path = test_file( "/ugrid/magnitude_direction/simplebox_clm.nc" );
-  MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
+  std::vector<std::string> files;
+  files.push_back( "simplebox_to_direction_clm.nc" );
+  files.push_back( "simplebox_from_direction_clm.nc" );
+  for ( const std::string &file : files )
+  {
+    std::string path = test_file( std::string( "/ugrid/magnitude_direction/" ) + file );
+    MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
+    EXPECT_NE( mesh, nullptr );
+    ASSERT_EQ( 6, MDAL_M_datasetGroupCount( mesh ) );
 
-  EXPECT_NE( mesh, nullptr );
+    MDAL_DatasetGroupH group;
+    if ( file == "simplebox_to_direction_clm.nc" )
+    {
+      group = MDAL_M_datasetGroup( mesh, 3 );
+      ASSERT_EQ( std::string( "Flow element center velocity to direction relative true north" ), std::string( MDAL_G_name( group ) ) );
+    }
+    else
+    {
+      group = MDAL_M_datasetGroup( mesh, 2 );
+      ASSERT_EQ( std::string( "Flow element center velocity from direction relative true north" ), std::string( MDAL_G_name( group ) ) );
+    }
+    MDAL_DatasetH dataset = MDAL_G_dataset( group, 10 );
+    int directionIndex = getValue( dataset, 20 );
+    EXPECT_EQ( directionIndex, 36 );
 
-  ASSERT_EQ( 6, MDAL_M_datasetGroupCount( mesh ) );
+    if ( file == "simplebox_to_direction_clm.nc" )
+    {
+      group = MDAL_M_datasetGroup( mesh, 2 );
+    }
+    else
+    {
+      group = MDAL_M_datasetGroup( mesh, 3 );
+    }
+    ASSERT_EQ( std::string( "Flow element center velocity magnitude" ), std::string( MDAL_G_name( group ) ) );
+    dataset = MDAL_G_dataset( group, 10 );
+    int magIndex = getValue( dataset, 20 );
+    EXPECT_EQ( magIndex, 3 );
 
-  MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 2 );
-  ASSERT_EQ( std::string( "Flow element center velocity direction" ), std::string( MDAL_G_name( group ) ) );
-  MDAL_DatasetH dataset = MDAL_G_dataset( group, 10 );
-  int directionIndex = getValue( dataset, 20 );
-  EXPECT_EQ( directionIndex, 36 );
+    double direction = -( ( directionIndex - 1 ) * 10 + 5 ); //supposed to be clokcwise angle
+    double magnitude = ( magIndex - 1 ) * 0.2 + 0.1;
 
-  group = MDAL_M_datasetGroup( mesh, 3 );
-  ASSERT_EQ( std::string( "Flow element center velocity magnitude" ), std::string( MDAL_G_name( group ) ) );
-  dataset = MDAL_G_dataset( group, 10 );
-  int magIndex = getValue( dataset, 20 );
-  EXPECT_EQ( magIndex, 3 );
+    group = MDAL_M_datasetGroup( mesh, 1 );
+    ASSERT_EQ( std::string( "Flow element center velocity" ), std::string( MDAL_G_name( group ) ) );
+    dataset = MDAL_G_dataset( group, 10 );
+    double x = getValueX( dataset, 20 );
+    double y = getValueY( dataset, 20 );
 
-  double direction = -( ( directionIndex - 1 ) * 10 + 5 ); //supposed to be clokcwise angle
-  double magnitude = ( magIndex - 1 ) * 0.2 + 0.1;
+    EXPECT_EQ( x, magnitude * cos( 2 * M_PI * direction / 360 ) );
+    EXPECT_EQ( y, magnitude * sin( 2 * M_PI * direction / 360 ) );
 
-  group = MDAL_M_datasetGroup( mesh, 1 );
-  ASSERT_EQ( std::string( "Flow element center velocity" ), std::string( MDAL_G_name( group ) ) );
-  dataset = MDAL_G_dataset( group, 10 );
-  double x = getValueX( dataset, 20 );
-  double y = getValueY( dataset, 20 );
-
-  EXPECT_EQ( x, magnitude * cos( 2 * M_PI * direction / 360 ) );
-  EXPECT_EQ( y, magnitude * sin( 2 * M_PI * direction / 360 ) );
-
-  MDAL_CloseMesh( mesh );
+    MDAL_CloseMesh( mesh );
+  }
 }
 
 int main( int argc, char **argv )
