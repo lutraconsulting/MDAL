@@ -19,7 +19,6 @@ MDAL::MemoryDataset2D::MemoryDataset2D( MDAL::DatasetGroup *grp, bool hasActiveF
   setSupportsActiveFlag( hasActiveFlag );
   if ( hasActiveFlag )
   {
-    assert( grp->dataLocation() == MDAL_DataLocation::DataOnVertices );
     mActive = std::vector<int>( mesh()->facesCount(), 1 );
   }
 }

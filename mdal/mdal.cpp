@@ -794,12 +794,6 @@ MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group, double time, const do
     return nullptr;
   }
 
-  if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices )
-  {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Active flag is only supported on datasets with data on vertices" );
-    return nullptr;
-  }
-
   const size_t index = g->datasets.size();
   MDAL::RelativeTimestamp t( time, MDAL::RelativeTimestamp::hours );
   dr->createDataset( g,
