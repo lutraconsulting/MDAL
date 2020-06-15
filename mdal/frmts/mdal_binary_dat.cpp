@@ -464,7 +464,7 @@ bool MDAL::DriverBinaryDat::persist( MDAL::DatasetGroup *group )
       // Write status flags
       for ( size_t i = 0; i < elemCount; i++ )
       {
-        bool active = static_cast<bool>( dataset->active( i ) );
+        bool active = dataset->supportsActiveFlag() ? static_cast<bool>( dataset->active( i ) ) : true;
         writeRawData( out, reinterpret_cast< const char * >( &active ), 1 );
       }
     }
