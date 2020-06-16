@@ -208,6 +208,11 @@ std::string MDAL::DatasetGroup::uri() const
   return mUri;
 }
 
+void MDAL::DatasetGroup::replaceUri( std::string uri )
+{
+  mUri = uri;
+}
+
 MDAL::Statistics MDAL::DatasetGroup::statistics() const
 {
   return mStatistics;

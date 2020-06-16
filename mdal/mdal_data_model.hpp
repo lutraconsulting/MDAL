@@ -166,6 +166,7 @@ namespace MDAL
       void setDataLocation( MDAL_DataLocation dataLocation );
 
       std::string uri() const;
+      void replaceUri( std::string uri );
 
       Statistics statistics() const;
       void setStatistics( const Statistics &statistics );

@@ -1179,3 +1179,14 @@ bool MDAL_G_isTemporal( MDAL_DatasetGroupH group )
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
   return g->datasets.size() > 1;
 }
+
+const char *MDAL_G_uri( MDAL_DatasetGroupH group )
+{
+  if ( !group )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
+    return EMPTY_STR;
+  }
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  return _return_str( g->uri() );
+}

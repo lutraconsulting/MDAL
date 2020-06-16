@@ -530,6 +530,12 @@ MDAL_EXPORT const char *MDAL_G_referenceTime( MDAL_DatasetGroupH group );
  */
 MDAL_EXPORT bool MDAL_G_isTemporal( MDAL_DatasetGroupH group );
 
+/**
+ * Returns dataset metadata key
+ * not thread-safe and valid only till next call
+ */
+MDAL_EXPORT const char *MDAL_G_uri( MDAL_DatasetGroupH group);
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// DATASETS
 ///////////////////////////////////////////////////////////////////////////////////////
