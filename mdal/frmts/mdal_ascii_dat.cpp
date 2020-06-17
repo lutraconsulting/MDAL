@@ -563,3 +563,8 @@ bool MDAL::DriverAsciiDat::persist( MDAL::DatasetGroup *group )
 
   return false;
 }
+
+std::string MDAL::DriverAsciiDat::writeDatasetOnFileSuffix() const
+{
+  return "dat";
+}
