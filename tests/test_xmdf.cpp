@@ -287,9 +287,9 @@ TEST( MeshXmdfTest, withReferenceTime )
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
 
-  ASSERT_EQ( 11, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 12, MDAL_M_datasetGroupCount( m ) );
 
-  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
   ASSERT_NE( g, nullptr );
 
   EXPECT_TRUE( hasReferenceTime( g ) );

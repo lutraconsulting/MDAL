@@ -20,17 +20,17 @@ jobs:
 
       - name: build MDAL
         run: |
-          mkdir -p build_lnx
-          cd build_lnx
+          mkdir -p ../build_osx
+          cd ../build_osx
           cmake \
               -DCMAKE_BUILD_TYPE=Debug \
               -DENABLE_TESTS=ON \
-              ../mdal
+              ../MDAL
           make -j`nproc`
 
       - name: Run tests
         env:
           CTEST_TARGET_SYSTEM: Linux-gcc
         run: |
-          cd build_lnx
+          cd ../build_osx
           ctest -VV
