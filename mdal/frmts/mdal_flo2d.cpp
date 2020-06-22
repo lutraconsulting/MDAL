@@ -498,16 +498,12 @@ void MDAL::DriverFlo2D::createMesh( const std::vector<CellCenter> &cells, double
   mMesh.reset(
     new MemoryMesh(
       name(),
-      vertices.size(),
-      0,
-      faces.size(),
       4, //maximum quads
-      computeExtent( vertices ),
       mDatFileName
     )
   );
-  mMesh->faces = faces;
-  mMesh->vertices = vertices;
+  mMesh->setFaces( std::move( faces ) );
+  mMesh->setVertices( std::move( vertices ) );
 }
 
 bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &timedepFileName )
@@ -827,7 +823,7 @@ bool MDAL::DriverFlo2D::appendGroup( HdfFile &file, MDAL::DatasetGroup *dsGroup,
     const Statistics st = dataset->statistics();
     maximums[i] = static_cast<float>( st.maximum );
     minimums[i] = static_cast<float>( st.minimum );
-    times.push_back( dataset->time( RelativeTimestamp::hours ) );
+    times[i] = dataset->time( RelativeTimestamp::hours ) ;
   }
 
   // store data

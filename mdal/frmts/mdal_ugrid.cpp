@@ -342,7 +342,6 @@ void MDAL::DriverUgrid::populateFaces( MDAL::Faces &faces )
 
   for ( size_t i = 0; i < faceCount; ++i )
   {
-    size_t nVertices = verticesInFace;
     std::vector<size_t> idxs;
 
     for ( size_t j = 0; j < verticesInFace; ++j )
@@ -353,8 +352,6 @@ void MDAL::DriverUgrid::populateFaces( MDAL::Faces &faces )
       if ( fillVal == val )
       {
         // found fill val
-        nVertices = j;
-        assert( nVertices > 1 );
         break;
       }
       else
@@ -368,7 +365,7 @@ void MDAL::DriverUgrid::populateFaces( MDAL::Faces &faces )
 
 void MDAL::DriverUgrid::addBedElevation( MDAL::MemoryMesh *mesh )
 {
-  if ( mNcFile->hasArr( nodeZVariableName() ) ) MDAL::addBedElevationDatasetGroup( mesh, mesh->vertices );
+  if ( mNcFile->hasArr( nodeZVariableName() ) ) MDAL::addBedElevationDatasetGroup( mesh, mesh->vertices() );
 }
 
 std::string MDAL::DriverUgrid::getCoordinateSystemVariableName()

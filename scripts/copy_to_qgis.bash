@@ -21,7 +21,7 @@ rm -rf $QGIS_MDAL_DIR/*
 echo "Copy new version"
 cp -Rv ./cmake $QGIS_MDAL_DIR/
 # QGIS has its own FindSqlite3 script
-rm $QGIS_MDAL_DIR/cmake/FindSqlite3.cmake 
+rm $QGIS_MDAL_DIR/cmake/FindSQLite3.cmake 
 cp -Rv ./cmake_templates $QGIS_MDAL_DIR/
 cp -Rv ./mdal/* $QGIS_MDAL_DIR
 find $QGIS_MDAL_DIR -name "*CMakeLists.txt" -type f -delete

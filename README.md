@@ -35,27 +35,43 @@ You can use MDAL to load the following file formats:
 
 \* Data lazy loaded
 
-\*\* Formats can be preprocessed using QGIS [Crayfish](https://plugins.qgis.org/plugins/crayfish/)/Mesh processing algorithm to one of supported formats
+\*\* Formats can be preprocessed using QGIS [Crayfish](https://plugins.qgis.org/plugins/crayfish/) Mesh processing algorithm to one of supported formats
 
 \*\*\* Results should pre pre-processed to become [UGRID compliant](https://github.com/lutraconsulting/MDAL/issues/155#issuecomment-530853839)
+
+| Format  | Mesh Frame Support | Mesh Lazy Loaded | 1D Data Support | 2D Data Support | 3D Data Support | Data Lazy Loaded |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| 2DM   |  READ-WRITE | N/A | N/A | N/A | N/A | N/A |
+| XMS TIN   | READ-ONLY | N/A | N/A | N/A | N/A | N/A |
+| Esri TIN   |  READ-ONLY | N/A | N/A | N/A | N/A | N/A |
+| NetCDF   |  READ-ONLY | NO | NO | READ-ONLY | N/A | NO | 
+| GRIB   |  READ-ONLY | NO | NO | READ-ONLY | N/A | NO | 
+| XMDF   |  N/A | N/A | NO | READ-ONLY | READ-ONLY | YES |
+| XDMF   |  N/A | N/A | NO | READ-ONLY | NO | YES |
+| DAT   |  N/A | N/A | READ-ONLY | READ-WRITE | N/A | NO | 
+| 3Di   |  READ-ONLY | NO |  READ-ONLY | READ-ONLY | NO | NO | 
+| UGRID   |  READ-WRITE | NO | READ-ONLY | READ-ONLY | NO | NO | 
+| FLO-2D   |  READ-ONLY  | NO | NO | READ-WRITE | NO | NO  | 
+| Selafin   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
+| SWW   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
 
 # Versioning and integration in QGIS
 
 QGIS contains internal copy of MDAL library in following versions:
 
-| QGIS    | MDAL    |
-| ------- | ------- |
-| 3.0.2   | N/A     |
-| 3.2.3   | 0.0.3   |
-| 3.4.14  | 0.0.10  |
-| 3.6.3   | 0.3.2   |
-| 3.8.3   | 0.3.3   |
-| 3.10.0  | 0.3.3   |
-| 3.10.1  | 0.4.0   |
-| 3.10.2  | 0.4.1   |
-| 3.10.3  | 0.4.2   |
-| 3.12.0  | 0.5.1   |
-| 3.14.0  | 0.6.x   |
+| QGIS    | MDAL    | Features | 
+| ------- | ------- | -------- |
+| 3.0.2   | N/A     |  [2D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119) |
+| 3.2.3   | 0.0.3   |          |
+| 3.4.14  | 0.0.10  |          |
+| 3.6.3   | 0.3.2   | Many new formats supported |
+| 3.8.3   | 0.3.3   | |
+| 3.10.0  | 0.3.3   | |
+| 3.10.1  | 0.4.0   | Save datasets for some formats |
+| 3.10.2  | 0.4.1   | |
+| 3.10.3  | 0.4.2   | |
+| 3.12.0  | 0.5.1   |  [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158) |
+| 3.14.0  | 0.6.1   |  [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164) | 
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
