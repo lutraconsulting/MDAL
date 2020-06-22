@@ -15,7 +15,7 @@ jobs:
           wget https://qgis.org/downloads/macos/deps/qgis-deps-${QGIS_DEPS_VERSION}.tar.gz
           sudo mkdir -p /opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/
           cd /opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/
-          sudo tar -xvzf $THIS_DIR/qgis-deps-${QGIS_DEPS_VERSION}.tar.gz
+          sudo tar -xzf ./qgis-deps-${QGIS_DEPS_VERSION}.tar.gz
           /opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/bin/gdalinfo --formats
 
       - name: build MDAL
@@ -23,8 +23,17 @@ jobs:
           mkdir -p ../build_osx
           cd ../build_osx
           cmake \
+              -DCMAKE_PREFIX_PATH=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage \
               -DCMAKE_BUILD_TYPE=Debug \
-              -DENABLE_TESTS=ON \
+              -DGDAL_LIBRARY=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/lib/libgdal.dylib \
+              -DGDAL_INCLUDE_DIR=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/include \
+              -DGDAL_CONFIG=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/bin/gdal-config \
+              -DNETCDF_PREFIX=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage \
+              -DSQLITE3_INCLUDE_DIR=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/include \
+              -DSQLITE3_LIBRARY=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/lib/libsqlite3.dylib \
+              -DHDF5_DIR=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage \
+              -DLIBXML2_INCLUDE_DIR=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/include \
+              -DLIBXML2_LIBRARY=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/lib/libxml2.dylib \
               ../MDAL
           make -j`nproc`
 
