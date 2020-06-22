@@ -323,7 +323,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
   ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -356,10 +356,10 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
     EXPECT_FALSE( MDAL_G_isTemporal( g ) );
   }
 
-  // Bed elevation dataset and face elevation dataset
+  // Face elevation dataset
   {
 
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -393,6 +393,187 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
   MDAL_CloseMesh( m );
 }
 
+TEST( Mesh2DMTest, MultiMaterialMeshTest )
+{
+  std::string path = test_file( "/2dm/multi_material.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  int maxCount = MDAL_M_faceVerticesMaximumCount( m );
+  EXPECT_EQ( maxCount, 4 );
+
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "2DM" );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 11 );
+  double x = getVertexXCoordinatesAt( m, 2 );
+  double y = getVertexYCoordinatesAt( m, 2 );
+  double z = getVertexZCoordinatesAt( m, 2 );
+  EXPECT_DOUBLE_EQ( 10.0, x );
+  EXPECT_DOUBLE_EQ( -10.0, y );
+  EXPECT_DOUBLE_EQ( 0.0, z );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 12, f_count );
+
+  double minX, maxX, minY, maxY;
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+  EXPECT_DOUBLE_EQ( -15.0, minX );
+  EXPECT_DOUBLE_EQ( 15.0, maxX );
+  EXPECT_DOUBLE_EQ( -10.0, minY );
+  EXPECT_DOUBLE_EQ( 10.0, maxY );
+
+  int f_v_count = getFaceVerticesCountAt( m, 1 );
+  EXPECT_EQ( f_v_count, 3 );
+  int f_v = getFaceVerticesIndexAt( m, 0, 0 );
+  EXPECT_EQ( 0, f_v );
+
+  // Bed elevation dataset
+  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 11, count );
+
+    double value = getValue( ds, 5 );
+    EXPECT_DOUBLE_EQ( 5.0, value );
+
+    EXPECT_FALSE( MDAL_G_isTemporal( g ) );
+  }
+
+  // Material index dataset
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "Material ID" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 12, count );
+
+    double value = getValue( ds, 1 );
+    EXPECT_DOUBLE_EQ( 1, value );
+
+    EXPECT_FALSE( MDAL_G_isTemporal( g ) );
+  }
+
+  // Face elevation dataset
+  {
+
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "Bed Elevation (Face)" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 12, count );
+
+    double value = getValue( ds, 0 );
+    EXPECT_DOUBLE_EQ( 8.333, value );
+  }
+
+  // Auxiliary material #1 dataset
+  {
+
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "Auxiliary Material ID 1" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 12, count );
+
+    double value = getValue( ds, 1 );
+    EXPECT_DOUBLE_EQ( 1, value );
+  }
+
+  MDAL_CloseMesh( m );
+}
 
 TEST( Mesh2DMTest, Save2DMeshToFile )
 {
