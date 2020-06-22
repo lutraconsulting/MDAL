@@ -1,5 +1,5 @@
 name: OSX Tests
-on: [push]
+on: [push, pull_request]
 env:
   QGIS_DEPS_VERSION: 0.4.0
 jobs:

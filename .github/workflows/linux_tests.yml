@@ -1,5 +1,5 @@
 name: Linux Tests
-on: [push]
+on: [push, pull_request]
 jobs:
   linux_tests:
     if: github.repository == 'lutraconsulting/MDAL'

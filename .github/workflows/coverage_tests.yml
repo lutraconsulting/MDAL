@@ -1,5 +1,5 @@
 name: Coverage Tests
-on: [push]
+on: [push, pull_request]
 jobs:
   coverage_tests:
     if: github.repository == 'lutraconsulting/MDAL'
