@@ -1,4 +1,9 @@
-[![Build Status](https://travis-ci.org/lutraconsulting/MDAL.svg?branch=master)](https://travis-ci.org/lutraconsulting/MDAL)
+![Linux Tests](https://github.com/lutraconsulting/MDAL/workflows/Linux%20Tests/badge.svg?branch=master)
+![MemCheck Tests](https://github.com/lutraconsulting/MDAL/workflows/MemCheck%20Tests/badge.svg)
+![Coverage Tests](https://github.com/lutraconsulting/MDAL/workflows/Coverage%20Tests/badge.svg)
+![OSX Tests](https://github.com/lutraconsulting/MDAL/workflows/OSX%20Tests/badge.svg)
+![WIN Tests](https://github.com/lutraconsulting/MDAL/workflows/.github/workflows/win_test.yml/badge.svg)
+
 ![Code Style](https://github.com/lutraconsulting/MDAL/workflows/Code%20Style/badge.svg)
 [![Coverage Status](https://img.shields.io/coveralls/lutraconsulting/MDAL.svg)](https://coveralls.io/github/lutraconsulting/MDAL?branch=master)
 [![Docs Build](https://dev.azure.com/lutraconsulting/MDAL/_apis/build/status/lutraconsulting.MDAL?branchName=master)](https://dev.azure.com/lutraconsulting/MDAL/_build/latest?definitionId=1&branchName=master)
