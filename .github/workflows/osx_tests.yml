@@ -4,7 +4,6 @@ env:
   QGIS_DEPS_VERSION: 0.4.0
 jobs:
   osx_tests:
-    if: github.repository == 'lutraconsulting/MDAL'
     runs-on: macos-latest
     steps:
       - name: Checkout MDAL
