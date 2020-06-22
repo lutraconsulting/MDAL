@@ -2,6 +2,7 @@ name: Coverage Tests
 on: [push, pull_request]
 jobs:
   coverage_tests:
+    if: github.repository == 'lutraconsulting/MDAL'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout MDAL
