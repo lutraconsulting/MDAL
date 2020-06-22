@@ -1,0 +1,50 @@
+name: MemCheck Tests
+on: [push]
+jobs:
+  memcheck_tests:
+    if: github.repository == 'lutraconsulting/MDAL'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout MDAL
+        uses: actions/checkout@v2
+
+      - name: install deps
+        run: |
+          sudo add-apt-repository ppa:ubuntugis/ppa -y
+          sudo apt-get install -y --allow-unauthenticated libgdal-dev
+          sudo apt-get install -y libhdf5-dev libnetcdf-dev
+          sudo apt-get install -y libxml2-dev
+          sudo apt-get install libc6-dbg gdb valgrind
+          valgrind --version
+
+      - name: build MDAL with valgrind
+        run: |
+          mkdir -p build_memcheck_lnx
+          cd build_memcheck_lnx
+          cmake \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DENABLE_TESTS=ON \
+              -DMEMORYCHECK_COMMAND_OPTIONS="--leak-check=yes --show-leak-kinds=definite --gen-suppressions=all --track-origins=yes --num-callers=20 --leak-resolution=high --show-reachable=no" \
+              -DMEMORYCHECK_SUPPRESSIONS_FILE=../scripts/ci/linux/valgrind.supp \
+              -DWITH_POSTGRESQL=TRUE \
+              ../mdal
+          make -j`nproc`
+
+      - name: Run tests
+        env:
+          CTEST_TARGET_SYSTEM: Linux-gcc
+          GLIBCPP_FORCE_NEW: 1
+          GLIBCXX_FORCE_NEW: 1
+        run: |
+          cd build_memcheck_lnx
+          ctest -T memcheck 2>&1 | tee memcheck.log
+
+      - name: Check memcheck for errors
+        run: |
+          cd build_memcheck_lnx
+          if grep -q "Defects:" "memcheck.log"; then
+            echo "Error: Show memcheck results"
+            ls -la Testing/Temporary/MemoryChecker.*.log
+            cat Testing/Temporary/MemoryChecker.*.log
+            exit 1
+          fi

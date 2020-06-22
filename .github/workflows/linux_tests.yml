@@ -1,0 +1,33 @@
+name: Linux Tests
+on: [push]
+jobs:
+  linux_tests:
+    if: github.repository == 'lutraconsulting/MDAL'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout MDAL
+        uses: actions/checkout@v2
+
+      - name: install deps
+        run: |
+          sudo add-apt-repository ppa:ubuntugis/ppa -y
+          sudo apt-get install -y --allow-unauthenticated libgdal-dev
+          sudo apt-get install -y libhdf5-dev libnetcdf-dev
+          sudo apt-get install -y libxml2-dev
+
+      - name: build MDAL
+        run: |
+          mkdir -p build_lnx
+          cd build_lnx
+          cmake \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DENABLE_TESTS=ON \
+              ../mdal
+          make -j`nproc`
+
+      - name: Run tests
+        env:
+          CTEST_TARGET_SYSTEM: Linux-gcc
+        run: |
+          cd build_lnx
+          ctest -VV

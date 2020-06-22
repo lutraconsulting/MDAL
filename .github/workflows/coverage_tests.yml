@@ -1,0 +1,48 @@
+name: Coverage Tests
+on: [push]
+jobs:
+  coverage_tests:
+    if: github.repository == 'lutraconsulting/MDAL'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout MDAL
+        uses: actions/checkout@v2
+
+      - name: install deps
+        run: |
+          sudo add-apt-repository ppa:ubuntugis/ppa -y
+          sudo apt-get install -y --allow-unauthenticated libgdal-dev
+          sudo apt-get install -y libhdf5-dev libnetcdf-dev
+          sudo apt-get install -y libxml2-dev
+          sudo apt-get install -y lcov
+
+      - name: build MDAL with coverage
+        run: |
+          mkdir -p build_coverage_lnx
+          cd build_coverage_lnx
+          cmake \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DENABLE_TESTS=ON \
+              -DENABLE_COVERAGE=ON \
+              ../mdal
+          make -j`nproc`
+
+      - name: Run tests
+        env:
+          CTEST_TARGET_SYSTEM: Linux-gcc
+        run: |
+          cd build_coverage_lnx
+          ctest -VV
+
+      - name: Prepare coverage report
+        run: |
+          cd build_coverage_lnx
+          lcov --directory . --capture --output-file coverage.info
+          lcov --remove coverage.info '*/tests/*' '/usr/*' '*googletest/*' '*/3rdparty/*' --output-file coverage.info
+          lcov --list coverage.info
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            path-to-lcov: build_coverage_lnx/coverage.info
