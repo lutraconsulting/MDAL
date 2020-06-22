@@ -22,11 +22,7 @@ namespace MDAL
   class Mesh2dm: public MemoryMesh
   {
     public:
-      Mesh2dm( size_t verticesCount,
-               size_t edgesCount,
-               size_t facesCount,
-               size_t faceVerticesMaximumCount,
-               BBox extent,
+      Mesh2dm( size_t faceVerticesMaximumCount,
                const std::string &uri,
                const std::map<size_t, size_t> vertexIDtoIndex
              );

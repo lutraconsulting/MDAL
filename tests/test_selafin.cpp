@@ -9,6 +9,7 @@
 
 //mdal
 #include "mdal.h"
+#include "mdal_utils.hpp"
 #include "mdal_testutils.hpp"
 
 TEST( MeshSLFTest, MalpassetGeometry )
@@ -51,6 +52,21 @@ TEST( MeshSLFTest, MalpassetGeometry )
   int f_count = MDAL_M_faceCount( m );
   EXPECT_EQ( 26000, f_count );
 
+  // ///////////
+  // Edges
+  // ///////////
+  EXPECT_EQ( 0, MDAL_M_edgeCount( m ) );
+
+  // ///////////
+  // Extent
+  // ///////////
+  double xmin, xmax, ymin, ymax;
+  MDAL_M_extent( m, &xmin, &xmax, &ymin, &ymax );
+  EXPECT_EQ( xmin, 0 );
+  EXPECT_EQ( xmax, 17763.0703125 );
+  EXPECT_EQ( ymin, -2343.5400390625 );
+  EXPECT_EQ( ymax, 6837.7900390625 );
+
   // test face 1
   int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( 3, f_v_count ); //only triangles!
@@ -85,9 +101,6 @@ TEST( MeshSLFTest, MalpassetGeometry )
 
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
-
-  int active = getActive( ds, 0 );
-  EXPECT_EQ( 1, active );
 
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 13541, count );
@@ -167,9 +180,6 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  int active = getActive( ds, 1 );
-  EXPECT_EQ( 1, active );
-
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 13541, count );
 
@@ -210,9 +220,6 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  active = getActive( ds, 1 );
-  EXPECT_EQ( 1, active );
-
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 13541, count );
 
@@ -222,8 +229,8 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   EXPECT_DOUBLE_EQ( -0.97271907329559326, value );
 
   MDAL_D_minimumMaximum( ds, &min, &max );
-  EXPECT_DOUBLE_EQ( 2.3694833011052991e-12, min );
-  EXPECT_DOUBLE_EQ( 7.5673562379016834, max );
+  EXPECT_TRUE( MDAL::equals( 0, min ) );
+  EXPECT_TRUE( MDAL::equals( 7.5673562379016834, max ) );
 
   EXPECT_TRUE( compareReferenceTime( r, "1900-01-01T00:00:00" ) );
 

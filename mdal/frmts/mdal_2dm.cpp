@@ -22,19 +22,11 @@
 
 #define DRIVER_NAME "2DM"
 
-MDAL::Mesh2dm::Mesh2dm( size_t verticesCount,
-                        size_t edgesCount,
-                        size_t facesCount,
-                        size_t faceVerticesMaximumCount,
-                        MDAL::BBox extent,
+MDAL::Mesh2dm::Mesh2dm( size_t faceVerticesMaximumCount,
                         const std::string &uri,
                         const std::map<size_t, size_t> vertexIDtoIndex )
   : MemoryMesh( DRIVER_NAME,
-                verticesCount,
-                edgesCount,
-                facesCount,
                 faceVerticesMaximumCount,
-                extent,
                 uri )
   , mVertexIDtoIndex( vertexIDtoIndex )
 {
@@ -276,22 +268,18 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
 
   std::unique_ptr< Mesh2dm > mesh(
     new Mesh2dm(
-      vertices.size(),
-      edges.size(),
-      faces.size(),
       MAX_VERTICES_PER_FACE_2DM,
-      computeExtent( vertices ),
       mMeshFile,
       vertexIDtoIndex
     )
   );
-  mesh->faces = faces;
-  mesh->vertices = vertices;
-  mesh->edges = edges;
+  mesh->setFaces( std::move( faces ) );
+  mesh->setVertices( std::move( vertices ) );
+  mesh->setEdges( std::move( edges ) );
 
   // Add Bed Elevations
   MDAL::addFaceScalarDatasetGroup( mesh.get(), elementCenteredElevation, "Bed Elevation (Face)" );
-  MDAL::addBedElevationDatasetGroup( mesh.get(), vertices );
+  MDAL::addBedElevationDatasetGroup( mesh.get(), mesh->vertices() );
 
   return std::unique_ptr<Mesh>( mesh.release() );
 }
