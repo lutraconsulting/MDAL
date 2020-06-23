@@ -832,6 +832,8 @@ TEST( MeshAsciiDatTest, WriteScalarVertexTest )
 
     MDAL_DriverH driver = MDAL_driverFromName( "ASCII_DAT" );
     ASSERT_NE( driver, nullptr );
+    const char *suffix = MDAL_DR_writeDatasetsSuffix( driver );
+    EXPECT_EQ( std::string( "dat" ), std::string( suffix ) );
     ASSERT_TRUE( MDAL_DR_writeDatasetsCapability( driver, MDAL_DataLocation::DataOnVertices ) );
 
     MDAL_DatasetGroupH g = MDAL_M_addDatasetGroup(
