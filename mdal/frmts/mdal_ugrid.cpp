@@ -576,13 +576,13 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
       *isPolar = true;
       *isX = false;
 
+      // check from_/to_direction in standard_name
+      std::string standardName = mNcFile->getAttrStr( "standard_name", varid );
+      *invertedDirection = MDAL::contains( longName, "from direction" );
+
       name = MDAL::replace( longName, "speed", "velocity" );
       name = MDAL::removeFrom( name, " from direction" );
       name = MDAL::removeFrom( name, " to direction" );
-
-      // check from_/to_direction in standard_name
-      std::string standardName = mNcFile->getAttrStr( "standard_name", varid );
-      *invertedDirection = MDAL::contains( standardName, "from_direction" );
     }
     else
     {

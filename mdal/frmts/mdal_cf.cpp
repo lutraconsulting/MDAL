@@ -166,6 +166,7 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
         {
           it->second.ncid_y = varid;
           it->second.classification_y = classes;
+          it->second.isInvertedDirection = invertedDirection;
         }
 
         // If it is classified, we want to keep each component as scalar
@@ -179,7 +180,7 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
           CFDatasetGroupInfo scalarDsInfoY;
           scalarDsInfoY = it->second;
           scalarDsInfoY.isVector = false;
-          scalarDsInfoX.isPolar = false;
+          scalarDsInfoY.isPolar = false;
           scalarDsInfoX.ncid_x = it->second.ncid_x;
           scalarDsInfoY.ncid_x = it->second.ncid_y;
 
