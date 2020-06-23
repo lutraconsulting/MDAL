@@ -23,19 +23,45 @@ namespace MDAL
    * This class is used to read the selafin file format.
    * The file is opened with initialize() and stay opened until this object is destroyed
    *
-   * \note SerafinStreamReader object is shared between different datasets, with the mesh and its iterators.
-   *       As SerafinStreamReader is not thread safe, it has to be shared in the same thread.
+   * \note SelafinFile object is shared between different datasets, with the mesh and its iterators.
+   *       As SelafinFile is not thread safe, it has to be shared in the same thread.
    *
-   * Each record of the stream has a int (4 bytes) at the beginning and the end of the record, this int is the size of the record
+   * This class can be used to create a mesh with all the dataset contained in a file with the static method createMessh()
+   * It is also pôssible to add all the dataset of a file in a separate existing mesh with the static method populateDataset()
+   *
+   * All the method to access with lazy loading to the mesh data or datasets are encapsulted and only accessible by the friend classes :
+   *    MeshSelafin
+   *    MeshSelafinVertexIterator
+   *    MeshSelafinFaceIterator
+   *    DatasetSelafin
+   *
+   * This ecapsulation protects these lazy loading access methods because they can't be used before the instance of SelafinFile has been initialized and parsed.
+   *
   */
   class SelafinFile
   {
     public:
-      //! Constructs the reader
+      //! Constructor
       SelafinFile( const std::string &fileName );
+
+      //! Returns a mesh created with the file
+      static std::unique_ptr<Mesh> createMesh( const std::string &fileName );
+      //! Populates the mesh with dataset from the file
+      static void populateDataset( Mesh *mesh, const std::string &fileName );
 
       //! Read the header of the file and return the project name
       std::string readHeader();
+
+      //! Add the dataset group to the file (persist), replace dataset in the new group by Selafindataset with lazy loading
+      bool addDatasetGroup( DatasetGroup *datasetGroup );
+
+    private:
+
+      //! Initializes and open the file file with the \a fileName
+      void initialize();
+
+      //! Extracts data from files
+      void parseFile();
 
       //! Returns the vertices count in the mesh stored in the file
       size_t verticesCount();
@@ -44,27 +70,12 @@ namespace MDAL
       //! Returns the vertices count per face for the mesh stored in the file
       size_t verticesPerFace();
 
-      //! Returns a mesh created with the file
-      static std::unique_ptr<Mesh> createMesh( const std::string &fileName );
-      //! Populates the mesh with dataset from the file
-      static void populateDataset( Mesh *mesh, const std::string &fileName );
-
       //! Returns \a count values at \a timeStepIndex and \a variableIndex, and an \a offset from the start
       std::vector<double> datasetValues( size_t timeStepIndex, size_t variableIndex, size_t offset, size_t count );
       //! Returns \a count vertex indexex in face with an \a offset from the start
       std::vector<int> connectivityIndex( size_t offset, size_t count );
       //! Returns \a count vertices with an \a offset from the start
       std::vector<double> vertices( size_t offset, size_t count );
-
-      //! Add the dataset group to the file (persiste), replace dataset in the new group by Selafindataset with lazy loading
-      bool addDatasetGroup( DatasetGroup *datasetGroup );
-
-    private:
-      //! Initializes and open the file file with the \a fileName
-      void initialize();
-
-      //! Extracts data from files
-      void parseFile();
 
       //! Reads a string record with a size \a len from current position in the stream, throws an exception if the size in not compaitble
       std::string readString( size_t len );
@@ -151,15 +162,21 @@ namespace MDAL
 
       std::ifstream mIn;
       bool mParsed = false;
+
+
+      friend class MeshSelafin;
+      friend class MeshSelafinVertexIterator;
+      friend class MeshSelafinFaceIterator;
+      friend class DatasetSelafin;
   };
 
   class DatasetSelafin : public Dataset2D
   {
     public:
       /**
-       * Contructs a dataset with a SerafinStreamReader object, \a reader, and the \a size of the array(s)
+       * Contructs a dataset with a SelafinFile object and the index of the time step
        *
-       * \note SerafinStreamReader object is shared between different dataset, with the mesh and its iterators.
+       * \note SelafinFile object is shared between different dataset, with the mesh and its iterators.
        *       As SerafinStreamReader is not thread safe, it has to be shared in the same thread.
        *
        * Position of array(s) in the stream has to be set after construction (default = begin of the stream),

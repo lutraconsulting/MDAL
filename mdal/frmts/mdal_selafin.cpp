@@ -384,9 +384,9 @@ void MDAL::SelafinFile::populateDataset( MDAL::Mesh *mesh, std::shared_ptr<MDAL:
   }
 
   // now calculate statistics
-  for ( auto group : groupsInOrder )
+  for ( const std::shared_ptr<DatasetGroup> group : groupsInOrder )
   {
-    for ( auto dataset : group->datasets )
+    for ( const std::shared_ptr<Dataset> dataset : group->datasets )
     {
       MDAL::Statistics stats = MDAL::calculateStatistics( dataset );
       dataset->setStatistics( stats );
@@ -397,7 +397,7 @@ void MDAL::SelafinFile::populateDataset( MDAL::Mesh *mesh, std::shared_ptr<MDAL:
   }
 
   // As everything seems to be ok (no exception thrown), push the groups in the mesh
-  for ( auto group : groupsInOrder )
+  for ( const std::shared_ptr<DatasetGroup> group : groupsInOrder )
     mesh->datasetGroups.push_back( group );
 }
 
@@ -699,11 +699,6 @@ bool MDAL::DriverSelafin::persist( MDAL::DatasetGroup *group )
     saveDatasetGroupOnFile( group );
     return false;
   }
-  catch ( MDAL_Status error )
-  {
-    MDAL::Log::error( error, name(), "error occurred" );
-    return true;
-  }
   catch ( MDAL::Error err )
   {
     MDAL::Log::error( err, name() );
@@ -724,9 +719,8 @@ bool MDAL::DriverSelafin::saveDatasetGroupOnFile( MDAL::DatasetGroup *datasetGro
       throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Unable to create new file" );
   }
 
-  SelafinFile reader( fileName );
-
-  return reader.addDatasetGroup( datasetGroup );
+  SelafinFile file( fileName );
+  return file.addDatasetGroup( datasetGroup );
 }
 
 // //////////////////////////////
