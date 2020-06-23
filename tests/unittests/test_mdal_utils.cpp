@@ -108,6 +108,21 @@ TEST( MdalUtilsTest, TimeParsing )
   }
 }
 
+TEST( MdalUtilsTest, RemoveFrom )
+{
+  std::vector<std::pair<std::string, std::string>> tests =
+  {
+    { "", "" },
+    { "aaaa XXX", "aaaa " },
+    { "bbb XXX XXX", "bbb XXX " },
+    { "ccc", "ccc" },
+  };
+  for ( const auto &test : tests )
+  {
+    EXPECT_EQ( test.second, MDAL::removeFrom( test.first, "XXX" ) );
+  }
+}
+
 TEST( MdalUtilsTest, CF_TimeUnitParsing )
 {
   std::vector<std::pair<std::string, MDAL::RelativeTimestamp::Unit>> tests =
