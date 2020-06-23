@@ -9,6 +9,7 @@
 
 //mdal
 #include "mdal.h"
+#include "mdal_utils.hpp"
 #include "mdal_testutils.hpp"
 
 #ifndef M_PI
@@ -687,14 +688,17 @@ TEST( MeshUgridTest, magnitude_direction )
     double direction = -( ( directionIndex - 1 ) * 10 + 5 ); //supposed to be clokcwise angle
     double magnitude = ( magIndex - 1 ) * 0.2 + 0.1;
 
+    if ( file == "simplebox_from_direction_clm.nc" )
+      direction = direction + 180;
+
     group = MDAL_M_datasetGroup( mesh, 1 );
     ASSERT_EQ( std::string( "Flow element center velocity" ), std::string( MDAL_G_name( group ) ) );
     dataset = MDAL_G_dataset( group, 10 );
     double x = getValueX( dataset, 20 );
     double y = getValueY( dataset, 20 );
 
-    EXPECT_EQ( x, magnitude * cos( 2 * M_PI * direction / 360 ) );
-    EXPECT_EQ( y, magnitude * sin( 2 * M_PI * direction / 360 ) );
+    EXPECT_TRUE( MDAL::equals( x, magnitude * cos( 2 * M_PI * direction / 360 ) ) );
+    EXPECT_TRUE( MDAL::equals( y, magnitude * sin( 2 * M_PI * direction / 360 ) ) );
 
     MDAL_CloseMesh( mesh );
   }
