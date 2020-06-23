@@ -214,6 +214,8 @@ TEST( MeshFlo2dTest, WriteBarnHDF5_Append )
     MDAL_MeshH m = MDAL_LoadMesh( pathOrig.c_str() );
     ASSERT_NE( m, nullptr );
     MDAL_DriverH driver = MDAL_driverFromName( "FLO2D" );
+    const char *suffix = MDAL_DR_writeDatasetsSuffix( driver );
+    EXPECT_EQ( std::string( "" ), std::string( suffix ) );
     ASSERT_NE( driver, nullptr );
     ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
