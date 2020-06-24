@@ -11,6 +11,7 @@
 #include "mdal.h"
 #include "mdal_utils.hpp"
 #include "mdal_testutils.hpp"
+#include "frmts/mdal_selafin.hpp"
 
 TEST( MeshSLFTest, MalpassetGeometry )
 {
@@ -117,45 +118,8 @@ TEST( MeshSLFTest, MalpassetGeometry )
   MDAL_CloseMesh( m );
 }
 
-TEST( MeshSLFTest, MalpassetResultFrench )
+static void testPreExistingScalarDatasetGroup( MDAL_DatasetGroupH r )
 {
-  std::string path = test_file( "/slf/example_res_fr.slf" );
-  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
-  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
-  ASSERT_NE( m, nullptr );
-  MDAL_Status s = MDAL_LastStatus();
-  EXPECT_EQ( MDAL_Status::None, s );
-
-  const char *projection = MDAL_M_projection( m );
-  EXPECT_EQ( std::string( "" ), std::string( projection ) );
-
-  std::string driverName = MDAL_M_driverName( m );
-  EXPECT_EQ( driverName, "SELAFIN" );
-
-  // ///////////
-  // Vertices
-  // ///////////
-  int v_count = MDAL_M_vertexCount( m );
-  EXPECT_EQ( v_count, 13541 );
-  double z = getVertexZCoordinatesAt( m, 0 );
-  EXPECT_DOUBLE_EQ( 0.0, z );
-  // ///////////
-  // Faces
-  // ///////////
-  int f_count = MDAL_M_faceCount( m );
-  EXPECT_EQ( 26000, f_count );
-
-  // test face 1
-  int f_v_count = getFaceVerticesCountAt( m, 1 );
-  EXPECT_EQ( 3, f_v_count ); //only triangles!
-
-  int var_count = MDAL_M_datasetGroupCount( m );
-  ASSERT_EQ( 4, var_count ); // 4 variables (Velocity, Water Depth, Free Surface and Bottom)
-
-  // ///////////
-  // Scalar Dataset
-  // ///////////
-  MDAL_DatasetGroupH r = MDAL_M_datasetGroup( m, 2 );
   ASSERT_NE( r, nullptr );
 
   int meta_count = MDAL_G_metadataCount( r );
@@ -194,45 +158,278 @@ TEST( MeshSLFTest, MalpassetResultFrench )
   MDAL_G_minimumMaximum( r, &min, &max );
   EXPECT_DOUBLE_EQ( -0.00673320097848773, min );
   EXPECT_DOUBLE_EQ( 100.00228118896484, max );
+}
 
-  // ///////////
-  // Vector Dataset
-  // ///////////
-  r = MDAL_M_datasetGroup( m, 0 );
+static void testPreExisitingVectorDatasetGroup( MDAL_DatasetGroupH r )
+{
   ASSERT_NE( r, nullptr );
 
-  meta_count = MDAL_G_metadataCount( r );
+  size_t meta_count = MDAL_G_metadataCount( r );
   ASSERT_EQ( 1, meta_count );
 
-  name = MDAL_G_name( r );
+  std::string name = MDAL_G_name( r );
   EXPECT_EQ( std::string( "vitesse       ms" ), std::string( name ) );
 
-  scalar = MDAL_G_hasScalarData( r );
+  double scalar = MDAL_G_hasScalarData( r );
   EXPECT_EQ( false, scalar );
 
-  dataLocation = MDAL_G_dataLocation( r );
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( r );
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
 
   ASSERT_EQ( 2, MDAL_G_datasetCount( r ) );
-  ds = MDAL_G_dataset( r, 1 );
+  MDAL_DatasetH ds = MDAL_G_dataset( r, 1 );
   ASSERT_NE( ds, nullptr );
 
-  valid = MDAL_D_isValid( ds );
+  bool valid = MDAL_D_isValid( ds );
   EXPECT_EQ( true, valid );
 
-  count = MDAL_D_valueCount( ds );
+  size_t count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 13541, count );
 
-  value = getValueX( ds, 8667 );
+  double value = getValueX( ds, 8667 );
   EXPECT_DOUBLE_EQ( 6.2320127487182617, value );
   value = getValueY( ds, 8667 );
   EXPECT_DOUBLE_EQ( -0.97271907329559326, value );
 
+  double min, max;
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_TRUE( MDAL::equals( 0, min ) );
   EXPECT_TRUE( MDAL::equals( 7.5673562379016834, max ) );
 
   EXPECT_TRUE( compareReferenceTime( r, "1900-01-01T00:00:00" ) );
+}
+
+TEST( MeshSLFTest, MalpassetResultFrench )
+{
+  std::string path = test_file( "/slf/example_res_fr.slf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "" ), std::string( projection ) );
+
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "SELAFIN" );
+
+  // ///////////
+  // Vertices
+  // ///////////
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 13541 );
+  double z = getVertexZCoordinatesAt( m, 0 );
+  EXPECT_DOUBLE_EQ( 0.0, z );
+  // ///////////
+  // Faces
+  // ///////////
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 26000, f_count );
+
+  // test face 1
+  int f_v_count = getFaceVerticesCountAt( m, 1 );
+  EXPECT_EQ( 3, f_v_count ); //only triangles!
+
+  int var_count = MDAL_M_datasetGroupCount( m );
+  ASSERT_EQ( 4, var_count ); // 4 variables (Velocity, Water Depth, Free Surface and Bottom)
+
+  // ///////////
+  // Scalar Dataset
+  // ///////////
+  testPreExistingScalarDatasetGroup( MDAL_M_datasetGroup( m, 2 ) );
+
+  // ///////////
+  // Vector Dataset
+  // ///////////
+  testPreExisitingVectorDatasetGroup( MDAL_M_datasetGroup( m, 0 ) );
+
+  MDAL_CloseMesh( m );
+}
+
+
+TEST( MeshSLFTest, SaveMeshFrame )
+{
+  saveAndCompareMesh(
+    test_file( "/slf/example_res_fr.slf" ),
+    tmp_file( "/emptymesh.slf" ),
+    "SELAFIN" );
+}
+
+static MDAL_DatasetGroupH addNewScalarDatasetGroup( MDAL_MeshH mesh, MDAL_DriverH driver, std::string file )
+{
+  MDAL_DatasetGroupH newScalarGroup = MDAL_M_addDatasetGroup( mesh, "New Scalar Dataset Group", DataOnVertices, true, driver, file.c_str() );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  size_t v_count = MDAL_M_vertexCount( mesh );
+  std::vector<double> scalarValue1( v_count );
+  std::vector<double> scalarValue2( v_count );
+  for ( size_t i = 0; i < v_count; i++ )
+  {
+    scalarValue1[i] = ( i % 15 ) / 3.0;
+    scalarValue2[i] = ( i % 30 ) / 3.0;
+  }
+  MDAL_G_addDataset( newScalarGroup, 0, scalarValue1.data(), nullptr );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  MDAL_G_addDataset( newScalarGroup, 1.111111111111111111, scalarValue2.data(), nullptr );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  MDAL_G_closeEditMode( newScalarGroup );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+
+  return newScalarGroup;
+}
+
+static MDAL_DatasetGroupH addNewVectorDatasetGroup( MDAL_MeshH mesh, MDAL_DriverH driver, std::string file )
+{
+  MDAL_DatasetGroupH newVectorGroup = MDAL_M_addDatasetGroup( mesh, "New Vector Dataset Group", DataOnVertices, false, driver, file.c_str() );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  size_t v_count = MDAL_M_vertexCount( mesh );
+  std::vector<double> vectorValue1( v_count * 2 );
+  std::vector<double> vectorValue2( v_count * 2 );
+  for ( size_t i = 0; i < v_count * 2; i++ )
+  {
+    vectorValue1[i] = ( i % 10 ) / 3.0;
+    vectorValue2[i] = ( i % 20 ) / 3.0;
+  }
+  MDAL_G_addDataset( newVectorGroup, 0, vectorValue1.data(), nullptr );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  MDAL_G_addDataset( newVectorGroup, 1.111111111, vectorValue2.data(), nullptr );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  MDAL_G_closeEditMode( newVectorGroup );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+
+  return newVectorGroup;
+}
+
+static void testScalarDatasetGroupAdded( MDAL_DatasetGroupH r )
+{
+  ASSERT_NE( r, nullptr );
+
+  double scalar = MDAL_G_hasScalarData( r );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DatasetH ds = MDAL_G_dataset( r, 1 );
+  ASSERT_NE( ds, nullptr );
+
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 1.111111111, time ) );
+
+  size_t count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 13541, count );
+
+  double value = getValue( ds, 8667 );
+  EXPECT_DOUBLE_EQ( 9, value );
+}
+
+static void testVectorDatasetGroupAdded( MDAL_DatasetGroupH r )
+{
+  ASSERT_NE( r, nullptr );
+
+  double scalar = MDAL_G_hasScalarData( r );
+  EXPECT_EQ( false, scalar );
+
+  MDAL_DatasetH ds = MDAL_G_dataset( r, 1 );
+  ASSERT_NE( ds, nullptr );
+
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 1.111111111, time ) );
+
+  size_t count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 13541, count );
+
+  double value = getValueX( ds, 8667 );
+  EXPECT_TRUE( MDAL::equals( 4.66666, value, 0.0001 ) );
+
+}
+
+TEST( MeshSLFTest, WriteDatasetInExistingFile )
+{
+  std::string path = test_file( "/slf/example_res_fr.slf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  MDAL_DriverH driver = MDAL_driverFromName( "SELAFIN" );
+  ASSERT_NE( driver, nullptr );
+
+  //Add dataset
+  std::string file = tmp_file( "/selafin_adding_dataset_existing.slf" );
+  copy( path, file );
+
+  MDAL_MeshH meshAdded = MDAL_LoadMesh( file.c_str() );
+  ASSERT_NE( meshAdded, nullptr );
+
+  addNewScalarDatasetGroup( meshAdded, driver, file );
+  addNewVectorDatasetGroup( meshAdded, driver, file );
+  MDAL_CloseMesh( meshAdded );
+  MDAL_CloseMesh( m );
+
+  meshAdded = MDAL_LoadMesh( file.c_str() );
+  ASSERT_NE( meshAdded, nullptr );
+
+  EXPECT_EQ( 6, MDAL_M_datasetGroupCount( meshAdded ) );
+
+  testPreExistingScalarDatasetGroup( MDAL_M_datasetGroup( meshAdded, 2 ) );
+  testPreExisitingVectorDatasetGroup( MDAL_M_datasetGroup( meshAdded, 0 ) );
+
+  // Scalar dataset group added
+  testScalarDatasetGroupAdded( MDAL_M_datasetGroup( meshAdded, 4 ) );
+
+  // Vector dataset group added
+  testVectorDatasetGroupAdded( MDAL_M_datasetGroup( meshAdded, 5 ) );
+
+  MDAL_CloseMesh( meshAdded );
+}
+
+TEST( MeshSLFTest, WriteDatasetInNewFile )
+{
+  std::string path = test_file( "/slf/example_res_fr.slf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  MDAL_DriverH driver = MDAL_driverFromName( "SELAFIN" );
+  ASSERT_NE( driver, nullptr );
+
+  //Add dataset
+  std::string file = tmp_file( "/selafin_adding_dataset_newFile.slf" ) ;
+  if ( MDAL::fileExists( file ) )
+    std::remove( file.c_str() );
+
+  addNewScalarDatasetGroup( m, driver, file );
+  addNewVectorDatasetGroup( m, driver, file );
+  MDAL_CloseMesh( m );
+
+  MDAL_MeshH newMesh = MDAL_LoadMesh( file.c_str() );
+  ASSERT_NE( newMesh, nullptr );
+
+  EXPECT_EQ( 2, MDAL_M_datasetGroupCount( newMesh ) );
+
+  // Scalar dataset group added
+  testScalarDatasetGroupAdded( MDAL_M_datasetGroup( newMesh, 0 ) );
+
+  // Vector dataset group added
+  testVectorDatasetGroupAdded( MDAL_M_datasetGroup( newMesh, 1 ) );
+
+  MDAL_CloseMesh( newMesh );
+}
+
+TEST( MeshSLFTest, loadDatasetFromFile )
+{
+  std::string path = test_file( "/slf/example.slf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  EXPECT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  std::string datasetFile = test_file( "/slf/example_res_fr.slf" );
+  MDAL_M_LoadDatasets( m, datasetFile.c_str() );
+
+
+  EXPECT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+
+  testPreExistingScalarDatasetGroup( MDAL_M_datasetGroup( m, 3 ) );
+  testPreExisitingVectorDatasetGroup( MDAL_M_datasetGroup( m, 1 ) );
 
   MDAL_CloseMesh( m );
 }

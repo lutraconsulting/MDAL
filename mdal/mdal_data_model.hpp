@@ -78,6 +78,7 @@ namespace MDAL
       Mesh *mesh() const;
 
       double time( RelativeTimestamp::Unit unit ) const;
+      RelativeTimestamp timestamp() const;
       void setTime( double time, RelativeTimestamp::Unit unit = RelativeTimestamp::hours );
       void setTime( const RelativeTimestamp &time );
 
