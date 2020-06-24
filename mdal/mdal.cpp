@@ -826,6 +826,7 @@ bool MDAL_G_isInEditMode( MDAL_DatasetGroupH group )
 
 void MDAL_G_closeEditMode( MDAL_DatasetGroupH group )
 {
+  MDAL::Log::resetLastStatus();
   if ( !group )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
