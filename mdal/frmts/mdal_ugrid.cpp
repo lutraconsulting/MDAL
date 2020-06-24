@@ -583,6 +583,7 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
       name = MDAL::replace( longName, "speed", "velocity" );
       name = MDAL::removeFrom( name, " from direction" );
       name = MDAL::removeFrom( name, " to direction" );
+      name = MDAL::removeFrom( name, " direction" );
     }
     else
     {
