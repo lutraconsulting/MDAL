@@ -322,8 +322,10 @@ namespace MDAL
 
       bool persist( DatasetGroup *group ) override;
 
-      int faceVerticesMaximumCount() const {return 3;}
+      int faceVerticesMaximumCount() const override {return 3;}
       void save( const std::string &uri, Mesh *mesh ) override;
+
+      std::string writeDatasetOnFileSuffix() const override;
 
     private:
       bool saveDatasetGroupOnFile( DatasetGroup *datasetGroup );
