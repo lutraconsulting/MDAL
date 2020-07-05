@@ -157,7 +157,7 @@ namespace MDAL
 
       std::string mFileName;
       bool mStreamInFloatPrecision = true;
-      bool mIsNativeLittleEndian = true;
+      bool mChangeEndianness = true;
       long long mFileSize = -1;
 
       std::ifstream mIn;

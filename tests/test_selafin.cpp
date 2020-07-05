@@ -63,7 +63,7 @@ TEST( MeshSLFTest, MalpassetGeometry )
   // ///////////
   double xmin, xmax, ymin, ymax;
   MDAL_M_extent( m, &xmin, &xmax, &ymin, &ymax );
-  EXPECT_EQ( xmin, 0 );
+  EXPECT_EQ( xmin, 536.4716186523438 );
   EXPECT_EQ( xmax, 17763.0703125 );
   EXPECT_EQ( ymin, -2343.5400390625 );
   EXPECT_EQ( ymax, 6837.7900390625 );
@@ -432,6 +432,12 @@ TEST( MeshSLFTest, loadDatasetFromFile )
   testPreExisitingVectorDatasetGroup( MDAL_M_datasetGroup( m, 1 ) );
 
   MDAL_CloseMesh( m );
+}
+
+TEST( MeshSLFTest, JanetFile )
+{
+  std::string path( "/home/vincent/meshData/selafin/test_sd_6.slf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
 }
 
 int main( int argc, char **argv )

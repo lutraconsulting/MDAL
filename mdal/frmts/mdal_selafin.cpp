@@ -49,7 +49,22 @@ void MDAL::SelafinFile::initialize()
   mFileSize = mIn.tellg();
   mIn.seekg( 0, mIn.beg );
 
-  mIsNativeLittleEndian = MDAL::isNativeLittleEndian();
+  mChangeEndianness = MDAL::isNativeLittleEndian();
+
+  //Check if need to change the endianness
+  // read first size_t that has to be 80
+  size_t firstInt = readSizet();
+  mIn.seekg( 0, mIn.beg );
+  if ( firstInt != 80 )
+  {
+    mChangeEndianness = !mChangeEndianness;
+    //Retry
+    firstInt = readSizet();
+    if ( firstInt != 80 )
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File " + mFileName + " could not be open" );
+    mIn.seekg( 0, mIn.beg );
+  }
+
   mParsed = false;
 }
 
@@ -282,7 +297,7 @@ std::vector<double> MDAL::SelafinFile::datasetValues( size_t timeStepIndex, size
 {
   if ( !mParsed )
     parseFile();
-  if ( variableIndex < mVariableStreamPosition.size() &&  timeStepIndex < mVariableStreamPosition[timeStepIndex].size() )
+  if ( variableIndex < mVariableStreamPosition.size() &&  timeStepIndex < mVariableStreamPosition[variableIndex].size() )
     return readDoubleArr( mVariableStreamPosition[variableIndex][timeStepIndex], offset, count );
   else
     return std::vector<double>();
@@ -500,13 +515,13 @@ double MDAL::SelafinFile::readDouble( )
   if ( mStreamInFloatPrecision )
   {
     float ret_f;
-    if ( !readValue( ret_f, mIn, mIsNativeLittleEndian ) )
+    if ( !readValue( ret_f, mIn, mChangeEndianness ) )
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Reading double failed" );
     ret = static_cast<double>( ret_f );
   }
   else
   {
-    if ( !readValue( ret, mIn, mIsNativeLittleEndian ) )
+    if ( !readValue( ret, mIn, mChangeEndianness ) )
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Reading double failed" );
   }
   return ret;
@@ -520,7 +535,7 @@ int MDAL::SelafinFile::readInt( )
   if ( mIn.read( reinterpret_cast< char * >( &data ), 4 ) )
     if ( !mIn )
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open stream for reading int" );
-  if ( mIsNativeLittleEndian )
+  if ( mChangeEndianness )
   {
     std::reverse( reinterpret_cast< char * >( &data ), reinterpret_cast< char * >( &data ) + 4 );
   }
@@ -780,7 +795,7 @@ void MDAL::MeshSelafin::calculateExtent() const
     }
     index += count;
   }
-  while ( count == 0 );
+  while ( count != 0 );
 
   mExtent = MDAL::computeExtent( vertices );
   mIsExtentUpToDate = true;
