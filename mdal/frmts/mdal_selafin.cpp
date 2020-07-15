@@ -53,13 +53,13 @@ void MDAL::SelafinFile::initialize()
 
   //Check if need to change the endianness
   // read first size_t that has to be 80
-  size_t firstInt = readSizet();
+  size_t firstInt = readSizeT();
   mIn.seekg( 0, mIn.beg );
   if ( firstInt != 80 )
   {
     mChangeEndianness = !mChangeEndianness;
     //Retry
-    firstInt = readSizet();
+    firstInt = readSizeT();
     if ( firstInt != 80 )
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File " + mFileName + " could not be open" );
     mIn.seekg( 0, mIn.beg );
@@ -418,7 +418,7 @@ void MDAL::SelafinFile::populateDataset( MDAL::Mesh *mesh, std::shared_ptr<MDAL:
 
 std::string MDAL::SelafinFile::readString( size_t len )
 {
-  size_t length = readSizet();
+  size_t length = readSizeT();
   if ( length != len ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to read string" );
   std::string ret = readStringWithoutLength( len );
   ignoreArrayLength();
@@ -427,7 +427,7 @@ std::string MDAL::SelafinFile::readString( size_t len )
 
 std::vector<double> MDAL::SelafinFile::readDoubleArr( size_t len )
 {
-  size_t length = readSizet();
+  size_t length = readSizeT();
   if ( mStreamInFloatPrecision )
   {
     if ( length != len * 4 )
@@ -465,7 +465,7 @@ std::vector<double> MDAL::SelafinFile::readDoubleArr( const std::streampos &posi
 
 std::vector<int> MDAL::SelafinFile::readIntArr( size_t len )
 {
-  size_t length = readSizet();
+  size_t length = readSizeT();
   if ( length != len * 4 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading int array" );
   std::vector<int> ret( len );
   for ( size_t i = 0; i < len; ++i )
@@ -546,7 +546,7 @@ int MDAL::SelafinFile::readInt( )
   return var;
 }
 
-size_t MDAL::SelafinFile::readSizet()
+size_t MDAL::SelafinFile::readSizeT()
 {
   int var = readInt( );
   return static_cast<size_t>( var );
@@ -554,18 +554,18 @@ size_t MDAL::SelafinFile::readSizet()
 
 bool MDAL::SelafinFile::checkIntArraySize( size_t len )
 {
-  return ( len * 4 == readSizet() );
+  return ( len * 4 == readSizeT() );
 }
 
 bool MDAL::SelafinFile::checkDoubleArraySize( size_t len )
 {
   if ( mStreamInFloatPrecision )
   {
-    return ( len * 4 ) == readSizet();
+    return ( len * 4 ) == readSizeT();
   }
   else
   {
-    return ( len * 8 ) == readSizet();
+    return ( len * 8 ) == readSizeT();
   }
 }
 

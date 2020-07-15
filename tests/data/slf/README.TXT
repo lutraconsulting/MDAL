@@ -1,11 +1,5 @@
-Some information about the failing selafin files
-================================================
-
-all files
----------
-
 format: double precision floating point
-projectsion: EPSG 25832
+CRS: EPSG 25832
 
 
 test_sd_6
@@ -35,11 +29,3 @@ where
  - L="Courant number "
  - US="friction velocity  "
 
-
-test_sd_8
----------
-
-created with: Janet (v2.24.00)
-number of timesteps: 1
-parameters: X, Y, B
-comment: this file contains 5 not connected meshes
