@@ -23,7 +23,7 @@ namespace MDAL
   {
     public:
       SerafinStreamReader();
-      void initialize( const std::string &fileName );
+      bool initialize( const std::string &fileName );
 
       std::string read_string( size_t len );
       std::vector<double> read_double_arr( size_t len );
@@ -35,6 +35,10 @@ namespace MDAL
       size_t read_sizet( );
 
       size_t remainingBytes();
+
+      //! Return true if is float precision
+      bool streamInFloatPrecision() const;
+
     private:
       void ignore_array_length( );
       std::string read_string_without_length( size_t len );
@@ -43,9 +47,11 @@ namespace MDAL
 
       std::string mFileName;
       bool mStreamInFloatPrecision = true;
-      bool mIsNativeLittleEndian = true;
+      bool mChangeEndianness = true;
       long long mFileSize = -1;
       std::ifstream mIn;
+
+      bool readHeader();
   };
 
   /**

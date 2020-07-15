@@ -24,7 +24,7 @@
 
 MDAL::SerafinStreamReader::SerafinStreamReader() = default;
 
-void MDAL::SerafinStreamReader::initialize( const std::string &fileName )
+bool MDAL::SerafinStreamReader::initialize( const std::string &fileName )
 {
   mFileName = fileName;
   if ( !MDAL::fileExists( mFileName ) )
@@ -41,8 +41,23 @@ void MDAL::SerafinStreamReader::initialize( const std::string &fileName )
   mFileSize = mIn.tellg();
   mIn.seekg( 0, mIn.beg );
 
-  mStreamInFloatPrecision = getStreamPrecision();
-  mIsNativeLittleEndian = MDAL::isNativeLittleEndian();
+  mChangeEndianness = MDAL::isNativeLittleEndian();
+
+  //Check if need to change the endianness
+  // read first size_t that has to be 80
+  size_t firstInt = read_sizet();
+  mIn.seekg( 0, mIn.beg );
+  if ( firstInt != 80 )
+  {
+    mChangeEndianness = !mChangeEndianness;
+    //Retry
+    firstInt = read_sizet();
+    if ( firstInt != 80 )
+      throw MDAL_Status::Err_UnknownFormat;
+    mIn.seekg( 0, mIn.beg );
+  }
+
+  return readHeader();
 }
 
 bool MDAL::SerafinStreamReader::getStreamPrecision( )
@@ -65,6 +80,27 @@ bool MDAL::SerafinStreamReader::getStreamPrecision( )
   }
   ignore_array_length( );
   return ret;
+}
+
+bool MDAL::SerafinStreamReader::readHeader()
+{
+  std::string header = read_string( 80 );
+  std::string varType = header.substr( 72, 8 );
+  varType = trim( varType );
+
+  if ( varType == "SERAFIN" )
+    mStreamInFloatPrecision = true;
+  else if ( varType == "SERAFIND" )
+    mStreamInFloatPrecision = false;
+  else
+    throw MDAL_Status::Err_UnknownFormat;
+
+  return true;
+}
+
+bool MDAL::SerafinStreamReader::streamInFloatPrecision() const
+{
+  return mStreamInFloatPrecision;
 }
 
 std::string MDAL::SerafinStreamReader::read_string( size_t len )
@@ -149,13 +185,13 @@ double MDAL::SerafinStreamReader::read_double( )
   if ( mStreamInFloatPrecision )
   {
     float ret_f;
-    if ( !readValue( ret_f, mIn, mIsNativeLittleEndian ) )
+    if ( !readValue( ret_f, mIn, mChangeEndianness ) )
       throw MDAL_Status::Err_UnknownFormat;
     ret = static_cast<double>( ret_f );
   }
   else
   {
-    if ( !readValue( ret, mIn, mIsNativeLittleEndian ) )
+    if ( !readValue( ret, mIn, mChangeEndianness ) )
       throw MDAL_Status::Err_UnknownFormat;
   }
   return ret;
@@ -169,7 +205,7 @@ int MDAL::SerafinStreamReader::read_int( )
   if ( mIn.read( reinterpret_cast< char * >( &data ), 4 ) )
     if ( !mIn )
       throw MDAL_Status::Err_UnknownFormat;
-  if ( mIsNativeLittleEndian )
+  if ( mChangeEndianness )
   {
     std::reverse( reinterpret_cast< char * >( &data ), reinterpret_cast< char * >( &data ) + 4 );
   }
@@ -339,8 +375,8 @@ void MDAL::DriverSelafin::parseFile( std::vector<std::string> &var_names,
      - NBV(1)+NBV(2) records containing the results tables for each variable at time
   */
   data.resize( var_names.size() );
-
-  size_t nTimesteps = mReader.remainingBytes() / ( 12 + ( 4 + ( *nPoint ) * 4 + 4 ) * var_names.size() );
+  size_t realSize = mReader.streamInFloatPrecision() ? 4 : 8;
+  size_t nTimesteps = mReader.remainingBytes() / ( 8 + realSize + ( 4 + ( *nPoint ) * realSize + 4 ) *  var_names.size() );
   for ( size_t nT = 0; nT < nTimesteps; ++nT )
   {
     std::vector<double> times = mReader.read_double_arr( 1 );
@@ -528,28 +564,16 @@ bool MDAL::DriverSelafin::canRead( const std::string &uri )
 {
   if ( !MDAL::fileExists( uri ) ) return false;
 
-  std::ifstream in( uri, std::ifstream::in | std::ifstream::binary );
-  if ( !in ) return false;
-
-  // The first four bytes of the file should contain the values (in hexadecimal): 00 00 00 50.
-  // This actually indicates the start of a string of length 80 in the file.
-  // At position 84 in the file, the eight next bytes should read (in hexadecimal): 00 00 00 50 00 00 00 04.
-  unsigned char data[ 92 ];
-  in.read( reinterpret_cast< char * >( &data ), 92 );
-  if ( !in )
+  try
+  {
+    SerafinStreamReader reader;
+    return reader.initialize( uri );
+  }
+  catch ( MDAL_Status )
+  {
     return false;
+  }
 
-  if ( data[0] != 0 || data[1] != 0 ||
-       data[2] != 0 || data[3] != 0x50 )
-    return false;
-
-  if ( data[84 + 0] != 0 || data[84 + 1] != 0 ||
-       data[84 + 2] != 0 || data[84 + 3] != 0x50 ||
-       data[84 + 4] != 0 || data[84 + 5] != 0 ||
-       data[84 + 6] != 0 || data[84 + 7] != 8 )
-    return false;
-
-  return true;
 }
 
 std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFile, MDAL_Status *status )
