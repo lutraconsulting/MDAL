@@ -301,7 +301,7 @@ TEST( ApiTest, MeshNamesApi )
     },
     {
       test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ),
-      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
+      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
     },
     {
       "Invalid_File_Path",
@@ -335,7 +335,7 @@ TEST( ApiTest, MeshNamesApi )
     },
     {
       "\"\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"\"",
-      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
+      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
     },
     {
       "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"",

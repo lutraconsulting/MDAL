@@ -119,12 +119,193 @@ void MDAL::DriverFlo2D::parseCADPTSFile( const std::string &datFileName, std::ve
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CADPTS file, wrong lineparts count (3)" );
     }
     CellCenter cc;
-    cc.id = MDAL::toSizeT( lineParts[1] ) - 1; //numbered from 1
+    cc.id = MDAL::toSizeT( lineParts[0] ) - 1; //numbered from 1
     cc.x = MDAL::toDouble( lineParts[1] );
     cc.y = MDAL::toDouble( lineParts[2] );
     cc.conn.resize( 4 );
     cells.push_back( cc );
   }
+}
+
+void MDAL::DriverFlo2D::parseCHANBANKFile( const std::string &datFileName,
+    std::map<size_t, size_t> &cellIdToVertices,
+    std::map<size_t, std::vector<size_t>> &dupplicatedRightBankToVertex,
+    size_t &verticesCount )
+{
+  std::string chanBankFile( fileNameFromDir( datFileName, "CHANBANK.DAT" ) );
+  if ( !MDAL::fileExists( chanBankFile ) )
+  {
+    throw MDAL::Error( MDAL_Status::Err_FileNotFound, "Could not find file " + chanBankFile );
+  }
+  std::ifstream cadptsStream( chanBankFile, std::ifstream::in );
+  std::string line;
+  // CHANBANK.DAT - Cell id of each bank (Left Bank id , Right Bank id), if right bank id is 0, channel is only on left cell
+  size_t vertexIndex = 0;
+  while ( std::getline( cadptsStream, line ) )
+  {
+    line = MDAL::rtrim( line );
+    std::vector<std::string> lineParts = MDAL::split( line, ' ' );
+    if ( lineParts.size() != 2 )
+    {
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHANBANK file, wrong lineparts count (2)" );
+    }
+    int leftBank = MDAL::toSizeT( lineParts[0] ) - 1;  //numbered from 1
+    int rightBank = MDAL::toSizeT( lineParts[1] ) - 1;
+
+    std::map<size_t, size_t>::const_iterator it = cellIdToVertices.find( rightBank );
+    if ( it != cellIdToVertices.end() )
+    {
+      // sometime a right bank can be associated several times to a left bank (inverse is not possible)
+      std::map<size_t, std::vector<size_t>>::iterator itDupplicated = dupplicatedRightBankToVertex.find( rightBank );
+      if ( itDupplicated == dupplicatedRightBankToVertex.end() )
+        dupplicatedRightBankToVertex[rightBank] = std::vector<size_t>( 1, vertexIndex );
+      else
+        itDupplicated->second.push_back( vertexIndex );
+    }
+    else if ( rightBank >= 0 )
+    {
+      cellIdToVertices[rightBank] = vertexIndex;
+    }
+
+    cellIdToVertices[leftBank] = vertexIndex;
+
+    vertexIndex++;
+  }
+  verticesCount = vertexIndex;
+}
+
+void MDAL::DriverFlo2D::parseCHANFile( const std::string &datFileName, const std::map<size_t, size_t> &cellIdToVertices, std::vector<Edge> &edges )
+{
+  std::string chanFile( fileNameFromDir( datFileName, "CHAN.DAT" ) );
+  if ( !MDAL::fileExists( chanFile ) )
+  {
+    throw MDAL::Error( MDAL_Status::Err_FileNotFound, "Could not find file " + chanFile );
+  }
+  std::ifstream cadptsStream( chanFile, std::ifstream::in );
+  std::string line;
+  // CHAN.DAT - each reachs are represented by following line beginning by R, V,T or N
+  // Confluences are represented by line beginning by C
+  // other line are no used by MDAL
+  int previousCellId = -1;
+  while ( std::getline( cadptsStream, line ) )
+  {
+    line = MDAL::rtrim( line );
+    std::vector<std::string> lineParts = MDAL::split( line, ' ' );
+    if ( lineParts.empty() )
+    {
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHAN file, empty line" );
+    }
+    std::string firstChar = lineParts[0];
+    if ( firstChar == "R" || firstChar == "V" || firstChar == "T" || firstChar == "N" ) //chanel node
+    {
+      if ( lineParts.size() < 2 )
+      {
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHAN file, wrong chanel element line" );
+      }
+      int currentCellId = MDAL::toSizeT( lineParts[1] ) - 1;
+      if ( previousCellId >= 0 )
+      {
+        std::map<size_t, size_t>::const_iterator it1 = cellIdToVertices.find( previousCellId );
+        std::map<size_t, size_t>::const_iterator it2 = cellIdToVertices.find( currentCellId );
+        if ( it1 != cellIdToVertices.end() && it2 != cellIdToVertices.end() )
+          edges.push_back( { it1->second, it2->second } );
+      }
+
+      previousCellId = currentCellId;
+    }
+    else
+    {
+      previousCellId = -1;
+      if ( firstChar == "C" ) //confluence
+      {
+        if ( lineParts.size() != 3 )
+        {
+          throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHAN file, wrong confluene line:" );
+        }
+        std::map<size_t, size_t>::const_iterator it1 = cellIdToVertices.find( MDAL::toSizeT( lineParts[1] ) - 1 );
+        std::map<size_t, size_t>::const_iterator it2 = cellIdToVertices.find( MDAL::toSizeT( lineParts[2] ) - 1 );
+        if ( it1 != cellIdToVertices.end() && it2 != cellIdToVertices.end() )
+          edges.push_back( {it1->second, it2->second} );
+      }
+    }
+  }
+}
+
+void MDAL::DriverFlo2D::parseHYCANFile( const std::string &datFileName, const std::map<size_t, size_t> &cellIdToVertices )
+{
+  std::string chanFile( fileNameFromDir( datFileName, "CHAN.DAT" ) );
+  if ( !MDAL::fileExists( chanFile ) )
+  {
+    throw MDAL::Error( MDAL_Status::Err_FileNotFound, "Could not find file " + chanFile );
+  }
+  std::ifstream cadptsStream( chanFile, std::ifstream::in );
+  std::string line;
+}
+
+void MDAL::DriverFlo2D::create1dMesh( const std::string &datFileName, const std::vector<MDAL::DriverFlo2D::CellCenter> &cells, std::map<size_t, size_t> &cellsIdToVertex )
+{
+  std::map<size_t, std::vector<size_t>> duplicatedRightBankToVertex;
+  std::vector<Vertex> vertices;
+  std::vector<Edge> edges;
+  size_t verticesCount;
+
+  parseCHANBANKFile( datFileName, cellsIdToVertex, duplicatedRightBankToVertex, verticesCount );
+  vertices = std::vector<Vertex>( verticesCount );
+
+  for ( const MDAL::DriverFlo2D::CellCenter &cell : cells )
+  {
+    std::map<size_t, size_t>::const_iterator it = cellsIdToVertex.find( cell.id );
+    if ( it != cellsIdToVertex.end() )
+    {
+      if ( it->second < vertices.size() )
+      {
+        Vertex &vertex = vertices[it->second];
+        //if coordinates of vertex is not nan, this coordinates is the one of the first bank, so add the second and use factor 0.5
+        if ( std::isnan( vertex.x ) )
+        {
+          vertex.x = cell.x;
+          vertex.y = cell.y;
+        }
+        else
+        {
+          vertex.x += cell.x;
+          vertex.x *= 0.5;
+          vertex.y += cell.y;
+          vertex.y *= 0.5;
+        }
+      }
+    }
+
+    std::map<size_t, std::vector<size_t>>::const_iterator itDuplicated = duplicatedRightBankToVertex.find( cell.id );
+    if ( itDuplicated != duplicatedRightBankToVertex.end() )
+    {
+      const std::vector<size_t> &indexes = itDuplicated->second;
+      for ( size_t index : indexes )
+      {
+        if ( index < vertices.size() )
+        {
+          Vertex &vertex = vertices[index];
+          if ( std::isnan( vertex.x ) )
+          {
+            vertex.x = cell.x;
+            vertex.y = cell.y;
+          }
+          else
+          {
+            vertex.x += cell.x;
+            vertex.x *= 0.5;
+            vertex.y += cell.y;
+            vertex.y *= 0.5;
+          }
+        }
+      }
+    }
+  }
+
+  parseCHANFile( datFileName, cellsIdToVertex, edges );
+  mMesh.reset( new MemoryMesh( name(), 0, mDatFileName ) );
+  mMesh->setVertices( std::move( vertices ) );
+  mMesh->setEdges( std::move( edges ) );
 }
 
 void MDAL::DriverFlo2D::parseFPLAINFile( std::vector<double> &elevations,
@@ -663,6 +844,22 @@ bool MDAL::DriverFlo2D::canReadDatasets( const std::string &uri )
   return true;
 }
 
+std::string MDAL::DriverFlo2D::buildUri( const std::string &meshFile )
+{
+  std::vector<std::string> meshNames;
+
+  std::string mesh1DTopologyFile( fileNameFromDir( meshFile, "CHAN.DAT" ) );
+  std::string mesh2DTopologyFile( fileNameFromDir( meshFile, "FPLAIN.DAT" ) );
+
+  if ( fileExists( mesh1DTopologyFile ) )
+    meshNames.push_back( "mesh1d" );
+
+  if ( fileExists( mesh2DTopologyFile ) )
+    meshNames.push_back( "mesh2d" );
+
+  return MDAL::buildAndMergeMeshUris( meshFile, meshNames, name() );
+}
+
 void MDAL::DriverFlo2D::load( const std::string &uri, MDAL::Mesh *mesh )
 {
   MDAL::Log::resetLastStatus();
@@ -687,9 +884,41 @@ void MDAL::DriverFlo2D::load( const std::string &uri, MDAL::Mesh *mesh )
   }
 }
 
-std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &resultsFile, const std::string & )
+std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &resultsFile, const std::string &meshName )
 {
   mDatFileName = resultsFile;
+
+  if ( meshName == "mesh1d" )
+    return load1dmesh();
+
+  return load2dmesh();
+}
+
+
+std::unique_ptr<MDAL::Mesh> MDAL::DriverFlo2D::load1dmesh()
+{
+  std::vector<CellCenter> cells;
+  std::map<size_t, size_t> cellsIdToVertex;
+
+  try
+  {
+    // Parse cells position
+    parseCADPTSFile( mDatFileName, cells );
+    create1dMesh( mDatFileName, cells, cellsIdToVertex );
+    parseHYCANFile( mDatFileName, cellsIdToVertex );
+
+  }
+  catch ( MDAL::Error err )
+  {
+    MDAL::Log::error( err, name() );
+  }
+
+  return std::unique_ptr<Mesh>( mMesh.release() );
+}
+
+
+std::unique_ptr<MDAL::Mesh> MDAL::DriverFlo2D::load2dmesh()
+{
   MDAL::Log::resetLastStatus();
   mMesh.reset();
   std::vector<CellCenter> cells;
@@ -719,7 +948,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &result
 
   catch ( MDAL_Status error )
   {
-    MDAL::Log::error( error, name(), "error occurred while loading file " + resultsFile );
+    MDAL::Log::error( error, name(), "error occurred while loading file " + mDatFileName );
     mMesh.reset();
   }
   catch ( MDAL::Error err )
@@ -729,7 +958,6 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &result
 
   return std::unique_ptr<Mesh>( mMesh.release() );
 }
-
 
 bool MDAL::DriverFlo2D::addToHDF5File( DatasetGroup *group )
 {
