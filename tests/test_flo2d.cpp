@@ -901,9 +901,8 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
 
 TEST( MeshFlo2dTest, mesh1D )
 {
-  std::string path = "/home/vincent/meshData/FLOW-2D/Lesson 8 Pro/CADPTS.DAT";
-  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "FLO2D:\"" + path + "\":" + "mesh1d" + ";;" +
-             "FLO2D:\"" + path + "\":" + "mesh2d" );
+  std::string path = "/home/vincent/meshData/FLOW-2D/Lesson 8 Pro_with_removed_files/CADPTS.DAT";
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "FLO2D:\"" + path + "\":" + "mesh1d" );
   std::string uri1d = "FLO2D:\"" + path + "\":" + "mesh1d";
 
   MDAL_MeshH m = MDAL_LoadMesh( uri1d.c_str() );
@@ -929,6 +928,28 @@ TEST( MeshFlo2dTest, mesh1D )
   getEdgeVertexIndices( m, e_count, startIndexes, endIndexes );
   EXPECT_EQ( startIndexes[10], 10 );
   EXPECT_EQ( endIndexes[10], 11 );
+
+  // ///////////
+  // Datasets
+  // ///////////
+  ASSERT_EQ( 13, MDAL_M_datasetGroupCount( m ) );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 11 );
+  ASSERT_NE( g, nullptr );
+  ASSERT_EQ( DataOnVertices, MDAL_G_dataLocation( g ) );
+  ASSERT_EQ( 50, MDAL_G_datasetCount( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 2 );
+  ASSERT_NE( ds, nullptr );
+  ASSERT_TRUE( MDAL::equals( 0.24264, getValue( ds,  5 ) ) );
+
+  g = MDAL_M_datasetGroup( m, 10 );
+  ASSERT_NE( g, nullptr );
+  ASSERT_EQ( DataOnVertices, MDAL_G_dataLocation( g ) );
+  ASSERT_EQ( 50, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 2 );
+  ASSERT_NE( ds, nullptr );
+  ASSERT_TRUE( MDAL::equals( 0.012488, getValue( ds,  5 ) ) );
+
+  MDAL_CloseMesh( m );
 }
 
 
