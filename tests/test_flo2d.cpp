@@ -901,7 +901,7 @@ TEST( MeshFlo2dTest, pro_16_02_14 )
 
 TEST( MeshFlo2dTest, mesh1D )
 {
-  std::string path = "/home/vincent/meshData/FLOW-2D/Lesson 8 Pro_with_removed_files/CADPTS.DAT";
+  std::string path = test_file( "/flo2d/channel/CADPTS.DAT" );
   EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "FLO2D:\"" + path + "\":" + "mesh1d" );
   std::string uri1d = "FLO2D:\"" + path + "\":" + "mesh1d";
 
