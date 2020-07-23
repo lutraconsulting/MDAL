@@ -112,3 +112,25 @@ TEST( MdalDateTimeTest, ConvertJulianDay )
   }
 }
 
+TEST( MdalDateTimeTest, ConvertFromISO8601 )
+{
+  std::string timeISO8601 = "1900-02-01T01:02Z";
+
+  MDAL::DateTime dateTimeFromStr( timeISO8601 );
+  MDAL::DateTime dateTime( 1900, 2, 1, 1, 2 );
+
+  EXPECT_EQ( dateTimeFromStr, dateTime );
+
+  timeISO8601 = "1900-02-01T01:02:59Z";
+  dateTimeFromStr = MDAL::DateTime( timeISO8601 );
+  dateTime = MDAL::DateTime( 1900, 2, 1, 1, 2, 59 );
+
+  EXPECT_EQ( dateTimeFromStr, dateTime );
+
+
+  timeISO8601 = "1900-02-01T01:02:59.789Z";
+  dateTimeFromStr = MDAL::DateTime( timeISO8601 );
+  dateTime = MDAL::DateTime( 1900, 2, 1, 1, 2, 59.789 );
+
+  EXPECT_EQ( dateTimeFromStr, dateTime );
+}
