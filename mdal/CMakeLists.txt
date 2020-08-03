@@ -16,6 +16,7 @@ SET(MDAL_SOURCES
   frmts/mdal_binary_dat.cpp
   frmts/mdal_selafin.cpp
   frmts/mdal_esri_tin.cpp
+  frmts/mdal_ply.cpp
 )
 
 SET(MDAL_HEADERS
@@ -33,6 +34,7 @@ SET(MDAL_HEADERS
   frmts/mdal_binary_dat.hpp
   frmts/mdal_selafin.hpp
   frmts/mdal_esri_tin.hpp
+  frmts/mdal_ply.hpp
 )
 
 IF(HDF5_FOUND)
