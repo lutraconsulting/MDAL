@@ -40,6 +40,9 @@ TEST( MeshPlyTest, all_features )
   std::string driverName = MDAL_M_driverName( m );
   EXPECT_EQ( driverName, "PLY" );
 
+  std::string proj = MDAL_M_projection(m);
+  EXPECT_EQ(proj, "+proj=tmerc");
+
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 5 );
   double x = getVertexXCoordinatesAt( m, 2 );

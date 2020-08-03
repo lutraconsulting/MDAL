@@ -45,6 +45,7 @@ size_t MDAL::DriverPly::getIndex(std::vector<std::string> v, std::string in) {
     return (size_t)distance(v.begin(), it);
 }
 
+// check for the magic number which in  a PLY file is "ply"
 bool MDAL::DriverPly::canReadMesh( const std::string &uri )
 {
   std::ifstream in( uri, std::ifstream::in );
@@ -68,7 +69,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   size_t faceCount = 0;
   size_t edgeCount = 0;
   std::vector<std::string> chunks;
-  std::vector<MDAL::DriverPly::element> elements;
+  std::vector<MDAL::DriverPly::element> elements; // we will decant the element specifications into here 
+  std::string proj = "";
 
   if (!std::getline(in, line))
   {
@@ -76,6 +78,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       return nullptr;
   }
   
+  //
+  // The header is a format defintion ans a series of header definitions and/or comment lines
+  // cycle through these until end-header
+  //
   do {
       //
       // all element blocks block in the header and enumerate the number of members and the properties
@@ -136,6 +142,19 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       }
 
       //
+      // if "comment crs" assume that the rest is the crs data
+      //
+      else if (startsWith(line, "comment crs ")) {
+          line.erase(0, 12);
+          proj = line;
+          if (!std::getline(in, line))
+          {
+              MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt");
+              return nullptr;
+          }
+      }
+
+      //
       // probably a comment line
       //
       else {
@@ -151,7 +170,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   Faces faces(0);
   Edges edges(0);
   size_t maxSizeFace = 0;
-  std::string proj = "";
   size_t faceSize = 0;
   std::vector<std::vector<double>*> vertexDatasets;
   std::vector<std::string> vProp2Ds;
@@ -277,14 +295,11 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
               }
           }
 
-          //
-          // load the CRS
-          //
-          else if (element.name == "CRS") {
-              proj += line;
-          }
+          // anything other element ignore and move to the next line
+
           if (!std::getline(in, line))
           {
+              // if it is supposed to be the last line - don't look further
               if (elid != (elements.size() - 1) && i != (element.size - 1)) {
                   MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough definitions");
                   return nullptr;
