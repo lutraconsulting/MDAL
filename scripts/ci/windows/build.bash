@@ -8,7 +8,7 @@ echo "Using libraries from ${OSGEO4W_DIR}"
 echo "Windows Visual Studio 15 64b build"
 mkdir -p build_win
 cd build_win
-/mnt/c/Program\ Files/CMake/bin/cmake.exe -G "Visual Studio 16 2019" ${CMAKE_OPTIONS} \
+C:/Program\ Files/CMake/bin/cmake -G "Visual Studio 15 Win64" ${CMAKE_OPTIONS} \
    -DCMAKE_BUILD_TYPE=Rel \
    -DENABLE_TESTS=ON \
    -DNETCDF_PREFIX="${OSGEO4W_DIR}" \
@@ -20,9 +20,10 @@ cd build_win
    -DLIBXML2_INCLUDE_DIR="${OSGEO4W_DIR}/include/libxml2" \
    ..
 
-/mnt/c/Program\ Files/CMake/bin/cmake.exe --build .
+C:/Program\ Files/CMake/bin/cmake --build .
 
 export PATH="$PATH:/c/OSGeo4W64/bin:/c/Users/travis/build/lutraconsulting/MDAL/build_win/tools/Debug:/c/Users/travis/build/lutraconsulting/MDAL/build_win/mdal/Debug"
 echo "PATH used: $PATH"
-/mnt/c/Program\ Files/CMake/bin/ctest.exe -VV --exclude-regex "mdalinfo_test"
+
+C:/Program\ Files/CMake/bin/ctest -VV --exclude-regex "mdalinfo_test"
 cd ..
