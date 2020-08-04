@@ -45,7 +45,7 @@ MDAL::DriverPly::~DriverPly() = default;
 size_t MDAL::DriverPly::getIndex( std::vector<std::string> v, std::string in )
 {
   auto it = find( v.begin(), v.end(), in );
-  return ( size_t)distance( v.begin(), it );
+  return ( size_t )distance( v.begin(), it );
 }
 
 // check for the magic number which in  a PLY file is "ply"
@@ -168,7 +168,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
     //
     // probably a comment line
     //
-    else 
+    else
     {
       if ( !std::getline( in, line ) )
       {
@@ -386,7 +386,7 @@ std::shared_ptr< MDAL::DatasetGroup> MDAL::DriverPly::addDatasetGroup( MDAL::Mes
   if ( location == DataOnEdges && mesh->edgesCount() == 0 )
     return NULL;
 
-  std::shared_ptr< DatasetGroup > group = std::make_shared< DatasetGroup >( mesh->driverName(),mesh,name,name );
+  std::shared_ptr< DatasetGroup > group = std::make_shared< DatasetGroup >( mesh->driverName(), mesh, name, name );
   group->setDataLocation( location );
   group->setIsScalar( isScalar );
   group->setStatistics( MDAL::calculateStatistics( group ) );
