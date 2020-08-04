@@ -11,11 +11,11 @@
 
 TEST( MeshPlyTest, WrongFiles )
 {
-  for (int i = 0; i < 4; ++i)
+  for ( int i = 0; i < 4; ++i )
   {
     std::string fileName = test_file( "/ply/invalid/invalid" + std::to_string( i ) + ".ply" );
 
-    if (i == 0)
+    if ( i == 0 )
       EXPECT_TRUE( std::string( MDAL_MeshNames( fileName.c_str() ) ).empty() );
     else
       EXPECT_EQ( MDAL_MeshNames( fileName.c_str() ), "PLY:\"" + fileName + "\"" );
@@ -77,7 +77,7 @@ TEST( MeshPlyTest, all_features )
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
-  const char* name = MDAL_G_name( g );
+  const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
 
   bool scalar = MDAL_G_hasScalarData( g );
@@ -354,7 +354,7 @@ TEST( MeshPlyInvTest, all_features_inv )
   MDAL_CloseMesh( m );
 }
 
-int main( int argc, char** argv )
+int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
   init_test();

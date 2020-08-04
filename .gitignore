@@ -53,3 +53,5 @@ cmake-build-debug/*
 .vs/MDAL/v16/ipch/AutoPCH/d29670d7e8ef77f1/MDAL_GDAL.ipch
 .vs/MDAL/v16/ipch/AutoPCH/edee92532311721c/MDAL_2DM.ipch
 .vs/MDAL/v16/ipch/AutoPCH/ff8bea5a916a958a/MDAL_CF.ipch
+.vs/MDAL/v16/ipch/AutoPCH/80ce5e6b060f018a/MDAL_PLY.ipch
+.vs/MDAL/v16/ipch/AutoPCH/b0caf5ff09f2b35a/MDAL_UTILS.ipch
