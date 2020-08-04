@@ -25,19 +25,19 @@ namespace MDAL
     public:
       DriverPly();
       ~DriverPly() override;
-      DriverPly* create() override;
+      DriverPly *create() override;
 
       bool canReadMesh( const std::string& uri ) override;
-      std::unique_ptr< Mesh > load( const std::string& meshFile, const std::string& meshName = "" ) override;
+      std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string& meshName = "" ) override;
 
     private:
-      std::shared_ptr<DatasetGroup> addDatasetGroup( MDAL::Mesh* mesh, const std::string& name, const MDAL_DataLocation location, bool isScalar );
+      std::shared_ptr<DatasetGroup> addDatasetGroup( MDAL::Mesh *mesh, const std::string &name, const MDAL_DataLocation location, bool isScalar );
       void addDataset( MDAL::DatasetGroup* group, const std::vector<double>& values );
 
       //
       // Element specification. holds the name, size and arbitraily long vector of properties
       //
-      struct element 
+      struct element
       {
         public:
           std::string name; // element name
@@ -46,11 +46,10 @@ namespace MDAL
           std::vector<bool> list; // is the property a list
           size_t size; // element size
 
-        bool operator==( const std::string rhs ) 
-        {
-          return name == rhs;
-        }
-
+          bool operator==( const std::string rhs ) 
+          {
+            return name == rhs;
+          }
       };
 
       size_t getIndex( std::vector<std::string> v, std::string in );

@@ -241,7 +241,7 @@ TEST( MeshPlyInvTest, all_features_inv )
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
 
-  const char* name = MDAL_G_name( g );
+  const char *name = MDAL_G_name( g );
   EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
 
   bool scalar = MDAL_G_hasScalarData( g );
