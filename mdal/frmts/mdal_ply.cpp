@@ -194,7 +194,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       if (element.name == "vertex") {
           vertexCount = element.size;
           vertices.resize(vertexCount);
-          for (int i = 0; i < element.properties.size(); ++i) {
+          for (size_t i = 0; i < element.properties.size(); ++i) {
               if (element.properties[i] != "x" &&
                   element.properties[i] != "y" &&
                   element.properties[i] != "z" &&
@@ -208,7 +208,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       else if (element.name == "face") {
           faceCount = element.size;
           faces.resize(faceCount);
-          for (int i = 0; i < element.properties.size(); ++i) {
+          for (size_t i = 0; i < element.properties.size(); ++i) {
               if (element.properties[i] != "vertex_indices" &&
                   !element.list[i])
               {
@@ -221,7 +221,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       else if (element.name == "edge") {
           edgeCount = element.size;
           edges.resize(edgeCount);
-          for (int i = 0; i < element.properties.size(); ++i) {
+          for (size_t i = 0; i < element.properties.size(); ++i) {
               if (element.properties[i] != "vertex1" &&
                   element.properties[i] != "vertex2" &&
                   !element.list[i])
@@ -253,7 +253,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
               vertex.x = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, "x")]);
               vertex.y = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, "y")]);
               vertex.z = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, "z")]);
-              for (int j = 0; j < vProp2Ds.size(); ++j) {
+              for (size_t j = 0; j < vProp2Ds.size(); ++j) {
                   std::vector<double> &dataset = *vertexDatasets[j];
                   double value = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, vProp2Ds[j])]);
                   dataset.push_back(value);
@@ -272,7 +272,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
                   face[j] = MDAL::toSizeT(chunks[j + 1]);
               }
               if (faceSize > maxSizeFace) maxSizeFace = faceSize;
-              for (int j = 0; j < fProp2Ds.size(); ++j) {
+              for (size_t j = 0; j < fProp2Ds.size(); ++j) {
                   std::vector<double>& dataset = *faceDatasets[j];
                   double value = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, fProp2Ds[j]) + faceSize]);
                   dataset.push_back(value);
@@ -287,7 +287,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
               Edge& edge = edges[i];
               edge.startVertex = MDAL::toSizeT(chunks[MDAL::DriverPly::getIndex(element.properties, "vertex1")]);
               edge.endVertex = MDAL::toSizeT(chunks[MDAL::DriverPly::getIndex(element.properties, "vertex2")]);
-              for (int j = 0; j < eProp2Ds.size(); ++j) {
+              for (size_t j = 0; j < eProp2Ds.size(); ++j) {
                   std::vector<double>& dataset = *edgeDatasets[j];
                   double value = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, eProp2Ds[j])]);
                   dataset.push_back(value);
@@ -327,19 +327,19 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
 
 
   
-  for (int i = 0; i < vertexDatasets.size(); ++i) {
+  for (size_t i = 0; i < vertexDatasets.size(); ++i) {
       std::vector<double> &dataset = *vertexDatasets[i];
       std::shared_ptr<DatasetGroup> group = addDatasetGroup(mesh.get(), vProp2Ds[i], DataOnVertices, true);
       addDataset(group.get(), dataset );
   }
 
-  for (int i = 0; i < faceDatasets.size(); ++i) {
+  for (size_t i = 0; i < faceDatasets.size(); ++i) {
       std::vector<double>& dataset = *faceDatasets[i];
       std::shared_ptr<DatasetGroup> group = addDatasetGroup(mesh.get(), fProp2Ds[i], DataOnFaces, true);
       addDataset(group.get(), dataset);
   }
 
-  for (int i = 0; i < edgeDatasets.size(); ++i) {
+  for (size_t i = 0; i < edgeDatasets.size(); ++i) {
       std::vector<double>& dataset = *edgeDatasets[i];
       std::shared_ptr<DatasetGroup> group = addDatasetGroup(mesh.get(), eProp2Ds[i], DataOnEdges, true);
       addDataset(group.get(), dataset);
@@ -403,7 +403,7 @@ void MDAL::DriverPly::addDataset(MDAL::DatasetGroup *group, const std::vector<do
 
     std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >(group);
     dataset->setTime(0.0);
-    memcpy(dataset->values(), values.data(), sizeof(double) * values.size());
+    std::memcpy(dataset->values(), values.data(), sizeof(double) * values.size());
     dataset->setStatistics(MDAL::calculateStatistics(dataset));
     group->datasets.push_back(dataset);
     group->setStatistics(MDAL::calculateStatistics(group));
