@@ -184,8 +184,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   Edges edges( 0 );
   size_t maxSizeFace = 0;
   size_t faceSize = 0;
-  std::vector<std::vector<double>*> vertexDatasets;
-  std::vector<std::string> vProp2Ds;
+
+  //datastructures that will contain all of the datasets, categorised by vertex, face and edge datasets
+  std::vector<std::vector<double>*> vertexDatasets; // conatins the data
+  std::vector<std::string> vProp2Ds; // contains the dataset names
   std::vector<std::vector<double>*> faceDatasets;
   std::vector<std::string> fProp2Ds;
   std::vector<std::vector<double>*> edgeDatasets;
@@ -198,10 +200,14 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   //
   if ( !std::getline( in, line ) )
   {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough vertex definitions" );
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain any definitions" );
     return nullptr;
   }
   chunks = split( line, ' ' );
+
+  //
+  // configure the vectors to hold the data
+  //
   for ( size_t elid = 0; elid < elements.size(); ++elid )
   {
     MDAL::DriverPly::element element = elements[elid];
@@ -250,6 +256,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
         }
       }
     }
+
+    //
+    // load the data
+    //
     for ( size_t i = 0; i < element.size; ++i )
     {
       //
@@ -320,14 +330,14 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
         }
       }
 
-      // anything other element ignore and move to the next line
+      // any other element ignore and move to the next line
 
       if ( !std::getline( in, line ) )
       {
         // if it is supposed to be the last line - don't look further
         if ( elid != ( elements.size() - 1 ) && i != ( element.size - 1 ) )
         {
-          MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough definitions" );
+          MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough definitions of type " + element.name );
           return nullptr;
         }
       }
