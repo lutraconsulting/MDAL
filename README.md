@@ -35,7 +35,7 @@ You can use MDAL to load the following file formats:
 - [Esri TIN](https://en.wikipedia.org/wiki/Esri_TIN): Format for storing elevation data as a triangulated irregular network
 - [SAGA FLOW**](https://gis.stackexchange.com/a/254942/59405): Rasters in the SAGA flow direction format
 - [ADCIRC***](https://adcirc.org): ADCIRC hydrodynamic model results
-- [PLY](https://en.wikipedia.org/wiki/PLY_(file_format)): Stamford Polygon Format also useful for mesh created from PointClouds by [PDAL](pdal.io)
+- [PLY](https://en.wikipedia.org/wiki/PLY_(file_format)): Stamford Polygon Format also useful for mesh created from PointClouds by [PDAL](https://pdal.io)
 
 \* Data lazy loaded
 
