@@ -129,7 +129,7 @@ void MDAL::DriverFlo2D::parseCADPTSFile( const std::string &datFileName, std::ve
 
 void MDAL::DriverFlo2D::parseCHANBANKFile( const std::string &datFileName,
     std::map<size_t, size_t> &cellIdToVertices,
-    std::map<size_t, std::vector<size_t>> &dupplicatedRightBankToVertex,
+    std::map<size_t, std::vector<size_t>> &duplicatedRightBankToVertex,
     size_t &verticesCount )
 {
   std::string chanBankFile( fileNameFromDir( datFileName, "CHANBANK.DAT" ) );
@@ -155,10 +155,10 @@ void MDAL::DriverFlo2D::parseCHANBANKFile( const std::string &datFileName,
     std::map<size_t, size_t>::const_iterator it = cellIdToVertices.find( rightBank );
     if ( it != cellIdToVertices.end() )
     {
-      // sometime a right bank can be associated several times to a left bank (inverse is not possible)
-      std::map<size_t, std::vector<size_t>>::iterator itDupplicated = dupplicatedRightBankToVertex.find( rightBank );
-      if ( itDupplicated == dupplicatedRightBankToVertex.end() )
-        dupplicatedRightBankToVertex[rightBank] = std::vector<size_t>( 1, vertexIndex );
+      // sometimes a right bank can be associated several times to a left bank (inverse is not possible)
+      std::map<size_t, std::vector<size_t>>::iterator itDupplicated = duplicatedRightBankToVertex.find( rightBank );
+      if ( itDupplicated == duplicatedRightBankToVertex.end() )
+        duplicatedRightBankToVertex[rightBank] = std::vector<size_t>( 1, vertexIndex );
       else
         itDupplicated->second.push_back( vertexIndex );
     }
@@ -296,7 +296,7 @@ void MDAL::DriverFlo2D::parseHYCHANFile( const std::string &datFileName, const s
   std::string hyChanFile( fileNameFromDir( datFileName, "HYCHAN.OUT" ) );
   if ( !MDAL::fileExists( hyChanFile ) )
   {
-    throw MDAL::Error( MDAL_Status::Err_FileNotFound, "Could not find file " + hyChanFile );
+    return;
   }
   std::ifstream hyChanStream( hyChanFile, std::ifstream::in );
   std::string line;
@@ -332,7 +332,7 @@ void MDAL::DriverFlo2D::parseHYCHANFile( const std::string &datFileName, const s
   std::vector<double> timeStep;
   while ( std::getline( hyChanStream, line ) )
   {
-    std::vector<std::string> lineParts = MDAL::split( line, ' ' );
+    const std::vector<std::string> lineParts = MDAL::split( line, ' ' );
 
     if ( lineParts.size() != variablesName.size() + 1 )
       break;
@@ -391,6 +391,30 @@ void MDAL::DriverFlo2D::parseHYCHANFile( const std::string &datFileName, const s
 
 void MDAL::DriverFlo2D::createMesh1d( const std::string &datFileName, const std::vector<MDAL::DriverFlo2D::CellCenter> &cells, std::map<size_t, size_t> &cellsIdToVertex )
 {
+  //    In flow 2D, each 1D node can be defined by one or two cell id, corresponding to the left bank and the right bank.
+  //    If there is only one id associated with the node, the cell id is the left bank, and the right bank has id cell equal to 0.
+  //    Consequences for the (X, Y) position of the node/vertex :
+  //    - if only one cell (the left bank id cell), the position of the node is this left bank cell position.
+  //    - if two cells, left bank and right bank, the position of the node is the centre of the segment [left bank, right bank].
+  //
+  //    parseCHANBANKFile() creates a map between cells and 1D vertex (in MDAL sens):  cellsIdToVertex.
+  //    Each cell id (key), left bank and right bank if it exists, is mapped with a node/vertex (value is vertex index).
+  //    Vertex indexes are the position of the node in the CHANBANK file. As right bank cell could be associated with several nodes,
+  //    when consecutive edges are not colinear (seen in the test data file, for example, line 57-58 and 61-62 of the CHANBANK.DAT test file).
+  //    In this case, those duplicated right banks are stored in another map: duplicatedRightBankToVertex (key: right bank cell, value: vector of indexes of associated vertex).
+  //
+  //    Once the links between left/right bank cells and vertices are defined, the following step is to calculate the effective (X, Y) position of each vertex.
+  //    For that, all the cells are iterated :
+  //    If the id cell is contained in the cellsIdToVertex map and the vertex has not already has been its coordinates filled (vertices are initiated with NaN coordinate),
+  //    then this vertex takes the coordinate of the corresponding cell.
+  //    If the id cell is contained in the cellsIdToVertex map and the vertex coordinates are not NaN, that means that the vertex is associated with two banks,
+  //    so add the second coordinates to the first and multiply by factor 0.5 to average the coordinates.
+  //
+  //    As the id cells could correspond to a cell that is a right bank associated with severals vertex,
+  //    do the same with duplicatedRightBankToVertex that contain the vertices associated with the duplicated right bank.
+  //
+  //    How the cellsIdToVertex and duplicatedRightBankToVertex maps are created, each vertex could not be present more than twice in those maps.
+
   std::map<size_t, std::vector<size_t>> duplicatedRightBankToVertex;
   std::vector<Vertex> vertices;
   std::vector<Edge> edges;
@@ -407,7 +431,7 @@ void MDAL::DriverFlo2D::createMesh1d( const std::string &datFileName, const std:
       if ( it->second < vertices.size() )
       {
         Vertex &vertex = vertices[it->second];
-        //if coordinates of vertex is not nan, this coordinates is the one of the first bank, so add the second and use factor 0.5
+        //if coordinates of vertex is not nan, thAs theis coordinates is the one of the first bank, so add the second and use factor 0.5
         if ( std::isnan( vertex.x ) )
         {
           vertex.x = cell.x;
@@ -971,8 +995,9 @@ bool MDAL::DriverFlo2D::canReadMesh( const std::string &uri )
 
   std::string fplainFile( fileNameFromDir( uri, "FPLAIN.DAT" ) );
   std::string chanFile( fileNameFromDir( uri, "CHAN.DAT" ) );
+  std::string chanBankFile( fileNameFromDir( uri, "CHANBANK.DAT" ) );
 
-  return MDAL::fileExists( fplainFile ) || MDAL::fileExists( chanFile );
+  return MDAL::fileExists( fplainFile ) || ( MDAL::fileExists( chanFile ) && MDAL::fileExists( chanBankFile ) );
 }
 
 bool MDAL::DriverFlo2D::canReadDatasets( const std::string &uri )
@@ -993,9 +1018,10 @@ std::string MDAL::DriverFlo2D::buildUri( const std::string &meshFile )
   std::vector<std::string> meshNames;
 
   std::string mesh1DTopologyFile( fileNameFromDir( meshFile, "CHAN.DAT" ) );
+  std::string mesh1DVerticesPosition( fileNameFromDir( meshFile, "CHANBANK.DAT" ) );
   std::string mesh2DTopologyFile( fileNameFromDir( meshFile, "FPLAIN.DAT" ) );
 
-  if ( fileExists( mesh1DTopologyFile ) )
+  if ( fileExists( mesh1DTopologyFile ) && fileExists( mesh1DVerticesPosition ) )
     meshNames.push_back( "mesh1d" );
 
   if ( fileExists( mesh2DTopologyFile ) )

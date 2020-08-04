@@ -917,6 +917,8 @@ TEST( MeshFlo2dTest, mesh1D )
   EXPECT_EQ( v_count, 66 );
   EXPECT_TRUE( MDAL::equals( getVertexXCoordinatesAt( m, 10 ), 1361905 ) );
   EXPECT_TRUE( MDAL::equals( getVertexYCoordinatesAt( m, 10 ), 73194.93 ) );
+  EXPECT_TRUE( MDAL::equals( getVertexXCoordinatesAt( m, 20 ), 1361705 ) );
+  EXPECT_TRUE( MDAL::equals( getVertexYCoordinatesAt( m, 20 ), 73234.93 ) );
 
   // ///////////
   // Edges
@@ -928,6 +930,8 @@ TEST( MeshFlo2dTest, mesh1D )
   getEdgeVertexIndices( m, e_count, startIndexes, endIndexes );
   EXPECT_EQ( startIndexes[10], 10 );
   EXPECT_EQ( endIndexes[10], 11 );
+  EXPECT_EQ( startIndexes[20], 20 );
+  EXPECT_EQ( endIndexes[20], 21 );
 
   // ///////////
   // Datasets
@@ -935,19 +939,28 @@ TEST( MeshFlo2dTest, mesh1D )
   ASSERT_EQ( 13, MDAL_M_datasetGroupCount( m ) );
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 11 );
   ASSERT_NE( g, nullptr );
+  ASSERT_EQ( "BED SHEAR STRESS", std::string( MDAL_G_name( g ) ) );
   ASSERT_EQ( DataOnVertices, MDAL_G_dataLocation( g ) );
   ASSERT_EQ( 50, MDAL_G_datasetCount( g ) );
   MDAL_DatasetH ds = MDAL_G_dataset( g, 2 );
   ASSERT_NE( ds, nullptr );
   ASSERT_TRUE( MDAL::equals( 0.24264, getValue( ds,  5 ) ) );
+  double min, max;
+  MDAL_G_minimumMaximum( g, &min, &max );
+  ASSERT_EQ( min, 0.0 );
+  ASSERT_EQ( max, 1.206 );
 
   g = MDAL_M_datasetGroup( m, 10 );
   ASSERT_NE( g, nullptr );
+  ASSERT_EQ( "ENERGY SLOPE", std::string( MDAL_G_name( g ) ) );
   ASSERT_EQ( DataOnVertices, MDAL_G_dataLocation( g ) );
   ASSERT_EQ( 50, MDAL_G_datasetCount( g ) );
   ds = MDAL_G_dataset( g, 2 );
   ASSERT_NE( ds, nullptr );
   ASSERT_TRUE( MDAL::equals( 0.012488, getValue( ds,  5 ) ) );
+  MDAL_G_minimumMaximum( g, &min, &max );
+  ASSERT_EQ( min, 0.0 );
+  ASSERT_EQ( max, 0.023452 );
 
   MDAL_CloseMesh( m );
 }
