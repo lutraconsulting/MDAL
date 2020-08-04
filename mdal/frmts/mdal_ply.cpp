@@ -25,41 +25,41 @@
 
 #define DRIVER_NAME "PLY"
 
-MDAL::DriverPly::DriverPly():
+MDAL::DriverPly::DriverPly() :
   Driver( DRIVER_NAME,
-          "Stamford PLY Ascii Mesh File",
-          "*.ply",
-          Capability::ReadMesh
-        )
+    "Stamford PLY Ascii Mesh File",
+    "*.ply",
+    Capability::ReadMesh
+  )
 {
 }
 
-MDAL::DriverPly *MDAL::DriverPly::create()
+MDAL::DriverPly* MDAL::DriverPly::create()
 {
   return new DriverPly();
 }
 
 MDAL::DriverPly::~DriverPly() = default;
 
-size_t MDAL::DriverPly::getIndex(std::vector<std::string> v, std::string in) 
+size_t MDAL::DriverPly::getIndex( std::vector<std::string> v, std::string in )
 {
-  auto it = find(v.begin(), v.end(), in);
-  return (size_t)distance(v.begin(), it);
+  auto it = find( v.begin(), v.end(), in );
+  return (size_t)distance( v.begin(), it );
 }
 
 // check for the magic number which in  a PLY file is "ply"
-bool MDAL::DriverPly::canReadMesh( const std::string &uri )
+bool MDAL::DriverPly::canReadMesh( const std::string & uri )
 {
   std::ifstream in( uri, std::ifstream::in );
   std::string line;
-  if ( !MDAL::getHeaderLine( in, line ) || !startsWith( line, "ply" ) )
+  if (!MDAL::getHeaderLine( in, line ) || !startsWith( line, "ply" ))
   {
     return false;
   }
   return true;
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, const std::string & )
+std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string & meshFile, const std::string& )
 {
   MDAL::Log::resetLastStatus();
 
@@ -74,56 +74,56 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   std::vector<MDAL::DriverPly::element> elements; // we will decant the element specifications into here
   std::string proj = "";
 
-  if (!std::getline(in, line))
+  if (!std::getline( in, line ))
   {
-    MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt");
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt" );
     return nullptr;
   }
-  
+
   //
   // The header is a format defintion ans a series of header definitions and/or comment lines
   // cycle through these until end-header
   //
-  do 
+  do
   {
     //
     // all element blocks block in the header and enumerate the number of members and the properties
     //
-    if (startsWith(line, "element")) 
+    if (startsWith( line, "element" ))
     {
-      chunks = split(line, ' ');
-      if ((chunks.size() != 3))
+      chunks = split( line, ' ' );
+      if (( chunks.size() != 3 ))
       {
-        MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " invalid number of vertexes");
-          return nullptr;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " invalid number of vertexes" );
+        return nullptr;
       }
       MDAL::DriverPly::element element;
       element.name = chunks[1];
-      element.size = MDAL::toSizeT(chunks[2]);
-      do 
+      element.size = MDAL::toSizeT( chunks[2] );
+      do
       {
-        if (!std::getline(in, line))
+        if (!std::getline( in, line ))
         {
-            MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt");
-            return nullptr;
+          MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt" );
+          return nullptr;
         }
-        if (startsWith(line, "property"))
+        if (startsWith( line, "property" ))
         {
-          chunks = split(line, ' ');
+          chunks = split( line, ' ' );
           switch (chunks.size()) {
           case 3:
-              element.properties.push_back(chunks[2]);
-              element.types.push_back(chunks[1]);
-              element.list.push_back(false);
-              break;
+            element.properties.push_back( chunks[2] );
+            element.types.push_back( chunks[1] );
+            element.list.push_back( false );
+            break;
           case 5:
-              element.properties.push_back(chunks[4]);
-              element.types.push_back(chunks[3]);
-              element.list.push_back(true);
-              break;
+            element.properties.push_back( chunks[4] );
+            element.types.push_back( chunks[3] );
+            element.list.push_back( true );
+            break;
           default:
-              MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " invalid element line" + line);
-              return nullptr;
+            MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " invalid element line" + line );
+            return nullptr;
           }
         }
         else
@@ -131,36 +131,32 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           break;
         }
       } while (true);
-      else 
-      {
-        break;
-      }
-      elements.push_back(element);
+      elements.push_back( element );
     }
     //
     // if end - stop looping
-    else if (startsWith(line, "end_header")) 
+    else if (startsWith( line, "end_header" ))
     {
       break;
     }
     //
     //if binary - give up
     //
-    else if (startsWith(line, "binary")) {
-      MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " only ASCII format PLY files are supported");
+    else if (startsWith( line, "binary" )) {
+      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " only ASCII format PLY files are supported" );
       return nullptr;
     }
 
     //
     // if "comment crs" assume that the rest is the crs data
     //
-    else if (startsWith(line, "comment crs ")) 
+    else if (startsWith( line, "comment crs " ))
     {
-      line.erase(0, 12);
+      line.erase( 0, 12 );
       proj = line;
-      if (!std::getline(in, line))
+      if (!std::getline( in, line ))
       {
-        MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt");
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt" );
         return nullptr;
       }
     }
@@ -169,17 +165,17 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
     // probably a comment line
     //
     else {
-      if (!std::getline(in, line))
+      if (!std::getline( in, line ))
       {
-        MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt");
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt" );
         return nullptr;
       }
     }
   } while (true);
 
-  Vertices vertices(0);
-  Faces faces(0);
-  Edges edges(0);
+  Vertices vertices( 0 );
+  Faces faces( 0 );
+  Edges edges( 0 );
   size_t maxSizeFace = 0;
   size_t faceSize = 0;
   std::vector<std::vector<double>*> vertexDatasets;
@@ -188,63 +184,63 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   std::vector<std::string> fProp2Ds;
   std::vector<std::vector<double>*> edgeDatasets;
   std::vector<std::string> eProp2Ds;
-  
+
 
 
   //
   // load the elements in order
   //
-  if (!std::getline(in, line))
+  if (!std::getline( in, line ))
   {
-    MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough vertex definitions");
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough vertex definitions" );
     return nullptr;
   }
-  chunks = split(line, ' ');
-  for (size_t elid = 0; elid < elements.size(); ++elid) 
+  chunks = split( line, ' ' );
+  for (size_t elid = 0; elid < elements.size(); ++elid)
   {
     MDAL::DriverPly::element element = elements[elid];
-    if (element.name == "vertex") 
+    if (element.name == "vertex")
     {
       vertexCount = element.size;
-      vertices.resize(vertexCount);
-      for (size_t i = 0; i < element.properties.size(); ++i) 
+      vertices.resize( vertexCount );
+      for (size_t i = 0; i < element.properties.size(); ++i)
       {
         if (element.properties[i] != "x" &&
-            element.properties[i] != "y" &&
-            element.properties[i] != "z" &&
-            ! element.list[i])
+          element.properties[i] != "y" &&
+          element.properties[i] != "z" &&
+          !element.list[i])
         {
-          vertexDatasets.push_back(new std::vector<double>);
-          vProp2Ds.push_back(element.properties[i]);
+          vertexDatasets.push_back( new std::vector<double> );
+          vProp2Ds.push_back( element.properties[i] );
         }
       }
     }
-    else if (element.name == "face") 
+    else if (element.name == "face")
     {
       faceCount = element.size;
-      faces.resize(faceCount);
-      for (size_t i = 0; i < element.properties.size(); ++i) 
+      faces.resize( faceCount );
+      for (size_t i = 0; i < element.properties.size(); ++i)
       {
         if (element.properties[i] != "vertex_indices" &&
-                  !element.list[i])
+          !element.list[i])
         {
-          faceDatasets.push_back(new std::vector<double>);
-          fProp2Ds.push_back(element.properties[i]);
+          faceDatasets.push_back( new std::vector<double> );
+          fProp2Ds.push_back( element.properties[i] );
         }
       }
     }
-    else if (element.name == "edge") 
+    else if (element.name == "edge")
     {
       edgeCount = element.size;
-      edges.resize(edgeCount);
-      for (size_t i = 0; i < element.properties.size(); ++i) 
+      edges.resize( edgeCount );
+      for (size_t i = 0; i < element.properties.size(); ++i)
       {
         if (element.properties[i] != "vertex1" &&
           element.properties[i] != "vertex2" &&
           !element.list[i])
         {
-          edgeDatasets.push_back(new std::vector<double>);
-          eProp2Ds.push_back(element.properties[i]);
+          edgeDatasets.push_back( new std::vector<double> );
+          eProp2Ds.push_back( element.properties[i] );
         }
       }
     }
@@ -254,27 +250,27 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       // set the line size - we will only deal with one list at the begining of the line
       //
       size_t nChunks = element.properties.size();
-      if (element.list[0]) nChunks += MDAL::toSizeT(chunks[0]);
+      if (element.list[0]) nChunks += MDAL::toSizeT( chunks[0] );
       if (chunks.size() != nChunks)
       {
-          MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " contains invalid line : " + line);
-          return nullptr;
+        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " contains invalid line : " + line );
+        return nullptr;
       }
 
       //
       // Load the vertexes
       //
-      if (element.name == "vertex") 
+      if (element.name == "vertex")
       {
         Vertex& vertex = vertices[i];
-        vertex.x = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, "x")]);
-        vertex.y = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, "y")]);
-        vertex.z = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, "z")]);
-        for (size_t j = 0; j < vProp2Ds.size(); ++j) 
+        vertex.x = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, "x" )] );
+        vertex.y = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, "y" )] );
+        vertex.z = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, "z" )] );
+        for (size_t j = 0; j < vProp2Ds.size(); ++j)
         {
-          std::vector<double> &dataset = *vertexDatasets[j];
-          double value = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, vProp2Ds[j])]);
-          dataset.push_back(value);
+          std::vector<double>& dataset = *vertexDatasets[j];
+          double value = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, vProp2Ds[j] )] );
+          dataset.push_back( value );
           vertexDatasets[j] = &dataset;
         }
       }
@@ -282,21 +278,21 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       //
       //load the trinagles
       //
-      else if (element.name == "face") 
+      else if (element.name == "face")
       {
-        faceSize = MDAL::toSizeT(chunks[0]);
+        faceSize = MDAL::toSizeT( chunks[0] );
         Face& face = faces[i];
-        face.resize(faceSize);
-        for (size_t j = 0; j < faceSize; ++j) 
+        face.resize( faceSize );
+        for (size_t j = 0; j < faceSize; ++j)
         {
-            face[j] = MDAL::toSizeT(chunks[j + 1]);
+          face[j] = MDAL::toSizeT( chunks[j + 1] );
         }
         if (faceSize > maxSizeFace) maxSizeFace = faceSize;
-        for (size_t j = 0; j < fProp2Ds.size(); ++j) 
+        for (size_t j = 0; j < fProp2Ds.size(); ++j)
         {
           std::vector<double>& dataset = *faceDatasets[j];
-          double value = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, fProp2Ds[j]) + faceSize]);
-          dataset.push_back(value);
+          double value = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, fProp2Ds[j] ) + faceSize] );
+          dataset.push_back( value );
           faceDatasets[j] = &dataset;
         }
       }
@@ -304,33 +300,33 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       //
       //load the edges
       //
-      else if (element.name == "edge") 
+      else if (element.name == "edge")
       {
         Edge& edge = edges[i];
-        edge.startVertex = MDAL::toSizeT(chunks[MDAL::DriverPly::getIndex(element.properties, "vertex1")]);
-        edge.endVertex = MDAL::toSizeT(chunks[MDAL::DriverPly::getIndex(element.properties, "vertex2")]);
-        for (size_t j = 0; j < eProp2Ds.size(); ++j) 
+        edge.startVertex = MDAL::toSizeT( chunks[MDAL::DriverPly::getIndex( element.properties, "vertex1" )] );
+        edge.endVertex = MDAL::toSizeT( chunks[MDAL::DriverPly::getIndex( element.properties, "vertex2" )] );
+        for (size_t j = 0; j < eProp2Ds.size(); ++j)
         {
           std::vector<double>& dataset = *edgeDatasets[j];
-          double value = MDAL::toDouble(chunks[MDAL::DriverPly::getIndex(element.properties, eProp2Ds[j])]);
-          dataset.push_back(value);
+          double value = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, eProp2Ds[j] )] );
+          dataset.push_back( value );
           edgeDatasets[j] = &dataset;
         }
       }
 
       // anything other element ignore and move to the next line
 
-      if (!std::getline(in, line))
+      if (!std::getline( in, line ))
       {
         // if it is supposed to be the last line - don't look further
-        if (elid != (elements.size() - 1) && i != (element.size - 1)) {
-          MDAL::Log::error(MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough definitions");
+        if (elid != ( elements.size() - 1 ) && i != ( element.size - 1 )) {
+          MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough definitions" );
           return nullptr;
         }
       }
-      chunks = split(line, ' ');
+      chunks = split( line, ' ' );
     }
-  } 
+  }
 
 
   std::unique_ptr< MemoryMesh > mesh(
@@ -342,64 +338,64 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   );
   mesh->setFaces( std::move( faces ) );
   mesh->setVertices( std::move( vertices ) );
-  mesh->setEdges(std::move(edges));
-  mesh->setSourceCrs(proj);
+  mesh->setEdges( std::move( edges ) );
+  mesh->setSourceCrs( proj );
 
   // Add Bed Elevation
-  MDAL::addBedElevationDatasetGroup(mesh.get(), mesh->vertices());
+  MDAL::addBedElevationDatasetGroup( mesh.get(), mesh->vertices() );
 
   for (size_t i = 0; i < vertexDatasets.size(); ++i) {
-    std::vector<double> &dataset = *vertexDatasets[i];
-    std::shared_ptr<DatasetGroup> group = addDatasetGroup(mesh.get(), vProp2Ds[i], DataOnVertices, true);
-    addDataset(group.get(), dataset );
+    std::vector<double>& dataset = *vertexDatasets[i];
+    std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), vProp2Ds[i], DataOnVertices, true );
+    addDataset( group.get(), dataset );
   }
 
   for (size_t i = 0; i < faceDatasets.size(); ++i) {
     std::vector<double>& dataset = *faceDatasets[i];
-    std::shared_ptr<DatasetGroup> group = addDatasetGroup(mesh.get(), fProp2Ds[i], DataOnFaces, true);
-    addDataset(group.get(), dataset);
+    std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), fProp2Ds[i], DataOnFaces, true );
+    addDataset( group.get(), dataset );
   }
 
   for (size_t i = 0; i < edgeDatasets.size(); ++i) {
     std::vector<double>& dataset = *edgeDatasets[i];
-    std::shared_ptr<DatasetGroup> group = addDatasetGroup(mesh.get(), eProp2Ds[i], DataOnEdges, true);
-    addDataset(group.get(), dataset);
+    std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), eProp2Ds[i], DataOnEdges, true );
+    addDataset( group.get(), dataset );
   }
 
   return std::unique_ptr<Mesh>( mesh.release() );
 }
 
-std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverPly::addDatasetGroup(MDAL::Mesh *mesh, const std::string& name, const MDAL_DataLocation location, bool isScalar)
+std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverPly::addDatasetGroup( MDAL::Mesh * mesh, const std::string & name, const MDAL_DataLocation location, bool isScalar )
 {
   if (!mesh)
     return NULL;
 
   if (location == DataOnFaces && mesh->facesCount() == 0)
     return NULL;
-  
+
   if (location == DataOnEdges && mesh->edgesCount() == 0)
     return NULL;
 
   std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
-        mesh->driverName(),
-        mesh,
-        name,
-        name
-        );
-  group->setDataLocation(location);
-  group->setIsScalar(isScalar);
-  group->setStatistics(MDAL::calculateStatistics(group));
-  mesh->datasetGroups.push_back(group);
+    mesh->driverName(),
+    mesh,
+    name,
+    name
+    );
+  group->setDataLocation( location );
+  group->setIsScalar( isScalar );
+  group->setStatistics( MDAL::calculateStatistics( group ) );
+  mesh->datasetGroups.push_back( group );
   return group;
 }
 
-void MDAL::DriverPly::addDataset(MDAL::DatasetGroup *group, const std::vector<double>& values )
+void MDAL::DriverPly::addDataset( MDAL::DatasetGroup * group, const std::vector<double> & values )
 {
   if (!group)
     return;
 
   MDAL::Mesh* mesh = group->mesh();
-    
+
   if (values.empty())
     return;
 
@@ -407,25 +403,25 @@ void MDAL::DriverPly::addDataset(MDAL::DatasetGroup *group, const std::vector<do
     return;
 
   if (group->dataLocation() == DataOnVertices) {
-    assert(values.size() == mesh->verticesCount());
+    assert( values.size() == mesh->verticesCount() );
   }
-    
+
   if (group->dataLocation() == DataOnFaces) {
-    assert(values.size() == mesh->facesCount());
+    assert( values.size() == mesh->facesCount() );
     if (mesh->facesCount() == 0)
       return;
   }
 
-  if (group->dataLocation() == DataOnEdges ) {
-    assert(values.size() == mesh->edgesCount());
+  if (group->dataLocation() == DataOnEdges) {
+    assert( values.size() == mesh->edgesCount() );
     if (mesh->edgesCount() == 0)
       return;
   }
 
-  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >(group);
-   dataset->setTime(0.0);
-   memcpy(dataset->values(), values.data(), sizeof(double) * values.size());
-   dataset->setStatistics(MDAL::calculateStatistics(dataset));
-   group->datasets.push_back(dataset);
-   group->setStatistics(MDAL::calculateStatistics(group));
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group );
+  dataset->setTime( 0.0 );
+  memcpy( dataset->values(), values.data(), sizeof( double ) * values.size() );
+  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  group->datasets.push_back( dataset );
+  group->setStatistics( MDAL::calculateStatistics( group ) );
 }
