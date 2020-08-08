@@ -431,7 +431,7 @@ void MDAL::DriverFlo2D::createMesh1d( const std::string &datFileName, const std:
       if ( it->second < vertices.size() )
       {
         Vertex &vertex = vertices[it->second];
-        //if coordinates of vertex is not nan, thAs theis coordinates is the one of the first bank, so add the second and use factor 0.5
+        //if coordinates of vertex is not nan, those coordinates are the first bank, so add the second and use factor 0.5
         if ( std::isnan( vertex.x ) )
         {
           vertex.x = cell.x;

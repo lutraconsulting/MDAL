@@ -33,7 +33,7 @@ namespace MDAL
    *  - DEPTH.OUT
    *  - VELFP.OUT
    *
-   * hdf5 format extra datasets can also be readen, and this driver supports persisting dataset with this format.
+   * hdf5 format extra datasets can also be read, and this driver supports persisting dataset with this format.
    *
    * For 1D mesh, the cell centres are also defined in CADPTS.DAT file.
    * Each vertex is linked to a cell from CADPTS.DAT that represents the position of the left bank, and each cell can be linked only with one left bank.
