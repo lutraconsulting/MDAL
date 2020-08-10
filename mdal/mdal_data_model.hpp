@@ -269,6 +269,11 @@ namespace MDAL
 
       virtual void closeSource() {};
 
+      virtual bool isEditable() const {return false;}
+
+      virtual void addVertices( size_t vertexCount, double *coordinates );
+      virtual void addFaces( size_t faceCount, int *faceSizes, int *vertexIndices );
+
     private:
       const std::string mDriverName;
       size_t mFaceVerticesMaximumCount = 0; //typically 3 or 4, sometimes up to 9

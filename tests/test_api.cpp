@@ -350,6 +350,48 @@ TEST( ApiTest, MeshNamesApi )
   EXPECT_EQ( MDAL_MeshNames( nullptr ), nullptr );
 }
 
+TEST( ApiTest, MeshCreationApi )
+{
+  MDAL_DriverH driver = MDAL_driverFromName( "Ugrid" );
+  MDAL_MeshH mesh = MDAL_CreateMesh( driver );
+  EXPECT_NE( mesh, nullptr );
+
+  EXPECT_EQ( MDAL_M_vertexCount( mesh ), 0 );
+  EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
+  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 4 );
+
+  std::vector<double> coordinates( {0.0, 0.0, 0.0,
+                                    1.0, 1.0, 0.0,
+                                    2.0, 0.0, 2.0,
+                                    1.0, 2.0, 3.0,
+                                    0.0, -2.0, 4.0,
+                                    2.0, -2.0, 4.0} );
+
+  std::vector<int> invalidVertexIndices( {0, 7, 3,
+                                          1, 2, 3,
+                                          4, 5, 2, 0,
+                                          0, 2, 1} );
+
+  std::vector<int> vertexIndices( {0, 1, 3,
+                                   1, 2, 3,
+                                   4, 5, 2, 0,
+                                   0, 2, 1} );
+
+  std::vector<int> faceSizes( {3, 3, 4, 3} );
+  MDAL_M_addVertices( mesh, 6, coordinates.data() );
+  MDAL_M_addFaces( mesh, 4, faceSizes.data(), invalidVertexIndices.data() );
+
+  EXPECT_EQ( MDAL_LastStatus(), Err_InvalidData );
+  EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
+
+  MDAL_M_addFaces( mesh, 4, faceSizes.data(), vertexIndices.data() );
+  EXPECT_EQ( MDAL_M_vertexCount( mesh ), 6 );
+  EXPECT_EQ( MDAL_M_faceCount( mesh ), 4 );
+
+  MDAL_SaveMesh( mesh, "/home/vincent/_tryFolder/es.es", "Ugrid" );
+  MDAL_CloseMesh( mesh );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );

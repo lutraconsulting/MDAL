@@ -1214,3 +1214,56 @@ const char *MDAL_DR_writeDatasetsSuffix( MDAL_DriverH driver )
   MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
   return _return_str( d->writeDatasetOnFileSuffix() );
 }
+
+MDAL_MeshH MDAL_CreateMesh( MDAL_DriverH driver )
+{
+  MDAL::Driver *d =  static_cast<MDAL::Driver *>( driver );
+  return new MDAL::MemoryMesh( d->name(), d->faceVerticesMaximumCount(), "" );
+}
+
+void MDAL_M_addVertices( MDAL_MeshH mesh, int vertexCount, double *coordinates )
+{
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+  }
+
+  MDAL::Mesh *m = static_cast<MDAL::Mesh *>( mesh );
+
+  if ( ! m->isEditable() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not editable" );
+  }
+
+  m->addVertices( vertexCount, coordinates );
+
+}
+
+void MDAL_M_addFaces( MDAL_MeshH mesh, int faceCount, int *faceSizes, int *vertexIndices )
+{
+  MDAL::Log::resetLastStatus();
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+  }
+
+  MDAL::Mesh *m = static_cast<MDAL::Mesh *>( mesh );
+
+  if ( ! m->isEditable() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not editable" );
+  }
+  m->addFaces( faceCount, faceSizes, vertexIndices );
+
+}
+
+void MDAL_M_setProjection( MDAL_MeshH mesh, const char *projection )
+{
+  MDAL::Log::resetLastStatus();
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+  }
+
+  static_cast<MDAL::Mesh *>( mesh )->setSourceCrsFromWKT( std::string( projection ) );
+}

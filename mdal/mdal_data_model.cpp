@@ -378,6 +378,19 @@ size_t MDAL::Mesh::faceVerticesMaximumCount() const
   return mFaceVerticesMaximumCount;
 }
 
+void MDAL::Mesh::addVertices( size_t vertexCount, double *coordinates )
+{
+  MDAL_UNUSED( vertexCount );
+  MDAL_UNUSED( coordinates );
+}
+
+void MDAL::Mesh::addFaces( size_t faceCount, int *faceSizes, int *vertexIndices )
+{
+  MDAL_UNUSED( faceCount );
+  MDAL_UNUSED( faceSizes );
+  MDAL_UNUSED( vertexIndices );
+}
+
 MDAL::MeshVertexIterator::~MeshVertexIterator() = default;
 
 MDAL::MeshFaceIterator::~MeshFaceIterator() = default;
