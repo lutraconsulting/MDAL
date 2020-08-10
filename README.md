@@ -54,7 +54,7 @@ You can use MDAL to load the following file formats:
 | DAT   |  N/A | N/A | READ-ONLY | READ-WRITE | N/A | NO | 
 | 3Di   |  READ-ONLY | NO |  READ-ONLY | READ-ONLY | NO | NO | 
 | UGRID   |  READ-WRITE | NO | READ-ONLY | READ-ONLY | NO | NO | 
-| FLO-2D   |  READ-ONLY  | NO | NO | READ-WRITE | NO | NO  | 
+| FLO-2D   |  READ-ONLY  | NO | READ-ONLY | READ-WRITE | NO | NO  | 
 | Selafin   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
 | SWW   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
 
