@@ -358,7 +358,7 @@ TEST( ApiTest, MeshCreationApi )
 
   EXPECT_EQ( MDAL_M_vertexCount( mesh ), 0 );
   EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
-  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 4 );
+  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), std::numeric_limits<int>::max() );
 
   std::vector<double> coordinates( {0.0, 0.0, 0.0,
                                     1.0, 1.0, 0.0,
