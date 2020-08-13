@@ -1261,7 +1261,6 @@ void MDAL_M_addFaces( MDAL_MeshH mesh, int faceCount, int *faceSizes, int *verte
   if ( driver )
     maxVerticesPerFace = driver->faceVerticesMaximumCount();
 
-
   m->addFaces( faceCount, maxVerticesPerFace, faceSizes, vertexIndices );
 
 }
