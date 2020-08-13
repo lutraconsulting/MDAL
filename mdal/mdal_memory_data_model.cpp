@@ -186,13 +186,22 @@ void MDAL::MemoryMesh::addVertices( size_t vertexCount, double *coordinates )
   mExtent = computeExtent( mVertices );
 }
 
-void MDAL::MemoryMesh::addFaces( size_t faceCount, int *faceSizes, int *vertexIndices )
+void MDAL::MemoryMesh::addFaces( size_t faceCount, size_t driverMaxVerticesPerFace, int *faceSizes, int *vertexIndices )
 {
   size_t indicesIndex = 0;
   Faces newFaces( faceCount );
   for ( size_t faceIndex = 0; faceIndex < faceCount; ++faceIndex )
   {
     size_t faceSize = faceSizes[faceIndex];
+    if ( faceSize > driverMaxVerticesPerFace )
+    {
+      MDAL::Log::error( Err_InvalidData, "Incompatible faces count" );
+      return;
+    }
+
+    if ( faceSize > mFaceVerticesMaximumCount )
+      mFaceVerticesMaximumCount = faceSize;
+
     Face face( faceSize );
     for ( size_t i = 0; i < faceSize; ++i )
     {
@@ -204,7 +213,6 @@ void MDAL::MemoryMesh::addFaces( size_t faceCount, int *faceSizes, int *vertexIn
         MDAL::Log::error( Err_InvalidData, "Invalid vertex index when adding faces" );
         return;
       }
-
     }
     indicesIndex = indicesIndex + faceSize;
     newFaces[faceIndex] = std::move( face );

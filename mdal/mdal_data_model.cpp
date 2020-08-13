@@ -384,9 +384,10 @@ void MDAL::Mesh::addVertices( size_t vertexCount, double *coordinates )
   MDAL_UNUSED( coordinates );
 }
 
-void MDAL::Mesh::addFaces( size_t faceCount, int *faceSizes, int *vertexIndices )
+void MDAL::Mesh::addFaces( size_t faceCount, size_t driverMaxVerticesPerFace, int *faceSizes, int *vertexIndices )
 {
   MDAL_UNUSED( faceCount );
+  MDAL_UNUSED( driverMaxVerticesPerFace );
   MDAL_UNUSED( faceSizes );
   MDAL_UNUSED( vertexIndices );
 }

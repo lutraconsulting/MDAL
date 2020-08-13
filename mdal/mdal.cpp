@@ -1218,7 +1218,9 @@ const char *MDAL_DR_writeDatasetsSuffix( MDAL_DriverH driver )
 MDAL_MeshH MDAL_CreateMesh( MDAL_DriverH driver )
 {
   MDAL::Driver *d =  static_cast<MDAL::Driver *>( driver );
-  return new MDAL::MemoryMesh( d->name(), d->faceVerticesMaximumCount(), "" );
+  return new MDAL::MemoryMesh( d->name(),
+                               0, // empty mesh, so faceVerticesMaximumCount=0, this attribute will be updated if faces are added
+                               "" );
 }
 
 void MDAL_M_addVertices( MDAL_MeshH mesh, int vertexCount, double *coordinates )
@@ -1253,7 +1255,14 @@ void MDAL_M_addFaces( MDAL_MeshH mesh, int faceCount, int *faceSizes, int *verte
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not editable" );
   }
-  m->addFaces( faceCount, faceSizes, vertexIndices );
+
+  std::shared_ptr<MDAL::Driver> driver = MDAL::DriverManager::instance().driver( m->driverName() );
+  int maxVerticesPerFace = std::numeric_limits<int>::max();
+  if ( driver )
+    maxVerticesPerFace = driver->faceVerticesMaximumCount();
+
+
+  m->addFaces( faceCount, maxVerticesPerFace, faceSizes, vertexIndices );
 
 }
 

@@ -358,7 +358,7 @@ TEST( ApiTest, MeshCreationApi )
 
   EXPECT_EQ( MDAL_M_vertexCount( mesh ), 0 );
   EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
-  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), std::numeric_limits<int>::max() );
+  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 0 );
 
   std::vector<double> coordinates( {0.0, 0.0, 0.0,
                                     1.0, 1.0, 0.0,
@@ -387,8 +387,32 @@ TEST( ApiTest, MeshCreationApi )
   MDAL_M_addFaces( mesh, 4, faceSizes.data(), vertexIndices.data() );
   EXPECT_EQ( MDAL_M_vertexCount( mesh ), 6 );
   EXPECT_EQ( MDAL_M_faceCount( mesh ), 4 );
+  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 4 );
 
-  MDAL_SaveMesh( mesh, "/home/vincent/_tryFolder/es.es", "Ugrid" );
+  std::string createdMeshFile = tmp_file( "/createdMesh" );
+  MDAL_SaveMesh( mesh, createdMeshFile.c_str(), "Ugrid" );
+  EXPECT_EQ( MDAL_LastStatus(), None );
+  MDAL_CloseMesh( mesh );
+
+  mesh = MDAL_LoadMesh( createdMeshFile.c_str() );
+  EXPECT_EQ( MDAL_M_vertexCount( mesh ), 6 );
+  EXPECT_EQ( MDAL_M_faceCount( mesh ), 4 );
+
+  EXPECT_EQ( getVertexXCoordinatesAt( mesh, 1 ), 1.0 );
+  EXPECT_EQ( getVertexYCoordinatesAt( mesh, 1 ), 1.0 );
+  EXPECT_EQ( getVertexXCoordinatesAt( mesh, 3 ), 1.0 );
+  EXPECT_EQ( getVertexYCoordinatesAt( mesh, 3 ), 2.0 );
+
+  EXPECT_EQ( getFaceVerticesCountAt( mesh, 1 ), 3 );
+  EXPECT_EQ( getFaceVerticesCountAt( mesh, 2 ), 4 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 2, 0 ), 4 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 2, 1 ), 5 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 2, 2 ), 2 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 2, 3 ), 0 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 0 ), 0 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 1 ), 2 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 2 ), 1 );
+
   MDAL_CloseMesh( mesh );
 }
 
