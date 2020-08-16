@@ -352,14 +352,6 @@ TEST( ApiTest, MeshNamesApi )
 
 TEST( ApiTest, MeshCreationApi )
 {
-  MDAL_DriverH driver = MDAL_driverFromName( "Ugrid" );
-  MDAL_MeshH mesh = MDAL_CreateMesh( driver );
-  EXPECT_NE( mesh, nullptr );
-
-  EXPECT_EQ( MDAL_M_vertexCount( mesh ), 0 );
-  EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
-  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 0 );
-
   std::vector<double> coordinates( {0.0, 0.0, 0.0,
                                     1.0, 1.0, 0.0,
                                     2.0, 0.0, 2.0,
@@ -372,12 +364,29 @@ TEST( ApiTest, MeshCreationApi )
                                           4, 5, 2, 0,
                                           0, 2, 1} );
 
+  std::vector<int> faceSizes( {3, 3, 4, 3} );
   std::vector<int> vertexIndices( {0, 1, 3,
                                    1, 2, 3,
                                    4, 5, 2, 0,
                                    0, 2, 1} );
 
-  std::vector<int> faceSizes( {3, 3, 4, 3} );
+  MDAL_MeshH mesh = nullptr;
+  MDAL_M_addVertices( mesh, 6, coordinates.data() );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
+  MDAL_M_addFaces( mesh, 4, faceSizes.data(), invalidVertexIndices.data() );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
+  MDAL_M_setProjection( mesh, "EPSG:32620" );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
+
+  MDAL_DriverH driver = MDAL_driverFromName( "Ugrid" );
+  mesh = MDAL_CreateMesh( driver );
+  EXPECT_NE( mesh, nullptr );
+
+  EXPECT_EQ( MDAL_M_vertexCount( mesh ), 0 );
+  EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
+  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 0 );
+
+
   MDAL_M_addVertices( mesh, 6, coordinates.data() );
   MDAL_M_addFaces( mesh, 4, faceSizes.data(), invalidVertexIndices.data() );
 
@@ -392,6 +401,10 @@ TEST( ApiTest, MeshCreationApi )
   std::string createdMeshFile = tmp_file( "/createdMesh" );
   MDAL_SaveMesh( mesh, createdMeshFile.c_str(), "Ugrid" );
   EXPECT_EQ( MDAL_LastStatus(), None );
+
+  MDAL_M_setProjection( mesh, "EPSG:32620" );
+  EXPECT_EQ( MDAL_LastStatus(), None );
+
   MDAL_CloseMesh( mesh );
 
   mesh = MDAL_LoadMesh( createdMeshFile.c_str() );

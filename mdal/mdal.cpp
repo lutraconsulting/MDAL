@@ -1228,6 +1228,7 @@ void MDAL_M_addVertices( MDAL_MeshH mesh, int vertexCount, double *coordinates )
   if ( !mesh )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+    return;
   }
 
   MDAL::Mesh *m = static_cast<MDAL::Mesh *>( mesh );
@@ -1248,6 +1249,7 @@ void MDAL_M_addFaces( MDAL_MeshH mesh, int faceCount, int *faceSizes, int *verte
   if ( !mesh )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+    return;
   }
 
   MDAL::Mesh *m = static_cast<MDAL::Mesh *>( mesh );
@@ -1273,6 +1275,7 @@ void MDAL_M_setProjection( MDAL_MeshH mesh, const char *projection )
   if ( !mesh )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+    return;
   }
 
   static_cast<MDAL::Mesh *>( mesh )->setSourceCrsFromWKT( std::string( projection ) );
