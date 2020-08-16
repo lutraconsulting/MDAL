@@ -1237,6 +1237,7 @@ void MDAL_M_addVertices( MDAL_MeshH mesh, int vertexCount, double *coordinates )
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not editable" );
   }
 
+  m->datasetGroups.clear();
   m->addVertices( vertexCount, coordinates );
 
 }
@@ -1256,6 +1257,7 @@ void MDAL_M_addFaces( MDAL_MeshH mesh, int faceCount, int *faceSizes, int *verte
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not editable" );
   }
 
+  m->datasetGroups.clear();
   std::shared_ptr<MDAL::Driver> driver = MDAL::DriverManager::instance().driver( m->driverName() );
   int maxVerticesPerFace = std::numeric_limits<int>::max();
   if ( driver )

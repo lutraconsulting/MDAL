@@ -267,6 +267,8 @@ MDAL_EXPORT void MDAL_M_extent( MDAL_MeshH mesh, double *minX, double *maxX, dou
  * \param vertexCount the count of vertices
  * \param coordinates coordinates of vertices (x0,y0,z0,x1,y1,z1,...,xn,yn,zn)
  *
+ * \note to avoid incompatible datasets, adding faces removes all the existing dataset group
+ *
  * \since MDAL 0.7
  */
 MDAL_EXPORT void MDAL_M_addVertices( MDAL_MeshH mesh, int vertexCount, double *coordinates );
@@ -277,6 +279,8 @@ MDAL_EXPORT void MDAL_M_addVertices( MDAL_MeshH mesh, int vertexCount, double *c
  * \param faceCount the count of faces
  * \param faceSizes a pointer to an array of integer containing the number of vertices per each faces
  * \param vertexIndices a pointer to an array of integer containing the indices of vertices of each faces
+ *
+ * \note to avoid incompatible datasets, adding faces removes all the existing dataset group
  *
  * \since MDAL 0.7
  */
