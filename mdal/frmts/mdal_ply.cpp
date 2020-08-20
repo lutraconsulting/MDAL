@@ -136,24 +136,22 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       while ( true );
       elements.push_back( element );
     }
-    
+
     // if end - stop looping
     else if ( startsWith( line, "end_header" ) )
     {
       break;
     }
-    
+
     //if binary - give up
-    
+
     else if ( startsWith( line, "binary" ) )
     {
       MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " only ASCII format PLY files are supported" );
       return nullptr;
     }
 
-    
     // if "comment crs" assume that the rest is the crs data
-    
     else if ( startsWith( line, "comment crs " ) )
     {
       line.erase( 0, 12 );
@@ -165,9 +163,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       }
     }
 
-    
     // probably a comment line
-    
     else
     {
       if ( !std::getline( in, line ) )
@@ -193,8 +189,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   std::vector<std::vector<double>> edgeDatasets;
   std::vector<std::string> eProp2Ds;
 
-
-
   /*
   * load the elements in order
   */
@@ -205,9 +199,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   }
   chunks = split( line, ' ' );
 
-  
   // configure the vectors to hold the data
-  
+
   for ( size_t elid = 0; elid < elements.size(); ++elid )
   {
     MDAL::DriverPly::element element = elements[elid];
@@ -222,7 +215,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
              element.properties[i] != "z" &&
              !element.list[i] )
         {
-          vertexDatasets.push_back( * new std::vector<double>  );
+          vertexDatasets.push_back( * new std::vector<double> );
           vProp2Ds.push_back( element.properties[i] );
         }
       }
@@ -257,9 +250,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       }
     }
 
-    
     // load the data
-    
     for ( size_t i = 0; i < element.size; ++i )
     {
       /*
@@ -285,7 +276,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
         for ( size_t j = 0; j < vProp2Ds.size(); ++j )
         {
           double value = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, vProp2Ds[j] )] );
-          vertexDatasets[j].push_back( value );        }
+          vertexDatasets[j].push_back( value );
+        }
       }
 
       /*
@@ -324,7 +316,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       }
 
       // any other element ignore and move to the next line
-
       if ( !std::getline( in, line ) )
       {
         // if it is supposed to be the last line - don't look further
@@ -337,7 +328,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       chunks = split( line, ' ' );
     }
   }
-
 
   std::unique_ptr< MemoryMesh > mesh(
     new MemoryMesh(
