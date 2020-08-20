@@ -2,7 +2,7 @@
 ![MemCheck Tests](https://github.com/lutraconsulting/MDAL/workflows/MemCheck%20Tests/badge.svg)
 ![Coverage Tests](https://github.com/lutraconsulting/MDAL/workflows/Coverage%20Tests/badge.svg)
 ![OSX Tests](https://github.com/lutraconsulting/MDAL/workflows/OSX%20Tests/badge.svg)
-[![WIN Tests](https://api.travis-ci.org/lutraconsulting/MDAL.svg?branch=master)](https://www.travis-ci.org/lutraconsulting/MDAL)
+![WIN Tests](https://github.com/lutraconsulting/MDAL/workflows/Windows%20Tests/badge.svg)
 
 ![Code Style](https://github.com/lutraconsulting/MDAL/workflows/Code%20Style/badge.svg)
 [![Coverage Status](https://img.shields.io/coveralls/lutraconsulting/MDAL.svg)](https://coveralls.io/github/lutraconsulting/MDAL?branch=master)

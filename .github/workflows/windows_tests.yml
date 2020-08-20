@@ -1,64 +1,28 @@
 name: Windows Tests
 on: [push, pull_request]
-env:
-  QGIS_DEPS_VERSION: 0.4.0
+
 jobs:
   windows_tests:
     runs-on: windows-latest
-
-    strategy:
-      matrix:
-        include:
-          - VS_VERSION: Visual Studio 16
-            VS_VER: 2019
-            SDK: release-1911 # gisinternals SDK version still to 2017
-            MSVC_VER: 1920
-            platform: x86
-
-    env:
-        VS_VERSION: ${{ matrix.VS_VERSION }}
-        VS_VER: ${{ matrix.VS_VER }}
-        SDK: ${{ matrix.SDK }}
-        MSVC_VER: ${{ matrix.MSVC_VER }}
-        platform: ${{ matrix.platform }}
 
     steps:
       - name: Checkout MDAL
         uses: actions/checkout@v2
 
-      - name: Choco help
+      - name: Choco install qgis
         uses: crazy-max/ghaction-chocolatey@v1
         with:
           args: install qgis --version 3.4.3 -y --verbose
 
-      - name: Set environment
+      - name: Move SDK to OSGeo4W folder
         shell: pwsh
         run: |
-            if($env:platform -eq "x86")
-            {
-                $env:ARCHITECTURE="x86"
-                $env:WIN64_ARG=""
-                $env:CMAKE_ARCHITECTURE="Win32"
-            }
-            else
-            {
-                $env:ARCHITECTURE="amd64"
-                $env:WIN64_ARG="WIN64=YES"
-                $env:CMAKE_ARCHITECTURE="x64"
-            }
-            echo "::set-env name=PATH::$env:PATH"
-            echo "::set-env name=ARCHITECTURE::$env:ARCHITECTURE"
-            echo "::set-env name=WIN64_ARG::$env:WIN64_ARG"
-            echo "::set-env name=CMAKE_ARCHITECTURE::$env:CMAKE_ARCHITECTURE"
+            mv "C:\Program Files\QGIS 3.4" "C:\OSGeo4W64"
 
       - name: Set compiler environment
         shell: cmd
         run: |
-            if "%VS_VER%" == "2019" CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=%ARCHITECTURE%
-            echo ::set-env name=PATH::%PATH%
-            echo ::set-env name=INCLUDE::%INCLUDE%
-            echo ::set-env name=LIB::%LIB%
-            echo ::set-env name=LIBPATH::%LIBPATH%
+            CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=x86
 
       - name: Build
         shell: pwsh
@@ -71,18 +35,12 @@ jobs:
                 if ($LastExitCode -ne 0) { exit $LastExitCode }
             }
 
-            mv  "C:\Program Files\QGIS 3.4" "C:\OSGeo4W64"
-            cd $env:GITHUB_WORKSPACE\mdal
+            cd $env:GITHUB_WORKSPACE
             mkdir build
             cd build
-            exec { cmake .. -G "Visual Studio 15 Win64" ${CMAKE_OPTIONS}  -DCMAKE_BUILD_TYPE=Rel  -DENABLE_TESTS=ON  -DNETCDF_PREFIX="${OSGEO4W_DIR}" \
-                           -DHDF5_ROOT="${OSGEO4W_DIR}" \
-                           -DGDAL_DIR="${OSGEO4W_DIR}" \
-                           -DGDAL_LIBRARY="${OSGEO4W_DIR}/lib/gdal_i.lib" \
-                           -DGDAL_INCLUDE_DIR="${OSGEO4W_DIR}/include" \
-                           -DLIBXML2_LIBRARIES="${OSGEO4W_DIR}/lib/libxml2.lib" \
-                           -DLIBXML2_INCLUDE_DIR="${OSGEO4W_DIR}/include/libxml2" }
-            exec { nmake }
+            exec { cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Rel  -DENABLE_TESTS=ON  -DNETCDF_PREFIX="C:\OSGeo4W64" -DHDF5_ROOT="C:\OSGeo4W64" -DGDAL_DIR="C:\OSGeo4W64" -DGDAL_LIBRARY="C:\OSGeo4W64\lib\gdal_i.lib" -DGDAL_INCLUDE_DIR="C:\OSGeo4W64\include" -DLIBXML2_LIBRARIES="C:\OSGeo4W64\lib\libxml2.lib" -DLIBXML2_INCLUDE_DIR="C:\OSGeo4W64\include\libxml2" ..  }
+            exec { cmake --build . }
+
       - name: Run tests
         shell: pwsh
         run: |
@@ -93,9 +51,7 @@ jobs:
                 & $ScriptBlock 2>&1 | ForEach-Object -Process { "$_" }
                 if ($LastExitCode -ne 0) { exit $LastExitCode }
             }
-            $env:SDK_PREFIX="$env:GITHUB_WORKSPACE\sdk\$env:SDK"
-            $env:SDK_BIN="$env:SDK_PREFIX\bin"
-            $env:PATH="$env:GITHUB_WORKSPACE\mdal;$env:$env:SDK_BIN;$env:PATH"
-            $env:DO_NOT_FAIL_ON_RECODE_ERRORS="YES"
-            cd $env:GITHUB_WORKSPACE\mdal\build
+
+            $env:PATH="C:\OSGeo4W64\bin;$env:GITHUB_WORKSPACE\build\tool\Debug\;$env:GITHUB_WORKSPACE\build\mdal\Debug;$env:PATH"
+            cd $env:GITHUB_WORKSPACE\build
             exec { ctest -VV --exclude-regex "mdalinfo_test" }

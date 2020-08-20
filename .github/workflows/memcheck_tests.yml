@@ -24,7 +24,7 @@ jobs:
               -DCMAKE_BUILD_TYPE=Debug \
               -DENABLE_TESTS=ON \
               -DMEMORYCHECK_COMMAND_OPTIONS="--leak-check=yes --show-leak-kinds=definite --gen-suppressions=all --track-origins=yes --num-callers=20 --leak-resolution=high --show-reachable=no" \
-              -DMEMORYCHECK_SUPPRESSIONS_FILE=../scripts/ci/linux/valgrind.supp \
+              -DMEMORYCHECK_SUPPRESSIONS_FILE=../scripts/valgrind.supp \
               -DWITH_POSTGRESQL=TRUE \
               ../MDAL
           make -j`nproc`
