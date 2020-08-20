@@ -1,0 +1,31 @@
+ply
+format ascii 1.0
+comment test file for MDAL
+element vertex 5
+property float64 x
+property float64 y
+property float64 z
+property uint16 red
+property uint16 green
+property uint16 blue
+element face 2
+property list uint8 uint32 vertex_indices
+property uint m
+element edge  6
+property int vertex1
+property int vertex2
+property uchar red_edge
+property uchar green_edge
+property uchar blue_edge
+end_header
+0 0 0 255 255 255
+0 10 0 255 255 0
+10 10 0 255 0 0
+10 0 0 0 0 0
+10 20 10 0 255 255
+4 0 1 2 3 1000
+0 1 0 0 0 
+1 2 0 0 255
+2 3 0 255 255
+3 0 255 255 255
+4 3 255 0 0

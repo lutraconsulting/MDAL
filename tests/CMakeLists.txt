@@ -69,6 +69,7 @@ SET(TESTS
     test_binary_dat.cpp
     test_selafin.cpp
     test_esri_tin.cpp
+    test_ply.cpp
     )
 
 IF(HDF5_FOUND)
