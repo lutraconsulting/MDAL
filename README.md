@@ -132,17 +132,15 @@ make
 
 ### MacOS
 
-First you need to install homebrew and osgeo4mac dependencies, 
-see [osx install script](scripts/ci/osx/install.bash)
+First you need to install [qgis-deps](https://qgis.org/downloads/macos/deps/) dependencies, 
 
 To build, create build system with cmake and make sure you
-use dependencies from homebrew and not system ones
+use dependencies from qgis-deps and not system ones
 
 ```
 mkdir build;cd build
-export CMAKE_PREFIX_PATH=/usr/local/opt/gdal2
-cmake -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
-make
+cmake -DCMAKE_PREFIX_PATH=/opt/QGIS/qgis-deps-0.5.3/stage -DCMAKE_BUILD_TYPE=Debug -GNinja -DENABLE_TESTS=ON ../
+ninja
 ```
 
 ## Tests
