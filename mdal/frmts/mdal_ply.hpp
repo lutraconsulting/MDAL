@@ -1,6 +1,6 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2020 Peter Petrik (zilolv at gmail dot com)
+ Copyright (C) 2020 Runette Software Ltd
 */
 
 #ifndef MDAL_PLY_HPP
@@ -34,9 +34,9 @@ namespace MDAL
       std::shared_ptr<DatasetGroup> addDatasetGroup( MDAL::Mesh *mesh, const std::string &name, const MDAL_DataLocation location, bool isScalar );
       void addDataset( MDAL::DatasetGroup *group, const std::vector<double> &values );
 
-      //
-      // Element specification. holds the name, size and arbitraily long vector of properties
-      //
+      /*
+      * Element specification. holds the name, size and arbitraily long vector of properties
+      */
       struct element
       {
         public:
@@ -46,7 +46,7 @@ namespace MDAL
           std::vector<bool> list; // is the property a list
           size_t size; // element size
 
-          bool operator==( const std::string rhs )
+          bool operator==( const std::string &rhs ) const
           {
             return name == rhs;
           }

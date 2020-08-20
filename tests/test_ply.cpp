@@ -1,6 +1,6 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
+ Copyright (C) 2020 Runette Software Ltd
 */
 #include "gtest/gtest.h"
 
@@ -191,7 +191,7 @@ TEST( MeshPlyTest, all_features )
 }
 
 
-// test the alyternative element order
+// test the alternative element order
 TEST( MeshPlyInvTest, all_features_inv )
 {
   std::string path = test_file( "/ply/all_features_inv.ply" );
@@ -351,6 +351,31 @@ TEST( MeshPlyInvTest, all_features_inv )
 
   value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 255, value );
+  MDAL_CloseMesh( m );
+}
+
+// test the alternative element order
+TEST( MeshPlyFileTest, real_file )
+{
+  std::string path = test_file( "/ply/test_mesh.ply" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "PLY:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  int maxCount = MDAL_M_faceVerticesMaximumCount( m );
+  EXPECT_EQ( maxCount, 3 );
+
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "PLY" );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 38487 );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 76294, f_count );
+
   MDAL_CloseMesh( m );
 }
 

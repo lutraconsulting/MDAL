@@ -20,6 +20,7 @@ docs/build
 .*.swp
 .DS_Store
 .vscode
+.vs
 .idea
 .kdev4/
 .project
