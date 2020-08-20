@@ -39,3 +39,4 @@ qtcreator-build/
 scripts/Debug
 Thumb.db
 cmake-build-debug/*
+Testing/*
