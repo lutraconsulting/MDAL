@@ -392,7 +392,7 @@ TEST( MeshSLFTest, WriteDatasetInNewFile )
 
   //Add dataset
   std::string file = tmp_file( "/selafin_adding_dataset_newFile.slf" ) ;
-  if ( MDAL::fileExists( file ) )
+  if ( fileExists( file ) )
     std::remove( file.c_str() );
 
   addNewScalarDatasetGroup( m, driver, file );
