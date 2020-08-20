@@ -29,6 +29,7 @@ MDAL drivers
    sww
    hecras
    3di
+   ply
    ugrid
    esri-tin
    flo2d
