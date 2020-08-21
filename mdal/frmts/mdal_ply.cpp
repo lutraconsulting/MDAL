@@ -28,7 +28,7 @@
 
 MDAL::DriverPly::DriverPly() :
   Driver( DRIVER_NAME,
-          "Stamford PLY Ascii Mesh File",
+          "Stanford PLY Ascii Mesh File",
           "*.ply",
           Capability::ReadMesh
         )
