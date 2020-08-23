@@ -2,7 +2,7 @@
 ![MemCheck Tests](https://github.com/lutraconsulting/MDAL/workflows/MemCheck%20Tests/badge.svg)
 ![Coverage Tests](https://github.com/lutraconsulting/MDAL/workflows/Coverage%20Tests/badge.svg)
 ![OSX Tests](https://github.com/lutraconsulting/MDAL/workflows/OSX%20Tests/badge.svg)
-[![WIN Tests](https://api.travis-ci.org/lutraconsulting/MDAL.svg?branch=master)](https://www.travis-ci.org/lutraconsulting/MDAL)
+![WIN Tests](https://github.com/lutraconsulting/MDAL/workflows/Windows%20Tests/badge.svg)
 
 ![Code Style](https://github.com/lutraconsulting/MDAL/workflows/Code%20Style/badge.svg)
 [![Coverage Status](https://img.shields.io/coveralls/lutraconsulting/MDAL.svg)](https://coveralls.io/github/lutraconsulting/MDAL?branch=master)
@@ -35,7 +35,7 @@ You can use MDAL to load the following file formats:
 - [Esri TIN](https://en.wikipedia.org/wiki/Esri_TIN): Format for storing elevation data as a triangulated irregular network
 - [SAGA FLOW**](https://gis.stackexchange.com/a/254942/59405): Rasters in the SAGA flow direction format
 - [ADCIRC***](https://adcirc.org): ADCIRC hydrodynamic model results
-- [PLY](https://en.wikipedia.org/wiki/PLY_(file_format)): Stamford Polygon Format also useful for mesh created from PointClouds by [PDAL](https://pdal.io)
+- [PLY](https://en.wikipedia.org/wiki/PLY_(file_format)): Stanford Polygon Format also useful for mesh created from point clouds by [PDAL](https://pdal.io)
 
 \* Data lazy loaded
 
@@ -132,17 +132,15 @@ make
 
 ### MacOS
 
-First you need to install homebrew and osgeo4mac dependencies, 
-see [osx install script](scripts/ci/osx/install.bash)
+First you need to install [qgis-deps](https://qgis.org/downloads/macos/deps/) dependencies, 
 
 To build, create build system with cmake and make sure you
-use dependencies from homebrew and not system ones
+use dependencies from qgis-deps and not system ones
 
 ```
 mkdir build;cd build
-export CMAKE_PREFIX_PATH=/usr/local/opt/gdal2
-cmake -DCMAKE_BUILD_TYPE=Rel -DENABLE_TESTS=ON ..
-make
+cmake -DCMAKE_PREFIX_PATH=/opt/QGIS/qgis-deps-0.5.3/stage -DCMAKE_BUILD_TYPE=Debug -GNinja -DENABLE_TESTS=ON ../
+ninja
 ```
 
 ## Tests

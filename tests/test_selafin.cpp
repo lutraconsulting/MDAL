@@ -344,9 +344,6 @@ static void testVectorDatasetGroupAdded( MDAL_DatasetGroupH r )
 TEST( MeshSLFTest, WriteDatasetInExistingFile )
 {
   std::string path = test_file( "/slf/example_res_fr.slf" );
-  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
-  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
-  ASSERT_NE( m, nullptr );
 
   MDAL_DriverH driver = MDAL_driverFromName( "SELAFIN" );
   ASSERT_NE( driver, nullptr );
@@ -361,7 +358,6 @@ TEST( MeshSLFTest, WriteDatasetInExistingFile )
   addNewScalarDatasetGroup( meshAdded, driver, file );
   addNewVectorDatasetGroup( meshAdded, driver, file );
   MDAL_CloseMesh( meshAdded );
-  MDAL_CloseMesh( m );
 
   meshAdded = MDAL_LoadMesh( file.c_str() );
   ASSERT_NE( meshAdded, nullptr );
@@ -392,7 +388,7 @@ TEST( MeshSLFTest, WriteDatasetInNewFile )
 
   //Add dataset
   std::string file = tmp_file( "/selafin_adding_dataset_newFile.slf" ) ;
-  if ( MDAL::fileExists( file ) )
+  if ( fileExists( file ) )
     std::remove( file.c_str() );
 
   addNewScalarDatasetGroup( m, driver, file );

@@ -267,6 +267,8 @@ namespace MDAL
       std::string crs() const;
       size_t faceVerticesMaximumCount() const;
 
+      virtual void closeSource() {};
+
     private:
       const std::string mDriverName;
       size_t mFaceVerticesMaximumCount = 0; //typically 3 or 4, sometimes up to 9
