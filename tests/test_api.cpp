@@ -378,6 +378,10 @@ TEST( ApiTest, MeshCreationApi )
   MDAL_M_setProjection( mesh, "EPSG:32620" );
   EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
 
+  mesh = MDAL_CreateMesh( nullptr );
+  EXPECT_EQ( mesh, nullptr );
+  EXPECT_EQ( MDAL_LastStatus(), Err_MissingDriver );
+
   MDAL_DriverH driver = MDAL_driverFromName( "Ugrid" );
   mesh = MDAL_CreateMesh( driver );
   EXPECT_NE( mesh, nullptr );

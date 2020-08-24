@@ -199,8 +199,8 @@ void MDAL::MemoryMesh::addFaces( size_t faceCount, size_t driverMaxVerticesPerFa
       return;
     }
 
-    if ( faceSize > mFaceVerticesMaximumCount )
-      mFaceVerticesMaximumCount = faceSize;
+    if ( faceSize > faceVerticesMaximumCount() )
+      setFaceVerticesMaximumCount( faceSize );
 
     Face face( faceSize );
     for ( size_t i = 0; i < faceSize; ++i )

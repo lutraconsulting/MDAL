@@ -1217,6 +1217,12 @@ const char *MDAL_DR_writeDatasetsSuffix( MDAL_DriverH driver )
 
 MDAL_MeshH MDAL_CreateMesh( MDAL_DriverH driver )
 {
+  if ( !driver )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
+    return nullptr;
+  }
+
   MDAL::Driver *d =  static_cast<MDAL::Driver *>( driver );
   return new MDAL::MemoryMesh( d->name(),
                                0, // empty mesh, so faceVerticesMaximumCount=0, this attribute will be updated if faces are added
@@ -1225,6 +1231,7 @@ MDAL_MeshH MDAL_CreateMesh( MDAL_DriverH driver )
 
 void MDAL_M_addVertices( MDAL_MeshH mesh, int vertexCount, double *coordinates )
 {
+  MDAL::Log::resetLastStatus();
   if ( !mesh )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
@@ -1240,7 +1247,6 @@ void MDAL_M_addVertices( MDAL_MeshH mesh, int vertexCount, double *coordinates )
 
   m->datasetGroups.clear();
   m->addVertices( vertexCount, coordinates );
-
 }
 
 void MDAL_M_addFaces( MDAL_MeshH mesh, int faceCount, int *faceSizes, int *vertexIndices )
@@ -1266,7 +1272,6 @@ void MDAL_M_addFaces( MDAL_MeshH mesh, int faceCount, int *faceSizes, int *verte
     maxVerticesPerFace = driver->faceVerticesMaximumCount();
 
   m->addFaces( faceCount, maxVerticesPerFace, faceSizes, vertexIndices );
-
 }
 
 void MDAL_M_setProjection( MDAL_MeshH mesh, const char *projection )

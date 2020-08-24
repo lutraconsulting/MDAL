@@ -378,6 +378,11 @@ size_t MDAL::Mesh::faceVerticesMaximumCount() const
   return mFaceVerticesMaximumCount;
 }
 
+void MDAL::Mesh::setFaceVerticesMaximumCount( const size_t &faceVerticesMaximumCount )
+{
+  mFaceVerticesMaximumCount = faceVerticesMaximumCount;
+}
+
 void MDAL::Mesh::addVertices( size_t vertexCount, double *coordinates )
 {
   MDAL_UNUSED( vertexCount );
