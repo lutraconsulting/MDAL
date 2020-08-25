@@ -77,6 +77,7 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.10.3  | 0.4.2   | |
 | 3.12.0  | 0.5.1   |  [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158) |
 | 3.14.0  | 0.6.1   |  [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164) | 
+| 3.16.0  | 0.7.0   | Mesh creation |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
