@@ -115,6 +115,10 @@ TEST( MeshSLFTest, MalpassetGeometry )
   value = getValue( ds, 9571 );
   EXPECT_DOUBLE_EQ( 7.5623664855957, value );
 
+  std::vector<double> newVertex{10, 10, 10};
+  MDAL_M_addVertices( m, 1, newVertex.data() );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
+
   MDAL_CloseMesh( m );
 }
 

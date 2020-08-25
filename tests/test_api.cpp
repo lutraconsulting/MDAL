@@ -350,6 +350,89 @@ TEST( ApiTest, MeshNamesApi )
   EXPECT_EQ( MDAL_MeshNames( nullptr ), nullptr );
 }
 
+TEST( ApiTest, MeshCreationApi )
+{
+  std::vector<double> coordinates( {0.0, 0.0, 0.0,
+                                    1.0, 1.0, 0.0,
+                                    2.0, 0.0, 2.0,
+                                    1.0, 2.0, 3.0,
+                                    0.0, -2.0, 4.0,
+                                    2.0, -2.0, 4.0} );
+
+  std::vector<int> invalidVertexIndices( {0, 7, 3,
+                                          1, 2, 3,
+                                          4, 5, 2, 0,
+                                          0, 2, 1} );
+
+  std::vector<int> faceSizes( {3, 3, 4, 3} );
+  std::vector<int> vertexIndices( {0, 1, 3,
+                                   1, 2, 3,
+                                   4, 5, 2, 0,
+                                   0, 2, 1} );
+
+  MDAL_MeshH mesh = nullptr;
+  MDAL_M_addVertices( mesh, 6, coordinates.data() );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
+  MDAL_M_addFaces( mesh, 4, faceSizes.data(), invalidVertexIndices.data() );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
+  MDAL_M_setProjection( mesh, "EPSG:32620" );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
+
+  mesh = MDAL_CreateMesh( nullptr );
+  EXPECT_EQ( mesh, nullptr );
+  EXPECT_EQ( MDAL_LastStatus(), Err_MissingDriver );
+
+  MDAL_DriverH driver = MDAL_driverFromName( "Ugrid" );
+  mesh = MDAL_CreateMesh( driver );
+  EXPECT_NE( mesh, nullptr );
+
+  EXPECT_EQ( MDAL_M_vertexCount( mesh ), 0 );
+  EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
+  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 0 );
+
+
+  MDAL_M_addVertices( mesh, 6, coordinates.data() );
+  MDAL_M_addFaces( mesh, 4, faceSizes.data(), invalidVertexIndices.data() );
+
+  EXPECT_EQ( MDAL_LastStatus(), Err_InvalidData );
+  EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
+
+  MDAL_M_addFaces( mesh, 4, faceSizes.data(), vertexIndices.data() );
+  EXPECT_EQ( MDAL_M_vertexCount( mesh ), 6 );
+  EXPECT_EQ( MDAL_M_faceCount( mesh ), 4 );
+  EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 4 );
+
+  std::string createdMeshFile = tmp_file( "/createdMesh" );
+  MDAL_SaveMesh( mesh, createdMeshFile.c_str(), "Ugrid" );
+  EXPECT_EQ( MDAL_LastStatus(), None );
+
+  MDAL_M_setProjection( mesh, "EPSG:32620" );
+  EXPECT_EQ( MDAL_LastStatus(), None );
+
+  MDAL_CloseMesh( mesh );
+
+  mesh = MDAL_LoadMesh( createdMeshFile.c_str() );
+  EXPECT_EQ( MDAL_M_vertexCount( mesh ), 6 );
+  EXPECT_EQ( MDAL_M_faceCount( mesh ), 4 );
+
+  EXPECT_EQ( getVertexXCoordinatesAt( mesh, 1 ), 1.0 );
+  EXPECT_EQ( getVertexYCoordinatesAt( mesh, 1 ), 1.0 );
+  EXPECT_EQ( getVertexXCoordinatesAt( mesh, 3 ), 1.0 );
+  EXPECT_EQ( getVertexYCoordinatesAt( mesh, 3 ), 2.0 );
+
+  EXPECT_EQ( getFaceVerticesCountAt( mesh, 1 ), 3 );
+  EXPECT_EQ( getFaceVerticesCountAt( mesh, 2 ), 4 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 2, 0 ), 4 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 2, 1 ), 5 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 2, 2 ), 2 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 2, 3 ), 0 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 0 ), 0 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 1 ), 2 );
+  EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 2 ), 1 );
+
+  MDAL_CloseMesh( mesh );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
