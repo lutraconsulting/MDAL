@@ -77,7 +77,7 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.10.3  | 0.4.2   | |
 | 3.12.0  | 0.5.1   |  [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158) |
 | 3.14.0  | 0.6.1   |  [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164) | 
-| 3.16.0  | 0.7.0   | Mesh creation |
+| 3.16.0  | 0.7.0   | Mesh creation, PLY format |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
@@ -102,6 +102,7 @@ To be able to accept a pull request, please verify that:
 - no dead-code (e.g. unused functions) or commented out code
 - all new code or new dependencies (e.g. libraries) have GPLv2 compatible license
 - all tests pass
+- the code if properly formated (run `./scripts/check_all.bash`)
 
 Please respect our [Contributor Covenant Code of Conduct](code_of_conduct.md)
 
@@ -111,9 +112,21 @@ Please respect our [Contributor Covenant Code of Conduct](code_of_conduct.md)
 
 For 64-bit version:
 
-* Install Microsoft Visual Studio 2017
+* Install Microsoft Visual Studio 16 2019
 * Install OSGeo4W (64bit) to C:\OSGeo4W64
-* see [win build script](scripts/ci/windows/build.bash)
+* Run `C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat -arch=x86` to initialize Visual Studio environment (or open VS terminal)
+* Create build directory `mkdir build;cd build`
+* Run 
+```
+cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Rel  
+-DENABLE_TESTS=ON  -DNETCDF_PREFIX="C:\OSGeo4W64" 
+-DHDF5_ROOT="C:\OSGeo4W64" -DGDAL_DIR="C:\OSGeo4W64" 
+-DGDAL_LIBRARY="C:\OSGeo4W64\lib\gdal_i.lib" 
+-DGDAL_INCLUDE_DIR="C:\OSGeo4W64\include" 
+-DLIBXML2_LIBRARIES="C:\OSGeo4W64\lib\libxml2.lib" -DLIBXML2_INCLUDE_DIR="C:\OSGeo4W64\include\libxml2" ..
+```
+* Build the executables `cmake --build .`
+* Run the tests `ctest -VV`
 
 ### Linux
 
