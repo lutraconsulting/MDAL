@@ -24,22 +24,6 @@
 
 #define INVALID_INDEX std::numeric_limits<size_t>::max()
 
-struct VertexCompare
-{
-  bool operator()( const MDAL::Vertex &lhs, const MDAL::Vertex &rhs ) const
-  {
-    double resX = 0;
-    resX += lhs.x * 1000000;
-    resX += lhs.y * 1000;
-
-    double resY = 0;
-    resY += rhs.x * 1000000;
-    resY += rhs.y * 1000;
-
-    return resX < resY;
-  }
-};
-
 static std::string fileNameFromDir( const std::string &mainFileName, const std::string &name )
 {
   std::string dir = MDAL::dirName( mainFileName );
