@@ -511,7 +511,7 @@ void MDAL::DriverFlo2D::parseFPLAINFile( std::vector<double> &elevations,
         {
           if ( i % 2 == 1 ) //North or South neighbor
             cellSize = fabs( cells[neighborCell - 1].y - cells[cc_i].y );
-          else // east or West
+          else // East or West
             cellSize = fabs( cells[neighborCell - 1].x - cells[cc_i].x );
 
           cellSizeCalculated = true;
