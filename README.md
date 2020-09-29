@@ -15,6 +15,10 @@ Mesh Data Abstraction Library
 - see [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158)
 - see [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164)
 
+## Mailing List
+
+To discuss development and usage, please use [mdal-developer@lists.osgeo.org](https://lists.osgeo.org/mailman/listinfo/mdal-developer)
+
 ## Supported Formats
 
 You can use MDAL to load the following file formats:
@@ -77,7 +81,7 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.10.3  | 0.4.2   | |
 | 3.12.0  | 0.5.1   |  [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158) |
 | 3.14.0  | 0.6.1   |  [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164) | 
-| 3.16.0  | 0.7.0   | Mesh creation, PLY format |
+| 3.16.0  | 0.7.1   | Mesh creation, PLY format |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
