@@ -1,6 +1,12 @@
 # MDAL - Mesh Data Abstraction Library (MIT License)
 # Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
 
+IF (HDF5_FOUND)
+  ADD_COMPILE_DEFINITIONS(HDF5=1)
+ELSE (HDF5_FOUND)
+
+ENDIF (HDF5_FOUND)
+
 FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(GTest)
 
