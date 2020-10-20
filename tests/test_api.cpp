@@ -328,28 +328,28 @@ TEST( ApiTest, MeshNamesApi )
   };
 #if HDF5 == 1
   testScenarios.push_back(
-    {
-      test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ),
-      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
-    }
+  {
+    test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ),
+    "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
+  }
   );
   testScenarios.push_back(
-    {
-      test_file( "/flo2d/BarnyHDF5/TIMP.HDF5" ),
-      ""
-    }
+  {
+    test_file( "/flo2d/BarnyHDF5/TIMP.HDF5" ),
+    ""
+  }
   );
   testScenarios.push_back(
-    {
-      "\"\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"\"",
-      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
-    }
+  {
+    "\"\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"\"",
+    "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
+  }
   );
   testScenarios.push_back(
-    {
-      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"",
-      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
-    }
+  {
+    "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"",
+    "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
+  }
   );
 #endif
   for ( const std::pair<std::string, std::string> &test : testScenarios )
