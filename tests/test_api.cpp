@@ -328,7 +328,6 @@ TEST( ApiTest, MeshNamesApi )
     },
   };
 #ifdef HAVE_HDF5
-  std::cout << "USING HDF5";
   testScenarios.push_back(
   {
     test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ),
