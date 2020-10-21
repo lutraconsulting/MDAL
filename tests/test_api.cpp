@@ -9,6 +9,7 @@
 //mdal
 #include "mdal.h"
 #include "mdal_testutils.hpp"
+#include "mdal_config.hpp"
 
 TEST( ApiTest, GlobalApi )
 {
@@ -300,15 +301,7 @@ TEST( ApiTest, MeshNamesApi )
       "Ugrid:\"" + test_file( "/ugrid/1dtest/dflow1d_map.nc" ) + "\":" + "mesh1d"
     },
     {
-      test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ),
-      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
-    },
-    {
       "Invalid_File_Path",
-      ""
-    },
-    {
-      test_file( "/flo2d/BarnyHDF5/TIMP.HDF5" ),
       ""
     },
     {
@@ -333,16 +326,33 @@ TEST( ApiTest, MeshNamesApi )
       "",
       ""
     },
-    {
-      "\"\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"\"",
-      "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
-    },
-    {
-      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"",
-      "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
-    },
   };
-
+#ifdef HAVE_HDF5
+  testScenarios.push_back(
+  {
+    test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ),
+    "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
+  }
+  );
+  testScenarios.push_back(
+  {
+    test_file( "/flo2d/BarnyHDF5/TIMP.HDF5" ),
+    ""
+  }
+  );
+  testScenarios.push_back(
+  {
+    "\"\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"\"",
+    "FLO2D:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\":" + "mesh2d"
+  }
+  );
+  testScenarios.push_back(
+  {
+    "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\"",
+    "2DM:\"" + test_file( "/flo2d/BarnHDF5/TIMDEP.HDF5" ) + "\""
+  }
+  );
+#endif
   for ( const std::pair<std::string, std::string> &test : testScenarios )
   {
     EXPECT_EQ( MDAL_MeshNames( test.first.c_str() ), test.second );
