@@ -181,3 +181,10 @@ cd MDAL
 ln -s ./scripts/mdal_astyle.bash .git/hooks/pre-commit
 ```
 
+### Windows
+
+On Windows, the code can be formatted using the following :
+```
+cd MDAL
+powershell -ExecutionPolicy BYPASS scripts\check_all.ps1
+``` 
