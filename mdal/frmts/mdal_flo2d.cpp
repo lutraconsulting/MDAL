@@ -833,8 +833,8 @@ void MDAL::DriverFlo2D::createMesh2d( const std::vector<CellCenter> &cells, cons
 
     for ( size_t position = 0; position < 4; ++position )
     {
-      size_t xPos=0;
-      size_t yPos=0;
+      size_t xPos = 0;
+      size_t yPos = 0;
 
       switch ( position )
       {

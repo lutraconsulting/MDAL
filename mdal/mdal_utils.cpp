@@ -121,7 +121,7 @@ size_t MDAL::toSizeT( const char &str )
 
 size_t MDAL::toSizeT( const double value )
 {
-  return static_cast<size_t>(value);
+  return static_cast<size_t>( value );
 }
 
 int MDAL::toInt( const size_t value )
