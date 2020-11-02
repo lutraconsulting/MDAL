@@ -7,6 +7,7 @@
 ![Code Style](https://github.com/lutraconsulting/MDAL/workflows/Code%20Style/badge.svg)
 [![Coverage Status](https://img.shields.io/coveralls/lutraconsulting/MDAL.svg)](https://coveralls.io/github/lutraconsulting/MDAL?branch=master)
 [![Docs Build](https://dev.azure.com/lutraconsulting/MDAL/_apis/build/status/lutraconsulting.MDAL?branchName=master)](https://dev.azure.com/lutraconsulting/MDAL/_build/latest?definitionId=1&branchName=master)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/mdal/badges/version.svg)](https://anaconda.org/conda-forge/mdal)
 
 # MDAL
 Mesh Data Abstraction Library
@@ -63,6 +64,23 @@ You can use MDAL to load the following file formats:
 | Selafin   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
 | SWW   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
 | PLY   | READ-ONLY | N/A | READ-ONLY | READ-ONLY | N/A | N/A |
+
+# Standalone Installation
+
+MDAL can be installed as a stand-alone package (i.e. outside of QGIS) using [conda](https://anaconda.org/conda-forge/mdal).
+
+The package can installed by running :
+
+```
+conda install -c conda-forge mdal
+```
+
+This package provides the MDAL ABI through the mdal shared object( i.e. mdal.dll, libmdal.dylib or libmdal.so) and the mdalinfo CLI.
+
+> A friendly note about versions. The conda package is usually targetted at
+> the latest version of GDAL on conda-forge. This is usually a later version 
+> than used by QGIS. Therefore, there may be some subtle differences in
+> behaviour when loading e.g. GRIB files.
 
 # Versioning and integration in QGIS
 
