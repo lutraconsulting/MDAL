@@ -29,7 +29,7 @@ namespace MDAL
    * are stored in single
    *   3D arrays (time, x, y) for vector datasets
    *   2D arrays (time, x) for scalar datasets
-   *   2D arrays (time, active) for active flags
+   *   2D arrays (time, active) for active flags (supported by default)
    */
   class XmdfDataset: public Dataset2D
   {
@@ -92,14 +92,21 @@ namespace MDAL
         const HdfGroup &rootGroup,
         const std::string &groupName,
         size_t vertexCount,
-        size_t faceCount );
+        size_t faceCount ) const;
 
       void addDatasetGroupsFromXmdfGroup(
         DatasetGroups &groups,
         const HdfGroup &rootGroup,
         const std::string &nameSuffix,
         size_t vertexCount,
-        size_t faceCount );
+        size_t faceCount ) const;
+
+      void readGroupsTree( HdfFile &file,
+                           const std::string &name,
+                           MDAL::DatasetGroups &groups,
+                           size_t vertexCount,
+                           size_t faceCount ) const;
+
   };
 
 } // namespace MDAL
