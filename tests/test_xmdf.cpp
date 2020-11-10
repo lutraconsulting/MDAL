@@ -7,6 +7,7 @@
 
 //mdal
 #include "mdal.h"
+#include "mdal_utils.hpp"
 #include "mdal_testutils.hpp"
 
 TEST( MeshXmdfTest, MissingMesh )
@@ -297,6 +298,161 @@ TEST( MeshXmdfTest, withReferenceTime )
 
   MDAL_CloseMesh( m );
 }
+
+TEST( MeshXmdfTest, HydroAs2D )
+{
+  // XMDF created with various TUFLOW utilities
+  std::string path = test_file( "/xmdf/hydro-as-2d/hydro_as-2d.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  ASSERT_EQ( MDAL_M_vertexCount( m ), 300 );
+  ASSERT_EQ( MDAL_M_faceCount( m ), 245 );
+
+  path = test_file( "/xmdf/hydro-as-2d/veloc.dat" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+
+  EXPECT_EQ( MDAL_M_datasetGroupCount( m ), 3 );
+
+  path = test_file( "/xmdf/hydro-as-2d/results.h5" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  ASSERT_EQ( MDAL_M_datasetGroupCount( m ), 9 );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "EH" ), std::string( name ) );
+  EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 2 );
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 300, count );
+  double val = getValue( ds, 100 );
+  EXPECT_TRUE( MDAL::equals( val, 0.0773996, 0.00001 ) );
+
+
+  g = MDAL_M_datasetGroup( m, 4 );
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "EH_abs" ), std::string( name ) );
+  EXPECT_EQ( MDAL_G_dataLocation( g ), DataOnVertices );
+  EXPECT_EQ( MDAL_G_datasetCount( g ), 4 );
+  EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
+  ds = MDAL_G_dataset( g, 2 );
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 300, count );
+  val = getValue( ds, 150 );
+  EXPECT_TRUE( MDAL::equals( val, 1.09848, 0.0001 ) );
+
+
+  g = MDAL_M_datasetGroup( m, 5 );
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "FT" ), std::string( name ) );
+  EXPECT_EQ( MDAL_G_dataLocation( g ), DataOnVertices );
+  EXPECT_EQ( MDAL_G_datasetCount( g ), 4 );
+  EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
+  ds = MDAL_G_dataset( g, 2 );
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 300, count );
+  val = getValue( ds, 150 );
+  EXPECT_TRUE( MDAL::equals( val, 0.0695, 0.00001 ) );
+
+  g = MDAL_M_datasetGroup( m, 6 );
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Froude" ), std::string( name ) );
+  EXPECT_EQ( MDAL_G_dataLocation( g ), DataOnVertices );
+  EXPECT_EQ( MDAL_G_datasetCount( g ), 4 );
+  EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
+  ds = MDAL_G_dataset( g, 2 );
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 300, count );
+  val = getValue( ds, 150 );
+  EXPECT_TRUE( MDAL::equals( val, 0.587074, 0.00001 ) );
+
+  g = MDAL_M_datasetGroup( m, 7 );
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "INT" ), std::string( name ) );
+  EXPECT_EQ( MDAL_G_dataLocation( g ), DataOnVertices );
+  EXPECT_EQ( MDAL_G_datasetCount( g ), 4 );
+  EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
+  ds = MDAL_G_dataset( g, 2 );
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 300, count );
+  val = getValue( ds, 150 );
+  EXPECT_TRUE( MDAL::equals( val, 0.0695, 0.00001 ) );
+
+  g = MDAL_M_datasetGroup( m, 8 );
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "q_spez" ), std::string( name ) );
+  EXPECT_EQ( MDAL_G_dataLocation( g ), DataOnVertices );
+  EXPECT_EQ( MDAL_G_datasetCount( g ), 4 );
+  EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
+  ds = MDAL_G_dataset( g, 2 );
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 300, count );
+  val = getValue( ds, 150 );
+  EXPECT_TRUE( MDAL::equals( val, 0.0336903, 0.00001 ) );
+
+  path = test_file( "/xmdf/hydro-as-2d/veloc.h5" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  ASSERT_EQ( MDAL_M_datasetGroupCount( m ), 11 );
+  g = MDAL_M_datasetGroup( m, 9 );
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "veloc_HYDRO_AS-2D" ), std::string( name ) );
+  EXPECT_EQ( MDAL_G_dataLocation( g ), DataOnVertices );
+  EXPECT_EQ( MDAL_G_datasetCount( g ), 4 );
+  EXPECT_FALSE( MDAL_G_hasScalarData( g ) );
+  EXPECT_FALSE( hasReferenceTime( g ) );
+  ds = MDAL_G_dataset( g, 2 );
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 300, count );
+  double valX = getValueX( ds, 200 );
+  double valY = getValueY( ds, 200 );
+  EXPECT_TRUE( MDAL::equals( valX, 0.253106, 0.00001 ) );
+  EXPECT_TRUE( MDAL::equals( valY, 0.347786, 0.00001 ) );
+
+  g = MDAL_M_datasetGroup( m, 10 );
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "veloc_magnitudeHYDRO_AS-2D" ), std::string( name ) );
+  EXPECT_EQ( MDAL_G_dataLocation( g ), DataOnVertices );
+  EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+  EXPECT_EQ( MDAL_G_datasetCount( g ), 4 );
+  EXPECT_FALSE( hasReferenceTime( g ) );
+  ds = MDAL_G_dataset( g, 2 );
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 300, count );
+  val = getValue( ds, 180 );
+  EXPECT_TRUE( MDAL::equals( val, 0.474482, 0.00001 ) );
+
+  MDAL_CloseMesh( m );
+}
+
 
 int main( int argc, char **argv )
 {
