@@ -301,7 +301,6 @@ TEST( MeshXmdfTest, withReferenceTime )
 
 TEST( MeshXmdfTest, HydroAs2D )
 {
-  // XMDF created with various TUFLOW utilities
   std::string path = test_file( "/xmdf/hydro-as-2d/hydro_as-2d.2dm" );
   EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );

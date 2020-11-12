@@ -28,7 +28,7 @@ You can use MDAL to load the following file formats:
 - [XMS TIN](https://www.xmswiki.com/wiki/TIN_Files): Mesh TIN representation in ASCII format
 - [NetCDF](https://en.wikipedia.org/wiki/NetCDF): Generic format for scientific data. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
 - [GRIB](https://en.wikipedia.org/wiki/GRIB): Format commonly used in meteorology. Examples can be found [here](http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/)
-- [XMDF*](https://en.wikipedia.org/wiki/XMDF): As an example, hydraulic outputs from TUFLOW modelling package
+- [XMDF*](https://en.wikipedia.org/wiki/XMDF): Outputs of various hydrodynamic modelling packages (e.g. TUFLOW, HYDRO_AS-2D)
 - [XDMF*](http://xdmf.org/index.php/Main_Page): As an example, hydraulic outputs from BASEMENT 3.x modelling package
 - [DAT](http://www.xmswiki.com/wiki/SMS:ASCII_Dataset_Files_*.dat): Outputs of various hydrodynamic modelling packages (e.g. BASEMENT, HYDRO_AS-2D, TUFLOW)
 - [3Di*](http://www.3di.nu): 3Di modelling package format based on [CF Conventions](http://cfconventions.org)
