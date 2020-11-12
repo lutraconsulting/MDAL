@@ -221,7 +221,6 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
   std::vector<std::string> gDataNames = rootGroup.datasets();
   if ( !MDAL::contains( gDataNames, "Times" ) ||
        !MDAL::contains( gDataNames, "Values" ) ||
-//       !MDAL::contains( gDataNames, "Active" ) ||
        !MDAL::contains( gDataNames, "Mins" ) ||
        !MDAL::contains( gDataNames, "Maxs" ) )
   {
