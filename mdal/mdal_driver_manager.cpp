@@ -12,6 +12,7 @@
 #include "frmts/mdal_selafin.hpp"
 #include "frmts/mdal_esri_tin.hpp"
 #include "frmts/mdal_ply.hpp"
+#include "frmts/mdal_dynamic_driver.hpp"
 #include "mdal_utils.hpp"
 
 #ifdef HAVE_HDF5
@@ -240,5 +241,40 @@ MDAL::DriverManager::DriverManager()
 #if defined HAVE_HDF5 && defined HAVE_XML
   mDrivers.push_back( std::make_shared<MDAL::DriverXdmf>() );
 #endif
+
+  // TODO : defined in cmake a variable to define the need to load dynamic driver
+  loadDynamicDrivers();
+}
+
+
+void MDAL::DriverManager::loadDynamicDrivers()
+{
+  char *externalDriverPath = nullptr;
+#ifdef WIN32
+  size_t requiredSize = 0;
+  getenv_s( &requiredSize, NULL, 0, "MDAL_DRIVER_PATH" );
+  if ( requiredSize != 0 )
+  {
+    externalDriverPath = ( char * )malloc( requiredSize * sizeof( char ) );
+    getenv_s( &requiredSize, externalDriverPath, requiredSize, "MDAL_DRIVER_PATH" );
+  }
+  else
+    externalDriverPath = nullptr;
+#else
+  externalDriverPath = getenv( "MDAL_DRIVER_PATH" );
+#endif
+
+  if ( externalDriverPath == nullptr )
+    return;
+
+  std::vector<std::string> libList = MDAL::Library::libraryFilesInDir( externalDriverPath );
+
+  for ( const std::string &libFile : libList )
+  {
+    std::shared_ptr<MDAL::Driver> driver( MDAL::DriverDynamic::create( externalDriverPath + libFile ) );
+    if ( driver )
+      mDrivers.push_back( driver );
+  }
+
 }
 
