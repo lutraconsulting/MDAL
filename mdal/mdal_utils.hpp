@@ -13,6 +13,16 @@
 #include <sstream>
 #include <fstream>
 #include <cmath>
+#include <functional>
+
+#if defined (WIN32)
+#include <windows.h>
+#undef min
+#undef max
+#else
+#include <dlfcn.h>
+#include <dirent.h>
+#endif
 
 #include <algorithm>
 
@@ -224,6 +234,76 @@ namespace MDAL
     MDAL_Status status;
     std::string mssg;
     std::string driver;
+  };
+
+  //! Class to handle dynamic library. The loaded library is implicity shared when copying this object
+  class Library
+  {
+    public:
+      //! Creater a instance from a library file
+      Library( std::string libraryFile );
+      ~Library();
+      Library( const Library &other );
+      Library &operator=( const Library &other );
+
+      //! Returns whether the library is valid after loading the file if needed
+      bool isValid();
+
+      //! Returns a list of library fil in the folder \a dirPath
+      static std::vector<std::string> libraryFilesInDir( const std::string &dirPath );
+
+      /**
+       * Returns a function from a symbol name. Caller needs to define what are the types of the arguments and of the returned value :
+       * <Type of the returned Value, Type of arg1, Type of arg2, ...>
+       */
+      template<typename T, typename ... Ts>
+      std::function<T( Ts ... args )> getSymbol( const std::string &symbolName )
+      {
+        if ( !isValid() )
+          return std::function<T( Ts ... args )>();
+#ifdef WIN32
+        FARPROC proc = GetProcAddress( d->mLibrary, symbolName.c_str() );
+
+        if ( !proc )
+          return std::function<T( Ts ... args )>();
+
+        std::function<T( Ts ... args )> symbol = reinterpret_cast<T( * )( Ts ... args )>( proc );
+#else
+        std::function<T( Ts ... args )> symbol =
+          reinterpret_cast<T( * )( Ts ... args )>( dlsym( d->mLibrary, symbolName.c_str() ) );
+
+#if (defined(__APPLE__) && defined(__MACH__))
+        /* On mach-o systems, C symbols have a leading underscore and depending
+         * on how dlcompat is configured it may or may not add the leading
+         * underscore.  If dlsym() fails, add an underscore and try again.
+         */
+        if ( symbol == nullptr )
+        {
+          char withUnder[256] = {};
+          snprintf( withUnder, sizeof( withUnder ), "_%s", symbolName.c_str() );
+          std::function<T( Ts ... args )> symbol = reinterpret_cast<T( * )( Ts ... args )>( dlsym( d->mLibrary, withUnder ) );
+        }
+#endif
+#endif
+        return symbol;
+      }
+
+
+    private:
+      struct Data
+      {
+#ifdef  WIN32
+        HINSTANCE  mLibrary = nullptr;
+#else
+        void *mLibrary = nullptr;
+#endif
+        mutable int mRef = 1;
+        std::string mLibraryFile;
+      };
+
+      Data *d;
+
+      bool loadLibrary();
   };
 } // namespace MDAL
 #endif //MDAL_UTILS_HPP

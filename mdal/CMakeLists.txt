@@ -10,6 +10,7 @@ SET(MDAL_SOURCES
   mdal_logger.cpp
   mdal_memory_data_model.cpp
   frmts/mdal_driver.cpp
+  frmts/mdal_dynamic_driver.cpp
   frmts/mdal_2dm.cpp
   frmts/mdal_xms_tin.cpp
   frmts/mdal_ascii_dat.cpp
@@ -28,6 +29,7 @@ SET(MDAL_HEADERS
   mdal_logger.hpp
   mdal_memory_data_model.hpp
   frmts/mdal_driver.hpp
+  frmts/mdal_dynamic_driver.hpp
   frmts/mdal_2dm.hpp
   frmts/mdal_xms_tin.hpp
   frmts/mdal_ascii_dat.hpp

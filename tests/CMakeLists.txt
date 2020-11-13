@@ -41,6 +41,8 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/mdal/api)
 #########################################################################
 #########################################################################
 
+ADD_DEFINITIONS(-DDRIVERS_PATH="${CMAKE_BINARY_DIR}/tools/externaldriver/")
+
 INCLUDE_DIRECTORIES(  
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -61,6 +63,7 @@ MACRO (ADD_MDAL_TEST TESTSRC)
   ADD_TEST(${TESTNAME} ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME})
 ENDMACRO (ADD_MDAL_TEST)
 
+
 SET(TESTS
     test_2dm.cpp
     test_xms_tin.cpp
@@ -70,6 +73,7 @@ SET(TESTS
     test_selafin.cpp
     test_esri_tin.cpp
     test_ply.cpp
+    test_dynamic_driver.cpp
     )
 
 IF(HDF5_FOUND)

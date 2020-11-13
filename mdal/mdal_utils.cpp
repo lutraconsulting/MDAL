@@ -936,3 +936,103 @@ std::string MDAL::buildAndMergeMeshUris( const std::string &meshFile, const std:
 
   return mergedUris;
 }
+
+MDAL::Library::Library( std::string libraryFile )
+{
+  d = new Data;
+  d->mLibraryFile = libraryFile;
+}
+
+MDAL::Library::~Library()
+{
+  d->mRef--;
+#ifdef WIN32
+  if ( d->mLibrary &&  d->mRef == 0 )
+    FreeLibrary( d->mLibrary );
+#else
+  if ( d->mLibrary &&  d->mRef == 0 )
+    dlclose( d->mLibrary );
+#endif
+}
+
+MDAL::Library::Library( const MDAL::Library &other )
+{
+  *this = other;
+}
+
+MDAL::Library &MDAL::Library::operator=( const MDAL::Library &other )
+{
+  d = other.d;
+  d->mRef++;
+
+  return ( *this );
+}
+
+bool MDAL::Library::isValid()
+{
+  if ( !d->mLibrary )
+    loadLibrary();
+
+  return d->mLibrary != nullptr;
+}
+
+std::vector<std::string> MDAL::Library::libraryFilesInDir( const std::string &dirPath )
+{
+  std::vector<std::string> filesList;
+#if defined(WIN32)
+  WIN32_FIND_DATA data;
+  HANDLE hFind;
+  std::string pattern = dirPath;
+  pattern.push_back( '*' );
+
+  hFind = FindFirstFile( pattern.c_str(), &data );
+
+  if ( hFind == INVALID_HANDLE_VALUE )
+    return filesList;
+
+  do
+  {
+    std::string fileName( data.cFileName );
+    if ( !fileName.empty() && fileExtension( fileName ) == ".dll" )
+      filesList.push_back( fileName );
+  }
+  while ( FindNextFile( hFind, &data ) != 0 );
+
+  FindClose( hFind );
+#else
+  DIR *dir = opendir( dirPath.c_str() );
+  struct dirent *de = readdir( dir );
+  while ( de != nullptr )
+  {
+    std::string fileName( de->d_name );
+    if ( !fileName.empty() )
+    {
+      std::string extentsion = fileExtension( fileName );
+      if ( extentsion == ".so" || extentsion == ".dylib" )
+        filesList.push_back( fileName );
+    }
+    de = readdir( dir );
+  }
+
+  closedir( dir );
+#endif
+  return filesList;
+}
+
+bool MDAL::Library::loadLibrary()
+{
+  //should we allow only one successful loading?
+  if ( d->mLibrary )
+    return false;
+#ifdef WIN32
+
+  UINT uOldErrorMode =
+    SetErrorMode( SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS );
+  d->mLibrary = LoadLibrary( d->mLibraryFile.c_str() );
+  SetErrorMode( uOldErrorMode );
+
+#else
+  d->mLibrary = dlopen( d->mLibraryFile.c_str(), RTLD_LAZY );
+#endif
+  return d->mLibrary != nullptr;
+}
