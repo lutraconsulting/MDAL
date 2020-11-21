@@ -125,7 +125,7 @@ static Mesh parseMesh( const std::string &uri )
   // datasets
   while ( std::getline( file, line ) )
   {
-    while ( line != "---" )
+    while ( line != "---" && !file.eof() )
     {
       Datasetgroup group;
       group.name = line;
@@ -137,23 +137,15 @@ static Mesh parseMesh( const std::string &uri )
             group.metadata.push_back(
               std::pair<std::string, std::string>( meta.at( 0 ), meta.at( 1 ) ) );
         }
-        else
-          break;
 
       if ( getline( file, line ) )
         group.dataType = line;
-      else
-        break;
 
       if ( getline( file, line ) )
         group.scalar = line == "Scalar";
-      else
-        break;
 
       if ( getline( file, line ) )
         group.referenceTime = line;
-      else
-        break;
 
       while ( getline( file, line ) && line != "---" )
       {
@@ -182,8 +174,7 @@ static Mesh parseMesh( const std::string &uri )
 
       mesh.datasetGroups.push_back( group );
 
-      if ( !getline( file, line ) )
-        break;
+      getline( file, line );
     }
   }
 
@@ -240,8 +231,6 @@ bool CALL_CONV  MDAL_DRIVER_canReadMesh( const char *uri )
     std::ifstream in( uri );
     if ( in.good() )
       return true;
-
-    return false;
   }
 
   return false;
@@ -249,16 +238,13 @@ bool CALL_CONV  MDAL_DRIVER_canReadMesh( const char *uri )
 
 int CALL_CONV MDAL_DRIVER_openMesh( const char *uri, const char * )
 {
-  std::cout << "//////////////////////////////   Driver function : open mesh with uri: " << uri << std::endl;
   if ( MDAL_DRIVER_canReadMesh( uri ) )
   {
     int id = sIdGenerator++;
-    std::cout << "//////////////////////////////   Driver function : open mesh success with id: " << id << std::endl;
     sMeshes[id] = parseMesh( uri );
     return id;
   }
 
-  std::cout << "//////////////////////////////   Driver function : open mesh : can't read mesh" << std::endl;;
   return -1;
 }
 
@@ -273,7 +259,7 @@ int CALL_CONV MDAL_DRIVER_M_vertexCount( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
-    return sMeshes[meshId].vertices.size();
+    return int( sMeshes[meshId].vertices.size() );
   }
   return -1;
 }
@@ -282,7 +268,7 @@ int CALL_CONV MDAL_DRIVER_M_faceCount( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
-    return sMeshes[meshId].faces.size();
+    return static_cast<int>( sMeshes[meshId].faces.size() );
   }
   return -1;
 }
@@ -291,7 +277,7 @@ int CALL_CONV MDAL_DRIVER_M_edgeCount( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
-    return sMeshes[meshId].edges.size();
+    return static_cast<int>( sMeshes[meshId].edges.size() );
   }
   return -1;
 }
@@ -342,7 +328,7 @@ int CALL_CONV MDAL_DRIVER_M_vertices( int meshId, int startIndex, int count, dou
     // Or a function like this with start index and count (here the caller keep reponsability to know the position,
     // and there will be only one caller : common implementation of dynamic driver of MDAL. simpler to implement?
     const Mesh &mesh = sMeshes[meshId];
-    if ( startIndex >= int( mesh.vertices.size() ) )
+    if ( startIndex >= static_cast<int>( mesh.vertices.size() ) )
       return -1;
     size_t effectiveVertCount = std::min( size_t( count ), mesh.vertices.size() - startIndex );
     std::vector<double> coordinates( effectiveVertCount * 3 );
@@ -355,7 +341,7 @@ int CALL_CONV MDAL_DRIVER_M_vertices( int meshId, int startIndex, int count, dou
 
     memcpy( buffer, coordinates.data(), effectiveVertCount * 3 * sizeof( double ) );
 
-    return effectiveVertCount;
+    return static_cast<int>( effectiveVertCount );
   }
   return -1;
 }
@@ -365,7 +351,7 @@ int CALL_CONV MDAL_DRIVER_M_faces( int meshId, int startFaceIndex, int faceCount
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
-    if ( startFaceIndex >= int( mesh.faces.size() ) )
+    if ( startFaceIndex >= static_cast<int>( mesh.faces.size() ) )
       return -1;
     size_t effectiveFaceCount = std::min( size_t( faceCount ), mesh.faces.size() - startFaceIndex );
     size_t faceIndex = startFaceIndex;
@@ -389,7 +375,7 @@ int CALL_CONV MDAL_DRIVER_M_faces( int meshId, int startFaceIndex, int faceCount
     memcpy( faceOffsetsBuffer, faceSizes.data(), faceSizes.size() * sizeof( int ) );
     memcpy( vertexIndicesBufer, vertexIndices.data(), vertexIndices.size() * sizeof( int ) );
 
-    return faceSizes.size();
+    return static_cast<int>( faceSizes.size() );
   }
 
   return -1;
@@ -400,7 +386,7 @@ int CALL_CONV MDAL_DRIVER_M_edges( int meshId, int startEdgeIndex, int edgeCount
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
-    if ( startEdgeIndex >= int( mesh.edges.size() ) )
+    if ( startEdgeIndex >= static_cast<int>( mesh.edges.size() ) )
       return -1;
     size_t effectiveEdgesCount = std::min( size_t( edgeCount ), mesh.edges.size() - startEdgeIndex );
     std::vector<int> startIndices;
@@ -416,7 +402,7 @@ int CALL_CONV MDAL_DRIVER_M_edges( int meshId, int startEdgeIndex, int edgeCount
     memcpy( startVertexIndices, startIndices.data(), sizeof( int )*effectiveEdgesCount );
     memcpy( endVertexIndices, endIndices.data(), sizeof( int )*effectiveEdgesCount );
 
-    return effectiveEdgesCount;
+    return static_cast<int>( effectiveEdgesCount );
   }
 
   return -1;
@@ -427,7 +413,7 @@ int CALL_CONV MDAL_DRIVER_M_datasetGroupCount( int meshId )
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
-    return mesh.datasetGroups.size();
+    return static_cast<int>( mesh.datasetGroups.size() );
   }
 
   return -1;
@@ -468,11 +454,11 @@ int CALL_CONV MDAL_DRIVER_G_metadataCount( int meshId, int groupIndex )
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
-    if ( groupIndex >= int( mesh.datasetGroups.size() ) )
+    if ( groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) )
       return -1;
     const Datasetgroup &datasetGroup = mesh.datasetGroups.at( groupIndex );
 
-    return datasetGroup.metadata.size();
+    return static_cast<int>( datasetGroup.metadata.size() );
   }
 
   return -1;
@@ -539,13 +525,13 @@ int CALL_CONV MDAL_DRIVER_D_data( int meshId, int groupIndex, int datasetIndex, 
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
-    if ( groupIndex >= int( mesh.datasetGroups.size() ) )
+    if ( groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) )
       return -1;
     const Datasetgroup &datasetGroup = mesh.datasetGroups.at( groupIndex );
-    if ( datasetIndex >= int( datasetGroup.dataset.size() ) )
+    if ( datasetIndex >= static_cast<int>( datasetGroup.dataset.size() ) )
       return -1;
     const Dataset &dataset = datasetGroup.dataset.at( datasetIndex );
-    int totalDatasetValues = dataset.values.size();
+    int totalDatasetValues = static_cast<int>( dataset.values.size() );
     if ( !datasetGroup.scalar )
       totalDatasetValues /= 2;
     int effectiveCount = std::min( count, totalDatasetValues - indexStart );
@@ -570,7 +556,7 @@ bool CALL_CONV MDAL_DRIVER_D_hasActiveFlagCapability( int meshId, int groupIndex
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
-    if ( groupIndex >= int( mesh.datasetGroups.size() ) )
+    if ( groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) )
       return false;
     const Datasetgroup &datasetGroup = mesh.datasetGroups.at( groupIndex );
     if ( datasetGroup.dataType == "onFace" )
@@ -586,20 +572,20 @@ int CALL_CONV  MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datase
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
-    if ( groupIndex >= int( mesh.datasetGroups.size() ) )
+    if ( groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) )
       return -1;
-    const Datasetgroup &datasetGroup = mesh.datasetGroups.at( groupIndex );
+    const Datasetgroup &datasetGroup = mesh.datasetGroups.at( size_t( groupIndex ) );
     if ( datasetGroup.dataType != "onFace" )
       return -1;
 
-    if ( datasetIndex >= int( datasetGroup.dataset.size() ) )
+    if ( datasetIndex >= static_cast<int>( datasetGroup.dataset.size() ) )
       return -1;
-    const Dataset &dataset = datasetGroup.dataset.at( datasetIndex );
-    int totalDatasetValues = dataset.values.size();
+    const Dataset &dataset = datasetGroup.dataset.at( size_t( datasetIndex ) );
+    int totalDatasetValues = static_cast<int>( dataset.values.size() );
     int effectiveCount = std::min( count, totalDatasetValues - indexStart );
 
     for ( int i = 0; i < effectiveCount; ++i )
-      buffer[i] = dataset.isFaceActive.at( i + indexStart );
+      buffer[i] = dataset.isFaceActive.at( size_t( i + indexStart ) );
 
     return effectiveCount;
   }

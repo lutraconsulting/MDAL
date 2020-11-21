@@ -350,3 +350,12 @@ TEST( MdalUtilsTest, FileExtensionTest )
     EXPECT_EQ( MDAL::fileExtension( test.first ), test.second );
   }
 }
+
+TEST( MdalUtilsTest, LibraryTest )
+{
+  // test only invalidity, valid library is tested in MeshDynamicDriverTest
+  MDAL::Library library( "nofile" );
+  EXPECT_FALSE( library.isValid() );
+  std::function<void ( int )> funct = library.getSymbol<int, int>( "function" );
+  EXPECT_FALSE( funct );
+}

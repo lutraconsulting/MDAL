@@ -80,7 +80,7 @@ namespace MDAL
     private:
       Library mLibrary;
       int mMeshId;
-      size_t mPosition = 0;
+      int mPosition = 0;
 
       //************************************
       std::function<int ( int, int, int, int *, int, int * )> mFacesFunction;
@@ -137,6 +137,7 @@ namespace MDAL
                          const std::string &uri,
                          const Library &library,
                          int meshId );
+      ~MeshDynamicDriver();
 
       std::unique_ptr<MeshVertexIterator> readVertices() override;
       std::unique_ptr<MeshEdgeIterator> readEdges() override;
@@ -173,6 +174,8 @@ namespace MDAL
       std::function<const char *( int, int, int )> mDatasetGroupMetadataValueFunction;
       std::function < bool ( int, int, bool *, int *, int * )> mDatasetDescriptionFunction;
       std::function<bool ( int, int, int )> mDatasetSupportActiveFlagFunction;
+
+      std::function<void ( int )> mCloseMeshFunction;
   };
 }
 

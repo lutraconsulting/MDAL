@@ -10,7 +10,7 @@
 #include "mdal_utils.hpp"
 
 
-TEST( DynamicDriverTest, openMesh )
+TEST( MeshDynamicDriverTest, openMesh )
 {
 #ifndef WIN32
   setenv( "MDAL_DRIVER_PATH", DRIVERS_PATH, 0 );
