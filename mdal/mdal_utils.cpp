@@ -661,7 +661,6 @@ std::string MDAL::coordinateToString( double coordinate, int precision )
   oss << coordinate;
 
   std::string returnString = oss.str();
-  returnString.back();
 
   //remove unnecessary '0' or '.'
   if ( returnString.size() > 0 )

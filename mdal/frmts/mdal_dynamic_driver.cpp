@@ -36,7 +36,7 @@ bool MDAL::DriverDynamic::canReadMesh( const std::string &uri )
   {
     if ( !loadSymbols() )
     {
-      MDAL::Log::error( MDAL_Status::Err_MissingDriver, name(), "Driver is not valid" );
+      MDAL::Log::error( MDAL_Status::Err_MissingDriver, name(), "External driver is not valid" );
       return false;
     }
   }
@@ -50,7 +50,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverDynamic::load( const std::string &uri, c
   {
     if ( !loadSymbols() )
     {
-      MDAL::Log::error( MDAL_Status::Err_MissingDriver, name(), "Driver is not valid" );
+      MDAL::Log::error( MDAL_Status::Err_MissingDriver, name(), "External driver is not valid" );
       return std::unique_ptr<MDAL::Mesh>();
     }
   }
@@ -58,36 +58,25 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverDynamic::load( const std::string &uri, c
   int meshId = mOpenMeshFunction( uri.c_str(), meshName.c_str() );
   if ( meshId != -1 )
   {
-    if ( mMeshIds.find( meshId ) != mMeshIds.end() )
-      MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "Unable to load the mesh, duplicate mesh id" );
-
-    std::unique_ptr<MDAL::MeshDynamicDriver> mesh( new MeshDynamicDriver( name(), mMaxVertexPerFace, uri, mLibrary, meshId ) );
-    if ( mesh->loadSymbol() )
+    if ( mMeshIds.find( meshId ) == mMeshIds.end() )
     {
-      mMeshIds.insert( meshId );
-      mesh->setProjection();
-      if ( !mesh->populateDatasetGroups() )
-        return std::unique_ptr<MDAL::Mesh>();
-      return mesh;
-    }
-    else
-    {
-      MDAL::Log::error( MDAL_Status::Err_MissingDriver, name(), "Driver is not valid" );
-      return std::unique_ptr<MDAL::Mesh>();
+      std::unique_ptr<MDAL::MeshDynamicDriver> mesh( new MeshDynamicDriver( name(), mMaxVertexPerFace, uri, mLibrary, meshId ) );
+      if ( mesh->loadSymbol() )
+      {
+        mMeshIds.insert( meshId );
+        mesh->setProjection();
+        if ( mesh->populateDatasetGroups() )
+          return mesh;
+      }
     }
   }
-
   MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Unable to load the mesh" );
-
   return std::unique_ptr<MDAL::Mesh>();
 }
 
 MDAL::Driver *MDAL::DriverDynamic::create( const std::string &libFile )
 {
   Library library( libFile );
-
-  if ( !library.isValid() )
-    return nullptr;
 
   std::function<const char *()> driverNameFunction = library.getSymbol<const char *>( "MDAL_DRIVER_driverName" );
   std::function<const char *()> driverLongNameFunction = library.getSymbol<const char *>( "MDAL_DRIVER_driverLongName" );
@@ -126,13 +115,11 @@ bool MDAL::DriverDynamic::loadSymbols()
 {
   mCanReadMeshFunction = mLibrary.getSymbol<bool, const char *>( "MDAL_DRIVER_canReadMesh" );
   mOpenMeshFunction = mLibrary.getSymbol<int, const char *, const char *>( "MDAL_DRIVER_openMesh" );
-  mCloseMeshFunction = mLibrary.getSymbol<void, int>( "MDAL_DRIVER_closeMesh" );
 
   if ( mCanReadMeshFunction == nullptr ||
-       mOpenMeshFunction == nullptr ||
-       mCloseMeshFunction == nullptr )
+       mOpenMeshFunction == nullptr )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, name(), "Driver is not valid" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, name(), "External driver is not valid" );
     return false;
   }
 
@@ -149,52 +136,40 @@ MDAL::MeshDynamicDriver::MeshDynamicDriver( const std::string &driverName,
   mId( meshId )
 {}
 
-size_t MDAL::MeshDynamicDriver::verticesCount() const
+MDAL::MeshDynamicDriver::~MeshDynamicDriver()
 {
-  if ( mMeshVertexCountFunction )
+  mCloseMeshFunction( mId );
+}
+
+static int elementCount( int meshId, const std::function<int ( int )> &countFunction, const std::string &driverName )
+{
+  if ( countFunction )
   {
-    int count = mMeshVertexCountFunction( mId );
+    int count = countFunction( meshId );
     if ( count >= 0 )
       return count;
 
-    MDAL::Log::error( MDAL_Status::Err_InvalidData, driverName(), "Invalid mesh" );
-    return 0;
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, driverName, "Invalid mesh" );
   }
+  else
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, driverName, "Driver is not valid" );
 
-  MDAL::Log::error( MDAL_Status::Err_MissingDriver, driverName(), "Driver is not valid" );
   return 0;
+}
+
+size_t MDAL::MeshDynamicDriver::verticesCount() const
+{
+  return elementCount( mId, mMeshVertexCountFunction, driverName() );
 }
 
 size_t MDAL::MeshDynamicDriver::facesCount() const
 {
-  if ( mMeshFaceCountFunction )
-  {
-    int count = mMeshFaceCountFunction( mId );
-    if ( count >= 0 )
-      return count;
-
-    MDAL::Log::error( MDAL_Status::Err_InvalidData, driverName(), "Invalid mesh" );
-    return 0;
-  }
-
-  MDAL::Log::error( MDAL_Status::Err_MissingDriver, driverName(), "Driver is not valid" );
-  return 0;
+  return elementCount( mId, mMeshFaceCountFunction, driverName() );
 }
 
 size_t MDAL::MeshDynamicDriver::edgesCount() const
 {
-  if ( mMeshEdgeCountFunction )
-  {
-    int count = mMeshEdgeCountFunction( mId );
-    if ( count >= 0 )
-      return count;
-
-    MDAL::Log::error( MDAL_Status::Err_InvalidData, driverName(), "Invalid mesh" );
-    return 0;
-  }
-
-  MDAL::Log::error( MDAL_Status::Err_MissingDriver, driverName(), "Driver is not valid" );
-  return 0;
+  return elementCount( mId, mMeshEdgeCountFunction, driverName() );
 }
 
 MDAL::BBox MDAL::MeshDynamicDriver::extent() const
@@ -228,9 +203,9 @@ bool MDAL::MeshDynamicDriver::populateDatasetGroups()
   if ( !mMeshDatasetGroupsCountFunction )
     return false;
 
-  size_t datasetGroupCount = mMeshDatasetGroupsCountFunction( mId );
+  int datasetGroupCount = mMeshDatasetGroupsCountFunction( mId );
 
-  for ( size_t i = 0; i < datasetGroupCount; ++i )
+  for ( int i = 0; i < datasetGroupCount; ++i )
   {
     const char *groupName = mDatasetgroupNameFunction( mId, i );
     const char *referenceTime = mDatasetGroupReferencetimeFunction( mId, i );
@@ -275,7 +250,7 @@ bool MDAL::MeshDynamicDriver::populateDatasetGroups()
       }
     }
 
-    for ( size_t d = 0; d < size_t( datasetCount ); ++d )
+    for ( int d = 0; d < datasetCount ; ++d )
     {
       std::shared_ptr<DatasetDynamicDriver> dataset = std::make_shared<DatasetDynamicDriver>( group.get(), mId, i, d, mLibrary );
       dataset->setSupportsActiveFlag( mDatasetSupportActiveFlagFunction( mId, i, d ) );
@@ -293,12 +268,6 @@ bool MDAL::MeshDynamicDriver::populateDatasetGroups()
 
 bool MDAL::MeshDynamicDriver::loadSymbol()
 {
-  if ( !mLibrary.isValid() )
-  {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriver, driverName(), "Driver is not valid, library can't be loaded" );
-    return false;
-  }
-
   mMeshVertexCountFunction = mLibrary.getSymbol<int, int>( "MDAL_DRIVER_M_vertexCount" ) ;
   mMeshFaceCountFunction = mLibrary.getSymbol<int, int>( "MDAL_DRIVER_M_faceCount" ) ;
   mMeshEdgeCountFunction = mLibrary.getSymbol<int, int>( "MDAL_DRIVER_M_edgeCount" ) ;
@@ -312,6 +281,7 @@ bool MDAL::MeshDynamicDriver::loadSymbol()
   mDatasetGroupMetadataValueFunction = mLibrary.getSymbol<const char *, int, int, int>( "MDAL_DRIVER_G_metadataValue" );
   mDatasetDescriptionFunction = mLibrary.getSymbol<bool, int, int, bool *, int *, int *>( "MDAL_DRIVER_G_datasetsDescription" );
   mDatasetSupportActiveFlagFunction = mLibrary.getSymbol<bool, int, int, int>( "MDAL_DRIVER_D_hasActiveFlagCapability" );
+  mCloseMeshFunction = mLibrary.getSymbol<void, int>( "MDAL_DRIVER_closeMesh" );
 
   if ( mMeshVertexCountFunction == nullptr ||
        mMeshFaceCountFunction == nullptr ||
@@ -325,7 +295,8 @@ bool MDAL::MeshDynamicDriver::loadSymbol()
        mDatasetGroupMetadataKeyFunction == nullptr ||
        mDatasetGroupMetadataValueFunction == nullptr ||
        mDatasetDescriptionFunction == nullptr ||
-       mDatasetSupportActiveFlagFunction == nullptr )
+       mDatasetSupportActiveFlagFunction == nullptr ||
+       mCloseMeshFunction == nullptr )
   {
     MDAL::Log::error( MDAL_Status::Err_MissingDriver, driverName(), "Driver is not valid, unable to load mesh access functions" );
     return false;
@@ -365,7 +336,7 @@ size_t MDAL::MeshVertexIteratorDynamicDriver::next( size_t vertexCount, double *
       return 0;
   }
 
-  int effectiveVerticesCount = mVerticesFunction( mMeshId, mPosition, vertexCount, coordinates );
+  int effectiveVerticesCount = mVerticesFunction( mMeshId, mPosition, MDAL::toInt( vertexCount ), coordinates );
   if ( effectiveVerticesCount < 0 )
   {
     MDAL::Log::error( MDAL_Status::Err_InvalidData, "Invalid mesh, unable to read vertices" );
@@ -390,7 +361,7 @@ size_t MDAL::MeshFaceIteratorDynamicDriver::next( size_t faceOffsetsBufferLen, i
       return 0;
   }
 
-  int effectiveFacesCount = mFacesFunction( mMeshId, mPosition, faceOffsetsBufferLen, faceOffsetsBuffer, vertexIndicesBufferLen, vertexIndicesBuffer );
+  int effectiveFacesCount = mFacesFunction( mMeshId, mPosition, MDAL::toInt( faceOffsetsBufferLen ), faceOffsetsBuffer, MDAL::toInt( vertexIndicesBufferLen ), vertexIndicesBuffer );
   if ( effectiveFacesCount < 0 )
   {
     MDAL::Log::error( MDAL_Status::Err_InvalidData, "Invalid mesh, unable to read faces" );
@@ -415,7 +386,7 @@ size_t MDAL::MeshEdgeIteratorDynamicDriver::next( size_t edgeCount, int *startVe
       return 0;
   }
 
-  int effectiveEdgesCount = mEdgesFunction( mMeshId, mPosition, edgeCount, startVertexIndices, endVertexIndices );
+  int effectiveEdgesCount = mEdgesFunction( mMeshId, mPosition, MDAL::toInt( edgeCount ), startVertexIndices, endVertexIndices );
 
   if ( effectiveEdgesCount < 0 )
   {
@@ -443,7 +414,7 @@ size_t MDAL::DatasetDynamicDriver::scalarData( size_t indexStart, size_t count, 
     return 0;
   }
 
-  return mDataFunction( mMeshId, mGroupIndex, mDatasetIndex, indexStart, count, buffer );
+  return mDataFunction( mMeshId, mGroupIndex, mDatasetIndex, MDAL::toInt( indexStart ), MDAL::toInt( count ), buffer );
 }
 
 size_t MDAL::DatasetDynamicDriver::vectorData( size_t indexStart, size_t count, double *buffer )
@@ -454,7 +425,7 @@ size_t MDAL::DatasetDynamicDriver::vectorData( size_t indexStart, size_t count, 
     return 0;
   }
 
-  return mDataFunction( mMeshId, mGroupIndex, mDatasetIndex, indexStart, count, buffer );
+  return mDataFunction( mMeshId, mGroupIndex, mDatasetIndex, MDAL::toInt( indexStart ), MDAL::toInt( count ), buffer );
 }
 
 size_t MDAL::DatasetDynamicDriver::activeData( size_t indexStart, size_t count, int *buffer )
@@ -468,7 +439,7 @@ size_t MDAL::DatasetDynamicDriver::activeData( size_t indexStart, size_t count, 
     return 0;
   }
 
-  return mActiveFlagsFunction( mMeshId, mGroupIndex, mDatasetIndex, indexStart, count, buffer );
+  return mActiveFlagsFunction( mMeshId, mGroupIndex, mDatasetIndex, MDAL::toInt( indexStart ), MDAL::toInt( count ), buffer );
 }
 
 bool MDAL::DatasetDynamicDriver::loadSymbol()
