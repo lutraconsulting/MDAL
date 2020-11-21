@@ -32,28 +32,17 @@ MDAL::Driver *MDAL::DriverDynamic::create()
 
 bool MDAL::DriverDynamic::canReadMesh( const std::string &uri )
 {
-  if ( ! mCanReadMeshFunction )
+  if ( mCanReadMeshFunction )
   {
-    if ( !loadSymbols() )
-    {
-      MDAL::Log::error( MDAL_Status::Err_MissingDriver, name(), "External driver is not valid" );
-      return false;
-    }
+    return mCanReadMeshFunction( uri.c_str() );
   }
-
-  return mCanReadMeshFunction( uri.c_str() );
+  return false;
 }
 
 std::unique_ptr<MDAL::Mesh> MDAL::DriverDynamic::load( const std::string &uri, const std::string &meshName )
 {
   if ( !mOpenMeshFunction )
-  {
-    if ( !loadSymbols() )
-    {
-      MDAL::Log::error( MDAL_Status::Err_MissingDriver, name(), "External driver is not valid" );
-      return std::unique_ptr<MDAL::Mesh>();
-    }
-  }
+    return std::unique_ptr<MDAL::Mesh>();
 
   int meshId = mOpenMeshFunction( uri.c_str(), meshName.c_str() );
   if ( meshId != -1 )
@@ -180,8 +169,6 @@ MDAL::BBox MDAL::MeshDynamicDriver::extent() const
     mMeshExtentFunction( mId, &xMin, &xMax, &yMin, &yMax );
     return BBox( xMin, xMax, yMin, yMax );
   }
-
-  MDAL::Log::error( MDAL_Status::Err_MissingDriver, driverName(), "Driver is not valid" );
 
   return BBox( std::numeric_limits<double>::quiet_NaN(),
                std::numeric_limits<double>::quiet_NaN(),
@@ -409,10 +396,7 @@ MDAL::DatasetDynamicDriver::DatasetDynamicDriver( MDAL::DatasetGroup *parentGrou
 size_t MDAL::DatasetDynamicDriver::scalarData( size_t indexStart, size_t count, double *buffer )
 {
   if ( !mDataFunction )
-  {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Invalid dataset" );
     return 0;
-  }
 
   return mDataFunction( mMeshId, mGroupIndex, mDatasetIndex, MDAL::toInt( indexStart ), MDAL::toInt( count ), buffer );
 }
@@ -420,10 +404,7 @@ size_t MDAL::DatasetDynamicDriver::scalarData( size_t indexStart, size_t count, 
 size_t MDAL::DatasetDynamicDriver::vectorData( size_t indexStart, size_t count, double *buffer )
 {
   if ( !mDataFunction )
-  {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Invalid dataset" );
     return 0;
-  }
 
   return mDataFunction( mMeshId, mGroupIndex, mDatasetIndex, MDAL::toInt( indexStart ), MDAL::toInt( count ), buffer );
 }
@@ -434,10 +415,7 @@ size_t MDAL::DatasetDynamicDriver::activeData( size_t indexStart, size_t count, 
     return Dataset2D::activeData( indexStart, count, buffer );
 
   if ( !mActiveFlagsFunction )
-  {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Invalid dataset" );
     return 0;
-  }
 
   return mActiveFlagsFunction( mMeshId, mGroupIndex, mDatasetIndex, MDAL::toInt( indexStart ), MDAL::toInt( count ), buffer );
 }
