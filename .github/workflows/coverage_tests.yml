@@ -38,7 +38,7 @@ jobs:
         run: |
           cd ../build_coverage_lnx
           lcov --directory . --capture --output-file coverage.info
-          lcov --remove coverage.info '*/tests/*' '/usr/*' '*googletest/*' '*/3rdparty/*' */tools/externaldriver/*mdal_dumy_external_driver.* --output-file coverage.info
+          lcov --remove coverage.info '*/tests/*' '/usr/*' '*googletest/*' '*/3rdparty/*' */tools/externaldriver/* --output-file coverage.info
           lcov --list coverage.info
 
       - name: Coveralls
