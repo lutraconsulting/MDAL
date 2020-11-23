@@ -202,28 +202,28 @@ static int sIdGenerator = 0;
 #ifdef __cplusplus
 extern "C" {
 #endif
-const char *CALL_CONV MDAL_DRIVER_driverName()
+const char *MDAL_DRIVER_driverName()
 {
   return sName.c_str();
 }
-const char *CALL_CONV MDAL_DRIVER_driverLongName()
+const char *MDAL_DRIVER_driverLongName()
 {
   return sLongName.c_str();
 }
-const char *CALL_CONV MDAL_DRIVER_filters()
+const char *MDAL_DRIVER_filters()
 {
   return sFilters.c_str();
 }
-int CALL_CONV  MDAL_DRIVER_capabilities()
+int MDAL_DRIVER_capabilities()
 {
   return 1;
 }
-int CALL_CONV  MDAL_DRIVER_maxVertexPerFace()
+int MDAL_DRIVER_maxVertexPerFace()
 {
   return MAX_VERTEX_PER_FACE;
 }
 
-bool CALL_CONV  MDAL_DRIVER_canReadMesh( const char *uri )
+bool MDAL_DRIVER_canReadMesh( const char *uri )
 {
   std::vector<std::string> uriSplit = split( uri, '.' );
   if ( uriSplit.size() > 1 && uriSplit.back() == "msh" )
@@ -236,7 +236,7 @@ bool CALL_CONV  MDAL_DRIVER_canReadMesh( const char *uri )
   return false;
 }
 
-int CALL_CONV MDAL_DRIVER_openMesh( const char *uri, const char * )
+int MDAL_DRIVER_openMesh( const char *uri, const char * )
 {
   if ( MDAL_DRIVER_canReadMesh( uri ) )
   {
@@ -248,14 +248,14 @@ int CALL_CONV MDAL_DRIVER_openMesh( const char *uri, const char * )
   return -1;
 }
 
-void CALL_CONV MDAL_DRIVER_closeMesh( int meshId )
+void MDAL_DRIVER_closeMesh( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
     sMeshes.erase( sMeshes.find( meshId ) );
 }
 
 
-int CALL_CONV MDAL_DRIVER_M_vertexCount( int meshId )
+int MDAL_DRIVER_M_vertexCount( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -264,7 +264,7 @@ int CALL_CONV MDAL_DRIVER_M_vertexCount( int meshId )
   return -1;
 }
 
-int CALL_CONV MDAL_DRIVER_M_faceCount( int meshId )
+int MDAL_DRIVER_M_faceCount( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -273,7 +273,7 @@ int CALL_CONV MDAL_DRIVER_M_faceCount( int meshId )
   return -1;
 }
 
-int CALL_CONV MDAL_DRIVER_M_edgeCount( int meshId )
+int MDAL_DRIVER_M_edgeCount( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -282,7 +282,7 @@ int CALL_CONV MDAL_DRIVER_M_edgeCount( int meshId )
   return -1;
 }
 
-void CALL_CONV MDAL_DRIVER_M_extent( int meshId, double *xMin, double *xMax, double *yMin, double *yMax )
+void MDAL_DRIVER_M_extent( int meshId, double *xMin, double *xMax, double *yMin, double *yMax )
 {
   *xMin = std::numeric_limits<double>::quiet_NaN();
   *xMax = std::numeric_limits<double>::quiet_NaN();
@@ -311,7 +311,7 @@ void CALL_CONV MDAL_DRIVER_M_extent( int meshId, double *xMin, double *xMax, dou
   }
 }
 
-const char *CALL_CONV MDAL_DRIVER_M_projection( int meshId )
+const char *MDAL_DRIVER_M_projection( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -320,7 +320,7 @@ const char *CALL_CONV MDAL_DRIVER_M_projection( int meshId )
   return _return_str( "" );
 }
 
-int CALL_CONV MDAL_DRIVER_M_vertices( int meshId, int startIndex, int count, double *buffer )
+int MDAL_DRIVER_M_vertices( int meshId, int startIndex, int count, double *buffer )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -346,7 +346,7 @@ int CALL_CONV MDAL_DRIVER_M_vertices( int meshId, int startIndex, int count, dou
   return -1;
 }
 
-int CALL_CONV MDAL_DRIVER_M_faces( int meshId, int startFaceIndex, int faceCount, int *faceOffsetsBuffer, int vertexIndicesBufferLen, int *vertexIndicesBufer )
+int MDAL_DRIVER_M_faces( int meshId, int startFaceIndex, int faceCount, int *faceOffsetsBuffer, int vertexIndicesBufferLen, int *vertexIndicesBufer )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -366,9 +366,9 @@ int CALL_CONV MDAL_DRIVER_M_faces( int meshId, int startFaceIndex, int faceCount
       const Face &face = mesh.faces.at( faceIndex );
       for ( size_t i = 0; i < face.size(); ++i )
       {
-        vertexIndices.push_back( face.at( i ) );
+        vertexIndices.push_back( static_cast<int>( face.at( i ) ) );
       }
-      faceSizes.push_back( vertexIndices.size() );
+      faceSizes.push_back( static_cast<int>( vertexIndices.size() ) );
       ++faceIndex;
     }
 
@@ -381,7 +381,7 @@ int CALL_CONV MDAL_DRIVER_M_faces( int meshId, int startFaceIndex, int faceCount
   return -1;
 }
 
-int CALL_CONV MDAL_DRIVER_M_edges( int meshId, int startEdgeIndex, int edgeCount, int *startVertexIndices, int *endVertexIndices )
+int MDAL_DRIVER_M_edges( int meshId, int startEdgeIndex, int edgeCount, int *startVertexIndices, int *endVertexIndices )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -395,8 +395,8 @@ int CALL_CONV MDAL_DRIVER_M_edges( int meshId, int startEdgeIndex, int edgeCount
     endIndices.reserve( effectiveEdgesCount );
     for ( size_t i = 0; i < effectiveEdgesCount; ++i )
     {
-      startIndices.push_back( mesh.edges.at( i ).first );
-      endIndices.push_back( mesh.edges.at( i ).second );
+      startIndices.push_back( static_cast<int>( mesh.edges.at( i ).first ) );
+      endIndices.push_back( static_cast<int>( mesh.edges.at( i ).second ) );
     }
 
     memcpy( startVertexIndices, startIndices.data(), sizeof( int )*effectiveEdgesCount );
@@ -408,7 +408,7 @@ int CALL_CONV MDAL_DRIVER_M_edges( int meshId, int startEdgeIndex, int edgeCount
   return -1;
 }
 
-int CALL_CONV MDAL_DRIVER_M_datasetGroupCount( int meshId )
+int MDAL_DRIVER_M_datasetGroupCount( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -419,7 +419,7 @@ int CALL_CONV MDAL_DRIVER_M_datasetGroupCount( int meshId )
   return -1;
 }
 
-const char *CALL_CONV MDAL_DRIVER_G_groupName( int meshId, int groupIndex )
+const char *MDAL_DRIVER_G_groupName( int meshId, int groupIndex )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -434,7 +434,7 @@ const char *CALL_CONV MDAL_DRIVER_G_groupName( int meshId, int groupIndex )
   return _return_str( "" );
 }
 
-const char *CALL_CONV MDAL_DRIVER_G_referenceTime( int meshId, int groupIndex )
+const char *MDAL_DRIVER_G_referenceTime( int meshId, int groupIndex )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -449,7 +449,7 @@ const char *CALL_CONV MDAL_DRIVER_G_referenceTime( int meshId, int groupIndex )
   return  _return_str( "" );
 }
 
-int CALL_CONV MDAL_DRIVER_G_metadataCount( int meshId, int groupIndex )
+int MDAL_DRIVER_G_metadataCount( int meshId, int groupIndex )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -465,7 +465,7 @@ int CALL_CONV MDAL_DRIVER_G_metadataCount( int meshId, int groupIndex )
 }
 
 //! Returns the metadata key
-const char *CALL_CONV MDAL_DRIVER_G_metadataKey( int meshId, int groupIndex, int metaDataIndex )
+const char *MDAL_DRIVER_G_metadataKey( int meshId, int groupIndex, int metaDataIndex )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -480,7 +480,7 @@ const char *CALL_CONV MDAL_DRIVER_G_metadataKey( int meshId, int groupIndex, int
 }
 
 //! Returns the metadata value
-const char *CALL_CONV MDAL_DRIVER_G_metadataValue( int meshId, int groupIndex, int metaDataIndex )
+const char *MDAL_DRIVER_G_metadataValue( int meshId, int groupIndex, int metaDataIndex )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -494,7 +494,7 @@ const char *CALL_CONV MDAL_DRIVER_G_metadataValue( int meshId, int groupIndex, i
   return _return_str( "" );
 }
 
-bool CALL_CONV MDAL_DRIVER_G_datasetsDescription( int meshId, int groupIndex, bool *isScalar, int *dataLocation, int *datasetCount )
+bool MDAL_DRIVER_G_datasetsDescription( int meshId, int groupIndex, bool *isScalar, int *dataLocation, int *datasetCount )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -512,7 +512,7 @@ bool CALL_CONV MDAL_DRIVER_G_datasetsDescription( int meshId, int groupIndex, bo
     if ( datasetGroup.dataType == "onEdge" )
       *dataLocation = 3;
 
-    *datasetCount = datasetGroup.dataset.size();
+    *datasetCount = static_cast<int>( datasetGroup.dataset.size() );
 
     return true;
   }
@@ -520,7 +520,7 @@ bool CALL_CONV MDAL_DRIVER_G_datasetsDescription( int meshId, int groupIndex, bo
   return false;
 }
 
-int CALL_CONV MDAL_DRIVER_D_data( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double *buffer )
+int MDAL_DRIVER_D_data( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double *buffer )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -551,7 +551,7 @@ int CALL_CONV MDAL_DRIVER_D_data( int meshId, int groupIndex, int datasetIndex, 
 }
 
 
-bool CALL_CONV MDAL_DRIVER_D_hasActiveFlagCapability( int meshId, int groupIndex, int )
+bool MDAL_DRIVER_D_hasActiveFlagCapability( int meshId, int groupIndex, int )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -567,7 +567,7 @@ bool CALL_CONV MDAL_DRIVER_D_hasActiveFlagCapability( int meshId, int groupIndex
 }
 
 //! Returns the dataset active flags
-int CALL_CONV  MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer )
+int MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {

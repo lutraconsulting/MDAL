@@ -242,10 +242,8 @@ MDAL::DriverManager::DriverManager()
   mDrivers.push_back( std::make_shared<MDAL::DriverXdmf>() );
 #endif
 
-  // TODO : defined in cmake a variable to define the need to load dynamic driver
   loadDynamicDrivers();
 }
-
 
 void MDAL::DriverManager::loadDynamicDrivers()
 {
