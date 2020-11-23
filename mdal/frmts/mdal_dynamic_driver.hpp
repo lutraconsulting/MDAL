@@ -48,7 +48,6 @@ namespace MDAL
       //************************************
       std::function<bool ( const char * )> mCanReadMeshFunction;
       std::function<int ( const char *, const char * )> mOpenMeshFunction;
-      std::function<void ( int )> mCloseMeshFunction;
   };
 
   class MeshDynamicDriver;
@@ -62,7 +61,7 @@ namespace MDAL
     private:
       Library mLibrary;
       int mMeshId;
-      size_t mPosition = 0;
+      int mPosition = 0;
 
       //************************************
       std::function<int ( int, int, int, double * )> mVerticesFunction;
@@ -97,7 +96,7 @@ namespace MDAL
     private:
       Library mLibrary;
       int mMeshId;
-      size_t mPosition = 0;
+      int mPosition = 0;
 
       //************************************
       std::function<int ( int, int, int, int *, int * )> mEdgesFunction;
