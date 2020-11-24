@@ -10,6 +10,7 @@
 
 //mdal
 #include "mdal.h"
+#include "mdal_utils.hpp"
 #include "mdal_testutils.hpp"
 
 TEST( MeshHec2dTest, simpleArea )
@@ -144,6 +145,56 @@ TEST( MeshHec2dTest, simpleArea )
   double time = MDAL_D_time( ds );
   EXPECT_DOUBLE_EQ( 0.0, time );
 
+<<<<<<< HEAD
+=======
+  EXPECT_TRUE( compareDurationInHours( 0, time ) );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1899-12-30T00:00:00" ) );
+
+  // ///////////
+  // Vector Dataset
+  // ///////////
+  g = MDAL_M_datasetGroup( m, 5 );
+  ASSERT_NE( g, nullptr );
+
+  meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Velocity" ), std::string( name ) );
+
+  scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+  ASSERT_EQ( 41, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 35 );
+  ASSERT_NE( ds, nullptr );
+
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 851, count );
+
+  value = getValueX( ds, 15 );
+  EXPECT_TRUE( MDAL::equals( -0.044146, value, 0.000001 ) );
+  value = getValueY( ds, 15 );
+  EXPECT_TRUE( MDAL::equals( 0.0001003014, value, 0.00000001 ) );
+
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_TRUE( MDAL::equals( 7.3807e-5, min, 0.000001 ) );
+  EXPECT_TRUE( MDAL::equals( 0.0452122, max, 0.000001 ) );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 0, min );
+  EXPECT_TRUE( MDAL::equals( 0.3837422465, max, 0.000001 ) );
+
+>>>>>>> 07daeb5 (fix hecras velocity/shear stress)
   MDAL_CloseMesh( m );
 }
 
