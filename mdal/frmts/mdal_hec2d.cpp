@@ -211,8 +211,6 @@ void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
                                         const std::vector<RelativeTimestamp> &times,
                                         const DateTime &referenceTime )
 {
-  double eps = std::numeric_limits<double>::min();
-
   std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
                                           name(),
                                           mMesh.get(),
