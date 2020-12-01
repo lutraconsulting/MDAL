@@ -124,7 +124,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   while ( std::getline( in, line ) )
   {
     if ( startsWith( line, "E4Q" ) ||
-         startsWith( line, "E3T" ) )
+         startsWith( line, "E3T" ) ||
+         startsWith( line, "E6T" ) )
     {
       faceCount++;
     }
@@ -137,7 +138,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
       edgesCount++;
     }
     else if ( startsWith( line, "E3L" ) ||
-              startsWith( line, "E6T" ) ||
               startsWith( line, "E8Q" ) ||
               startsWith( line, "E9Q" ) )
     {
@@ -156,6 +156,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   Vertices vertices( vertexCount );
   Edges edges( edgesCount );
   Faces faces( faceCount );
+  size_t maxVerticesPerFace = 2;
 
   // .2dm mesh files may have any number of material ID columns
   std::vector<std::vector<double>> faceMaterials;
@@ -174,20 +175,23 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   while ( std::getline( in, line ) )
   {
     if ( startsWith( line, "E4Q" ) ||
-         startsWith( line, "E3T" )
+         startsWith( line, "E3T" ) ||
+         startsWith( line, "E6T" )
        )
     {
       chunks = split( line,  ' ' );
       assert( faceIndex < faceCount );
 
       const size_t faceVertexCount = MDAL::toSizeT( line[1] );
-      assert( ( faceVertexCount == 3 ) || ( faceVertexCount == 4 ) );
+      assert( ( faceVertexCount == 3 ) || ( faceVertexCount == 4 ) || ( faceVertexCount == 6 ) );
+      if (maxVerticesPerFace < faceVertexCount)
+        maxVerticesPerFace = faceVertexCount;
 
       Face &face = faces[faceIndex];
       face.resize( faceVertexCount );
 
       // chunks format here
-      // E** id vertex_id1, vertex_id2, vertex_id3, material_id [, aux_column_1, aux_column_2, ...]
+      // E** id vertex_id1, vertex_id2, vertex_id3, ..., material_id [, aux_column_1, aux_column_2, ...]
       // vertex ids are numbered from 1
       // Right now we just store node IDs here - we will convert them to node indices afterwards
       assert( chunks.size() > faceVertexCount + 1 );
@@ -296,7 +300,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
 
   std::unique_ptr< Mesh2dm > mesh(
     new Mesh2dm(
-      MAX_VERTICES_PER_FACE_2DM,
+      maxVerticesPerFace,
       mMeshFile,
       vertexIDtoIndex
     )
@@ -367,12 +371,12 @@ void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh )
   }
 
   // write faces
+  std::vector<int> vertexIndices(mesh->faceVerticesMaximumCount());
   std::unique_ptr<MDAL::MeshFaceIterator> faceIterator = mesh->readFaces();
   for ( size_t i = 0; i < mesh->facesCount(); ++i )
   {
     int faceOffsets[1];
-    int vertexIndices[MAX_VERTICES_PER_FACE_2DM];
-    faceIterator->next( 1, faceOffsets, 4, vertexIndices );
+    faceIterator->next( 1, faceOffsets, 4, vertexIndices.data() );
 
     if ( faceOffsets[0] > 2 && faceOffsets[0] < 5 )
     {
@@ -380,6 +384,8 @@ void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh )
         line = "E3T ";
       if ( faceOffsets[0] == 4 )
         line = "E4Q ";
+      if ( faceOffsets[0] == 6 )
+        line = "E6T ";
 
       line.append( std::to_string( i + 1 ) );
 

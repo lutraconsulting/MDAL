@@ -162,6 +162,51 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   MDAL_CloseMesh( m );
 }
 
+TEST( Mesh2DMTest, TriangleE6TFile )
+{
+  std::string path = test_file( "/2dm/triangleE6T.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  int maxCount = MDAL_M_faceVerticesMaximumCount( m );
+  EXPECT_EQ( maxCount, 6 );
+
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "2DM" );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 22 );
+  double x = getVertexXCoordinatesAt( m, 0 );
+  double y = getVertexYCoordinatesAt( m, 0 );
+  double z = getVertexZCoordinatesAt( m, 0 );
+  EXPECT_DOUBLE_EQ( 1.84300000e+001, x );
+  EXPECT_DOUBLE_EQ( 8.52200000e+001, y );
+  EXPECT_DOUBLE_EQ( 0.0, z );
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 6, f_count );
+
+  int f_v_count = getFaceVerticesCountAt( m, 0 );
+  EXPECT_EQ( 6, f_v_count ); //triangle 6 node
+
+  int f_v = getFaceVerticesIndexAt( m, 0, 0 );
+  EXPECT_EQ( 0, f_v );
+  f_v = getFaceVerticesIndexAt( m, 0, 1 );
+  EXPECT_EQ( 3, f_v );
+  f_v = getFaceVerticesIndexAt( m, 0, 2 );
+  EXPECT_EQ( 1, f_v );
+  f_v = getFaceVerticesIndexAt( m, 0, 3 );
+  EXPECT_EQ( 4, f_v );
+  f_v = getFaceVerticesIndexAt( m, 0, 4 );
+  EXPECT_EQ( 2, f_v );
+  f_v = getFaceVerticesIndexAt( m, 0, 5 );
+  EXPECT_EQ( 5, f_v );
+
+  MDAL_CloseMesh( m );
+}
+
 TEST( Mesh2DMTest, LinesFile )
 {
   std::string path = test_file( "/2dm/lines.2dm" );
@@ -285,7 +330,7 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
   ASSERT_EQ( MDAL_Status::None, s );
 
   int maxCount = MDAL_M_faceVerticesMaximumCount( m );
-  EXPECT_EQ( maxCount, 4 );
+  EXPECT_EQ( maxCount, 3 );
 
   std::string driverName = MDAL_M_driverName( m );
   EXPECT_EQ( driverName, "2DM" );
@@ -403,7 +448,7 @@ TEST( Mesh2DMTest, MultiMaterialMeshTest )
   ASSERT_EQ( MDAL_Status::None, s );
 
   int maxCount = MDAL_M_faceVerticesMaximumCount( m );
-  EXPECT_EQ( maxCount, 4 );
+  EXPECT_EQ( maxCount, 3 );
 
   std::string driverName = MDAL_M_driverName( m );
   EXPECT_EQ( driverName, "2DM" );
