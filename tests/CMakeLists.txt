@@ -26,10 +26,12 @@ IF (NOT GTEST_FOUND)
 
     INCLUDE_DIRECTORIES("${gtest_SOURCE_DIR}/include"
                         "${gmock_SOURCE_DIR}/include")
+
+
+    SET(GTEST_LIBRARIES gtest gmock)
 ELSE(NOT GTEST_FOUND)
     INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIR})
 ENDIF(NOT GTEST_FOUND)
-
 
 #########################################################################
 #########################################################################
@@ -56,7 +58,7 @@ MACRO (ADD_MDAL_TEST TESTSRC)
   STRING(REPLACE ".cpp" "" TESTNAME ${TESTNAME})
   SET (TESTNAME  "mdal_${TESTNAME}_test")
   ADD_EXECUTABLE(${TESTNAME} ${TESTSRC} $<TARGET_OBJECTS:mdaltestutils>)
-  TARGET_LINK_LIBRARIES(${TESTNAME} gtest gmock ${CMAKE_THREAD_LIBS_INIT} mdal)
+  TARGET_LINK_LIBRARIES(${TESTNAME} ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} mdal)
   IF(GDAL_FOUND)
     TARGET_INCLUDE_DIRECTORIES(${TESTNAME} PRIVATE ${GDAL_INCLUDE_DIRS})
   ENDIF(GDAL_FOUND)
@@ -164,5 +166,5 @@ SET(UNITTESTS_SRC
 )
 
 ADD_EXECUTABLE(mdal_unittests ${UNITTESTS_SRC})
-TARGET_LINK_LIBRARIES(mdal_unittests gtest gmock ${CMAKE_THREAD_LIBS_INIT} mdal_a)
+TARGET_LINK_LIBRARIES(mdal_unittests ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} mdal_a)
 ADD_TEST(mdal_unittests ${CMAKE_CURRENT_BINARY_DIR}/mdal_unittests)
