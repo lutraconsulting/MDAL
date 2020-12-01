@@ -34,7 +34,7 @@ MDAL::Mesh2dm::Mesh2dm( size_t faceVerticesMaximumCount,
 
 MDAL::Mesh2dm::~Mesh2dm() = default;
 
-bool _parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t vertexIndex, size_t vertexID )
+static bool _parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t vertexIndex, size_t vertexID )
 {
   if ( vertexIndex == vertexID )
     return false;
@@ -50,7 +50,7 @@ bool _parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t ve
   return false;
 }
 
-void _persist_native_index( std::vector<double> &arr, size_t nativeID, size_t ourId, size_t maxOurId )
+static void _persist_native_index( std::vector<double> &arr, size_t nativeID, size_t ourId, size_t maxOurId )
 {
   if ( !arr.empty() || ( nativeID != ourId + 1 ) )
   {
