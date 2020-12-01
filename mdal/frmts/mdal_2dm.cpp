@@ -50,6 +50,21 @@ bool _parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t ve
   return false;
 }
 
+void _persist_native_index( std::vector<double> &arr, size_t nativeID, size_t ourId, size_t maxOurId )
+{
+  if ( !arr.empty() || ( nativeID != ourId + 1 ) )
+  {
+    // we have gaps in face indexing
+    if ( arr.empty() )
+    {
+      arr.resize( maxOurId );
+      for ( size_t i = 0; i < ourId; ++i )
+        arr[i] = static_cast<double>( i + 1 );
+    }
+    arr[ourId] = static_cast<double>( nativeID );
+  }
+}
+
 size_t MDAL::Mesh2dm::vertexIndex( size_t vertexID ) const
 {
   auto ni2i = mVertexIDtoIndex.find( vertexID );
@@ -120,6 +135,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
   size_t materialCount = 0;
   bool hasMaterialsDefinitionsForElements = false;
 
+  std::vector<double> nativeVertexIds;
+  std::vector<double> nativeFaceIds;
+  std::vector<double> nativeEdgeIds;
+
   // Find out how many nodes and elements are contained in the .2dm mesh file
   while ( std::getline( in, line ) )
   {
@@ -184,7 +203,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
 
       const size_t faceVertexCount = MDAL::toSizeT( line[1] );
       assert( ( faceVertexCount == 3 ) || ( faceVertexCount == 4 ) || ( faceVertexCount == 6 ) );
-      if (maxVerticesPerFace < faceVertexCount)
+      if ( maxVerticesPerFace < faceVertexCount )
         maxVerticesPerFace = faceVertexCount;
 
       Face &face = faces[faceIndex];
@@ -195,6 +214,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
       // vertex ids are numbered from 1
       // Right now we just store node IDs here - we will convert them to node indices afterwards
       assert( chunks.size() > faceVertexCount + 1 );
+
+      // in case we have gaps/reorders in native indexes, store it
+      size_t nativeID = MDAL::toSizeT( chunks[1] );
+      _persist_native_index( nativeFaceIds, nativeID, faceIndex, faceCount );
 
       for ( size_t i = 0; i < faceVertexCount; ++i )
         face[i] = MDAL::toSizeT( chunks[i + 2] ) - 1; // 2dm is numbered from 1
@@ -241,6 +264,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
       chunks = split( line,  ' ' );
       assert( edgeIndex < edgesCount );
       assert( chunks.size() > 4 );
+      // in case we have gaps/reorders in native indexes, store it
+      size_t nativeID = MDAL::toSizeT( chunks[1] );
+      _persist_native_index( nativeEdgeIds, nativeID, edgeIndex, edgesCount );
+
       size_t startVertexIndex = MDAL::toSizeT( chunks[2] ) - 1; // 2dm is numbered from 1
       size_t endVertexIndex = MDAL::toSizeT( chunks[3] ) - 1; // 2dm is numbered from 1
       Edge &edge = edges[edgeIndex];
@@ -265,9 +292,11 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
         }
         lastVertexID = nodeID;
       }
-      nodeID -= 1; // 2dm is numbered from 1
 
-      _parse_vertex_id_gaps( vertexIDtoIndex, vertexIndex, nodeID );
+      // in case we have gaps/reorders in native indexes, store it
+      _persist_native_index( nativeVertexIds, nodeID, vertexIndex, vertexCount );
+      _parse_vertex_id_gaps( vertexIDtoIndex, vertexIndex, nodeID - 1 );
+
       assert( vertexIndex < vertexCount );
       Vertex &vertex = vertices[vertexIndex];
       vertex.x = toDouble( chunks[2] );
@@ -311,6 +340,13 @@ std::unique_ptr<MDAL::Mesh> MDAL::Driver2dm::load( const std::string &meshFile, 
 
   // Add Bed Elevation
   MDAL::addBedElevationDatasetGroup( mesh.get(), mesh->vertices() );
+
+  if ( !nativeFaceIds.empty() )
+    MDAL::addFaceScalarDatasetGroup( mesh.get(), nativeFaceIds, "NativeFaceIds" );
+  if ( !nativeVertexIds.empty() )
+    MDAL::addVertexScalarDatasetGroup( mesh.get(), nativeVertexIds, "NativeVertexIds" );
+  if ( !nativeEdgeIds.empty() )
+    MDAL::addEdgeScalarDatasetGroup( mesh.get(), nativeEdgeIds, "NativeEdgeIds" );
 
   // Add material IDs
   if ( hasMaterialsDefinitionsForElements )
@@ -371,7 +407,7 @@ void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh )
   }
 
   // write faces
-  std::vector<int> vertexIndices(mesh->faceVerticesMaximumCount());
+  std::vector<int> vertexIndices( mesh->faceVerticesMaximumCount() );
   std::unique_ptr<MDAL::MeshFaceIterator> faceIterator = mesh->readFaces();
   for ( size_t i = 0; i < mesh->facesCount(); ++i )
   {

@@ -582,64 +582,75 @@ void MDAL::combineStatistics( MDAL::Statistics &main, const MDAL::Statistics &ot
 
 void MDAL::addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertices )
 {
-  if ( !mesh )
-    return;
-
-  if ( 0 == mesh->verticesCount() )
-    return;
-
-  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
-                                          mesh->driverName(),
-                                          mesh,
-                                          mesh->uri(),
-                                          "Bed Elevation"
-                                        );
-  group->setDataLocation( MDAL_DataLocation::DataOnVertices );
-  group->setIsScalar( true );
-
-  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
-  dataset->setTime( 0.0 );
+  std::vector<double> values( mesh->verticesCount() );
   for ( size_t i = 0; i < vertices.size(); ++i )
   {
-    dataset->setScalarValue( i, vertices[i].z );
+    values[i] = vertices[i].z;
   }
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
-  group->datasets.push_back( dataset );
-  group->setStatistics( MDAL::calculateStatistics( group ) );
-  mesh->datasetGroups.push_back( group );
+  addVertexScalarDatasetGroup( mesh, values, "Bed Elevation" );
 }
 
-void MDAL::addFaceScalarDatasetGroup( MDAL::Mesh *mesh,
-                                      const std::vector<double> &values,
-                                      const std::string &name )
+static void _addScalarDatasetGroup( MDAL::Mesh *mesh,
+                                    const std::vector<double> &values,
+                                    const std::string &name,
+                                    MDAL_DataLocation location
+                                  )
 {
   if ( !mesh )
     return;
 
+  size_t maxCount = 0;
+  switch ( location )
+  {
+    case MDAL_DataLocation::DataOnVertices: maxCount = mesh->verticesCount(); break;
+    case MDAL_DataLocation::DataOnFaces: maxCount = mesh->facesCount(); break;
+    case MDAL_DataLocation::DataOnEdges: maxCount = mesh->edgesCount(); break;
+    default:
+      assert( false );
+  }
+
   if ( values.empty() )
     return;
 
-  if ( mesh->facesCount() == 0 )
+  if ( maxCount == 0 )
     return;
 
-  assert( values.size() ==  mesh->facesCount() );
+  assert( values.size() ==  maxCount );
 
-  std::shared_ptr<DatasetGroup> group = std::make_shared< DatasetGroup >(
-                                          mesh->driverName(),
-                                          mesh,
-                                          mesh->uri(),
-                                          name
-                                        );
-  group->setDataLocation( MDAL_DataLocation::DataOnFaces );
+  std::shared_ptr<MDAL::DatasetGroup> group = std::make_shared< MDAL::DatasetGroup >(
+        mesh->driverName(),
+        mesh,
+        mesh->uri(),
+        name
+      );
+  group->setDataLocation( location );
   group->setIsScalar( true );
 
-  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
+  std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MDAL::MemoryDataset2D >( group.get() );
   dataset->setTime( 0.0 );
   memcpy( dataset->values(), values.data(), sizeof( double )*values.size() );
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );
   group->setStatistics( MDAL::calculateStatistics( group ) );
   mesh->datasetGroups.push_back( group );
+}
+
+
+void MDAL::addFaceScalarDatasetGroup( MDAL::Mesh *mesh,
+                                      const std::vector<double> &values,
+                                      const std::string &name )
+{
+  _addScalarDatasetGroup( mesh, values, name, MDAL_DataLocation::DataOnFaces );
+}
+
+void MDAL::addVertexScalarDatasetGroup( MDAL::Mesh *mesh, const std::vector<double> &values, const std::string &name )
+{
+  _addScalarDatasetGroup( mesh, values, name, MDAL_DataLocation::DataOnVertices );
+}
+
+void MDAL::addEdgeScalarDatasetGroup( MDAL::Mesh *mesh, const std::vector<double> &values, const std::string &name )
+{
+  _addScalarDatasetGroup( mesh, values, name, MDAL_DataLocation::DataOnEdges );
 }
 
 bool MDAL::isNativeLittleEndian()

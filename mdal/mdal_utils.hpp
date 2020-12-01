@@ -149,8 +149,12 @@ namespace MDAL
   // mesh & datasets
   //! Adds bed elevatiom dataset group to mesh
   void addBedElevationDatasetGroup( MDAL::Mesh *mesh, const Vertices &vertices );
-  //! Adds altitude dataset group to mesh
+  //! Adds a scalar face dataset group with 1 timestep to mesh
   void addFaceScalarDatasetGroup( MDAL::Mesh *mesh, const std::vector<double> &values, const std::string &name );
+  //! Adds a scalar vertex dataset group with 1 timestep to mesh
+  void addVertexScalarDatasetGroup( MDAL::Mesh *mesh, const std::vector<double> &values, const std::string &name );
+  //! Adds a scalar edge dataset group with 1 timestep to mesh
+  void addEdgeScalarDatasetGroup( MDAL::Mesh *mesh, const std::vector<double> &values, const std::string &name );
 
   //! Reads all of type of value. Option to change the endianness is provided
   template<typename T>
