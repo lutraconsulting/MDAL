@@ -83,7 +83,7 @@ namespace MDAL
       ~Driver2dm() override;
       Driver2dm *create() override;
 
-      int faceVerticesMaximumCount() const override{return 6;}
+      int faceVerticesMaximumCount() const override {return 6;}
 
       bool canReadMesh( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName = "" ) override;

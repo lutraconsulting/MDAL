@@ -69,6 +69,122 @@ TEST( Mesh2DMTest, MeshWithNumberingGaps )
   EXPECT_EQ( v_count, 5 );
   int f_count = MDAL_M_faceCount( m );
   EXPECT_EQ( 2, f_count );
+  int e_count = MDAL_M_edgeCount( m );
+  EXPECT_EQ( 1, e_count );
+
+  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+
+  // NativeFaceIds
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "NativeFaceIds" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 2, count );
+
+    double value = getValue( ds, 0 );
+    EXPECT_DOUBLE_EQ( 1, value );
+
+    value = getValue( ds, 1 );
+    EXPECT_DOUBLE_EQ( 3, value );
+
+    EXPECT_FALSE( MDAL_G_isTemporal( g ) );
+  }
+
+  // NativeVertexIds
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 2 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "NativeVertexIds" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 5, count );
+
+    double value = getValue( ds, 3 );
+    EXPECT_DOUBLE_EQ( 4, value );
+
+    value = getValue( ds, 4 );
+    EXPECT_DOUBLE_EQ( 6, value );
+
+    EXPECT_FALSE( MDAL_G_isTemporal( g ) );
+  }
+
+  // NativeEdgeIds
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 1, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "NativeEdgeIds" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnEdges );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 1, count );
+
+    double value = getValue( ds, 0 );
+    EXPECT_DOUBLE_EQ( 5, value );
+
+    EXPECT_FALSE( MDAL_G_isTemporal( g ) );
+  }
+
   MDAL_CloseMesh( m );
 }
 
