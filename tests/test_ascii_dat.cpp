@@ -65,7 +65,7 @@ TEST( Mesh2DMTest, Mixed1D2D )
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
   // for mixed meshes, vertex datasets are supported
   // we use the dataset from quad_and_triangle, since if the number of vertices
@@ -75,7 +75,7 @@ TEST( Mesh2DMTest, Mixed1D2D )
   MDAL_M_LoadDatasets( m, vertexPath.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
 
   // for mixed meshes, element datasets are not supported
   std::string facePath = test_file( "/ascii_dat/quad_and_triangle_els_scalar.dat" );
@@ -332,9 +332,9 @@ TEST( MeshAsciiDatTest, QuadAndTriangleFaceScalarFileWithNumberingGaps )
   MDAL_M_LoadDatasets( m, path.c_str() );
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
-  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
   ASSERT_NE( g, nullptr );
 
   int meta_count = MDAL_G_metadataCount( g );

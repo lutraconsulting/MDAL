@@ -472,13 +472,13 @@ TEST( XdmfTest, Simple )
   MDAL_M_LoadDatasets( m, path2.c_str() );
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
-  EXPECT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+  EXPECT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
 
   // ///////////
   // Scalar Dataset
   // ///////////
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
@@ -535,7 +535,7 @@ TEST( XdmfTest, Simple )
   // Vector Dataset
   // //////////////
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
     ASSERT_NE( g, nullptr );
 
     int meta_count = MDAL_G_metadataCount( g );
