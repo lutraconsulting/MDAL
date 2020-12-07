@@ -262,16 +262,44 @@ void MDAL::DriverManager::loadDynamicDrivers()
   externalDriverPath = getenv( "MDAL_DRIVER_PATH" );
 #endif
 
+#if 0 // for debugging library loading in release mode under Windows
+#ifdef WIN32
+
+  OutputDebugString( "*****************************  Attempt to load external driver from: \n" );  OutputDebugString( externalDriverPath );
+  OutputDebugString( "Path: " );
+  size_t requiredPathSize = 0;
+  getenv_s( &requiredPathSize, NULL, 0, "PATH" );
+  char *path = nullptr;
+  if ( requiredPathSize != 0 )
+  {
+    path = ( char * )malloc( requiredPathSize * sizeof( char ) );
+    getenv_s( &requiredPathSize, path, requiredPathSize, "PATH" );
+  }
+  OutputDebugString( path ); OutputDebugString( "\n" );
+#endif
+#endif
+
   if ( externalDriverPath == nullptr )
     return;
 
   std::vector<std::string> libList = MDAL::Library::libraryFilesInDir( externalDriverPath );
-
   for ( const std::string &libFile : libList )
   {
     std::shared_ptr<MDAL::Driver> driver( MDAL::DriverDynamic::create( externalDriverPath + libFile ) );
+
     if ( driver )
+    {
       mDrivers.push_back( driver );
+#if 0 // for debugging library loading in release mode under Windows
+#ifdef WIN32
+      OutputDebugString( "+++++++++++++++++++++++++++++  loading driver is success for:" );  OutputDebugString( libFile.c_str() ); OutputDebugString( "\n" );
+    }
+    else
+    {
+      OutputDebugString( "-----------------------------   loading driver fails for:" );  OutputDebugString( libFile.c_str() ); OutputDebugString( "\n" );
+    }
+#endif
+#endif
   }
 
 }
