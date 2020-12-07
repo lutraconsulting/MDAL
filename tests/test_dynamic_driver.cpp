@@ -192,11 +192,11 @@ TEST( MeshDynamicDriverTest, openMesh )
 
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_TRUE( MDAL::equals( 2.236, min, 0.001 ) );
-  EXPECT_TRUE( MDAL::equals( 3.606, max, 0.001 ) );
+  EXPECT_TRUE( MDAL::equals( 2.236, max, 0.001 ) );
 
   MDAL_G_minimumMaximum( g, &min, &max );
-  EXPECT_TRUE( MDAL::equals( 1.0, min, 0.001 ) );
-  EXPECT_TRUE( MDAL::equals( 3.606, max, 0.001 ) );
+  EXPECT_TRUE( MDAL::equals( 1.4142, min, 0.001 ) );
+  EXPECT_TRUE( MDAL::equals( 2.236, max, 0.001 ) );
 
   MDAL_CloseMesh( m );
 }

@@ -525,11 +525,11 @@ MDAL_LIB_EXPORT double MDAL_DRIVER_D_time( int meshId, int groupIndex, int datas
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
-    *ok = groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) ;
+    *ok = groupIndex < static_cast<int>( mesh.datasetGroups.size() ) ;
     if ( !( *ok ) )
       return 0;
     const Datasetgroup &datasetGroup = mesh.datasetGroups.at( groupIndex );
-    *ok = datasetIndex >= static_cast<int>( datasetGroup.dataset.size() );
+    *ok = datasetIndex < static_cast<int>( datasetGroup.dataset.size() );
     if ( !( *ok ) )
       return 0;
     const Dataset &dataset = datasetGroup.dataset.at( datasetIndex );
@@ -600,8 +600,8 @@ int MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int
     if ( datasetIndex >= static_cast<int>( datasetGroup.dataset.size() ) )
       return -1;
     const Dataset &dataset = datasetGroup.dataset.at( size_t( datasetIndex ) );
-    int totalDatasetValues = static_cast<int>( dataset.values.size() );
-    int effectiveCount = std::min( count, totalDatasetValues - indexStart );
+    int totalValues = static_cast<int>( dataset.isFaceActive.size() );
+    int effectiveCount = std::min( count, totalValues - indexStart );
 
     for ( int i = 0; i < effectiveCount; ++i )
       buffer[i] = dataset.isFaceActive.at( size_t( i + indexStart ) );
@@ -612,7 +612,7 @@ int MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int
   return false;
 }
 
-MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int meshId, int groupIndex, int datasetIndex )
+MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int, int, int )
 {}
 
 #ifdef __cplusplus

@@ -245,9 +245,9 @@ bool MDAL::MeshDynamicDriver::populateDatasetGroups()
 
       bool ok = true;
       double time = mDatasetTimeFunction( mId, i, d, &ok );
-      dataset->setTime( RelativeTimestamp( time, RelativeTimestamp::hours ) );
       if ( !ok )
         return false;
+      dataset->setTime( RelativeTimestamp( time, RelativeTimestamp::hours ) );
 
       dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
       dataset->unloadData();
