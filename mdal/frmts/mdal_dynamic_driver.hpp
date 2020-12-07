@@ -117,6 +117,9 @@ namespace MDAL
 
       bool loadSymbol();
 
+      //! Removes stored data in memory (for drivers that support lazy loading)
+      void unloadData();
+
     private:
       int mMeshId = -1;
       int mGroupIndex = -1;
@@ -126,6 +129,7 @@ namespace MDAL
       //************************************
       std::function<int ( int, int, int, int, int, double * )> mDataFunction;
       std::function<int ( int, int, int, int, int, int * )> mActiveFlagsFunction;
+      std::function<void( int, int, int )> mUnloadFunction;
   };
 
   class MeshDynamicDriver: public Mesh

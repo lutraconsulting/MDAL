@@ -250,6 +250,8 @@ bool MDAL::MeshDynamicDriver::populateDatasetGroups()
         return false;
 
       dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+      dataset->unloadData();
+
       group->datasets.push_back( dataset );
     }
 
@@ -431,10 +433,12 @@ size_t MDAL::DatasetDynamicDriver::activeData( size_t indexStart, size_t count, 
 bool MDAL::DatasetDynamicDriver::loadSymbol()
 {
   mDataFunction = mLibrary.getSymbol<int, int, int, int, int, int, double *>( "MDAL_DRIVER_D_data" );
+  mUnloadFunction = mLibrary.getSymbol<void, int, int, int>( "MDAL_DRIVER_D_unload" );
   if ( supportsActiveFlag() )
     mActiveFlagsFunction = mLibrary.getSymbol<int, int, int, int, int, int, int *>( "MDAL_DRIVER_D_activeFlags" );
 
   if ( mDataFunction == nullptr ||
+       mUnloadFunction == nullptr ||
        ( supportsActiveFlag() && mActiveFlagsFunction == nullptr ) )
   {
     MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid" );
@@ -442,4 +446,12 @@ bool MDAL::DatasetDynamicDriver::loadSymbol()
   }
 
   return true;
+}
+
+void MDAL::DatasetDynamicDriver::unloadData()
+{
+  if ( !mUnloadFunction )
+    return;
+
+  mUnloadFunction( mMeshId, mGroupIndex, mDatasetIndex );
 }
