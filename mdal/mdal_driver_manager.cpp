@@ -297,9 +297,9 @@ void MDAL::DriverManager::loadDynamicDrivers()
     else
     {
       OutputDebugString( "-----------------------------   loading driver fails for:" );  OutputDebugString( libFile.c_str() ); OutputDebugString( "\n" );
+#endif
+#endif
     }
-#endif
-#endif
   }
 
 }

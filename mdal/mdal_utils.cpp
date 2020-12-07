@@ -447,7 +447,7 @@ std::string MDAL::getCurrentTimeStamp()
   return s;
 }
 
-MDAL::Statistics _calculateStatistics( const std::vector<double> &values, size_t count, bool isVector )
+MDAL::Statistics _calculateStatistics( const std::vector<double> &values, size_t count, bool isVector, const std::vector<int> &active )
 {
   MDAL::Statistics ret;
 
@@ -457,6 +457,9 @@ MDAL::Statistics _calculateStatistics( const std::vector<double> &values, size_t
 
   for ( size_t i = 0; i < count; ++i )
   {
+    if ( !active.empty() && active.at( i ) == 0 )
+      continue;
+
     double magnitude;
     if ( isVector )
     {
@@ -527,6 +530,11 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
   bool is3D = dataset->group()->dataLocation() == MDAL_DataLocation::DataOnVolumes;
   size_t bufLen = 2000;
   std::vector<double> buffer( isVector ? bufLen * 2 : bufLen );
+  std::vector<int> activeBuffer;
+  bool activeFaceFlag = dataset->group()->dataLocation() == MDAL_DataLocation::DataOnFaces && dataset->supportsActiveFlag();
+
+  if ( activeFaceFlag )
+    activeBuffer.resize( bufLen );
 
   size_t i = 0;
   while ( i < dataset->valuesCount() )
@@ -553,11 +561,14 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
       {
         valsRead = dataset->scalarData( i, bufLen, buffer.data() );
       }
+
+      if ( activeFaceFlag )
+        dataset->activeData( i, bufLen, activeBuffer.data() );
     }
     if ( valsRead == 0 )
       return ret;
 
-    MDAL::Statistics dsStats = _calculateStatistics( buffer, valsRead, isVector );
+    MDAL::Statistics dsStats = _calculateStatistics( buffer, valsRead, isVector, activeBuffer );
     combineStatistics( ret, dsStats );
     i += valsRead;
   }

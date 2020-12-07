@@ -520,6 +520,26 @@ bool MDAL_DRIVER_G_datasetsDescription( int meshId, int groupIndex, bool *isScal
   return false;
 }
 
+MDAL_LIB_EXPORT double MDAL_DRIVER_D_time( int meshId, int groupIndex, int datasetIndex, bool *ok )
+{
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    const Mesh &mesh = sMeshes[meshId];
+    *ok = groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) ;
+    if ( !( *ok ) )
+      return 0;
+    const Datasetgroup &datasetGroup = mesh.datasetGroups.at( groupIndex );
+    *ok = datasetIndex >= static_cast<int>( datasetGroup.dataset.size() );
+    if ( !( *ok ) )
+      return 0;
+    const Dataset &dataset = datasetGroup.dataset.at( datasetIndex );
+    return dataset.time;
+  }
+
+  *ok = false;
+  return 0;
+}
+
 int MDAL_DRIVER_D_data( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double *buffer )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
@@ -549,7 +569,6 @@ int MDAL_DRIVER_D_data( int meshId, int groupIndex, int datasetIndex, int indexS
 
   return -1;
 }
-
 
 bool MDAL_DRIVER_D_hasActiveFlagCapability( int meshId, int groupIndex, int )
 {
@@ -592,6 +611,9 @@ int MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int
 
   return false;
 }
+
+MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int meshId, int groupIndex, int datasetIndex )
+{}
 
 #ifdef __cplusplus
 }//////////////////////////

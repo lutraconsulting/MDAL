@@ -8,21 +8,21 @@
 
 #define mdal_EXPORTS
 
-#  if defined _WIN32 || defined __CYGWIN__
-#    ifdef mdal_EXPORTS
-#      ifdef __GNUC__
-#        define MDAL_LIB_EXPORT __attribute__ ((dllexport))
-#      else
-#        define MDAL_LIB_EXPORT __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
-#      endif
-#    endif
-#  else
-#    if __GNUC__ >= 4
-#      define MDAL_LIB_EXPORT __attribute__ ((visibility ("default")))
-#    else
-#      define MDAL_LIB_EXPORT
-#    endif
-#  endif //_WIN32 || defined __CYGWIN__
+#if defined _WIN32 || defined __CYGWIN__
+#ifdef mdal_EXPORTS
+#ifdef __GNUC__
+#define MDAL_LIB_EXPORT __attribute__ ((dllexport))
+#else
+#define MDAL_LIB_EXPORT __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
+#endif
+#endif
+#else
+#if __GNUC__ >= 4
+#define MDAL_LIB_EXPORT __attribute__ ((visibility ("default")))
+#else
+#define MDAL_LIB_EXPORT
+#endif
+#endif //_WIN32 || defined __CYGWIN__
 
 
 #ifdef __cplusplus
@@ -123,6 +123,9 @@ MDAL_LIB_EXPORT const char *MDAL_DRIVER_G_metadataValue( int meshId, int groupIn
 //! Returns dataset description, that is attributes that define the data
 MDAL_LIB_EXPORT bool MDAL_DRIVER_G_datasetsDescription( int meshId, int groupIndex, bool *isScalar, int *dataLocation, int *datasetCount );
 
+//! Returns the dataset time value
+MDAL_LIB_EXPORT double MDAL_DRIVER_D_time( int meshId, int groupIndex, int datasetIndex, bool *ok );
+
 //! Returns the dataset value, for value on vector, the buffer contains \a count pair of values : x0,y0,
 MDAL_LIB_EXPORT int MDAL_DRIVER_D_data( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double *buffer );
 
@@ -131,6 +134,9 @@ MDAL_LIB_EXPORT bool MDAL_DRIVER_D_hasActiveFlagCapability( int meshId, int grou
 
 //! Returns the dataset active flags
 MDAL_LIB_EXPORT int MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer );
+
+//! Unload data store in memory (for driver that support lazy loading, data are unloaded after statistic calculation)
+MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int meshId, int groupIndex, int datasetIndex );
 
 #ifdef __cplusplus
 }
