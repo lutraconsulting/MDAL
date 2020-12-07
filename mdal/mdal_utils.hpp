@@ -253,7 +253,7 @@ namespace MDAL
       //! Returns whether the library is valid after loading the file if needed
       bool isValid();
 
-      //! Returns a list of library fil in the folder \a dirPath
+      //! Returns a list of library file in the folder \a dirPath
       static std::vector<std::string> libraryFilesInDir( const std::string &dirPath );
 
       /**

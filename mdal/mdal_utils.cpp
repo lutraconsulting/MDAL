@@ -1041,8 +1041,34 @@ bool MDAL::Library::loadLibrary()
   d->mLibrary = LoadLibrary( d->mLibraryFile.c_str() );
   SetErrorMode( uOldErrorMode );
 
+#if 1 //for debugging
+  DWORD errorMessageID = GetLastError();
+  if ( d->mLibrary )
+  {
+    OutputDebugString( "++++++++++++++++++++++++++++++  load lib success for:" );  OutputDebugString( d->mLibraryFile.c_str() ); OutputDebugString( "\n" );
+  }
+  else
+  {
+    OutputDebugString( "------------------------------  load lib fail for:" );  OutputDebugString( d->mLibraryFile.c_str() ); OutputDebugString( "\n" );
+    std::string message;
+
+    if ( errorMessageID != 0 )
+    {
+
+      LPSTR messageBuffer = nullptr;
+      size_t size = FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                   NULL, errorMessageID, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), ( LPSTR )&messageBuffer, 0, NULL );
+
+      std::string message( messageBuffer, size );
+    }
+    OutputDebugString( "------------------------------  code error:" );  OutputDebugString( std::to_string( errorMessageID ).c_str() ); OutputDebugString( "\n" );
+    OutputDebugString( "------------------------------  message:" );  OutputDebugString( message.c_str() ); OutputDebugString( "\n" );
+  }
+#endif
+
 #else
   d->mLibrary = dlopen( d->mLibraryFile.c_str(), RTLD_LAZY );
 #endif
+
   return d->mLibrary != nullptr;
 }
