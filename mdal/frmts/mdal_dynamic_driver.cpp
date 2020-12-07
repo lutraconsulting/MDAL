@@ -242,6 +242,13 @@ bool MDAL::MeshDynamicDriver::populateDatasetGroups()
       dataset->setSupportsActiveFlag( mDatasetSupportActiveFlagFunction( mId, i, d ) );
       if ( !dataset->loadSymbol() )
         return false;
+
+      bool ok = true;
+      double time = mDatasetTimeFunction( mId, i, d, &ok );
+      dataset->setTime( RelativeTimestamp( time, RelativeTimestamp::hours ) );
+      if ( !ok )
+        return false;
+
       dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
       group->datasets.push_back( dataset );
     }
@@ -265,6 +272,7 @@ bool MDAL::MeshDynamicDriver::loadSymbol()
   mDatasetGroupMetadataCountFunction = mLibrary.getSymbol<int, int, int>( "MDAL_DRIVER_G_metadataCount" );
   mDatasetGroupMetadataKeyFunction = mLibrary.getSymbol<const char *, int, int, int>( "MDAL_DRIVER_G_metadataKey" );
   mDatasetGroupMetadataValueFunction = mLibrary.getSymbol<const char *, int, int, int>( "MDAL_DRIVER_G_metadataValue" );
+  mDatasetTimeFunction = mLibrary.getSymbol<double, int, int, int, bool *>( "MDAL_DRIVER_D_time" );
   mDatasetDescriptionFunction = mLibrary.getSymbol<bool, int, int, bool *, int *, int *>( "MDAL_DRIVER_G_datasetsDescription" );
   mDatasetSupportActiveFlagFunction = mLibrary.getSymbol<bool, int, int, int>( "MDAL_DRIVER_D_hasActiveFlagCapability" );
   mCloseMeshFunction = mLibrary.getSymbol<void, int>( "MDAL_DRIVER_closeMesh" );
@@ -281,6 +289,7 @@ bool MDAL::MeshDynamicDriver::loadSymbol()
        mDatasetGroupMetadataKeyFunction == nullptr ||
        mDatasetGroupMetadataValueFunction == nullptr ||
        mDatasetDescriptionFunction == nullptr ||
+       mDatasetTimeFunction == nullptr ||
        mDatasetSupportActiveFlagFunction == nullptr ||
        mCloseMeshFunction == nullptr )
   {
