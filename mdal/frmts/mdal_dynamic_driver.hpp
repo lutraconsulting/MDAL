@@ -172,6 +172,7 @@ namespace MDAL
       std::function<const char *( int, int, int )> mDatasetGroupMetadataKeyFunction;
       std::function<const char *( int, int, int )> mDatasetGroupMetadataValueFunction;
       std::function < bool ( int, int, bool *, int *, int * )> mDatasetDescriptionFunction;
+      std::function < double( int, int, int, bool * )> mDatasetTimeFunction;
       std::function<bool ( int, int, int )> mDatasetSupportActiveFlagFunction;
 
       std::function<void ( int )> mCloseMeshFunction;
