@@ -43,8 +43,6 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/mdal/api)
 #########################################################################
 #########################################################################
 
-ADD_DEFINITIONS(-DDRIVERS_PATH="${CMAKE_BINARY_DIR}/tools/externaldriver/")
-
 INCLUDE_DIRECTORIES(  
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -117,6 +115,12 @@ IF(HDF5_FOUND AND XML_FOUND)
     test_xdmf.cpp
   )
 ENDIF(HDF5_FOUND AND XML_FOUND)
+
+IF(BUILD_EXTERNAL_DRIVERS)
+  SET(TESTS ${TESTS}
+  )
+ENDIF(BUILD_EXTERNAL_DRIVERS)
+ADD_DEFINITIONS(-DDRIVERS_PATH="${CMAKE_BINARY_DIR}/external_drivers")
 
 FOREACH(TESTSRC ${TESTS})
     ADD_MDAL_TEST(${TESTSRC})
