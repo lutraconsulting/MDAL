@@ -225,10 +225,10 @@ bool MDAL::MeshDynamicDriver::populateDatasetGroups()
         break;
     }
 
-    size_t metadataCount = mDatasetGroupMetadataCountFunction( mId, i );
+    int metadataCount = mDatasetGroupMetadataCountFunction( mId, i );
     if ( metadataCount > 0 )
     {
-      for ( size_t metaIndex = 0; metaIndex < metadataCount; ++metaIndex )
+      for ( int metaIndex = 0; metaIndex < metadataCount; ++metaIndex )
       {
         std::string key( mDatasetGroupMetadataKeyFunction( mId, i, metaIndex ) );
         std::string value( mDatasetGroupMetadataValueFunction( mId, i, metaIndex ) );
