@@ -1,8 +1,0 @@
-SET(MDAL_DUMMY_EXTERNAL_DRIVER
-    mdalDummyExternalDriver.cpp)
-	
-ADD_LIBRARY(mdal_dummy_external_driver SHARED 
-${EXTERNAL_DRIVER__HEADER}
-${MDAL_DUMMY_EXTERNAL_DRIVER}
-)
-

@@ -26,6 +26,7 @@ SET (WITH_SQLITE3 TRUE CACHE BOOL "Build providers that require SQLITE3 (e.g. 3D
 SET (BUILD_STATIC FALSE CACHE BOOL "Build static mdal library" )
 SET (BUILD_SHARED TRUE CACHE BOOL "Build shared mdal library" )
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables")
+SET (BUILD_EXTERNAL_DRIVERS TRUE CACHE BOOL "Build external drivers")
 
 #############################################################
 # Setup code coverage
@@ -123,3 +124,9 @@ IF (ENABLE_TESTS)
   ENABLE_TESTING()
   ADD_SUBDIRECTORY(tests)
 ENDIF(ENABLE_TESTS)
+
+#############################################################
+# external drivers
+IF (BUILD_EXTERNAL_DRIVERS OR ENABLE_TESTS)
+  ADD_SUBDIRECTORY(external_drivers)
+ENDIF(BUILD_EXTERNAL_DRIVERS OR ENABLE_TESTS)
