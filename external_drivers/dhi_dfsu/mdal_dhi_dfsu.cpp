@@ -1,3 +1,8 @@
+/*
+ MDAL - Mesh Data Abstraction Library (MIT License)
+ Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
+*/
+
 #include "mdal_dhi_dfsu.hpp"
 
 #include <cassert>
