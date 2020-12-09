@@ -459,34 +459,14 @@ typedef std::map<std::string, std::pair<LONG, bool>> VectorGroups;
 
 static double convertTimeToHours( double time, LONG timeUnit )
 {
-  //timeUnit value from EUM.xml
-  switch ( timeUnit )
-  {
-    case 1400: //second
-      return time / 3600;
-      break;
-    case 1401: //minute
-      return time / 60;
-      break;
-    case 1402: //hour
-      return time;
-      break;
-    case 1403: //day
-      return time * 24;
-      break;
-    case 1404: //year
-      return time * 24 * 365;
-      break;
-    case 1405: //month
-      return time * 24 * 30;
-      break;
-    case 1406: //millisecond
-      return time / 3600 / 1000;
-      break;
-    default:
-      return 0;
-      break;
-  }
+  LONG idHour = 0;
+  double result = time;
+  LPCTSTR ident = "hour";
+  LONG count = eumGetItemTypeCount();
+  if ( eumGetUnitTag( ident, &idHour ) )
+    eumConvertUnit( timeUnit, time, idHour, &result );
+
+  return result;
 }
 
 bool Mesh::populateDatasetGroups()
@@ -562,7 +542,6 @@ bool Mesh::populateDatasetGroups()
     {
       mDatasetGroups.emplace_back( new DatasetGroup( name, itemUnit, i, doublePrecision, mFp, mPdfs ) );
     }
-
   }
 
   // fill dataset group
