@@ -11,14 +11,12 @@
 
 TEST( MeshDynamicDriverTest, hasMinimalExternalDriver )
 {
-  set_mdal_driver_path( "minimal_example" );
   MDAL_DriverH driver = MDAL_driverFromName( "Dynamic_driver_test" );
   ASSERT_TRUE( driver );
 }
 
 TEST( MeshDynamicDriverTest, openMesh )
 {
-  set_mdal_driver_path( "minimal_example" );
   std::string path = test_file( "/dynamic_driver/mesh_1.msh" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_TRUE( m );
@@ -199,6 +197,7 @@ int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
   init_test();
+  set_mdal_driver_path( "minimal_example" );
   int ret =  RUN_ALL_TESTS();
   finalize_test();
   return ret;
