@@ -263,7 +263,7 @@ TEST( MeshSLFTest, SaveMeshFrame )
 static MDAL_DatasetGroupH addNewScalarDatasetGroup( MDAL_MeshH mesh, MDAL_DriverH driver, std::string file )
 {
   MDAL_DatasetGroupH newScalarGroup = MDAL_M_addDatasetGroup( mesh, "New Scalar Dataset Group", DataOnVertices, true, driver, file.c_str() );
-  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
   size_t v_count = MDAL_M_vertexCount( mesh );
   std::vector<double> scalarValue1( v_count );
   std::vector<double> scalarValue2( v_count );
@@ -273,11 +273,11 @@ static MDAL_DatasetGroupH addNewScalarDatasetGroup( MDAL_MeshH mesh, MDAL_Driver
     scalarValue2[i] = ( i % 30 ) / 3.0;
   }
   MDAL_G_addDataset( newScalarGroup, 0, scalarValue1.data(), nullptr );
-  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
   MDAL_G_addDataset( newScalarGroup, 1.111111111111111111, scalarValue2.data(), nullptr );
-  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
   MDAL_G_closeEditMode( newScalarGroup );
-  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
 
   return newScalarGroup;
 }
@@ -285,7 +285,7 @@ static MDAL_DatasetGroupH addNewScalarDatasetGroup( MDAL_MeshH mesh, MDAL_Driver
 static MDAL_DatasetGroupH addNewVectorDatasetGroup( MDAL_MeshH mesh, MDAL_DriverH driver, std::string file )
 {
   MDAL_DatasetGroupH newVectorGroup = MDAL_M_addDatasetGroup( mesh, "New Vector Dataset Group", DataOnVertices, false, driver, file.c_str() );
-  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
   size_t v_count = MDAL_M_vertexCount( mesh );
   std::vector<double> vectorValue1( v_count * 2 );
   std::vector<double> vectorValue2( v_count * 2 );
@@ -295,11 +295,11 @@ static MDAL_DatasetGroupH addNewVectorDatasetGroup( MDAL_MeshH mesh, MDAL_Driver
     vectorValue2[i] = ( i % 20 ) / 3.0;
   }
   MDAL_G_addDataset( newVectorGroup, 0, vectorValue1.data(), nullptr );
-  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
   MDAL_G_addDataset( newVectorGroup, 1.111111111, vectorValue2.data(), nullptr );
-  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
   MDAL_G_closeEditMode( newVectorGroup );
-  EXPECT_EQ( MDAL_LastStatus(), MDAL::None );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
 
   return newVectorGroup;
 }
