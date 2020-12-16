@@ -27,6 +27,31 @@ bool Mesh::canRead( const std::string &uri )
   if ( dataType != 2001 && dataType != 2000 )
     return false;
 
+  LPBLOCK customBlock;
+  LONG error = dfsGetCustomBlockRef(pdfs, &customBlock);
+  if (error != F_NO_ERROR)
+      return false;
+  // Search for "MIKE_FM" custom block containing int data
+  while (customBlock)
+  {
+      SimpleType dataType;
+      LPCTSTR name;
+      LONG size;
+      void* customblockData=nullptr;
+      error = dfsGetCustomBlock(customBlock, &dataType, &name,&size, &customblockData, &customBlock);
+      if (error != F_NO_ERROR)
+          return false;
+
+      if (0 == strcmp(name, "MIKE_FM") && dataType == UFS_INT)
+      {
+          int* intData = static_cast<int*>(customblockData);
+          
+          int dimension = intData[2];
+          if (dimension != 2)
+              return false;
+      }
+  }
+
   return true;
 
 }

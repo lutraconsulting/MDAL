@@ -274,7 +274,7 @@ TEST( MeshDhiDriverTest, meshWithVectorGroupDifferentName )
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
-  init_test();
+  initTest();
   int ret = RUN_ALL_TESTS();
   return ret;
 }
