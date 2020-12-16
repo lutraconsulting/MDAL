@@ -10,6 +10,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 #include "eum.h"
 #include "dfsio.h"
@@ -21,6 +22,7 @@ class Dataset
 {
   public:
     Dataset( LPFILE Fp, LPHEAD  Pdfs, LONG timeStepNo, size_t size, bool doublePrecision );
+    virtual ~Dataset() = default;
 
     //! Fills the buffer with data
     virtual int getData( int indexStart, int count, double *buffer ) = 0;
