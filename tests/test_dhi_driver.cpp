@@ -9,22 +9,6 @@
 #include "mdal_testutils.hpp"
 #include "mdal_utils.hpp"
 
-void initTest()
-{
-#ifdef WIN32
-  size_t requiredSize = 0;
-  getenv_s( &requiredSize, NULL, 0, "MDAL_DRIVER_PATH" );
-  if ( requiredSize == 0 )
-  {
-    _putenv_s( "MDAL_DRIVER_PATH", DRIVERS_PATH );
-  }
-#endif
-
-#ifndef WIN32
-  setenv( "MDAL_DRIVER_PATH", DRIVERS_PATH, 0 );
-#endif
-}
-
 TEST( MeshDhiDriverTest, loadDriver )
 {
   MDAL_DriverH driver = MDAL_driverFromName( "DHI" );
@@ -274,7 +258,9 @@ TEST( MeshDhiDriverTest, meshWithVectorGroupDifferentName )
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
-  initTest();
+  init_test();
+  set_mdal_driver_path( "dhi_dfsu" );
   int ret = RUN_ALL_TESTS();
+  finalize_test();
   return ret;
 }
