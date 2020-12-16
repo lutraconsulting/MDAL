@@ -18,6 +18,11 @@ const char *data_path()
   return TESTDATA;
 }
 
+const char *drivers_path()
+{
+  return DRIVERS_PATH;
+}
+
 
 std::string test_file( std::string basename )
 {
@@ -328,9 +333,25 @@ int getFaceVerticesIndexAt( MDAL_MeshH mesh, int faceIndex, int index )
   return faceVertexIndex;
 }
 
+void set_mdal_driver_path( const std::string &dirname )
+{
+  std::string fullPath = std::string( drivers_path() ) +  "/" + dirname;
+#ifdef WIN32
+  size_t requiredSize = 0;
+  getenv_s( &requiredSize, NULL, 0, "MDAL_DRIVER_PATH" );
+  if ( requiredSize == 0 )
+  {
+    _putenv_s( "MDAL_DRIVER_PATH", fullPath.c_str() );
+  }
+#endif
+
+#ifndef WIN32
+  setenv( "MDAL_DRIVER_PATH", fullPath.c_str(), 0 );
+#endif
+}
+
 void init_test()
 {
-
 }
 
 void finalize_test()

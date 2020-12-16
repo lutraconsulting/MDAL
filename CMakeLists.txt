@@ -27,6 +27,9 @@ SET (BUILD_STATIC FALSE CACHE BOOL "Build static mdal library" )
 SET (BUILD_SHARED TRUE CACHE BOOL "Build shared mdal library" )
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables")
 SET (BUILD_EXTERNAL_DRIVERS TRUE CACHE BOOL "Build external drivers")
+IF ( MSVC )
+  SET (EXTERNAL_DRIVER_DHI_DFSU TRUE CACHE BOOL "Build dhi unstructured mesh driver")
+ENDIF( MSVC )
 
 #############################################################
 # Setup code coverage
@@ -127,6 +130,6 @@ ENDIF(ENABLE_TESTS)
 
 #############################################################
 # external drivers
-IF (BUILD_EXTERNAL_DRIVERS OR ENABLE_TESTS)
+IF (BUILD_EXTERNAL_DRIVERS)
   ADD_SUBDIRECTORY(external_drivers)
-ENDIF(BUILD_EXTERNAL_DRIVERS OR ENABLE_TESTS)
+ENDIF(BUILD_EXTERNAL_DRIVERS)

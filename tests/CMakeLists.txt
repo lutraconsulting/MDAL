@@ -37,6 +37,7 @@ ENDIF(NOT GTEST_FOUND)
 #########################################################################
 SET(TESTDATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/data")
 ADD_DEFINITIONS(-DTESTDATA="${TESTDATA_DIR}")
+ADD_DEFINITIONS(-DDRIVERS_PATH="${CMAKE_BINARY_DIR}/external_drivers")
 ADD_LIBRARY(mdaltestutils OBJECT mdal_testutils.hpp mdal_testutils.cpp )
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/mdal/api)
 
@@ -73,8 +74,7 @@ SET(TESTS
     test_selafin.cpp
     test_esri_tin.cpp
     test_ply.cpp
-    test_dynamic_driver.cpp
-    )
+)
 
 IF(HDF5_FOUND)
   SET(TESTS ${TESTS}
@@ -118,15 +118,15 @@ ENDIF(HDF5_FOUND AND XML_FOUND)
 
 IF(BUILD_EXTERNAL_DRIVERS)
   SET(TESTS ${TESTS}
+    test_dynamic_driver.cpp
   )
-ENDIF(BUILD_EXTERNAL_DRIVERS)
-ADD_DEFINITIONS(-DDRIVERS_PATH="${CMAKE_BINARY_DIR}/external_drivers")
 
-IF(EXTERNAL_DRIVER_DHI_DFSU)
-  SET(TESTS ${TESTS}
-      test_dhi_driver.cpp
-  )
-ENDIF(EXTERNAL_DRIVER_DHI_DFSU)
+  IF(EXTERNAL_DRIVER_DHI_DFSU)
+    SET(TESTS ${TESTS}
+        test_dhi_driver.cpp
+    )
+  ENDIF(EXTERNAL_DRIVER_DHI_DFSU)
+ENDIF(BUILD_EXTERNAL_DRIVERS)
 
 FOREACH(TESTSRC ${TESTS})
     ADD_MDAL_TEST(${TESTSRC})
