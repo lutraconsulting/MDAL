@@ -9,22 +9,16 @@
 #include "mdal_testutils.hpp"
 #include "mdal_utils.hpp"
 
+TEST( MeshDynamicDriverTest, hasMinimalExternalDriver )
+{
+  set_mdal_driver_path("minimal_example");
+  MDAL_DriverH driver = MDAL_driverFromName("Dynamic_driver_test");
+  ASSERT_TRUE( driver );
+}
 
 TEST( MeshDynamicDriverTest, openMesh )
 {
-#ifdef WIN32
-  size_t requiredSize = 0;
-  getenv_s( &requiredSize, NULL, 0, "MDAL_DRIVER_PATH" );
-  if ( requiredSize == 0 )
-  {
-    _putenv_s( "MDAL_DRIVER_PATH", DRIVERS_PATH );
-  }
-#endif
-
-#ifndef WIN32
-  setenv( "MDAL_DRIVER_PATH", DRIVERS_PATH, 0 );
-#endif
-
+  set_mdal_driver_path("minimal_example");
   std::string path = test_file( "/dynamic_driver/mesh_1.msh" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_TRUE( m );
