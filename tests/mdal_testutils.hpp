@@ -17,7 +17,7 @@ const char *data_path();
 //! External drivers path
 const char *drivers_path();
 
-void set_mdal_driver_path(const std::string& dirname);
+void set_mdal_driver_path( const std::string &dirname );
 
 void init_test();
 void finalize_test();
