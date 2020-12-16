@@ -53,6 +53,6 @@ jobs:
             }
 
             $env:PATH="C:\OSGeo4W64\bin;$env:GITHUB_WORKSPACE\build\tool\Debug\;$env:GITHUB_WORKSPACE\build\mdal\Debug;$env:PATH"
-            $env:MDAL_DRIVER_PATH="$env:GITHUB_WORKSPACE\build\external_drivers\Debug"
+            $env:MDAL_DRIVER_PATH="$env:GITHUB_WORKSPACE\build\external_drivers\minimal_example\Debug"
             cd $env:GITHUB_WORKSPACE\build
             exec { ctest -VV --exclude-regex "mdalinfo_test" }
