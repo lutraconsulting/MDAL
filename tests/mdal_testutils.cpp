@@ -333,9 +333,9 @@ int getFaceVerticesIndexAt( MDAL_MeshH mesh, int faceIndex, int index )
   return faceVertexIndex;
 }
 
-void set_mdal_driver_path(const std::string& dirname)
+void set_mdal_driver_path( const std::string &dirname )
 {
-  std::string fullPath = std::string(drivers_path()) +  "/" + dirname;
+  std::string fullPath = std::string( drivers_path() ) +  "/" + dirname;
 #ifdef WIN32
   size_t requiredSize = 0;
   getenv_s( &requiredSize, NULL, 0, "MDAL_DRIVER_PATH" );
