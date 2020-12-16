@@ -39,7 +39,6 @@ SET(TESTDATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/data")
 ADD_DEFINITIONS(-DTESTDATA="${TESTDATA_DIR}")
 ADD_DEFINITIONS(-DDRIVERS_PATH="${CMAKE_BINARY_DIR}/external_drivers")
 ADD_LIBRARY(mdaltestutils OBJECT mdal_testutils.hpp mdal_testutils.cpp )
-TARGET_COMPILE_DEFINITIONS(mdaltestutils PRIVATE )
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/mdal/api)
 
 #########################################################################
