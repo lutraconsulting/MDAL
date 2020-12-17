@@ -37,3 +37,4 @@ MDAL drivers
    saga
    adcirc
    xms-tin
+   dfsu
