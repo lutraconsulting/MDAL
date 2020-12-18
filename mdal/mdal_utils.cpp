@@ -16,7 +16,7 @@
 #include <ctime>
 #include <stdlib.h>
 
-std::string getEnvVar( const std::string &varname, const std::string &defaultVal )
+std::string MDAL::getEnvVar( const std::string &varname, const std::string &defaultVal )
 {
   if ( varname.empty() )
     return std::string();
