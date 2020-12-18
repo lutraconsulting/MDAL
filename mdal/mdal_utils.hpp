@@ -40,6 +40,9 @@
 
 namespace MDAL
 {
+
+  std::string getEnvVar( const std::string &varname, const std::string &defaultVal = std::string() );
+
   // endianness
   bool isNativeLittleEndian();
 

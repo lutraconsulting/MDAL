@@ -247,26 +247,9 @@ MDAL::DriverManager::DriverManager()
 
 void MDAL::DriverManager::loadDynamicDrivers()
 {
-  char *externalDriverPath = nullptr;
-#ifdef WIN32
-  size_t requiredSize = 0;
-  getenv_s( &requiredSize, NULL, 0, "MDAL_DRIVER_PATH" );
-  if ( requiredSize != 0 )
-  {
-    externalDriverPath = ( char * )malloc( requiredSize * sizeof( char ) );
-    getenv_s( &requiredSize, externalDriverPath, requiredSize, "MDAL_DRIVER_PATH" );
-  }
-  else
-    externalDriverPath = nullptr;
-#else
-  externalDriverPath = getenv( "MDAL_DRIVER_PATH" );
-#endif
-
-
-  if ( externalDriverPath == nullptr )
+  std::string dirPath = MDAL::getEnvVar( "MDAL_DRIVER_PATH" );
+  if ( dirPath.empty() )
     return;
-
-  std::string dirPath = externalDriverPath;
   dirPath += '/';
   std::vector<std::string> libList = MDAL::Library::libraryFilesInDir( dirPath );
   for ( const std::string &libFile : libList )
