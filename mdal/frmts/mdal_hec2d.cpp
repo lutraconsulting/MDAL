@@ -479,16 +479,20 @@ std::shared_ptr<MDAL::MemoryDataset2D> MDAL::DriverHec2D::readBedElevation(
   std::vector<MDAL::RelativeTimestamp> times( 1 );
   DateTime referenceTime;
 
-  return readElemOutput(
-           gGeom2DFlowAreas,
-           areaElemStartIndex,
-           flowAreaNames,
-           "Cells Minimum Elevation",
-           "Bed Elevation",
-           times,
-           std::shared_ptr<MDAL::MemoryDataset2D>(),
-           referenceTime
-         );
+  std::shared_ptr<MDAL::MemoryDataset2D> bedElevation = readElemOutput(
+        gGeom2DFlowAreas,
+        areaElemStartIndex,
+        flowAreaNames,
+        "Cells Minimum Elevation",
+        "Bed Elevation",
+        times,
+        std::shared_ptr<MDAL::MemoryDataset2D>(),
+        referenceTime
+      );
+
+  if ( ! bedElevation ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Unable to read bed elevation values" );
+
+  return bedElevation;
 }
 
 void MDAL::DriverHec2D::readElemResults(

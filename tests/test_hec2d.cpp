@@ -392,6 +392,9 @@ TEST( MeshHec2dTest, model_505 )
   count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 73, count );
 
+  value = getValue( ds, 10 );
+  EXPECT_TRUE( std::isnan( value ) ); //dry face
+
   value = getValue( ds, 50 );
   EXPECT_TRUE( MDAL::equals( 34.785, value, 0.001 ) );
 
