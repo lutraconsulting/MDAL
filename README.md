@@ -142,12 +142,17 @@ For 64-bit version:
 * Create build directory `mkdir build;cd build`
 * Run 
 ```
-cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Rel  
--DENABLE_TESTS=ON  -DNETCDF_PREFIX="C:\OSGeo4W64" 
--DHDF5_ROOT="C:\OSGeo4W64" -DGDAL_DIR="C:\OSGeo4W64" 
--DGDAL_LIBRARY="C:\OSGeo4W64\lib\gdal_i.lib" 
--DGDAL_INCLUDE_DIR="C:\OSGeo4W64\include" 
--DLIBXML2_LIBRARIES="C:\OSGeo4W64\lib\libxml2.lib" -DLIBXML2_INCLUDE_DIR="C:\OSGeo4W64\include\libxml2" ..
+cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Rel  ^
+    -DENABLE_TESTS=ON ^
+    -DNETCDF_PREFIX="C:\OSGeo4W64" ^
+    -DHDF5_ROOT="C:\OSGeo4W64" ^
+    -DGDAL_DIR="C:\OSGeo4W64" ^
+    -DGDAL_LIBRARY="C:\OSGeo4W64\lib\gdal_i.lib" ^
+    -DGDAL_INCLUDE_DIR="C:\OSGeo4W64\include" ^
+    -DLIBXML2_LIBRARIES="C:\OSGeo4W64\lib\libxml2.lib ^
+    -DLIBXML2_INCLUDE_DIR="C:\OSGeo4W64\include\libxml2" ^
+    -D EXTERNAL_DRIVER_DHI_DFSU=OFF ^
+    ..
 ```
 * Build the executables `cmake --build .`
 * Adjust the PATH or copy the `mdal.dll` to folder `test\debug` with command 
