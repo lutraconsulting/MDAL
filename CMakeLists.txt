@@ -11,7 +11,7 @@ ENDIF()
 
 SET (CMAKE_CXX_STANDARD 11)
 # set path to additional CMake modules
-SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 #############################################################
 # global vars
@@ -106,7 +106,7 @@ ENDIF(WITH_SQLITE3)
 
 #############################################################
 # create mdal_config.h
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake_templates/mdal_config.hpp.in ${CMAKE_BINARY_DIR}/mdal_config.hpp)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/cmake_templates/mdal_config.hpp.in ${CMAKE_BINARY_DIR}/mdal_config.hpp)
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
 #############################################################
