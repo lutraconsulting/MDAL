@@ -140,7 +140,7 @@ For 64-bit version:
 * Install OSGeo4W (64bit) to C:\OSGeo4W64
 * Run `"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat -arch=x86"` to initialize Visual Studio environment (or open VS terminal). For community version, run similar command `"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat -arch=x86"`
 * Create build directory `mkdir build;cd build`
-* Run 
+* Run (to get a Release build)
 ```
 cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Rel  ^
     -DENABLE_TESTS=ON ^
@@ -154,9 +154,9 @@ cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Rel  ^
     -D EXTERNAL_DRIVER_DHI_DFSU=OFF ^
     ..
 ```
-* Build the executables `cmake --build .`
-* Adjust the PATH or copy the `mdal.dll` to folder `test\debug` with command 
-`set PATH="C:\OSGeo4W64\bin;<your_build_dir>\build\tool\Debug\;<your_build_dir>\build\mdal\Debug;%PATH%"`
+* Build the executables `cmake --build .  --config Release`
+* Adjust the PATH (or copy the `mdal.dll` to folder `test\Release`) with command 
+`set PATH="C:\OSGeo4W64\bin;<your_build_dir>\build\tool\Release\;<your_build_dir>\build\mdal\Release;%PATH%"`
 * Run the tests `ctest -VV --exclude-regex mdalinfo*`
 
 ### Linux
