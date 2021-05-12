@@ -617,20 +617,23 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName,
     }
     else // projection found : create the mesh and treat other datasets
     {
-      std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = gdal_datasets.at( 0 );
+      std::shared_ptr<MDAL::GdalDataset> firstDataset = gdal_datasets.at( 0 );
       // Init memory for data reader
-      mPafScanline = new double [cfGDALDataset->mXSize];
+      mPafScanline = new double [firstDataset->mXSize];
       // Create mMesh
       createMesh();
       // Parse bands
-      parseRasterBands( cfGDALDataset.get() );
+      parseRasterBands( firstDataset.get() );
 
       for ( size_t i = 0; i < datasets.size(); ++i )
       {
-        std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = gdal_datasets.at( i );
-        gdal_datasets.push_back( cfGDALDataset );
-        // Parse bands
-        parseRasterBands( cfGDALDataset.get() );
+        std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = datasets.at( i );
+        if ( meshes_equals( meshGDALDataset(), cfGDALDataset.get() ) )
+        {
+          gdal_datasets.push_back( cfGDALDataset );
+          // Parse bands
+          parseRasterBands( cfGDALDataset.get() );
+        }
       }
     }
 
