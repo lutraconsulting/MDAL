@@ -564,9 +564,11 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName,
 
     // some formats like NETCFD has data stored in subdatasets
     std::vector<std::string> subdatasets = parseDatasetNames( mFileName );
-
-    // First parse ALL datasets/bands to gather vector quantities
-    // if case they are splitted in different subdatasets
+    // Parse all the dataset
+    // For consistency, search the first dataset with a projection and store it first to use it as reference for the mesh
+    // store other dataset in a std::vector
+    std::vector<std::shared_ptr<MDAL::GdalDataset>> datasets;
+    bool firstProjFound = false;
     for ( auto iter = subdatasets.begin(); iter != subdatasets.end(); ++iter )
     {
       std::string gdal_dataset_name = *iter;
@@ -574,23 +576,58 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName,
       std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = std::make_shared<MDAL::GdalDataset>();
       cfGDALDataset->init( gdal_dataset_name );
 
-      if ( !mMesh )
+      if ( !firstProjFound && !cfGDALDataset->mProj.empty() )
       {
-        // If it is first dataset, create mesh from it
+        firstProjFound = true;
         gdal_datasets.push_back( cfGDALDataset );
-
-        // Init memory for data reader
-        mPafScanline = new double [cfGDALDataset->mXSize];
-
-        // Create mMesh
-        createMesh();
-
-        // Parse bands
-        parseRasterBands( cfGDALDataset.get() );
-
       }
-      else if ( meshes_equals( meshGDALDataset(), cfGDALDataset.get() ) )
+      else
       {
+        datasets.push_back( cfGDALDataset );
+      }
+    }
+
+    if ( !firstProjFound ) // no projection found : treat all dataset using the first for mesh
+    {
+      for ( size_t i = 0; i < datasets.size(); ++i )
+      {
+        std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = datasets.at( i );
+        if ( !mMesh )
+        {
+          // If it is first dataset, create mesh from it
+          gdal_datasets.push_back( cfGDALDataset );
+
+          // Init memory for data reader
+          mPafScanline = new double [cfGDALDataset->mXSize];
+
+          // Create mMesh
+          createMesh();
+
+          // Parse bands
+          parseRasterBands( cfGDALDataset.get() );
+
+        }
+        else if ( meshes_equals( meshGDALDataset(), cfGDALDataset.get() ) )
+        {
+          gdal_datasets.push_back( cfGDALDataset );
+          // Parse bands
+          parseRasterBands( cfGDALDataset.get() );
+        }
+      }
+    }
+    else // projection found : create the mesh and treat other datasets
+    {
+      std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = gdal_datasets.at( 0 );
+      // Init memory for data reader
+      mPafScanline = new double [cfGDALDataset->mXSize];
+      // Create mMesh
+      createMesh();
+      // Parse bands
+      parseRasterBands( cfGDALDataset.get() );
+
+      for ( size_t i = 0; i < datasets.size(); ++i )
+      {
+        std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = gdal_datasets.at( i );
         gdal_datasets.push_back( cfGDALDataset );
         // Parse bands
         parseRasterBands( cfGDALDataset.get() );
