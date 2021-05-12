@@ -587,54 +587,25 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName,
       }
     }
 
-    if ( !firstProjFound ) // no projection found : treat all dataset using the first for mesh
+    for ( std::shared_ptr<MDAL::GdalDataset> ds : datasets )
+      if ( gdal_datasets.empty() || meshes_equals( meshGDALDataset(), ds.get() ) )
+        gdal_datasets.push_back( ds );
+
+    // Construct the mesh with the first dataset
+    if ( !gdal_datasets.empty() )
     {
-      for ( size_t i = 0; i < datasets.size(); ++i )
-      {
-        std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = datasets.at( i );
-        if ( !mMesh )
-        {
-          // If it is first dataset, create mesh from it
-          gdal_datasets.push_back( cfGDALDataset );
-
-          // Init memory for data reader
-          mPafScanline = new double [cfGDALDataset->mXSize];
-
-          // Create mMesh
-          createMesh();
-
-          // Parse bands
-          parseRasterBands( cfGDALDataset.get() );
-
-        }
-        else if ( meshes_equals( meshGDALDataset(), cfGDALDataset.get() ) )
-        {
-          gdal_datasets.push_back( cfGDALDataset );
-          // Parse bands
-          parseRasterBands( cfGDALDataset.get() );
-        }
-      }
-    }
-    else // projection found : create the mesh and treat other datasets
-    {
-      std::shared_ptr<MDAL::GdalDataset> firstDataset = gdal_datasets.at( 0 );
+      std::shared_ptr<MDAL::GdalDataset> meshDataset = gdal_datasets.at( 0 );
       // Init memory for data reader
-      mPafScanline = new double [firstDataset->mXSize];
+      mPafScanline = new double [meshDataset->mXSize];
       // Create mMesh
       createMesh();
-      // Parse bands
-      parseRasterBands( firstDataset.get() );
+    }
 
-      for ( size_t i = 0; i < datasets.size(); ++i )
-      {
-        std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = datasets.at( i );
-        if ( meshes_equals( meshGDALDataset(), cfGDALDataset.get() ) )
-        {
-          gdal_datasets.push_back( cfGDALDataset );
-          // Parse bands
-          parseRasterBands( cfGDALDataset.get() );
-        }
-      }
+    // parse all datasets
+    for ( auto iter = gdal_datasets.begin(); iter != gdal_datasets.end(); ++iter )
+    {
+      std::shared_ptr<MDAL::GdalDataset> cfGDALDataset = std::make_shared<MDAL::GdalDataset>();
+      parseRasterBands( iter->get() );
     }
 
     // Fix consistency of groups
@@ -661,7 +632,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName,
 
   if ( mPafScanline ) delete[] mPafScanline;
 
-  // do not allow mesh without any valid datasets
+// do not allow mesh without any valid datasets
   if ( mMesh && ( mMesh->datasetGroups.empty() ) )
   {
     MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "Mesh does not have any valid dataset" );
