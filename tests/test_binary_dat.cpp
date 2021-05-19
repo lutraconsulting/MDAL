@@ -8,6 +8,7 @@
 //mdal
 #include "mdal.h"
 #include "mdal_testutils.hpp"
+#include "mdal_utils.hpp"
 
 TEST( MeshBinaryDatTest, MissingMesh )
 {
@@ -375,6 +376,54 @@ TEST( MeshBinaryDatTest, WriteVectorTest )
 
     MDAL_CloseMesh( m );
   }
+}
+
+TEST( MeshBinaryDatTest, WithoutActiveFlag )
+{
+  std::string meshPath = test_file( "/binary_dat/inactiveFlagMesh.2dm" );
+  std::string datasetPath = test_file( "/binary_dat/inactiveFlagDatasetGroup.dat" );
+
+  EXPECT_EQ( MDAL_MeshNames( meshPath.c_str() ), "2DM:\"" + meshPath + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( meshPath.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  MDAL_M_LoadDatasets( m, datasetPath.c_str() );
+
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 2, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Water Depth, m" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
+
+  ASSERT_EQ( 48, MDAL_G_datasetCount( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  ASSERT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 10170, count );
+
+  double value = getValue( ds, 0 );
+  EXPECT_TRUE( MDAL::equals( value, 0.26192855, 0.00000001 ) );
+
+  MDAL_CloseMesh( m );
 }
 
 int main( int argc, char **argv )
