@@ -12,10 +12,16 @@ API
    C API
    -----
 
-   .. toctree::
-       :maxdepth: 1
+       :ref:`mdal_c_api`
 
-       mdal_c_api
+   Other Languages
+   ---------------
+
+   The following community supported API's are also available:
+
+        * :ref:`python_api`
+        * :ref:`csharp_api`
+        * :ref:`unity_api`
 
 .. only:: latex
 
