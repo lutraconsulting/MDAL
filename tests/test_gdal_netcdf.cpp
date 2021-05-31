@@ -142,6 +142,65 @@ TEST( MeshGdalNetCDFTest, Indonesia )
   }
 }
 
+TEST( MeshGdalNetCDFTest, InconsistentDatasets )
+{
+  std::string path = test_file( std::string( "/netcdf/nonConstitentDataset.nc" ) );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "NETCDF:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  double minX, maxX, minY, maxY;
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+  EXPECT_DOUBLE_EQ( 351958.45, minX );
+  EXPECT_DOUBLE_EQ( 351970.45, maxX );
+  EXPECT_DOUBLE_EQ( 6690971.55, minY );
+  EXPECT_DOUBLE_EQ( 6690978.55, maxY );
+
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "gti" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
+
+  ASSERT_EQ( 58, MDAL_G_datasetCount( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 50 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_TRUE( MDAL_D_hasActiveFlagCapability( ds ) );
+  int active = getActive( ds, 260 );
+  EXPECT_EQ( 1, active );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 375, count );
+
+  double value = getValue( ds, 260 );
+  EXPECT_DOUBLE_EQ( 31.05268039902328, value );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
+
+  ds = MDAL_G_dataset( g, 0 );
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 429528.25, time ) );
+
+  MDAL_CloseMesh( m );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
