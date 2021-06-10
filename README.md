@@ -157,7 +157,7 @@ cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Rel  ^
 * Build the executables `cmake --build .  --config Release`
 * Adjust the PATH (or copy the `mdal.dll` to folder `test\Release`) with command 
 `set PATH="C:\OSGeo4W64\bin;<your_build_dir>\build\tool\Release\;<your_build_dir>\build\mdal\Release;%PATH%"`
-* Run the tests `ctest -VV --exclude-regex mdalinfo*`
+* Run the tests `ctest -VV -C Release --exclude-regex mdal_dynamic**`
 
 ### Linux
 
