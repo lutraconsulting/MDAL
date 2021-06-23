@@ -447,3 +447,8 @@ void MDAL::Driver2dm::save( const std::string &uri, MDAL::Mesh *mesh )
 
   file.close();
 }
+
+std::string MDAL::Driver2dm::saveMeshOnFileSuffix() const
+{
+  return "2dm";
+}

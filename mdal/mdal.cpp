@@ -1215,6 +1215,18 @@ const char *MDAL_DR_writeDatasetsSuffix( MDAL_DriverH driver )
   return _return_str( d->writeDatasetOnFileSuffix() );
 }
 
+const char *MDAL_DR_saveMeshSuffix( MDAL_DriverH driver )
+{
+  if ( !driver )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
+    return EMPTY_STR;
+  }
+
+  MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
+  return _return_str( d->saveMeshOnFileSuffix() );
+}
+
 MDAL_MeshH MDAL_CreateMesh( MDAL_DriverH driver )
 {
   if ( !driver )
@@ -1285,3 +1297,4 @@ void MDAL_M_setProjection( MDAL_MeshH mesh, const char *projection )
 
   static_cast<MDAL::Mesh *>( mesh )->setSourceCrsFromWKT( std::string( projection ) );
 }
+

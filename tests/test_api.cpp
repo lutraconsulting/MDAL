@@ -441,6 +441,18 @@ TEST( ApiTest, MeshCreationApi )
   EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 2 ), 1 );
 
   MDAL_CloseMesh( mesh );
+
+  driver = MDAL_driverFromName( "2DM" );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
+  EXPECT_EQ( std::strcmp( MDAL_DR_saveMeshSuffix( driver ), "2dm" ), 0 );
+
+  driver = MDAL_driverFromName( "Ugrid" );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
+  EXPECT_EQ( std::strcmp( MDAL_DR_saveMeshSuffix( driver ), "nc" ), 0 );
+
+  driver = MDAL_driverFromName( "SELAFIN" );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
+  EXPECT_EQ( std::strcmp( MDAL_DR_saveMeshSuffix( driver ), "slf" ), 0 );
 }
 
 int main( int argc, char **argv )
