@@ -281,6 +281,10 @@ TEST( ApiTest, LoggerApi )
 
   EXPECT_EQ( dr, nullptr );
   EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_MissingDriver );
+  MDAL_ResetStatus();
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+  MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_NotEnoughMemory, "test" );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_NotEnoughMemory );
   EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Error );
   EXPECT_EQ( receivedLogMessage, "No driver with index: -1" );
 }
@@ -367,18 +371,21 @@ TEST( ApiTest, MeshCreationApi )
                                     2.0, 0.0, 2.0,
                                     1.0, 2.0, 3.0,
                                     0.0, -2.0, 4.0,
-                                    2.0, -2.0, 4.0} );
+                                    2.0, -2.0, 4.0
+                                   } );
 
   std::vector<int> invalidVertexIndices( {0, 7, 3,
                                           1, 2, 3,
                                           4, 5, 2, 0,
-                                          0, 2, 1} );
+                                          0, 2, 1
+                                         } );
 
   std::vector<int> faceSizes( {3, 3, 4, 3} );
   std::vector<int> vertexIndices( {0, 1, 3,
                                    1, 2, 3,
                                    4, 5, 2, 0,
-                                   0, 2, 1} );
+                                   0, 2, 1
+                                  } );
 
   MDAL_MeshH mesh = nullptr;
   MDAL_M_addVertices( mesh, 6, coordinates.data() );
