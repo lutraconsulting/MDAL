@@ -285,7 +285,7 @@ TEST( ApiTest, LoggerApi )
   EXPECT_EQ( receivedLogMessage, "No driver with index: -1" );
   MDAL_ResetStatus();
   EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
-  MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_NotEnoughMemory, "test" );
+  MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_NotEnoughMemory, "Test" );
   EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_NotEnoughMemory );
   EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Error );
   EXPECT_EQ( receivedLogMessage, "Test" );
