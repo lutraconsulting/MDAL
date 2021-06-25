@@ -29,6 +29,28 @@ MDAL_Status MDAL_LastStatus()
   return MDAL::Log::getLastStatus();
 }
 
+MDAL_EXPORT void MDAL_ResetStatus()
+{
+    return MDAL::Log::resetLastStatus();
+}
+
+MDAL_EXPORT void MDAL_SetStatus( MDAL_LogLevel level, MDAL_Status status, const char* message )
+{
+    switch(level)
+    {
+        case MDAL_LogLevel::Error:
+            return MDAL::Log::error( status, message );
+        case MDAL_LogLevel::Warn:
+            return MDAL::Log::warning( status, message );
+        case MDAL_LogLevel::Info:
+            return MDAL::Log::info( message );
+        case MDAL_LogLevel::Debug:
+            return MDAL::Log::debug( message );
+        default:
+            return;
+    }
+}
+
 void MDAL_SetLoggerCallback( MDAL_LoggerCallback callback )
 {
   MDAL::Log::setLoggerCallback( callback );
