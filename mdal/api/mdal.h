@@ -119,7 +119,6 @@ MDAL_EXPORT void MDAL_ResetStatus();
 /*
  * Sets the last status message
  */
-
 MDAL_EXPORT void MDAL_SetStatus( MDAL_LogLevel Level, MDAL_Status status, const char *message );
 
 /**

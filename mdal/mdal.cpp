@@ -36,6 +36,7 @@ MDAL_EXPORT void MDAL_ResetStatus()
 
 MDAL_EXPORT void MDAL_SetStatus( MDAL_LogLevel level, MDAL_Status status, const char *message )
 {
+  MDAL::Log::resetLastStatus();
   switch ( level )
   {
     case MDAL_LogLevel::Error:
