@@ -47,8 +47,6 @@ MDAL_EXPORT void MDAL_SetStatus( MDAL_LogLevel level, MDAL_Status status, const 
       return MDAL::Log::info( message );
     case MDAL_LogLevel::Debug:
       return MDAL::Log::debug( message );
-    default:
-      return;
   }
 }
 
