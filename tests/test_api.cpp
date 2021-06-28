@@ -367,18 +367,21 @@ TEST( ApiTest, MeshCreationApi )
                                     2.0, 0.0, 2.0,
                                     1.0, 2.0, 3.0,
                                     0.0, -2.0, 4.0,
-                                    2.0, -2.0, 4.0} );
+                                    2.0, -2.0, 4.0
+                                   } );
 
   std::vector<int> invalidVertexIndices( {0, 7, 3,
                                           1, 2, 3,
                                           4, 5, 2, 0,
-                                          0, 2, 1} );
+                                          0, 2, 1
+                                         } );
 
   std::vector<int> faceSizes( {3, 3, 4, 3} );
   std::vector<int> vertexIndices( {0, 1, 3,
                                    1, 2, 3,
                                    4, 5, 2, 0,
-                                   0, 2, 1} );
+                                   0, 2, 1
+                                  } );
 
   MDAL_MeshH mesh = nullptr;
   MDAL_M_addVertices( mesh, 6, coordinates.data() );

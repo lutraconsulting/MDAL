@@ -1,6 +1,8 @@
 # MDAL - Mesh Data Abstraction Library (MIT License)
 # Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
 
+set(CMAKE_CXX_STANDARD 14)
+
 SET(MDAL_SOURCES 
   mdal.cpp
   mdal_utils.cpp
@@ -18,6 +20,7 @@ SET(MDAL_SOURCES
   frmts/mdal_selafin.cpp
   frmts/mdal_esri_tin.cpp
   frmts/mdal_ply.cpp
+  frmts/libplyxx/libplyxx.cpp
 )
 
 SET(MDAL_HEADERS
@@ -37,6 +40,9 @@ SET(MDAL_HEADERS
   frmts/mdal_selafin.hpp
   frmts/mdal_esri_tin.hpp
   frmts/mdal_ply.hpp
+  frmts/libplyxx/libplyxx.h
+  frmts/libplyxx/libplyxx_internal.h
+  frmts/libplyxx/textio.h
 )
 
 IF(HDF5_FOUND)
