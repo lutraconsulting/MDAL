@@ -72,8 +72,8 @@ namespace libply
 
   FileParser::FileParser( const PATH_STRING &filename )
     : m_filename( filename ),
-      m_lineTokenizer( ' ' ),
-      m_lineReader( filename )
+      m_lineReader( filename ),
+      m_lineTokenizer( ' ' )
   {
     readHeader();
   }
@@ -124,7 +124,6 @@ namespace libply
     line = line_substring;
     textio::Tokenizer spaceTokenizer( ' ' );
     auto tokens = spaceTokenizer.tokenize( line );
-    size_t startLine = 0;
     while ( std::string( tokens.at( 0 ) ) != "end_header" )
     {
       const std::string lineType = tokens.at( 0 );
@@ -292,7 +291,7 @@ namespace libply
     {
       while ( properties.size() < size )
       {
-        properties.emplace_back( std::move( getScalarProperty( m_listType ) ) );
+        properties.emplace_back( getScalarProperty( m_listType ) );
       }
     }
     else
@@ -323,12 +322,16 @@ namespace libply
     std::unique_ptr<IScalarProperty> prop;
     switch ( type )
     {
-      case Type::UCHAR: prop = std::make_unique<ScalarProperty<char>>();  break;
-      case Type::INT: prop = std::make_unique<ScalarProperty<int>>(); break;
-      case Type::FLOAT: prop = std::make_unique<ScalarProperty<float>>(); break;
-      case Type::DOUBLE: prop = std::make_unique<ScalarProperty<double>>(); break;
+      case Type::INT8: prop = std::make_unique<ScalarProperty<char>>();  break;
+      case Type::UINT8: prop = std::make_unique<ScalarProperty<char>>();  break;
+      case Type::INT16: prop = std::make_unique<ScalarProperty<char>>();  break;
+      case Type::UINT16: prop = std::make_unique<ScalarProperty<char>>();  break;
+      case Type::UINT32: prop = std::make_unique<ScalarProperty<int>>(); break;
+      case Type::INT32: prop = std::make_unique<ScalarProperty<int>>(); break;
+      case Type::FLOAT32: prop = std::make_unique<ScalarProperty<float>>(); break;
+      case Type::FLOAT64: prop = std::make_unique<ScalarProperty<double>>(); break;
     }
-    return std::move( prop );
+    return prop;
   }
 
   std::string formatString( File::Format format )
@@ -346,10 +349,14 @@ namespace libply
   {
     switch ( type )
     {
-      case Type::UCHAR: return "uchar";
-      case Type::INT: return "int";
-      case Type::FLOAT: return "float";
-      case Type::DOUBLE: return "double";
+      case Type::INT8: return "char";
+      case Type::UINT8: return "uchar";
+      case Type::INT16: return "short";
+      case Type::UINT16: return "ushort";
+      case Type::UINT32: return "uint";
+      case Type::INT32: return "int";
+      case Type::FLOAT32: return "float";
+      case Type::FLOAT64: return "double";
     }
     return "";
   }

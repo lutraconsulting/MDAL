@@ -23,27 +23,21 @@ namespace libply
 {
   enum class Type
   {
-    //CHAR,
-    UCHAR,
-    //SHORT,
-    //USHORT,
-    INT,
-    //UINT,
-    FLOAT,
-    DOUBLE,
-    //INT8,
-    //UINT8,
-    //INT16,
-    //UINT16,
-    //INT32,
-    //UINT32,
-    //FLOAT32,
-    //FLOAT64
+    INT8,
+    UINT8,
+    INT16,
+    UINT16,
+    INT32,
+    UINT32,
+    FLOAT32,
+    FLOAT64
   };
 
   class IScalarProperty
   {
     public:
+      virtual ~IScalarProperty() {}
+
       virtual IScalarProperty &operator=( unsigned int value ) = 0;
       virtual IScalarProperty &operator=( int value ) = 0;
       virtual IScalarProperty &operator=( float value ) = 0;
@@ -59,6 +53,9 @@ namespace libply
   class ScalarProperty: public IScalarProperty
   {
     public :
+
+      virtual ~ScalarProperty() {}
+
       virtual ScalarProperty &operator=( unsigned int value ) override
       { m_value = static_cast<InternalType>( value ); return *this; };
       virtual ScalarProperty &operator=( int value ) override

@@ -4,6 +4,7 @@
 #include <sstream>
 
 // a custom specialisation (and yes, you are allowed (and have to) put this in std)
+// from http://www.cplusplus.com/forum/general/238538/  
 namespace std {
   template<>
   struct hash<libply::Type> {
@@ -21,26 +22,42 @@ namespace libply
   typedef std::unordered_map<std::string, Type> TypeMap;
   const TypeMap TYPE_MAP =
   {
-    { "uchar", Type::UCHAR },
-    { "int", Type::INT },
-    { "float", Type::FLOAT },
-    { "double", Type::DOUBLE },
+    { "char", Type::INT8 },
+    { "uchar", Type::UINT8 },
+    { "short", Type::INT16 },
+    { "ushort", Type::UINT16},
+    { "int", Type::INT32 },
+    { "uint", Type::UINT32},
+    { "float", Type::FLOAT32 },
+    { "double", Type::FLOAT64 },
+    { "int8", Type::INT8 },
+    { "uint8", Type::UINT8 },
+    { "int16", Type::INT16 },
+    { "uint16", Type::UINT16},
+    { "int32", Type::INT32 },
+    { "uint32", Type::UINT32},
+    { "float32", Type::FLOAT32 },
+    { "float64", Type::FLOAT64 }
   };
 
   typedef std::unordered_map<Type, unsigned int> TypeSizeMap;
   const TypeSizeMap TYPE_SIZE_MAP =
   {
-    { Type::UCHAR, 1 },
-    { Type::INT, 4 },
-    { Type::FLOAT, 4 },
-    { Type::DOUBLE, 8 },
+    { Type::INT8, 1 },
+    { Type::UINT8, 1},
+    { Type::INT16, 2},
+    { Type::UINT16, 2},
+    { Type::INT32, 4},
+    { Type::UINT32, 4},
+    { Type::FLOAT32, 4},
+    { Type::FLOAT64, 8}
   };
 
   /// Type conversion functions.
 
-  inline void convert_UCHAR( const textio::SubString &token, IScalarProperty &property )
+  inline void convert_UINT( const textio::SubString &token, IScalarProperty &property )
   {
-    property = textio::stou<unsigned char>( token );
+    property = textio::stou<uint>( token );
   }
 
   inline void convert_INT( const textio::SubString &token, IScalarProperty &property )
@@ -63,20 +80,44 @@ namespace libply
 
   const ConversionFunctionMap CONVERSION_MAP =
   {
-    { Type::UCHAR , convert_UCHAR },
-    { Type::INT, convert_INT },
-    { Type::FLOAT, convert_FLOAT },
-    { Type::DOUBLE, convert_DOUBLE }
+    { Type::INT8, convert_INT },
+    { Type::UINT8, convert_UINT },
+    { Type::INT16, convert_INT },
+    { Type::UINT16, convert_UINT },
+    { Type::INT32, convert_INT },
+    { Type::UINT32, convert_UINT },
+    { Type::FLOAT32, convert_FLOAT },
+    { Type::FLOAT64, convert_DOUBLE }
   };
 
   /// Type casting functions.
 
-  inline void cast_UCHAR( char *buffer, IScalarProperty &property )
+  inline void cast_UINT8( char *buffer, IScalarProperty &property )
   {
     property = *reinterpret_cast<unsigned char *>( buffer );
   }
 
-  inline void cast_INT( char *buffer, IScalarProperty &property )
+  inline void cast_INT8( char *buffer, IScalarProperty &property )
+  {
+    property = *reinterpret_cast< char *>( buffer );
+  }
+
+  inline void cast_UINT16( char *buffer, IScalarProperty &property )
+  {
+    property = *reinterpret_cast<unsigned short *>( buffer );
+  }
+
+  inline void cast_INT16( char *buffer, IScalarProperty &property )
+  {
+    property = *reinterpret_cast<short *>( buffer );
+  }
+
+  inline void cast_UINT32( char *buffer, IScalarProperty &property )
+  {
+    property = *reinterpret_cast<unsigned int *>( buffer );
+  }
+
+  inline void cast_INT32( char *buffer, IScalarProperty &property )
   {
     property = *reinterpret_cast<int *>( buffer );
   }
@@ -96,13 +137,17 @@ namespace libply
 
   const CastFunctionMap CAST_MAP =
   {
-    { Type::UCHAR , cast_UCHAR },
-    { Type::INT, cast_INT },
-    { Type::FLOAT, cast_FLOAT },
-    { Type::DOUBLE, cast_DOUBLE }
+    { Type::INT8, cast_INT8 },
+    { Type::UINT8, cast_UINT8 },
+    { Type::INT16, cast_INT16 },
+    { Type::UINT16, cast_UINT16 },
+    { Type::INT32, cast_INT32 },
+    { Type::UINT32, cast_UINT32 },
+    { Type::FLOAT32, cast_FLOAT },
+    { Type::FLOAT64, cast_DOUBLE }
   };
 
-  inline std::stringstream &write_convert_UCHAR( IScalarProperty &property, std::stringstream &ss )
+  inline std::stringstream &write_convert_UINT( IScalarProperty &property, std::stringstream &ss )
   {
     ss << static_cast<unsigned int>( property );
     return ss;
@@ -131,13 +176,17 @@ namespace libply
 
   const WriteConvertFunctionMap WRITE_CONVERT_MAP =
   {
-    { Type::UCHAR , write_convert_UCHAR },
-    { Type::INT, write_convert_INT },
-    { Type::FLOAT, write_convert_FLOAT },
-    { Type::DOUBLE, write_convert_DOUBLE }
+    { Type::INT8, write_convert_INT },
+    { Type::UINT8, write_convert_UINT },
+    { Type::INT16, write_convert_INT },
+    { Type::UINT16, write_convert_UINT },
+    { Type::INT32, write_convert_INT },
+    { Type::UINT32, write_convert_UINT },
+    { Type::FLOAT32, write_convert_FLOAT },
+    { Type::FLOAT64, write_convert_DOUBLE }
   };
 
-  inline void write_cast_UCHAR( IScalarProperty &property, char *buffer, size_t &size )
+  inline void write_cast_UINT( IScalarProperty &property, char *buffer, size_t &size )
   {
     *reinterpret_cast<unsigned char *>( buffer ) = static_cast<unsigned int>( property );
     size = sizeof( unsigned char );
@@ -166,15 +215,19 @@ namespace libply
 
   const WriteCastFunctionMap WRITE_CAST_MAP =
   {
-    { Type::UCHAR , write_cast_UCHAR },
-    { Type::INT, write_cast_INT },
-    { Type::FLOAT, write_cast_FLOAT },
-    { Type::DOUBLE, write_cast_DOUBLE }
+    { Type::INT8, write_cast_INT },
+    { Type::UINT8, write_cast_UINT },
+    { Type::INT16, write_cast_INT },
+    { Type::UINT16, write_cast_UINT },
+    { Type::INT32, write_cast_INT },
+    { Type::UINT32, write_cast_UINT },
+    { Type::FLOAT32, write_cast_FLOAT },
+    { Type::FLOAT64, write_cast_DOUBLE }
   };
 
   struct PropertyDefinition
   {
-    PropertyDefinition( const std::string &name, Type type, bool isList, Type listLengthType = Type::UCHAR )
+    PropertyDefinition( const std::string &name, Type type, bool isList, Type listLengthType = Type::UINT8 )
       : name( name ), type( type ), isList( isList ), listLengthType( listLengthType ),
         conversionFunction( CONVERSION_MAP.at( type ) ),
         castFunction( CAST_MAP.at( type ) ),
