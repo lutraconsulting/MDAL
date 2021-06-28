@@ -60,7 +60,7 @@ namespace libply
 
   inline void convert_UINT( const textio::SubString &token, IScalarProperty &property )
   {
-    property = textio::stou<uint>( token );
+    property = textio::stou<unsigned int>( token );
   }
 
   inline void convert_INT( const textio::SubString &token, IScalarProperty &property )

@@ -227,7 +227,7 @@ namespace textio
     }
 
     textio::SubString::const_iterator start = begin;
-    const size_t WORD_WIDTH = 8;
+    const int WORD_WIDTH = 8;
     while ( end - start > WORD_WIDTH )
     {
       // Xor data with pattern to find the bit distance. Matching bytes will be 0x00, otherwise >0x00.
