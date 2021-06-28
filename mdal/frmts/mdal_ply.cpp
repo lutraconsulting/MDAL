@@ -70,8 +70,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   Vertices vertices( 0 );
   Faces faces( 0 );
   Edges edges( 0 );
-  size_t vertexCount = 0;
-  size_t faceCount = 0;
   size_t maxSizeFace = 0;
 
   //datastructures that will contain all of the datasets, categorised by vertex, face and edge datasets
@@ -86,7 +84,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   {
     if ( el.name == "vertex" )
     {
-      vertexCount = el.size;
       libply::ElementReadCallback vertexCallback = [&vertices, el]( libply::ElementBuffer & e )
       {
         Vertex vertex;
@@ -116,7 +113,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
     }
     else if ( el.name == "face" )
     {
-      faceCount = el.size;
       libply::ElementReadCallback faceCallback = [&faces, el, &maxSizeFace]( libply::ElementBuffer & e )
       {
         Face face;
@@ -125,21 +121,41 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
         for ( size_t i = 0; i < el.properties.size(); i++ )
         {
           libply::Property p = el.properties[i];
-          if ( p.name == "vertex_index" )
+          if ( p.name == "vertex_indices" )
           {
             if ( !p.isList )
             {
               // TODO raise error
             }
-            for ( int j = 0; j < maxSizeFace; j++ )
+            for ( size_t j = 0; j < maxSizeFace; j++ )
             {
-              face[j] = static_cast<int>( e[j] );
+                //std::cout << std::to_string( int( e[j] ) ) << std::endl;
+                face[j] = int( e[j] );
             }
           }
         }
         faces.push_back( face );
       };
       file.setElementReadCallback( "face", faceCallback );
+    } else if ( el.name == "edge" )
+    {
+      libply::ElementReadCallback edgeCallback = [&edges, el]( libply::ElementBuffer & e )
+      {
+        Edge edge;
+        for ( size_t i = 0; i < el.properties.size(); i++ )
+        {
+          libply::Property p = el.properties[i];
+          if ( p.name == "vertex1" )
+          {
+            edge.startVertex = int( e[i] );
+          } else if ( p.name == "vertex2" )
+          {
+            edge.endVertex = int( e[i] );
+          }
+        }
+        edges.push_back( edge );
+      };
+      file.setElementReadCallback( "edge", edgeCallback );
     }
   }
 
@@ -163,19 +179,19 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   for ( size_t i = 0; i < vertexDatasets.size(); ++i )
   {
     std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), vProp2Ds[i], DataOnVertices, true );
-    addDataset( group.get(), vertexDatasets[i] );
+    addDataset2D( group.get(), vertexDatasets[i] );
   }
 
   for ( size_t i = 0; i < faceDatasets.size(); ++i )
   {
     std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), fProp2Ds[i], DataOnFaces, true );
-    addDataset( group.get(), faceDatasets[i] );
+    addDataset2D( group.get(), faceDatasets[i] );
   }
 
   for ( size_t i = 0; i < edgeDatasets.size(); ++i )
   {
     std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), eProp2Ds[i], DataOnEdges, true );
-    addDataset( group.get(), edgeDatasets[i] );
+    addDataset2D( group.get(), edgeDatasets[i] );
   }
 
   /*
@@ -219,7 +235,7 @@ std::shared_ptr< MDAL::DatasetGroup> MDAL::DriverPly::addDatasetGroup( MDAL::Mes
   return group;
 }
 
-void MDAL::DriverPly::addDataset( MDAL::DatasetGroup *group, const std::vector<double> &values )
+void MDAL::DriverPly::addDataset2D( MDAL::DatasetGroup *group, const std::vector<double> &values )
 {
   if ( !group )
     return;

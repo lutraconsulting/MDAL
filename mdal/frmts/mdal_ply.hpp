@@ -32,7 +32,7 @@ namespace MDAL
 
     private:
       std::shared_ptr<DatasetGroup> addDatasetGroup( MDAL::Mesh *mesh, const std::string &name, const MDAL_DataLocation location, bool isScalar );
-      void addDataset( MDAL::DatasetGroup *group, const std::vector<double> &values );
+      void addDataset2D( MDAL::DatasetGroup *group, const std::vector<double> &values );
 
 
       size_t getIndex( std::vector<std::string> v, std::string in );
