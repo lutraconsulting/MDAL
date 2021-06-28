@@ -23,6 +23,7 @@
 #include "mdal_logger.hpp"
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
+#include "libplyxx/libplyxx.h"
 
 #define DRIVER_NAME "PLY"
 
@@ -64,270 +65,81 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
 {
   MDAL::Log::resetLastStatus();
 
-  std::ifstream in( meshFile, std::ifstream::in );
-  std::string line;
-
-  // Read header
-  size_t vertexCount = 0;
-  size_t faceCount = 0;
-  size_t edgeCount = 0;
-  std::vector<std::string> chunks;
-  std::vector<MDAL::DriverPly::element> elements; // we will decant the element specifications into here
-  std::string proj = "";
-
-  if ( !std::getline( in, line ) )
-  {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt" );
-    return nullptr;
-  }
-
-  /*
-  * The header is a format defintion and a series of element definitions and/or comment lines
-  * cycle through these until end-header
-  */
-  do
-  {
-    /*
-    * iterate through all of the  element blocks in the header and enumerate the number of members and the properties
-    */
-    if ( startsWith( line, "element" ) )
-    {
-      chunks = split( line, ' ' );
-      if ( ( chunks.size() != 3 ) )
-      {
-        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " invalid number of vertexes" );
-        return nullptr;
-      }
-      MDAL::DriverPly::element element;
-      element.name = chunks[1];
-      element.size = MDAL::toSizeT( chunks[2] );
-      do
-      {
-        if ( !std::getline( in, line ) )
-        {
-          MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt" );
-          return nullptr;
-        }
-        if ( startsWith( line, "property" ) )
-        {
-          chunks = split( line, ' ' );
-          switch ( chunks.size() )
-          {
-            case 3:
-              element.properties.push_back( chunks[2] );
-              element.types.push_back( chunks[1] );
-              element.list.push_back( false );
-              break;
-            case 5:
-              element.properties.push_back( chunks[4] );
-              element.types.push_back( chunks[3] );
-              element.list.push_back( true );
-              break;
-            default:
-              MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " invalid element line" + line );
-              return nullptr;
-          }
-        }
-        else
-        {
-          break;
-        }
-      }
-      while ( true );
-      elements.push_back( element );
-    }
-
-    // if end - stop looping
-    else if ( startsWith( line, "end_header" ) )
-    {
-      break;
-    }
-
-    //if binary - give up
-
-    else if ( startsWith( line, "binary" ) )
-    {
-      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " only ASCII format PLY files are supported" );
-      return nullptr;
-    }
-
-    // if "comment crs" assume that the rest is the crs data
-    else if ( startsWith( line, "comment crs " ) )
-    {
-      line.erase( 0, 12 );
-      proj = line;
-      if ( !std::getline( in, line ) )
-      {
-        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt" );
-        return nullptr;
-      }
-    }
-
-    // probably a comment line
-    else
-    {
-      if ( !std::getline( in, line ) )
-      {
-        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " Header is corrupt" );
-        return nullptr;
-      }
-    }
-  }
-  while ( true );
-
+  libply::File file( meshFile );
+  const libply::ElementsDefinition &definitions = file.definitions();
   Vertices vertices( 0 );
   Faces faces( 0 );
   Edges edges( 0 );
+  size_t vertexCount = 0;
+  size_t faceCount = 0;
   size_t maxSizeFace = 0;
-  size_t faceSize = 0;
 
   //datastructures that will contain all of the datasets, categorised by vertex, face and edge datasets
-  std::vector<std::vector<double>> vertexDatasets; // conatins the data
+  std::vector<std::vector<double>> vertexDatasets; // conatains the data
   std::vector<std::string> vProp2Ds; // contains the dataset names
   std::vector<std::vector<double>> faceDatasets;
   std::vector<std::string> fProp2Ds;
   std::vector<std::vector<double>> edgeDatasets;
   std::vector<std::string> eProp2Ds;
 
-  /*
-  * load the elements in order
-  */
-  if ( !std::getline( in, line ) )
+  for ( const libply::Element &el : definitions )
   {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain any definitions" );
-    return nullptr;
-  }
-  chunks = split( line, ' ' );
-
-  // configure the vectors to hold the data
-
-  for ( size_t elid = 0; elid < elements.size(); ++elid )
-  {
-    MDAL::DriverPly::element element = elements[elid];
-    if ( element.name == "vertex" )
+    if (el.name == "vertex")
     {
-      vertexCount = element.size;
-      vertices.resize( vertexCount );
-      for ( size_t i = 0; i < element.properties.size(); ++i )
-      {
-        if ( element.properties[i] != "x" &&
-             element.properties[i] != "y" &&
-             element.properties[i] != "z" &&
-             !element.list[i] )
+        vertexCount = el.size;
+        libply::ElementReadCallback vertexCallback = [&vertices, el]( libply::ElementBuffer & e )
         {
-          vertexDatasets.push_back( * new std::vector<double> );
-          vProp2Ds.push_back( element.properties[i] );
-        }
-      }
-    }
-    else if ( element.name == "face" )
+          Vertex vertex;
+          for ( size_t i = 0; i < el.properties.size(); i++ )
+          {
+            libply::Property p = el.properties[i];
+            if (p.name == "X" || p.name == "x")
+            {
+              vertex.x = e[i];
+            } else if (p.name == "Y" || p.name == "y")
+            {
+              vertex.y = e[i];
+            } else if (p.name == "Z" || p.name == "z")
+            {
+              vertex.z = e[i];
+            } else
+            {
+              // TODO raise error
+            }
+          }
+          vertices.push_back( vertex );
+        };
+        file.setElementReadCallback( "vertex", vertexCallback );
+    } else if (el.name == "face")
     {
-      faceCount = element.size;
-      faces.resize( faceCount );
-      for ( size_t i = 0; i < element.properties.size(); ++i )
-      {
-        if ( element.properties[i] != "vertex_indices" &&
-             !element.list[i] )
+        faceCount = el.size;
+        libply::ElementReadCallback faceCallback = [&faces, el, &maxSizeFace]( libply::ElementBuffer & e )
         {
-          faceDatasets.push_back( * new std::vector<double> );
-          fProp2Ds.push_back( element.properties[i] );
-        }
-      }
-    }
-    else if ( element.name == "edge" )
-    {
-      edgeCount = element.size;
-      edges.resize( edgeCount );
-      for ( size_t i = 0; i < element.properties.size(); ++i )
-      {
-        if ( element.properties[i] != "vertex1" &&
-             element.properties[i] != "vertex2" &&
-             !element.list[i] )
-        {
-          edgeDatasets.push_back( * new std::vector<double> );
-          eProp2Ds.push_back( element.properties[i] );
-        }
-      }
-    }
-
-    // load the data
-    for ( size_t i = 0; i < element.size; ++i )
-    {
-      /*
-      * set the line size - we will only deal with one list at the begining of the line
-      */
-      size_t nChunks = element.properties.size();
-      if ( element.list[0] ) nChunks += MDAL::toSizeT( chunks[0] );
-      if ( chunks.size() != nChunks )
-      {
-        MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " contains invalid line : " + line );
-        return nullptr;
-      }
-
-      /*
-      * Load the vertexes
-      */
-      if ( element.name == "vertex" )
-      {
-        Vertex &vertex = vertices[i];
-        vertex.x = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, "x" )] );
-        vertex.y = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, "y" )] );
-        vertex.z = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, "z" )] );
-        for ( size_t j = 0; j < vProp2Ds.size(); ++j )
-        {
-          double value = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, vProp2Ds[j] )] );
-          vertexDatasets[j].push_back( value );
-        }
-      }
-
-      /*
-      *load the faces
-      */
-      else if ( element.name == "face" )
-      {
-        faceSize = MDAL::toSizeT( chunks[0] );
-        Face &face = faces[i];
-        face.resize( faceSize );
-        for ( size_t j = 0; j < faceSize; ++j )
-        {
-          face[j] = MDAL::toSizeT( chunks[j + 1] );
-        }
-        if ( faceSize > maxSizeFace ) maxSizeFace = faceSize;
-        for ( size_t j = 0; j < fProp2Ds.size(); ++j )
-        {
-          double value = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, fProp2Ds[j] ) + faceSize] );
-          faceDatasets[j].push_back( value );
-        }
-      }
-
-      /*
-      load the edges
-      */
-      else if ( element.name == "edge" )
-      {
-        Edge &edge = edges[i];
-        edge.startVertex = MDAL::toSizeT( chunks[MDAL::DriverPly::getIndex( element.properties, "vertex1" )] );
-        edge.endVertex = MDAL::toSizeT( chunks[MDAL::DriverPly::getIndex( element.properties, "vertex2" )] );
-        for ( size_t j = 0; j < eProp2Ds.size(); ++j )
-        {
-          double value = MDAL::toDouble( chunks[MDAL::DriverPly::getIndex( element.properties, eProp2Ds[j] )] );
-          edgeDatasets[j].push_back( value );
-        }
-      }
-
-      // any other element ignore and move to the next line
-      if ( !std::getline( in, line ) )
-      {
-        // if it is supposed to be the last line - don't look further
-        if ( elid != ( elements.size() - 1 ) && i != ( element.size - 1 ) )
-        {
-          MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain enough definitions of type " + element.name );
-          return nullptr;
-        }
-      }
-      chunks = split( line, ' ' );
+          Face face;
+          maxSizeFace = 3;
+          face.resize(3);
+          for ( size_t i = 0; i < el.properties.size(); i++ )
+          {
+            libply::Property p = el.properties[i];
+            if (p.name == "vertex_index")
+            {
+              if ( !p.isList )
+              {
+                // TODO raise error
+              }
+              for (int j = 0; j < maxSizeFace; j++)
+              {
+                face[j] = static_cast<int>(e[j]);
+              }
+            }
+          }
+          faces.push_back( face );
+        };
+        file.setElementReadCallback( "face", faceCallback );
     }
   }
+
+  file.read();
 
   std::unique_ptr< MemoryMesh > mesh(
     new MemoryMesh(
@@ -339,7 +151,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   mesh->setFaces( std::move( faces ) );
   mesh->setVertices( std::move( vertices ) );
   mesh->setEdges( std::move( edges ) );
-  mesh->setSourceCrs( proj );
+  //mesh->setSourceCrs( proj );
 
   // Add Bed Elevation
   MDAL::addBedElevationDatasetGroup( mesh.get(), mesh->vertices() );

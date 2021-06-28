@@ -34,23 +34,6 @@ namespace MDAL
       std::shared_ptr<DatasetGroup> addDatasetGroup( MDAL::Mesh *mesh, const std::string &name, const MDAL_DataLocation location, bool isScalar );
       void addDataset( MDAL::DatasetGroup *group, const std::vector<double> &values );
 
-      /*
-      * Element specification. holds the name, size and arbitraily long vector of properties
-      */
-      struct element
-      {
-        public:
-          std::string name; // element name
-          std::vector<std::string> properties; // the name of each property
-          std::vector<std::string> types; // the type of each property
-          std::vector<bool> list; // is the property a list
-          size_t size; // element size
-
-          bool operator==( const std::string &rhs ) const
-          {
-            return name == rhs;
-          }
-      };
 
       size_t getIndex( std::vector<std::string> v, std::string in );
   };

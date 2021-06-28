@@ -31,10 +31,10 @@ TEST( MeshHec2dTest, simpleArea )
   std::vector<double> expectedCoords =
   {
     -5.5731e-06, 90.0, 0.00,
-      9.999988, 90.00000297, 0.00,
-      9.999988, 99.962230818, 0.00,
-      19.999988, 90.00000297, 0.00
-    };
+    9.999988, 90.00000297, 0.00,
+    9.999988, 99.962230818, 0.00,
+    19.999988, 90.00000297, 0.00
+  };
   EXPECT_EQ( expectedCoords.size(), 4 * 3 );
 
   std::vector<double> coordinates = getCoordinates( m, 4 );
