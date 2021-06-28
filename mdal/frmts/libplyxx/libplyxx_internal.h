@@ -4,15 +4,18 @@
 #include <sstream>
 
 // a custom specialisation (and yes, you are allowed (and have to) put this in std)
-// from http://www.cplusplus.com/forum/general/238538/  
-namespace std {
+// from http://www.cplusplus.com/forum/general/238538/
+namespace std
+{
   template<>
-  struct hash<libply::Type> {
+  struct hash<libply::Type>
+  {
     using argument_type = libply::Type;
     using result_type = int;
-    
-    result_type operator()(argument_type a) const {
-      return static_cast<result_type>(a);  
+
+    result_type operator()( argument_type a ) const
+    {
+      return static_cast<result_type>( a );
     }
   };
 }

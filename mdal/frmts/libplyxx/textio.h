@@ -321,7 +321,7 @@ namespace textio
     // Reached the end of the work buffer (last character not a newline delimiter).
     if ( eol == m_end )
     {
-      std::__1::streamsize count = readFileChunk( m_end - m_begin );
+      auto count = readFileChunk( m_end - m_begin );
       if ( count == 0 && m_file.eof() )
       {
         m_eof = true;

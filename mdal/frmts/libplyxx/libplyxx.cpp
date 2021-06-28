@@ -27,7 +27,7 @@ namespace libply
   void File::read()
   {
     m_parser->read();
-  };
+  }
 
   void addElementDefinition( const textio::Tokenizer::TokenList &tokens, std::vector<ElementDefinition> &elementDefinitions )
   {
