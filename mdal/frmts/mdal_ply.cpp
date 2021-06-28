@@ -84,58 +84,62 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
 
   for ( const libply::Element &el : definitions )
   {
-    if (el.name == "vertex")
+    if ( el.name == "vertex" )
     {
-        vertexCount = el.size;
-        libply::ElementReadCallback vertexCallback = [&vertices, el]( libply::ElementBuffer & e )
+      vertexCount = el.size;
+      libply::ElementReadCallback vertexCallback = [&vertices, el]( libply::ElementBuffer & e )
+      {
+        Vertex vertex;
+        for ( size_t i = 0; i < el.properties.size(); i++ )
         {
-          Vertex vertex;
-          for ( size_t i = 0; i < el.properties.size(); i++ )
+          libply::Property p = el.properties[i];
+          if ( p.name == "X" || p.name == "x" )
           {
-            libply::Property p = el.properties[i];
-            if (p.name == "X" || p.name == "x")
-            {
-              vertex.x = e[i];
-            } else if (p.name == "Y" || p.name == "y")
-            {
-              vertex.y = e[i];
-            } else if (p.name == "Z" || p.name == "z")
-            {
-              vertex.z = e[i];
-            } else
+            vertex.x = e[i];
+          }
+          else if ( p.name == "Y" || p.name == "y" )
+          {
+            vertex.y = e[i];
+          }
+          else if ( p.name == "Z" || p.name == "z" )
+          {
+            vertex.z = e[i];
+          }
+          else
+          {
+            // TODO raise error
+          }
+        }
+        vertices.push_back( vertex );
+      };
+      file.setElementReadCallback( "vertex", vertexCallback );
+    }
+    else if ( el.name == "face" )
+    {
+      faceCount = el.size;
+      libply::ElementReadCallback faceCallback = [&faces, el, &maxSizeFace]( libply::ElementBuffer & e )
+      {
+        Face face;
+        maxSizeFace = 3;
+        face.resize( 3 );
+        for ( size_t i = 0; i < el.properties.size(); i++ )
+        {
+          libply::Property p = el.properties[i];
+          if ( p.name == "vertex_index" )
+          {
+            if ( !p.isList )
             {
               // TODO raise error
             }
-          }
-          vertices.push_back( vertex );
-        };
-        file.setElementReadCallback( "vertex", vertexCallback );
-    } else if (el.name == "face")
-    {
-        faceCount = el.size;
-        libply::ElementReadCallback faceCallback = [&faces, el, &maxSizeFace]( libply::ElementBuffer & e )
-        {
-          Face face;
-          maxSizeFace = 3;
-          face.resize(3);
-          for ( size_t i = 0; i < el.properties.size(); i++ )
-          {
-            libply::Property p = el.properties[i];
-            if (p.name == "vertex_index")
+            for ( int j = 0; j < maxSizeFace; j++ )
             {
-              if ( !p.isList )
-              {
-                // TODO raise error
-              }
-              for (int j = 0; j < maxSizeFace; j++)
-              {
-                face[j] = static_cast<int>(e[j]);
-              }
+              face[j] = static_cast<int>( e[j] );
             }
           }
-          faces.push_back( face );
-        };
-        file.setElementReadCallback( "face", faceCallback );
+        }
+        faces.push_back( face );
+      };
+      file.setElementReadCallback( "face", faceCallback );
     }
   }
 
