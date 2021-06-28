@@ -5,7 +5,7 @@
 
 namespace libply
 {
-  File::File( const PATH_STRING &filename )
+  File::File( const std::string &filename )
     : m_filename( filename ),
       m_parser( std::make_unique<FileParser>( filename ) )
   {
@@ -70,7 +70,7 @@ namespace libply
     return Element( name, size, properties );
   }
 
-  FileParser::FileParser( const PATH_STRING &filename )
+  FileParser::FileParser( const std::string &filename )
     : m_filename( filename ),
       m_lineReader( filename ),
       m_lineTokenizer( ' ' )
@@ -464,7 +464,7 @@ namespace libply
     }
   }
 
-  FileOut::FileOut( const PATH_STRING &filename, File::Format format )
+  FileOut::FileOut( const std::string &filename, File::Format format )
     : m_filename( filename ), m_format( format )
   {
     createFile();

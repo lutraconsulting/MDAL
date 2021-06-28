@@ -11,14 +11,6 @@
 
 #include "textio.h"
 
-#ifdef _WIN32
-#define PATH_STRING std::wstring
-#define Str(s) L##s
-#else
-#define PATH_STRING std::string
-#define Str(s) s
-#endif
-
 namespace libply
 {
   enum class Type
@@ -144,7 +136,7 @@ namespace libply
   class File
   {
     public:
-      File( const PATH_STRING &filename );
+      File( const std::string &filename );
       ~File();
 
       ElementsDefinition definitions() const;
@@ -160,7 +152,7 @@ namespace libply
       };
 
     private:
-      PATH_STRING m_filename;
+      std::string m_filename;
       std::unique_ptr<FileParser> m_parser;
   };
 
@@ -170,7 +162,7 @@ namespace libply
   class FileOut
   {
     public:
-      FileOut( const PATH_STRING &filename, File::Format format );
+      FileOut( const std::string &filename, File::Format format );
 
       void setElementsDefinition( const ElementsDefinition &definitions );
       void setElementWriteCallback( const std::string &elementName, ElementWriteCallback &writeCallback );
@@ -182,7 +174,7 @@ namespace libply
       void writeData();
 
     private:
-      PATH_STRING m_filename;
+      std::string m_filename;
       File::Format m_format;
       ElementsDefinition m_definitions;
       std::map<std::string, ElementWriteCallback> m_writeCallbacks;

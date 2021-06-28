@@ -191,7 +191,7 @@ namespace libply
 
   inline void write_cast_UINT( IScalarProperty &property, char *buffer, size_t &size )
   {
-    *reinterpret_cast<unsigned char *>( buffer ) = static_cast<unsigned int>( property );
+    *reinterpret_cast<unsigned int *>( buffer ) = static_cast<unsigned int>( property );
     size = sizeof( unsigned char );
   }
 
@@ -278,7 +278,7 @@ namespace libply
   class FileParser
   {
     public:
-      explicit FileParser( const PATH_STRING &filename );
+      explicit FileParser( const std::string &filename );
       FileParser( const FileParser &other ) = delete;
       ~FileParser();
 
@@ -296,7 +296,7 @@ namespace libply
       typedef std::map<std::string, ElementReadCallback> CallbackMap;
 
     private:
-      PATH_STRING m_filename;
+      std::string m_filename;
       File::Format m_format;
       std::streamsize m_dataOffset;
       textio::LineReader m_lineReader;
