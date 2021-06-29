@@ -58,27 +58,27 @@ namespace libply
 
   /// Type conversion functions.
 
-  inline void convert_UINT( const textio::SubString &token, IScalarProperty &property )
+  inline void convert_UINT( const textio::SubString &token, IProperty &property )
   {
     property = textio::stou<unsigned int>( token );
   }
 
-  inline void convert_INT( const textio::SubString &token, IScalarProperty &property )
+  inline void convert_INT( const textio::SubString &token, IProperty &property )
   {
     property = textio::stoi<int>( token );
   }
 
-  inline void convert_FLOAT( const textio::SubString &token, IScalarProperty &property )
+  inline void convert_FLOAT( const textio::SubString &token, IProperty &property )
   {
     property = textio::stor<float>( token );
   }
 
-  inline void convert_DOUBLE( const textio::SubString &token, IScalarProperty &property )
+  inline void convert_DOUBLE( const textio::SubString &token, IProperty &property )
   {
     property = textio::stor<double>( token );
   }
 
-  typedef void( *ConversionFunction )( const textio::SubString &, IScalarProperty & );
+  typedef void( *ConversionFunction )( const textio::SubString &, IProperty & );
   typedef std::unordered_map<Type, ConversionFunction> ConversionFunctionMap;
 
   const ConversionFunctionMap CONVERSION_MAP =
@@ -95,47 +95,47 @@ namespace libply
 
   /// Type casting functions.
 
-  inline void cast_UINT8( char *buffer, IScalarProperty &property )
+  inline void cast_UINT8( char *buffer, IProperty &property )
   {
     property = *reinterpret_cast<unsigned char *>( buffer );
   }
 
-  inline void cast_INT8( char *buffer, IScalarProperty &property )
+  inline void cast_INT8( char *buffer, IProperty &property )
   {
     property = *reinterpret_cast< char *>( buffer );
   }
 
-  inline void cast_UINT16( char *buffer, IScalarProperty &property )
+  inline void cast_UINT16( char *buffer, IProperty &property )
   {
     property = *reinterpret_cast<unsigned short *>( buffer );
   }
 
-  inline void cast_INT16( char *buffer, IScalarProperty &property )
+  inline void cast_INT16( char *buffer, IProperty &property )
   {
     property = *reinterpret_cast<short *>( buffer );
   }
 
-  inline void cast_UINT32( char *buffer, IScalarProperty &property )
+  inline void cast_UINT32( char *buffer, IProperty &property )
   {
     property = *reinterpret_cast<unsigned int *>( buffer );
   }
 
-  inline void cast_INT32( char *buffer, IScalarProperty &property )
+  inline void cast_INT32( char *buffer, IProperty &property )
   {
     property = *reinterpret_cast<int *>( buffer );
   }
 
-  inline void cast_FLOAT( char *buffer, IScalarProperty &property )
+  inline void cast_FLOAT( char *buffer, IProperty &property )
   {
     property = *reinterpret_cast<float *>( buffer );
   }
 
-  inline void cast_DOUBLE( char *buffer, IScalarProperty &property )
+  inline void cast_DOUBLE( char *buffer, IProperty &property )
   {
     property = *reinterpret_cast<double *>( buffer );
   }
 
-  typedef void( *CastFunction )( char *buffer, IScalarProperty & );
+  typedef void( *CastFunction )( char *buffer, IProperty & );
   typedef std::unordered_map<Type, CastFunction> CastFunctionMap;
 
   const CastFunctionMap CAST_MAP =
@@ -150,31 +150,31 @@ namespace libply
     { Type::FLOAT64, cast_DOUBLE }
   };
 
-  inline std::stringstream &write_convert_UINT( IScalarProperty &property, std::stringstream &ss )
+  inline std::stringstream &write_convert_UINT( IProperty &property, std::stringstream &ss )
   {
     ss << static_cast<unsigned int>( property );
     return ss;
   }
 
-  inline std::stringstream &write_convert_INT( IScalarProperty &property, std::stringstream &ss )
+  inline std::stringstream &write_convert_INT( IProperty &property, std::stringstream &ss )
   {
     ss << static_cast<int>( property );
     return ss;
   }
 
-  inline std::stringstream &write_convert_FLOAT( IScalarProperty &property, std::stringstream &ss )
+  inline std::stringstream &write_convert_FLOAT( IProperty &property, std::stringstream &ss )
   {
     ss << static_cast<float>( property );
     return ss;
   }
 
-  inline std::stringstream &write_convert_DOUBLE( IScalarProperty &property, std::stringstream &ss )
+  inline std::stringstream &write_convert_DOUBLE( IProperty &property, std::stringstream &ss )
   {
     ss << static_cast<double>( property );
     return ss;
   }
 
-  typedef std::stringstream &( *WriteConvertFunction )( IScalarProperty &, std::stringstream & );
+  typedef std::stringstream &( *WriteConvertFunction )( IProperty &, std::stringstream & );
   typedef std::unordered_map<Type, WriteConvertFunction> WriteConvertFunctionMap;
 
   const WriteConvertFunctionMap WRITE_CONVERT_MAP =
@@ -189,31 +189,31 @@ namespace libply
     { Type::FLOAT64, write_convert_DOUBLE }
   };
 
-  inline void write_cast_UINT( IScalarProperty &property, char *buffer, size_t &size )
+  inline void write_cast_UINT( IProperty &property, char *buffer, size_t &size )
   {
     *reinterpret_cast<unsigned int *>( buffer ) = static_cast<unsigned int>( property );
     size = sizeof( unsigned char );
   }
 
-  inline void write_cast_INT( IScalarProperty &property, char *buffer, size_t &size )
+  inline void write_cast_INT( IProperty &property, char *buffer, size_t &size )
   {
     *reinterpret_cast<int *>( buffer ) = static_cast<int>( property );
     size = sizeof( int );
   }
 
-  inline void write_cast_FLOAT( IScalarProperty &property, char *buffer, size_t &size )
+  inline void write_cast_FLOAT( IProperty &property, char *buffer, size_t &size )
   {
     *reinterpret_cast<float *>( buffer ) = static_cast<float>( property );
     size = sizeof( float );
   }
 
-  inline void write_cast_DOUBLE( IScalarProperty &property, char *buffer, size_t &size )
+  inline void write_cast_DOUBLE( IProperty &property, char *buffer, size_t &size )
   {
     *reinterpret_cast<double *>( buffer ) = static_cast<double>( property );
     size = sizeof( double );
   }
 
-  typedef void( *WriteCastFunction )( IScalarProperty &property, char *buffer, size_t &size );
+  typedef void( *WriteCastFunction )( IProperty &property, char *buffer, size_t &size );
   typedef std::unordered_map<Type, WriteCastFunction> WriteCastFunctionMap;
 
   const WriteCastFunctionMap WRITE_CAST_MAP =

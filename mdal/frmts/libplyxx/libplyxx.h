@@ -25,28 +25,29 @@ namespace libply
     FLOAT64
   };
 
-  class IScalarProperty
+  class IProperty
   {
     public:
-      virtual ~IScalarProperty() {}
+      virtual ~IProperty() = default;
 
-      virtual IScalarProperty &operator=( unsigned int value ) = 0;
-      virtual IScalarProperty &operator=( int value ) = 0;
-      virtual IScalarProperty &operator=( float value ) = 0;
-      virtual IScalarProperty &operator=( double value ) = 0;
+      virtual IProperty &operator=( unsigned int value ) = 0;
+      virtual IProperty &operator=( int value ) = 0;
+      virtual IProperty &operator=( float value ) = 0;
+      virtual IProperty &operator=( double value ) = 0;
 
       virtual operator unsigned int() = 0;
       virtual operator int() = 0;
       virtual operator float() = 0;
       virtual operator double() = 0;
+
   };
 
   template<typename InternalType>
-  class ScalarProperty: public IScalarProperty
+  class ScalarProperty: public IProperty
   {
     public :
 
-      virtual ~ScalarProperty() {}
+      virtual ~ScalarProperty() = default;
 
       virtual ScalarProperty &operator=( unsigned int value ) override
       { m_value = static_cast<InternalType>( value ); return *this; };
@@ -81,6 +82,30 @@ namespace libply
       InternalType m_value;
   };
 
+  class ListProperty : public IProperty
+  {
+    public:
+
+      IProperty &operator=( unsigned int value ) override { return *this; };
+      IProperty &operator=( int value ) override  { return *this; };
+      IProperty &operator=( float value ) override  { return *this; };
+      IProperty &operator=( double value ) override  { return *this; };
+
+      IProperty &operator[]( size_t index );
+
+      operator unsigned int() override { return 0; };
+      operator int() override { return 0; };
+      operator float() override { return 0; };
+      operator double() override { return 0; };
+
+      void define(Type type, size_t size);
+      size_t size() const { return list.size(); }
+
+    private:
+      std::vector<std::unique_ptr<IProperty>> list;
+      std::unique_ptr<IProperty> getScalarProperty( Type type );
+  };
+
   struct ElementDefinition;
 
   class ElementBuffer
@@ -92,17 +117,15 @@ namespace libply
     public:
       void reset( size_t size );
       size_t size() const { return properties.size(); };
-      IScalarProperty &operator[]( size_t index );
+      IProperty &operator[]( size_t index );
 
     private:
       void appendScalarProperty( Type type );
       void appendListProperty( Type type );
-      std::unique_ptr<IScalarProperty> getScalarProperty( Type type );
+      std::unique_ptr<IProperty> getScalarProperty( Type type );
 
     private:
-      bool m_isList;
-      Type m_listType;
-      std::vector<std::unique_ptr<IScalarProperty>> properties;
+      std::vector<std::unique_ptr<IProperty>> properties;
   };
 
   struct Property

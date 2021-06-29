@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <string>
+#include <iostream>
 
 namespace libply
 {
@@ -62,12 +63,12 @@ namespace libply
 
   Element ElementDefinition::getElement() const
   {
-    std::vector<Property> properties;
-    for ( const auto &p : this->properties )
+    std::vector<Property> props;
+    for ( const PropertyDefinition &p : properties )
     {
-      properties.emplace_back( p.getProperty() );
+      props.emplace_back( p.getProperty() );
     }
-    return Element( name, size, properties );
+    return Element( name, size, props );
   }
 
   FileParser::FileParser( const std::string &filename )
@@ -213,24 +214,41 @@ namespace libply
   void FileParser::parseLine( const textio::SubString &line, const ElementDefinition &elementDefinition, ElementBuffer &elementBuffer )
   {
     m_lineTokenizer.tokenize( line, m_tokens );
-    const auto &properties = elementDefinition.properties;
+    const std::vector<PropertyDefinition> properties = elementDefinition.properties;
 
-    if ( !properties.front().isList )
+    size_t t_idx = 0;
+    size_t e_idx = 0;
+    for (PropertyDefinition p : properties)
     {
-      for ( size_t i = 0; i < elementBuffer.size(); ++i )
-      {
-        properties[i].conversionFunction( m_tokens[i], elementBuffer[i] );
-      }
-    }
-    else
-    {
-      const auto &conversionFunction = properties[0].conversionFunction;
-      size_t listLength = std::stoi( m_tokens[0] );
-      elementBuffer.reset( listLength );
-      for ( size_t i = 0; i < elementBuffer.size(); ++i )
-      {
-        conversionFunction( m_tokens[i + 1], elementBuffer[i] );
-      }
+        if ( !p.isList)
+        {
+            if (t_idx == m_tokens.size()) return; //TODO throw an error
+            if (e_idx == elementBuffer.size()) return; //TODO throw an error
+            p.conversionFunction( m_tokens[t_idx], elementBuffer[e_idx] );
+            t_idx++;
+            e_idx++;
+        } else
+        {
+          if (t_idx == m_tokens.size()) return; //TODO throw an error
+          if (e_idx == elementBuffer.size()) return; //TODO throw an error
+          std::cout << "C" << std::endl;
+          const size_t listLength = std::stoi( m_tokens[t_idx] );
+          t_idx++;
+          ListProperty* lp = dynamic_cast<ListProperty*>( &elementBuffer[e_idx]);
+          lp->define(p.type, listLength);
+          std::cout << std::to_string( lp->size() ) << std::endl;
+          for(size_t i=0; i < listLength; i++)
+          {
+            if (t_idx == m_tokens.size()) return; //TODO throw an error
+            std::cout << std::to_string( t_idx ) << std::endl;
+            std::cout << std::to_string( int( lp[i] ) ) << std::endl;
+            p.conversionFunction( m_tokens[t_idx], lp[i] );
+            std::cout << "D" << std::endl;
+            t_idx++;
+          }
+          e_idx++;
+          std::cout << "E" << std::endl;
+        }
     }
   }
 
@@ -268,7 +286,6 @@ namespace libply
   }
 
   ElementBuffer::ElementBuffer( const ElementDefinition &definition )
-    : m_isList( false )
   {
     auto &properties = definition.properties;
     for ( auto &p : properties )
@@ -287,49 +304,55 @@ namespace libply
 
   void ElementBuffer::reset( size_t size )
   {
-    if ( properties.size() < size )
-    {
-      while ( properties.size() < size )
-      {
-        properties.emplace_back( getScalarProperty( m_listType ) );
-      }
-    }
-    else
-    {
-      properties.resize( size );
-    }
+
   }
 
-  IScalarProperty &ElementBuffer::operator[]( size_t index )
+  IProperty &ElementBuffer::operator[]( size_t index )
   {
     return *properties[index];
   }
 
   void ElementBuffer::appendScalarProperty( Type type )
   {
-    std::unique_ptr<IScalarProperty> prop = getScalarProperty( type );
-    properties.push_back( std::move( prop ) );
+    std::unique_ptr<IProperty> prop = getScalarProperty( type );
+    properties.push_back( prop );
   }
 
   void ElementBuffer::appendListProperty( Type type )
   {
-    m_isList = true;
-    m_listType = type;
+    std::unique_ptr<IProperty> prop = std::make_unique<ListProperty>();
+    properties.push_back( prop );
   }
 
-  std::unique_ptr<IScalarProperty> ElementBuffer::getScalarProperty( Type type )
+  std::unique_ptr<IProperty> ElementBuffer::getScalarProperty( Type type )
   {
-    std::unique_ptr<IScalarProperty> prop;
+    std::unique_ptr<IProperty> prop;
     switch ( type )
     {
-      case Type::INT8: prop = std::make_unique<ScalarProperty<char>>();  break;
-      case Type::UINT8: prop = std::make_unique<ScalarProperty<char>>();  break;
-      case Type::INT16: prop = std::make_unique<ScalarProperty<char>>();  break;
-      case Type::UINT16: prop = std::make_unique<ScalarProperty<char>>();  break;
-      case Type::UINT32: prop = std::make_unique<ScalarProperty<int>>(); break;
-      case Type::INT32: prop = std::make_unique<ScalarProperty<int>>(); break;
-      case Type::FLOAT32: prop = std::make_unique<ScalarProperty<float>>(); break;
-      case Type::FLOAT64: prop = std::make_unique<ScalarProperty<double>>(); break;
+      case Type::INT8:
+        prop = std::make_unique<ScalarProperty<char>>();
+        break;
+      case Type::UINT8:
+        prop = std::make_unique<ScalarProperty<char>>();
+        break;
+      case Type::INT16:
+        prop = std::make_unique<ScalarProperty<short>>();
+        break;
+      case Type::UINT16:
+        prop = std::make_unique<ScalarProperty<short>>();
+        break;
+      case Type::UINT32:
+        prop = std::make_unique<ScalarProperty<int>>();
+        break;
+      case Type::INT32:
+        prop = std::make_unique<ScalarProperty<int>>();
+        break;
+      case Type::FLOAT32:
+        prop = std::make_unique<ScalarProperty<float>>();
+        break;
+      case Type::FLOAT64:
+        prop = std::make_unique<ScalarProperty<double>>();
+        break;
     }
     return prop;
   }
@@ -515,6 +538,53 @@ namespace libply
       writeElements( file, elem, m_format, m_writeCallbacks[elem.name] );
     }
     file.close();
+  }
+
+  IProperty &ListProperty::operator[]( size_t index )
+  {
+    return *list[index];
+  }
+
+  void ListProperty::define(Type type, size_t size)
+  {
+    for (size_t i = 0; i < size; i++)
+    {
+      std::unique_ptr<IProperty> prop = getScalarProperty( type );
+      list.push_back( prop );
+    }
+  }
+
+  std::unique_ptr<IProperty> ListProperty::getScalarProperty( Type type )
+  {
+    std::unique_ptr<IProperty> prop;
+    switch ( type )
+    {
+      case Type::INT8:
+        prop = std::make_unique<ScalarProperty<char>>();
+        break;
+      case Type::UINT8:
+        prop = std::make_unique<ScalarProperty<char>>();
+        break;
+      case Type::INT16:
+        prop = std::make_unique<ScalarProperty<short>>();
+        break;
+      case Type::UINT16:
+        prop = std::make_unique<ScalarProperty<short>>();
+        break;
+      case Type::UINT32:
+        prop = std::make_unique<ScalarProperty<int>>();
+        break;
+      case Type::INT32:
+        prop = std::make_unique<ScalarProperty<int>>();
+        break;
+      case Type::FLOAT32:
+        prop = std::make_unique<ScalarProperty<float>>();
+        break;
+      case Type::FLOAT64:
+        prop = std::make_unique<ScalarProperty<double>>();
+        break;
+    }
+    return prop;
   }
 
 }
