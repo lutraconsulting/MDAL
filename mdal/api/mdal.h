@@ -112,6 +112,18 @@ MDAL_EXPORT const char *MDAL_Version();
 MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 
 /**
+ * Resets the last status message
+ * \since MDAL 0.8.2
+ */
+MDAL_EXPORT void MDAL_ResetStatus();
+
+/*
+ * Sets the last status message
+ * \since MDAL 0.8.2
+ */
+MDAL_EXPORT void MDAL_SetStatus( MDAL_LogLevel Level, MDAL_Status status, const char *message );
+
+/**
  * Sets custom callback for logging output
  *
  * By default standard stdout is used as output.
