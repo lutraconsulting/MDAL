@@ -1,6 +1,7 @@
 ply
 format ascii 1.0
 comment test file for MDAL
+comment crs: +proj=tmerc
 element face 2
 property list uint8 uint32 vertex_indices
 property uint m

@@ -43,7 +43,7 @@ MDAL::DriverPly *MDAL::DriverPly::create()
 
 MDAL::DriverPly::~DriverPly() = default;
 
-size_t MDAL::DriverPly::getIndex( std::vector<std::string> v, std::string in )
+size_t getIndex( std::vector<std::string> v, std::string in )
 {
   std::vector<std::string>::iterator it = std::find( v.begin(), v.end(), in );
   return ( size_t )std::distance( v.begin(), it );
@@ -64,9 +64,6 @@ bool MDAL::DriverPly::canReadMesh( const std::string &uri )
 std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, const std::string & )
 {
   MDAL::Log::resetLastStatus();
-
-  libply::File file( meshFile );
-  const libply::ElementsDefinition &definitions = file.definitions();
   Vertices vertices( 0 );
   Faces faces( 0 );
   Edges edges( 0 );
@@ -74,20 +71,53 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
 
   //datastructures that will contain all of the datasets, categorised by vertex, face and edge datasets
   std::vector<std::vector<double>> vertexDatasets; // conatains the data
-  std::vector<std::string> vProp2Ds; // contains the dataset names
+  std::vector<std::string> vProp2Ds; // contains the dataset name  
   std::vector<std::vector<double>> faceDatasets;
   std::vector<std::string> fProp2Ds;
   std::vector<std::vector<double>> edgeDatasets;
   std::vector<std::string> eProp2Ds;
 
+  libply::File file( meshFile );
+  const libply::ElementsDefinition &definitions = file.definitions();
+  for(const libply::Element &element : definitions)
+  {
+    for(const libply::Property &property : element.properties )
+      {
+        if (element.name == "vertex" &&
+            property.name != "X" &&
+            property.name != "x" &&
+            property.name != "Y" &&
+            property.name != "y" &&
+            property.name != "Z" &&
+            property.name != "z"
+        )
+        {
+            vProp2Ds.push_back(property.name);
+            vertexDatasets.push_back(* new std::vector<double>);
+        } else if (element.name == "face" &&
+                   property.name != "vertex_indices"
+                  )
+        {
+            fProp2Ds.push_back(property.name);
+            faceDatasets.push_back(* new std::vector<double>);
+        } else if (element.name == "edge" &&
+                   property.name != "vertex1" &&
+                   property.name != "vertex2"
+                  )
+        {
+            eProp2Ds.push_back(property.name);
+            edgeDatasets.push_back(* new std::vector<double>);
+        }
+      }
+  }
+
   for ( const libply::Element &el : definitions )
   {
     if ( el.name == "vertex" )
     {
-      libply::ElementReadCallback vertexCallback = [&vertices, el]( libply::ElementBuffer & e )
+      libply::ElementReadCallback vertexCallback = [&vertices, &el, &vProp2Ds, &vertexDatasets]( libply::ElementBuffer & e )
       {
         Vertex vertex;
-        std::cout << "vertex" << std::endl;
         for ( size_t i = 0; i < el.properties.size(); i++ )
         {
           libply::Property p = el.properties[i];
@@ -105,7 +135,9 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           }
           else
           {
-            std::cout << "vertex-data "<< p.name << std::endl;
+            int dsIdx = getIndex( vProp2Ds, p.name );
+            std::vector<double> *ds = & vertexDatasets[dsIdx];
+            ds->push_back( e[i] );
           }
         }
         vertices.push_back( vertex );
@@ -114,8 +146,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
     }
     else if ( el.name == "face" )
     {
-      std::cout << "face" << std::endl;
-      libply::ElementReadCallback faceCallback = [&faces, el, &maxSizeFace]( libply::ElementBuffer & e )
+      libply::ElementReadCallback faceCallback = [&faces, &el, &maxSizeFace, &fProp2Ds, &faceDatasets]( libply::ElementBuffer & e )
       {
         Face face;
         for ( size_t i = 0; i < el.properties.size(); i++ )
@@ -136,7 +167,9 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
             }
           } else
           {
-            std::cout << "face-data "<< p.name << std::endl;
+            int dsIdx = getIndex( fProp2Ds, p.name );
+            std::vector<double> *ds = & faceDatasets[dsIdx];
+            ds->push_back( e[i] );
           }
         }
         faces.push_back( face );
@@ -144,8 +177,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       file.setElementReadCallback( "face", faceCallback );
     } else if ( el.name == "edge" )
     {
-      std::cout << "edge" << std::endl;
-      libply::ElementReadCallback edgeCallback = [&edges, el]( libply::ElementBuffer & e )
+      libply::ElementReadCallback edgeCallback = [&edges, &el, &eProp2Ds, &edgeDatasets]( libply::ElementBuffer & e )
       {
         Edge edge;
         for ( size_t i = 0; i < el.properties.size(); i++ )
@@ -159,7 +191,9 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
             edge.endVertex = int( e[i] );
           } else
           {
-            std::cout << "edge-data "<< p.name << std::endl;
+            int dsIdx = getIndex( eProp2Ds, p.name );
+            std::vector<double> *ds = & edgeDatasets[dsIdx];
+            ds->push_back( e[i] );
           }
         }
         edges.push_back( edge );
