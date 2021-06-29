@@ -184,6 +184,14 @@ MDAL_EXPORT bool MDAL_DR_writeDatasetsCapability( MDAL_DriverH driver, MDAL_Data
 MDAL_EXPORT const char *MDAL_DR_writeDatasetsSuffix( MDAL_DriverH driver );
 
 /**
+ * Returns the file suffix used to save mesh frame on file
+ * not thread-safe and valid only till next call
+ *
+ * \since MDAL 0.8.2
+ */
+MDAL_EXPORT const char *MDAL_DR_saveMeshSuffix( MDAL_DriverH driver );
+
+/**
  * Returns whether driver has capability to save mesh
  */
 MDAL_EXPORT bool MDAL_DR_saveMeshCapability( MDAL_DriverH driver );
