@@ -125,16 +125,12 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
             {
               // TODO raise error
             }
-            std::cout << "One" << std::endl;
             libply::ListProperty *lp = dynamic_cast<libply::ListProperty*>(&e[i]);
-            std::cout << "Two" << std::endl;
-            std::cout << std::to_string( lp->size() ) << std::endl;
             if (maxSizeFace < lp->size()) maxSizeFace = lp->size();
             face.resize( lp->size() );
             for ( size_t j = 0; j < lp->size(); j++ )
             {
-                std::cout << std::to_string( j  ) << std::endl;
-                face[j] = int( lp[j] );
+                face[j] = int( lp->value(j) );
             }
           }
         }

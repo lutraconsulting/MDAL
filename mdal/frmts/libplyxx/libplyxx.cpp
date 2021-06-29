@@ -231,23 +231,17 @@ namespace libply
         {
           if (t_idx == m_tokens.size()) return; //TODO throw an error
           if (e_idx == elementBuffer.size()) return; //TODO throw an error
-          std::cout << "C" << std::endl;
           const size_t listLength = std::stoi( m_tokens[t_idx] );
           t_idx++;
           ListProperty* lp = dynamic_cast<ListProperty*>( &elementBuffer[e_idx]);
           lp->define(p.type, listLength);
-          std::cout << std::to_string( lp->size() ) << std::endl;
           for(size_t i=0; i < listLength; i++)
           {
             if (t_idx == m_tokens.size()) return; //TODO throw an error
-            std::cout << std::to_string( t_idx ) << std::endl;
-            std::cout << std::to_string( int( lp[i] ) ) << std::endl;
-            p.conversionFunction( m_tokens[t_idx], lp[i] );
-            std::cout << "D" << std::endl;
+            p.conversionFunction( m_tokens[t_idx], lp->value( i ) );
             t_idx++;
           }
           e_idx++;
-          std::cout << "E" << std::endl;
         }
     }
   }
@@ -315,13 +309,13 @@ namespace libply
   void ElementBuffer::appendScalarProperty( Type type )
   {
     std::unique_ptr<IProperty> prop = getScalarProperty( type );
-    properties.push_back( prop );
+    properties.push_back( std::move ( prop ) );
   }
 
   void ElementBuffer::appendListProperty( Type type )
   {
     std::unique_ptr<IProperty> prop = std::make_unique<ListProperty>();
-    properties.push_back( prop );
+    properties.push_back( std::move ( prop ) );
   }
 
   std::unique_ptr<IProperty> ElementBuffer::getScalarProperty( Type type )
@@ -540,17 +534,17 @@ namespace libply
     file.close();
   }
 
-  IProperty &ListProperty::operator[]( size_t index )
+  IProperty &ListProperty::value( size_t index )
   {
     return *list[index];
   }
 
-  void ListProperty::define(Type type, size_t size)
+  void ListProperty::define(Type type, size_t isize)
   {
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < isize; i++)
     {
       std::unique_ptr<IProperty> prop = getScalarProperty( type );
-      list.push_back( prop );
+      list.push_back( std::move ( prop ) );
     }
   }
 

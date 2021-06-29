@@ -91,8 +91,6 @@ namespace libply
       IProperty &operator=( float value ) override  { return *this; };
       IProperty &operator=( double value ) override  { return *this; };
 
-      IProperty &operator[]( size_t index );
-
       operator unsigned int() override { return 0; };
       operator int() override { return 0; };
       operator float() override { return 0; };
@@ -100,6 +98,8 @@ namespace libply
 
       void define(Type type, size_t size);
       size_t size() const { return list.size(); }
+
+      IProperty &value(size_t index);
 
     private:
       std::vector<std::unique_ptr<IProperty>> list;
