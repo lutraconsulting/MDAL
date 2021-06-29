@@ -115,7 +115,6 @@ namespace libply
       ElementBuffer( const ElementDefinition &definition );
 
     public:
-      void reset( size_t size );
       size_t size() const { return properties.size(); };
       IProperty &operator[]( size_t index );
 

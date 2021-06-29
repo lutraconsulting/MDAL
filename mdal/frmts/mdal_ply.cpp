@@ -87,6 +87,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       libply::ElementReadCallback vertexCallback = [&vertices, el]( libply::ElementBuffer & e )
       {
         Vertex vertex;
+        std::cout << "vertex" << std::endl;
         for ( size_t i = 0; i < el.properties.size(); i++ )
         {
           libply::Property p = el.properties[i];
@@ -104,7 +105,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           }
           else
           {
-            // TODO raise error
+            std::cout << "vertex-data "<< p.name << std::endl;
           }
         }
         vertices.push_back( vertex );
@@ -113,6 +114,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
     }
     else if ( el.name == "face" )
     {
+      std::cout << "face" << std::endl;
       libply::ElementReadCallback faceCallback = [&faces, el, &maxSizeFace]( libply::ElementBuffer & e )
       {
         Face face;
@@ -129,9 +131,12 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
             if (maxSizeFace < lp->size()) maxSizeFace = lp->size();
             face.resize( lp->size() );
             for ( size_t j = 0; j < lp->size(); j++ )
-            {
+            {   
                 face[j] = int( lp->value(j) );
             }
+          } else
+          {
+            std::cout << "face-data "<< p.name << std::endl;
           }
         }
         faces.push_back( face );
@@ -139,6 +144,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       file.setElementReadCallback( "face", faceCallback );
     } else if ( el.name == "edge" )
     {
+      std::cout << "edge" << std::endl;
       libply::ElementReadCallback edgeCallback = [&edges, el]( libply::ElementBuffer & e )
       {
         Edge edge;
@@ -151,6 +157,9 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           } else if ( p.name == "vertex2" )
           {
             edge.endVertex = int( e[i] );
+          } else
+          {
+            std::cout << "edge-data "<< p.name << std::endl;
           }
         }
         edges.push_back( edge );

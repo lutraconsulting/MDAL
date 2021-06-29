@@ -215,7 +215,6 @@ namespace libply
   {
     m_lineTokenizer.tokenize( line, m_tokens );
     const std::vector<PropertyDefinition> properties = elementDefinition.properties;
-
     size_t t_idx = 0;
     size_t e_idx = 0;
     for (PropertyDefinition p : properties)
@@ -251,31 +250,38 @@ namespace libply
     const auto &properties = elementDefinition.properties;
     const unsigned int MAX_PROPERTY_SIZE = 8;
     char buffer[MAX_PROPERTY_SIZE];
+    size_t e_idx = 0;
 
-    if ( !properties.front().isList )
+    for (PropertyDefinition p : properties)
     {
-      for ( size_t i = 0; i < elementBuffer.size(); ++i )
-      {
-        const auto size = TYPE_SIZE_MAP.at( properties[i].type );
-        fs.read( buffer, size );
-        properties[i].castFunction( buffer, elementBuffer[i] );
-      }
-    }
-    else
-    {
-      const auto lengthType = properties[0].listLengthType;
-      const auto lengthTypeSize = TYPE_SIZE_MAP.at( lengthType );
-      fs.read( buffer, lengthTypeSize );
-      size_t length = static_cast<size_t>( *buffer );
-      elementBuffer.reset( length );
+        if ( !p.isList)
+        {
+            if (e_idx == elementBuffer.size()) return; //TODO throw an error
+            const auto size = TYPE_SIZE_MAP.at( p.type );
+            fs.read( buffer, size );
+            p.castFunction( buffer, elementBuffer[e_idx] );
+            e_idx++;
+        }
+        else
+        {
+          if (e_idx == elementBuffer.size()) return; //TODO throw an error
+          const auto lengthType = p.listLengthType;
+          const auto lengthTypeSize = TYPE_SIZE_MAP.at( lengthType );
+          fs.read( buffer, lengthTypeSize );
+          size_t listLength = static_cast<size_t>( *buffer );
 
-      const auto &castFunction = properties[0].castFunction;
-      const auto size = TYPE_SIZE_MAP.at( properties[0].type );
-      for ( size_t i = 0; i < elementBuffer.size(); ++i )
-      {
-        fs.read( buffer, size );
-        castFunction( buffer, elementBuffer[i] );
-      }
+          ListProperty* lp = dynamic_cast<ListProperty*>( &elementBuffer[e_idx]);
+          lp->define(p.type, listLength);
+
+          const auto &castFunction = p.castFunction;
+          const auto size = TYPE_SIZE_MAP.at( p.type );
+          for(size_t i=0; i < listLength; i++)
+          {
+            fs.read( buffer, size );
+            castFunction( buffer, lp->value( i ) );
+          }
+          e_idx++;
+        }
     }
   }
 
@@ -293,11 +299,6 @@ namespace libply
         appendScalarProperty( p.type );
       }
     }
-
-  }
-
-  void ElementBuffer::reset( size_t size )
-  {
 
   }
 
@@ -474,7 +475,7 @@ namespace libply
   {
     const size_t size = elementDefinition.size;
     ElementBuffer buffer( elementDefinition );
-    buffer.reset( elementDefinition.properties.size() );
+    //buffer.reset( elementDefinition.properties.size() );
     for ( size_t i = 0; i < size; ++i )
     {
       writeProperties( file, buffer, i, elementDefinition, format, callback );
@@ -541,6 +542,7 @@ namespace libply
 
   void ListProperty::define(Type type, size_t isize)
   {
+    list.clear();
     for (size_t i = 0; i < isize; i++)
     {
       std::unique_ptr<IProperty> prop = getScalarProperty( type );
