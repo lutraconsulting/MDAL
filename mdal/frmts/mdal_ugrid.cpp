@@ -681,6 +681,11 @@ void MDAL::DriverUgrid::save( const std::string &uri, MDAL::Mesh *mesh )
   }
 }
 
+std::string MDAL::DriverUgrid::saveMeshOnFileSuffix() const
+{
+  return "nc";
+}
+
 void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
 {
   // Global dimensions
