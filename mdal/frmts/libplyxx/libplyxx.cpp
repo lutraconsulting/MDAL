@@ -19,6 +19,11 @@ namespace libply
     return m_parser->definitions();
   }
 
+  Metadata File::metadata() const
+  {
+    return m_parser->metadata;
+  }
+
 
   void File::setElementReadCallback( std::string elementName, ElementReadCallback &readCallback )
   {
@@ -53,6 +58,33 @@ namespace libply
     else
     {
       properties.emplace_back( tokens.back(), TYPE_MAP.at( tokens.at( 1 ) ), false );
+    }
+  }
+
+  void addMetadata( const textio::SubString line, Metadata &metadata )
+  {
+    textio::SubString::const_iterator next = textio::find( line.begin(), line.end(), ' ' );
+    assert( std::string( textio::SubString( line.begin(), next ) ) == "comment" );
+    line.begin() = next;
+    next++;
+    textio::SubString::const_iterator comment = textio::find( next, line.end(), ':' );
+    if ( comment != line.end() )
+    {
+      metadata.emplace( std::string( textio::SubString( next , comment ) ), std::string( textio::SubString( comment + 1, line.end() ) ) );
+    }
+    else
+    {
+      int idx = 1;
+      while ( idx < 100 )
+      {
+        std::string keyword = "comment" + std::to_string( idx );
+        if ( metadata.find( keyword ) ==  metadata.end() )
+        {
+          metadata.emplace( keyword, std::string( textio::SubString( next, line.end() ) ) );
+          break;
+        }
+        idx++;
+      }
     }
   }
 
@@ -93,11 +125,11 @@ namespace libply
 
   void FileParser::readHeader()
   {
-    // Read PLY magic number.
+    // Read PLY magic number
     std::string line = m_lineReader.getline();
     if ( line != "ply" )
     {
-      throw std::runtime_error( "Invalid file format." );
+      throw std::runtime_error( "Invalid file format." ); // TODO
     }
 
     // Read file format.
@@ -136,9 +168,13 @@ namespace libply
       {
         addProperty( tokens, m_elements.back() );
       }
+      else if ( lineType == "comment" )
+      {
+        addMetadata( line_substring, metadata );
+      }
       else
       {
-        //throw std::runtime_error("Invalid header line.");
+        //TODO throw std::runtime_error("Invalid header line.");
       }
 
       line_substring = m_lineReader.getline();
@@ -217,31 +253,32 @@ namespace libply
     const std::vector<PropertyDefinition> properties = elementDefinition.properties;
     size_t t_idx = 0;
     size_t e_idx = 0;
-    for (PropertyDefinition p : properties)
+    for ( PropertyDefinition p : properties )
     {
-        if ( !p.isList)
+      if ( !p.isList )
+      {
+        if ( t_idx == m_tokens.size() ) return; //TODO throw an error
+        if ( e_idx == elementBuffer.size() ) return; //TODO throw an error
+        p.conversionFunction( m_tokens[t_idx], elementBuffer[e_idx] );
+        t_idx++;
+        e_idx++;
+      }
+      else
+      {
+        if ( t_idx == m_tokens.size() ) return; //TODO throw an error
+        if ( e_idx == elementBuffer.size() ) return; //TODO throw an error
+        const size_t listLength = std::stoi( m_tokens[t_idx] );
+        t_idx++;
+        ListProperty *lp = dynamic_cast<ListProperty *>( &elementBuffer[e_idx] );
+        lp->define( p.type, listLength );
+        for ( size_t i = 0; i < listLength; i++ )
         {
-            if (t_idx == m_tokens.size()) return; //TODO throw an error
-            if (e_idx == elementBuffer.size()) return; //TODO throw an error
-            p.conversionFunction( m_tokens[t_idx], elementBuffer[e_idx] );
-            t_idx++;
-            e_idx++;
-        } else
-        {
-          if (t_idx == m_tokens.size()) return; //TODO throw an error
-          if (e_idx == elementBuffer.size()) return; //TODO throw an error
-          const size_t listLength = std::stoi( m_tokens[t_idx] );
+          if ( t_idx == m_tokens.size() ) return; //TODO throw an error
+          p.conversionFunction( m_tokens[t_idx], lp->value( i ) );
           t_idx++;
-          ListProperty* lp = dynamic_cast<ListProperty*>( &elementBuffer[e_idx]);
-          lp->define(p.type, listLength);
-          for(size_t i=0; i < listLength; i++)
-          {
-            if (t_idx == m_tokens.size()) return; //TODO throw an error
-            p.conversionFunction( m_tokens[t_idx], lp->value( i ) );
-            t_idx++;
-          }
-          e_idx++;
         }
+        e_idx++;
+      }
     }
   }
 
@@ -252,36 +289,36 @@ namespace libply
     char buffer[MAX_PROPERTY_SIZE];
     size_t e_idx = 0;
 
-    for (PropertyDefinition p : properties)
+    for ( PropertyDefinition p : properties )
     {
-        if ( !p.isList)
-        {
-            if (e_idx == elementBuffer.size()) return; //TODO throw an error
-            const auto size = TYPE_SIZE_MAP.at( p.type );
-            fs.read( buffer, size );
-            p.castFunction( buffer, elementBuffer[e_idx] );
-            e_idx++;
-        }
-        else
-        {
-          if (e_idx == elementBuffer.size()) return; //TODO throw an error
-          const auto lengthType = p.listLengthType;
-          const auto lengthTypeSize = TYPE_SIZE_MAP.at( lengthType );
-          fs.read( buffer, lengthTypeSize );
-          size_t listLength = static_cast<size_t>( *buffer );
+      if ( !p.isList )
+      {
+        if ( e_idx == elementBuffer.size() ) return; //TODO throw an error
+        const auto size = TYPE_SIZE_MAP.at( p.type );
+        fs.read( buffer, size );
+        p.castFunction( buffer, elementBuffer[e_idx] );
+        e_idx++;
+      }
+      else
+      {
+        if ( e_idx == elementBuffer.size() ) return; //TODO throw an error
+        const auto lengthType = p.listLengthType;
+        const auto lengthTypeSize = TYPE_SIZE_MAP.at( lengthType );
+        fs.read( buffer, lengthTypeSize );
+        size_t listLength = static_cast<size_t>( *buffer );
 
-          ListProperty* lp = dynamic_cast<ListProperty*>( &elementBuffer[e_idx]);
-          lp->define(p.type, listLength);
+        ListProperty *lp = dynamic_cast<ListProperty *>( &elementBuffer[e_idx] );
+        lp->define( p.type, listLength );
 
-          const auto &castFunction = p.castFunction;
-          const auto size = TYPE_SIZE_MAP.at( p.type );
-          for(size_t i=0; i < listLength; i++)
-          {
-            fs.read( buffer, size );
-            castFunction( buffer, lp->value( i ) );
-          }
-          e_idx++;
+        const auto &castFunction = p.castFunction;
+        const auto size = TYPE_SIZE_MAP.at( p.type );
+        for ( size_t i = 0; i < listLength; i++ )
+        {
+          fs.read( buffer, size );
+          castFunction( buffer, lp->value( i ) );
         }
+        e_idx++;
+      }
     }
   }
 
@@ -310,13 +347,13 @@ namespace libply
   void ElementBuffer::appendScalarProperty( Type type )
   {
     std::unique_ptr<IProperty> prop = getScalarProperty( type );
-    properties.push_back( std::move ( prop ) );
+    properties.push_back( std::move( prop ) );
   }
 
   void ElementBuffer::appendListProperty( Type type )
   {
     std::unique_ptr<IProperty> prop = std::make_unique<ListProperty>();
-    properties.push_back( std::move ( prop ) );
+    properties.push_back( std::move( prop ) );
   }
 
   std::unique_ptr<IProperty> ElementBuffer::getScalarProperty( Type type )
@@ -328,16 +365,16 @@ namespace libply
         prop = std::make_unique<ScalarProperty<char>>();
         break;
       case Type::UINT8:
-        prop = std::make_unique<ScalarProperty<char>>();
+        prop = std::make_unique<ScalarProperty<unsigned char>>();
         break;
       case Type::INT16:
         prop = std::make_unique<ScalarProperty<short>>();
         break;
       case Type::UINT16:
-        prop = std::make_unique<ScalarProperty<short>>();
+        prop = std::make_unique<ScalarProperty<unsigned short>>();
         break;
       case Type::UINT32:
-        prop = std::make_unique<ScalarProperty<int>>();
+        prop = std::make_unique<ScalarProperty<unsigned int>>();
         break;
       case Type::INT32:
         prop = std::make_unique<ScalarProperty<int>>();
@@ -540,13 +577,13 @@ namespace libply
     return *list[index];
   }
 
-  void ListProperty::define(Type type, size_t isize)
+  void ListProperty::define( Type type, size_t isize )
   {
     list.clear();
-    for (size_t i = 0; i < isize; i++)
+    for ( size_t i = 0; i < isize; i++ )
     {
       std::unique_ptr<IProperty> prop = getScalarProperty( type );
-      list.push_back( std::move ( prop ) );
+      list.push_back( std::move( prop ) );
     }
   }
 
@@ -559,16 +596,16 @@ namespace libply
         prop = std::make_unique<ScalarProperty<char>>();
         break;
       case Type::UINT8:
-        prop = std::make_unique<ScalarProperty<char>>();
+        prop = std::make_unique<ScalarProperty<unsigned char>>();
         break;
       case Type::INT16:
         prop = std::make_unique<ScalarProperty<short>>();
         break;
       case Type::UINT16:
-        prop = std::make_unique<ScalarProperty<short>>();
+        prop = std::make_unique<ScalarProperty<unsigned short>>();
         break;
       case Type::UINT32:
-        prop = std::make_unique<ScalarProperty<int>>();
+        prop = std::make_unique<ScalarProperty<unsigned int>>();
         break;
       case Type::INT32:
         prop = std::make_unique<ScalarProperty<int>>();

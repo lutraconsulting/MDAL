@@ -60,7 +60,7 @@ namespace libply
 
   inline void convert_UINT( const textio::SubString &token, IProperty &property )
   {
-    property = textio::stou<unsigned int>( token );
+    property = textio::stoi<int>( token );
   }
 
   inline void convert_INT( const textio::SubString &token, IProperty &property )
@@ -283,6 +283,7 @@ namespace libply
       ~FileParser();
 
       std::vector<Element> definitions() const;
+      Metadata metadata;
       //void setElementInserter(std::string elementName, IElementInserter* inserter);
       void setElementReadCallback( std::string elementName, ElementReadCallback &readCallback );
       void read();

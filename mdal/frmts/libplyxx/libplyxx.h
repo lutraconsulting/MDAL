@@ -50,13 +50,25 @@ namespace libply
       virtual ~ScalarProperty() = default;
 
       virtual ScalarProperty &operator=( unsigned int value ) override
-      { m_value = static_cast<InternalType>( value ); return *this; };
+      {
+        m_value = static_cast<InternalType>( value );
+        return *this;
+      };
       virtual ScalarProperty &operator=( int value ) override
-      { m_value = static_cast<InternalType>( value ); return *this; };
+      {
+        m_value = static_cast<InternalType>( value );
+        return *this;
+      };
       virtual ScalarProperty &operator=( float value ) override
-      { m_value = static_cast<InternalType>( value ); return *this; };
+      {
+        m_value = static_cast<InternalType>( value );
+        return *this;
+      };
       virtual ScalarProperty &operator=( double value ) override
-      { m_value = static_cast<InternalType>( value ); return *this; };
+      {
+        m_value = static_cast<InternalType>( value );
+        return *this;
+      };
 
       virtual operator unsigned int() override
       {
@@ -96,10 +108,10 @@ namespace libply
       operator float() override { return 0; };
       operator double() override { return 0; };
 
-      void define(Type type, size_t size);
+      void define( Type type, size_t size );
       size_t size() const { return list.size(); }
 
-      IProperty &value(size_t index);
+      IProperty &value( size_t index );
 
     private:
       std::vector<std::unique_ptr<IProperty>> list;
@@ -154,6 +166,7 @@ namespace libply
   class FileParser;
 
   typedef std::vector<Element> ElementsDefinition;
+  typedef std::unordered_map<std::string, std::string> Metadata;
 
   class File
   {
@@ -162,6 +175,7 @@ namespace libply
       ~File();
 
       ElementsDefinition definitions() const;
+      Metadata metadata() const;
       void setElementReadCallback( std::string elementName, ElementReadCallback &readCallback );
       void read();
 
@@ -189,6 +203,7 @@ namespace libply
       void setElementsDefinition( const ElementsDefinition &definitions );
       void setElementWriteCallback( const std::string &elementName, ElementWriteCallback &writeCallback );
       void write();
+      Metadata metadata;
 
     private:
       void createFile();

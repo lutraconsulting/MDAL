@@ -1,6 +1,8 @@
 ply
 format ascii 1.0
 comment test file for MDAL
+comment test1
+comment test2
 comment crs: +proj=tmerc
 element vertex 5
 property float64 x

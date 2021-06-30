@@ -7,6 +7,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstring>
+#include <iostream>
 
 namespace textio
 {
@@ -107,7 +108,7 @@ namespace textio
         ++p;
         ++n;
       }
-      real += static_cast<T>(frac / std::pow( 10.0 , n ));
+      real += static_cast<T>( frac / std::pow( 10.0 , n ) );
     }
     if ( p != end && ( *p == 'e' || *p == 'E' ) )
     {
@@ -223,7 +224,7 @@ namespace textio
     {
       case '\n': pattern = 0x0a0a0a0a0a0a0a0aULL; break;
       case ' ': pattern = 0x2020202020202020ULL; break;
-      default: throw std::runtime_error( "Unsupported delimiter." );
+      default: throw std::runtime_error( "Unsupported delimiter." ); //TODO
     }
 
     textio::SubString::const_iterator start = begin;
@@ -325,7 +326,7 @@ namespace textio
       if ( count == 0 && m_file.eof() )
       {
         m_eof = true;
-        return SubString( m_begin, m_end );
+        return lineSubstring;
       }
       else
       {
