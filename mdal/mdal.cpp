@@ -215,6 +215,7 @@ const char *MDAL_MeshNames( const char *uri )
 
 void MDAL_SaveMesh( MDAL_MeshH mesh, const char *meshFile, const char *driver )
 {
+  MDAL::Log::resetLastStatus();
   if ( !meshFile )
   {
     MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );
