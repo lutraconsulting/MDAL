@@ -69,6 +69,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   Edges edges( 0 );
   size_t maxSizeFace = 0;
 
+  size_t vertexCount = 0;
+  size_t faceCount = 0;
+  size_t edgeCount = 0;
+
   //datastructures that will contain all of the datasets, categorised by vertex, face and edge datasets
   std::vector<std::vector<double>> vertexDatasets; // conatains the data
   std::vector<std::string> vProp2Ds; // contains the dataset name
@@ -78,10 +82,23 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   std::vector<std::string> eProp2Ds;
 
   libply::File file( meshFile );
+  if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) { return nullptr; }
   const libply::ElementsDefinition &definitions = file.definitions();
   const libply::Metadata &metadata = file.metadata();
   for ( const libply::Element &element : definitions )
   {
+    if ( element.name == "vertex" )
+    {
+      vertexCount = element.size;
+    }
+    else if ( element.name == "face" )
+    {
+      faceCount = element.size;
+    }
+    else if ( element.name == "edge" )
+    {
+      edgeCount = element.size;
+    }
     for ( const libply::Property &property : element.properties )
     {
       if ( element.name == "vertex" &&
@@ -159,14 +176,17 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           {
             if ( !p.isList )
             {
-              // TODO raise error
+              MDAL::Log::error( MDAL_Status::Err_InvalidData, "PLY: triangles are not lists" );
             }
-            libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[i] );
-            if ( maxSizeFace < lp->size() ) maxSizeFace = lp->size();
-            face.resize( lp->size() );
-            for ( size_t j = 0; j < lp->size(); j++ )
+            else
             {
-              face[j] = int( lp->value( j ) );
+              libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[i] );
+              if ( maxSizeFace < lp->size() ) maxSizeFace = lp->size();
+              face.resize( lp->size() );
+              for ( size_t j = 0; j < lp->size(); j++ )
+              {
+                face[j] = int( lp->value( j ) );
+              }
             }
           }
           else
@@ -210,6 +230,15 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   }
 
   file.read();
+  if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) { return nullptr; }
+  if ( vertices.size() != vertexCount ||
+       faces.size() != faceCount ||
+       edges.size() != edgeCount
+     )
+  {
+    MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "Incomplte Mesh" );
+    return nullptr;
+  }
 
   std::unique_ptr< MemoryMesh > mesh(
     new MemoryMesh(

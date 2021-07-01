@@ -1,4 +1,5 @@
 #include "libplyxx_internal.h"
+#include "mdal.h"
 
 #include <fstream>
 #include <string>
@@ -38,14 +39,22 @@ namespace libply
   void addElementDefinition( const textio::Tokenizer::TokenList &tokens, std::vector<ElementDefinition> &elementDefinitions )
   {
     assert( std::string( tokens.at( 0 ) ) == "element" );
-    size_t startLine = 0;
-    if ( !elementDefinitions.empty() )
+    if ( tokens.size() != 3 || tokens.at( 2 ).size() == 0 )
     {
-      const auto &previousElement = elementDefinitions.back();
-      startLine = previousElement.startLine + previousElement.size;
+      MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Element Defintion" );
+      elementDefinitions.emplace_back( );
     }
-    ElementSize elementCount = std::stoul( tokens.at( 2 ) );
-    elementDefinitions.emplace_back( tokens.at( 1 ), elementCount, startLine );
+    else
+    {
+      size_t startLine = 0;
+      if ( !elementDefinitions.empty() )
+      {
+        const auto &previousElement = elementDefinitions.back();
+        startLine = previousElement.startLine + previousElement.size;
+      }
+      ElementSize elementCount = std::stoul( tokens.at( 2 ) );
+      elementDefinitions.emplace_back( tokens.at( 1 ), elementCount, startLine );
+    }
   }
 
   void addProperty( const textio::Tokenizer::TokenList &tokens, ElementDefinition &elementDefinition )
@@ -53,11 +62,25 @@ namespace libply
     auto &properties = elementDefinition.properties;
     if ( std::string( tokens.at( 1 ) ) == "list" )
     {
-      properties.emplace_back( tokens.back(), TYPE_MAP.at( tokens.at( 3 ) ), true, TYPE_MAP.at( tokens.at( 2 ) ) );
+      if ( tokens.size() != 5 )
+      {
+        MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Property Definition" );
+      }
+      else
+      {
+        properties.emplace_back( tokens.back(), TYPE_MAP.at( tokens.at( 3 ) ), true, TYPE_MAP.at( tokens.at( 2 ) ) );
+      }
     }
     else
     {
-      properties.emplace_back( tokens.back(), TYPE_MAP.at( tokens.at( 1 ) ), false );
+      if ( tokens.size() != 3 )
+      {
+        MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Property Definition" );
+      }
+      else
+      {
+        properties.emplace_back( tokens.back(), TYPE_MAP.at( tokens.at( 1 ) ), false );
+      }
     }
   }
 
@@ -129,7 +152,8 @@ namespace libply
     std::string line = m_lineReader.getline();
     if ( line != "ply" )
     {
-      throw std::runtime_error( "Invalid file format." ); // TODO
+      MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_UnknownFormat, "Invalid file format." );
+      return;
     }
 
     // Read file format.
@@ -148,7 +172,8 @@ namespace libply
     }
     else
     {
-      throw std::runtime_error( "Unsupported PLY format : " + line );
+      MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_UnknownFormat, "Unsupported PLY format" );
+      return;
     }
 
     // Read mesh elements properties.
@@ -174,7 +199,8 @@ namespace libply
       }
       else
       {
-        //TODO throw std::runtime_error("Invalid header line.");
+        MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_UnknownFormat, "Invalid header line." );
+        return;
       }
 
       line_substring = m_lineReader.getline();
@@ -255,25 +281,30 @@ namespace libply
     size_t e_idx = 0;
     for ( PropertyDefinition p : properties )
     {
+      if ( t_idx == m_tokens.size() ||  e_idx == elementBuffer.size() )
+      {
+        MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "Incomplete Element" );
+        return;
+      }
       if ( !p.isList )
       {
-        if ( t_idx == m_tokens.size() ) return; //TODO throw an error
-        if ( e_idx == elementBuffer.size() ) return; //TODO throw an error
         p.conversionFunction( m_tokens[t_idx], elementBuffer[e_idx] );
         t_idx++;
         e_idx++;
       }
       else
       {
-        if ( t_idx == m_tokens.size() ) return; //TODO throw an error
-        if ( e_idx == elementBuffer.size() ) return; //TODO throw an error
         const size_t listLength = std::stoi( m_tokens[t_idx] );
         t_idx++;
         ListProperty *lp = dynamic_cast<ListProperty *>( &elementBuffer[e_idx] );
         lp->define( p.type, listLength );
         for ( size_t i = 0; i < listLength; i++ )
         {
-          if ( t_idx == m_tokens.size() ) return; //TODO throw an error
+          if ( t_idx == m_tokens.size() )
+          {
+            MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "Incomplete Element" );
+            return;
+          }
           p.conversionFunction( m_tokens[t_idx], lp->value( i ) );
           t_idx++;
         }
