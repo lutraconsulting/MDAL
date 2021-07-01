@@ -283,6 +283,36 @@ TEST( ApiTest, LoggerApi )
   EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_MissingDriver );
   EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Error );
   EXPECT_EQ( receivedLogMessage, "No driver with index: -1" );
+
+  // test reset status
+  MDAL_ResetStatus();
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+
+  // test set Error
+  MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_NotEnoughMemory, "Test" );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_NotEnoughMemory );
+  EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Error );
+  EXPECT_EQ( receivedLogMessage, "Test" );
+
+  // test set Warning
+  MDAL_SetStatus( MDAL_LogLevel::Warn, MDAL_Status::Warn_InvalidElements, "Test1" );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Warn_InvalidElements );
+  EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Warn );
+  EXPECT_EQ( receivedLogMessage, "Test1" );
+
+  // test set Info
+  MDAL_SetStatus( MDAL_LogLevel::Info, MDAL_Status::Warn_InvalidElements, "Test2" );
+  // Note - the status should be actually used
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+  EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Info );
+  EXPECT_EQ( receivedLogMessage, "Test2" );
+
+  // test set Debug
+  MDAL_SetStatus( MDAL_LogLevel::Debug, MDAL_Status::Warn_InvalidElements, "Test3" );
+  // Note - the status should be actually used
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+  EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Debug );
+  EXPECT_EQ( receivedLogMessage, "Test3" );
 }
 
 TEST( ApiTest, MeshNamesApi )
@@ -444,6 +474,18 @@ TEST( ApiTest, MeshCreationApi )
   EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 2 ), 1 );
 
   MDAL_CloseMesh( mesh );
+
+  driver = MDAL_driverFromName( "2DM" );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
+  EXPECT_EQ( std::strcmp( MDAL_DR_saveMeshSuffix( driver ), "2dm" ), 0 );
+
+  driver = MDAL_driverFromName( "Ugrid" );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
+  EXPECT_EQ( std::strcmp( MDAL_DR_saveMeshSuffix( driver ), "nc" ), 0 );
+
+  driver = MDAL_driverFromName( "SELAFIN" );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
+  EXPECT_EQ( std::strcmp( MDAL_DR_saveMeshSuffix( driver ), "slf" ), 0 );
 }
 
 int main( int argc, char **argv )
