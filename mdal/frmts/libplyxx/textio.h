@@ -109,7 +109,7 @@ namespace textio
         ++p;
         ++n;
       }
-      real += static_cast<T>( frac / std::pow( 10.0 , n ) );
+      real += static_cast<T>( frac / std::pow( 10.0, n ) );
     }
     if ( p != end && ( *p == 'e' || *p == 'E' ) )
     {

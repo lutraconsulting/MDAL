@@ -93,7 +93,7 @@ namespace libply
     textio::SubString::const_iterator comment = textio::find( next, line.end(), ':' );
     if ( comment != line.end() )
     {
-      metadata.emplace( std::string( textio::SubString( next , comment ) ), std::string( textio::SubString( comment + 1, line.end() ) ) );
+      metadata.emplace( std::string( textio::SubString( next, comment ) ), std::string( textio::SubString( comment + 1, line.end() ) ) );
     }
     else
     {
