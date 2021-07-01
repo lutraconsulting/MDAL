@@ -225,6 +225,7 @@ namespace textio
     {
       case '\n': pattern = 0x0a0a0a0a0a0a0a0aULL; break;
       case ' ': pattern = 0x2020202020202020ULL; break;
+      case '\r': pattern = 0x0d0d0d0d0d0d0d0dULL; break;
       default: throw std::runtime_error( "Unsupported delimiter." ); //TODO
     }
 
@@ -313,7 +314,8 @@ namespace textio
 
   SubString LineReader::findLine()
   {
-    SubString::const_iterator eol = findSIMD( m_begin, m_end, '\n' );
+    SubString::const_iterator nl = findSIMD( m_begin, m_end, '\n' );
+    SubString::const_iterator eol = findSIMD( m_begin, nl, '\r' );
     if ( m_begin == m_workBuf.cbegin() && eol == m_end )
     {
       std::runtime_error( "Working buffer too small to fit single line." );
@@ -338,7 +340,7 @@ namespace textio
     else
     {
       // Set begin pointer to the first character after the newline delimiter.
-      m_begin = eol + 1;
+      m_begin = nl + 1;
     }
     return lineSubstring;
   }
