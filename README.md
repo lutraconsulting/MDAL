@@ -12,9 +12,14 @@
 # MDAL
 Mesh Data Abstraction Library
 
+MDAL is [OSGeo Community Project](https://www.osgeo.org/foundation-news/osgeo-community-program-welcomes-the-mesh-data-abstraction-library-mdal-project/)
+
+![OSGeo](docs/images/OSGeo_community-370x142.png)
+
 - see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119)
 - see [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158)
 - see [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164)
+- see [Mesh frame editing](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/228)
 
 ## Mailing List
 
