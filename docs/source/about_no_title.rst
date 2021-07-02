@@ -4,6 +4,6 @@ Mesh Data Abstraction Library (MDAL) is a C++ library for handling unstructured 
 
 MDAL is OSGeo Community Project
 
-.. image:: ./images/OSGeo_community-370x142.png
+.. image:: ../images/OSGeo_community-370x142.png
 
 See :ref:`software_using_mdal`
