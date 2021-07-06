@@ -28,7 +28,12 @@ namespace MDAL
       DriverPly *create() override;
 
       bool canReadMesh( const std::string &uri ) override;
+      int faceVerticesMaximumCount() const override {return 100;}
+
       std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName = "" ) override;
+      void save( const std::string &uri, Mesh *mesh ) override;
+
+      std::string saveMeshOnFileSuffix() const override;
 
     private:
       std::shared_ptr<DatasetGroup> addDatasetGroup( MDAL::Mesh *mesh, const std::string &name, const MDAL_DataLocation location, bool isScalar );

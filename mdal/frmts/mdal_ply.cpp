@@ -31,7 +31,7 @@ MDAL::DriverPly::DriverPly() :
   Driver( DRIVER_NAME,
           "Stanford PLY Ascii Mesh File",
           "*.ply",
-          Capability::ReadMesh
+          Capability::ReadMesh | Capability::SaveMesh
         )
 {
 }
@@ -59,6 +59,11 @@ bool MDAL::DriverPly::canReadMesh( const std::string &uri )
     return false;
   }
   return true;
+}
+
+std::string MDAL::DriverPly::saveMeshOnFileSuffix() const
+{
+  return "ply";
 }
 
 std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, const std::string & )
@@ -236,7 +241,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
        edges.size() != edgeCount
      )
   {
-    MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "Incomplte Mesh" );
+    MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "Incomplete Mesh" );
     return nullptr;
   }
 
@@ -356,4 +361,88 @@ void MDAL::DriverPly::addDataset2D( MDAL::DatasetGroup *group, const std::vector
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );
   group->setStatistics( MDAL::calculateStatistics( group ) );
+}
+
+void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
+{
+    MDAL::Log::resetLastStatus();
+
+    libply::FileOut file(uri, libply::File::Format::ASCII);
+    if (MDAL::Log::getLastStatus() != MDAL_Status::None) return;
+
+    libply::ElementsDefinition definitions;
+    std::vector<libply::Property> vproperties;
+    vproperties.emplace_back("X", libply::Type::FLOAT64, false);
+    vproperties.emplace_back("Y", libply::Type::FLOAT64, false);
+    vproperties.emplace_back("Z", libply::Type::FLOAT64, false);
+    definitions.emplace_back("vertex", mesh->verticesCount(), vproperties  );
+    if (mesh->facesCount() > 0)
+    {
+        std::vector<libply::Property> fproperties;
+        fproperties.emplace_back("vertex_indices", libply::Type::UINT32, true);
+        definitions.emplace_back("face", mesh->facesCount(), fproperties  );
+    }
+    if (mesh->edgesCount() > 0)
+    {
+        std::vector<libply::Property> eproperties;
+        eproperties.emplace_back("vertex1", libply::Type::UINT32, false);
+        eproperties.emplace_back("vertex2", libply::Type::UINT32, false);
+        definitions.emplace_back("edge", mesh->edgesCount(), eproperties  );
+    }
+
+    file.setElementsDefinition(definitions);
+
+  // write vertices
+  std::unique_ptr<MDAL::MeshVertexIterator> vertices = mesh->readVertices();
+
+
+    libply::ElementWriteCallback vertexCallback = [&vertices](libply::ElementBuffer& e, size_t index)
+	    {
+            double vertex[3];
+            vertices->next( 1, vertex );
+		    e[0] = vertex[0];
+		    e[1] = vertex[1];
+		    e[2] = vertex[2];
+	    };
+
+  // write faces
+  std::vector<int> vertexIndices( mesh->faceVerticesMaximumCount() );
+  std::unique_ptr<MDAL::MeshFaceIterator> faces = mesh->readFaces();
+
+    libply::ElementWriteCallback faceCallback = [&faces, &vertexIndices](libply::ElementBuffer& e, size_t index)
+	    {
+           std::cout << "Face" << std::endl;
+		    int faceOffsets[1];
+            faces->next( 1, faceOffsets, vertexIndices.size(), vertexIndices.data() );
+            libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[0] );
+            lp->define( libply::Type::UINT32, faceOffsets[0] );
+            std::cout << std::to_string(lp->size()) <<std::endl;
+            for ( int j = 0; j < faceOffsets[0]; ++j )
+            {
+		        lp->value(j) = vertexIndices[j];
+	        };
+        };
+ 
+
+  // write edges
+
+  std::unique_ptr<MDAL::MeshEdgeIterator> edges = mesh->readEdges();
+
+    libply::ElementWriteCallback edgeCallback = [&edges](libply::ElementBuffer& e, size_t index)
+	    {
+           std::cout << "Edge" << std::endl;
+            int startIndex;
+            int endIndex;
+            edges->next( 1, &startIndex, &endIndex );
+           std::cout << "Start :" << std::to_string(startIndex) << " : End : " << std::to_string(endIndex) << std::endl;
+           std::cout << std::to_string(e.size()) << std::endl;
+            e[0] = startIndex;
+            e[1] = endIndex;
+        };
+
+  	file.setElementWriteCallback("vertex", vertexCallback);
+	if (mesh->facesCount() > 0 ) file.setElementWriteCallback("face", faceCallback);
+    if (mesh->edgesCount() > 0 ) file.setElementWriteCallback("edge", edgeCallback);
+    std::cout << "Start Write" << std::endl;
+	file.write();
 }

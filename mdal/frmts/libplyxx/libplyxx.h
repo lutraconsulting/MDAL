@@ -40,6 +40,8 @@ namespace libply
       virtual operator float() = 0;
       virtual operator double() = 0;
 
+      virtual bool isList() = 0;
+
   };
 
   template<typename InternalType>
@@ -87,6 +89,8 @@ namespace libply
         return static_cast<double>( m_value );
       };
 
+      virtual bool isList() override { return false; }
+
     public:
       InternalType value() const { return m_value; };
 
@@ -107,6 +111,8 @@ namespace libply
       operator int() override { return 0; };
       operator float() override { return 0; };
       operator double() override { return 0; };
+
+      virtual bool isList() override { return true; }
 
       void define( Type type, size_t size );
       size_t size() const { return list.size(); }
@@ -147,6 +153,7 @@ namespace libply
     std::string name;
     Type type;
     bool isList;
+    size_t listCount;
   };
 
   typedef std::size_t ElementSize;

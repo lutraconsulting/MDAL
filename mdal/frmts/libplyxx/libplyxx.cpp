@@ -472,25 +472,34 @@ namespace libply
   void writeTextProperties( std::ofstream &file, ElementBuffer &buffer, const ElementDefinition &elementDefinition )
   {
     std::stringstream ss;
-    if ( elementDefinition.properties.front().isList )
+    const std::vector<PropertyDefinition> properties = elementDefinition.properties;
+    size_t e_idx = 0;
+    for ( PropertyDefinition p : properties )
     {
-      file << buffer.size() << " ";
-      auto &convert = elementDefinition.properties.front().writeConvertFunction;
-      for ( size_t i = 0; i < buffer.size(); ++i )
+      if ( !p.isList )
       {
+        auto &convert = p.writeConvertFunction;
         ss.clear();
         ss.str( std::string() );
-        file << convert( buffer[i], ss ).str() << " ";
+        file << convert( buffer[e_idx], ss ).str() << " ";
+        e_idx++;
       }
-    }
-    else
-    {
-      for ( size_t i = 0; i < buffer.size(); ++i )
+      else
       {
-        auto &convert = elementDefinition.properties.at( i ).writeConvertFunction;
-        ss.clear();
-        ss.str( std::string() );
-        file << convert( buffer[i], ss ).str() << " ";
+        auto &convert = p.writeConvertFunction;
+        ListProperty *lp = dynamic_cast<ListProperty *>( &buffer[e_idx] );
+        file << lp->size() << " ";
+        for ( size_t i = 0; i < lp->size(); i++ )
+        {
+          ss.clear();
+          ss.str( std::string() );
+          file << convert( lp->value( i ), ss ).str() << " ";
+        }
+        e_idx++;
+        for ( size_t i = 0; i < buffer.size(); ++i )
+        {
+
+        }
       }
     }
     file << '\n';
