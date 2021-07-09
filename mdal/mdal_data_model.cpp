@@ -192,9 +192,9 @@ void MDAL::DatasetGroup::setMetadata( const std::string &key, const std::string 
     metadata.push_back( std::make_pair( key, val ) );
 }
 
-void MDAL::DatasetGroup::setMetadata( const MDAL::Metadata &metadata )
+void MDAL::DatasetGroup::setMetadata( const MDAL::Metadata &new_metadata )
 {
-  for ( const auto &meta : metadata )
+  for ( const auto &meta : new_metadata )
     setMetadata( meta.first, meta.second );
 }
 
@@ -390,9 +390,9 @@ void MDAL::Mesh::setMetadata( const std::string &key, const std::string &val )
     metadata.push_back( std::make_pair( key, val ) );
 }
 
-void MDAL::Mesh::setMetadata( const MDAL::Metadata &metadata )
+void MDAL::Mesh::setMetadata( const MDAL::Metadata &new_metadata )
 {
-  for ( const auto &meta : metadata )
+  for ( const auto &meta : new_metadata )
     setMetadata( meta.first, meta.second );
 }
 

@@ -117,7 +117,7 @@ MDAL_EXPORT MDAL_Status MDAL_LastStatus();
  */
 MDAL_EXPORT void MDAL_ResetStatus();
 
-/*
+/**
  * Sets the last status message
  * \since MDAL 0.9.0
  */
