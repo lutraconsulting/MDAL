@@ -31,7 +31,11 @@ MDAL::DriverPly::DriverPly() :
   Driver( DRIVER_NAME,
           "Stanford PLY Ascii Mesh File",
           "*.ply",
-          Capability::ReadMesh | Capability::SaveMesh
+          Capability::ReadMesh |
+          Capability::SaveMesh |
+          Capability::WriteDatasetsOnVertices |
+          Capability::WriteDatasetsOnFaces |
+          Capability::WriteDatasetsOnEdges
         )
 {
 }
@@ -365,84 +369,114 @@ void MDAL::DriverPly::addDataset2D( MDAL::DatasetGroup *group, const std::vector
 
 void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
 {
-    MDAL::Log::resetLastStatus();
+  MDAL::Log::resetLastStatus();
 
-    libply::FileOut file(uri, libply::File::Format::ASCII);
-    if (MDAL::Log::getLastStatus() != MDAL_Status::None) return;
+  DatasetGroups groups = mesh->datasetGroups;
 
-    libply::ElementsDefinition definitions;
-    std::vector<libply::Property> vproperties;
-    vproperties.emplace_back("X", libply::Type::FLOAT64, false);
-    vproperties.emplace_back("Y", libply::Type::FLOAT64, false);
-    vproperties.emplace_back("Z", libply::Type::FLOAT64, false);
-    definitions.emplace_back("vertex", mesh->verticesCount(), vproperties  );
-    if (mesh->facesCount() > 0)
+  // vectors to hold the different types of group
+  DatasetGroups vgroups;
+  DatasetGroups fgroups;
+  DatasetGroups egroups;
+
+  for ( std::shared_ptr<DatasetGroup> group : groups )
+  {
+    if ( group->dataLocation() == MDAL_DataLocation::DataOnVertices )
     {
-        std::vector<libply::Property> fproperties;
-        fproperties.emplace_back("vertex_indices", libply::Type::UINT32, true);
-        definitions.emplace_back("face", mesh->facesCount(), fproperties  );
+      vgroups.push_back( group );
     }
-    if (mesh->edgesCount() > 0)
+    else if ( group->dataLocation() == MDAL_DataLocation::DataOnFaces )
     {
-        std::vector<libply::Property> eproperties;
-        eproperties.emplace_back("vertex1", libply::Type::UINT32, false);
-        eproperties.emplace_back("vertex2", libply::Type::UINT32, false);
-        definitions.emplace_back("edge", mesh->edgesCount(), eproperties  );
+      fgroups.push_back( group );
     }
+    else if ( group->dataLocation() == MDAL_DataLocation::DataOnEdges )
+    {
+      egroups.push_back( group );
+    }
+  }
 
-    file.setElementsDefinition(definitions);
+
+  libply::FileOut file( uri, libply::File::Format::ASCII );
+  if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) return;
+
+  libply::ElementsDefinition definitions;
+  std::vector<libply::Property> vproperties;
+  vproperties.emplace_back( "X", libply::Type::FLOAT64, false );
+  vproperties.emplace_back( "Y", libply::Type::FLOAT64, false );
+  vproperties.emplace_back( "Z", libply::Type::FLOAT64, false );
+  for ( std::shared_ptr<DatasetGroup> group : vgroups )
+  {
+    vproperties.emplace_back( group->name(), libply::Type::FLOAT64, false );
+  }
+  definitions.emplace_back( "vertex", mesh->verticesCount(), vproperties );
+  if ( mesh->facesCount() > 0 )
+  {
+    std::vector<libply::Property> fproperties;
+    fproperties.emplace_back( "vertex_indices", libply::Type::UINT32, true );
+    for ( std::shared_ptr<DatasetGroup> group : fgroups )
+    {
+      vproperties.emplace_back( group->name(), libply::Type::FLOAT64, false );
+    }
+    definitions.emplace_back( "face", mesh->facesCount(), fproperties );
+  }
+  if ( mesh->edgesCount() > 0 )
+  {
+    std::vector<libply::Property> eproperties;
+    eproperties.emplace_back( "vertex1", libply::Type::UINT32, false );
+    eproperties.emplace_back( "vertex2", libply::Type::UINT32, false );
+    for ( std::shared_ptr<DatasetGroup> group : egroups )
+    {
+      vproperties.emplace_back( group->name(), libply::Type::FLOAT64, false );
+    }
+    definitions.emplace_back( "edge", mesh->edgesCount(), eproperties );
+  }
+
+  file.setElementsDefinition( definitions );
 
   // write vertices
   std::unique_ptr<MDAL::MeshVertexIterator> vertices = mesh->readVertices();
 
 
-    libply::ElementWriteCallback vertexCallback = [&vertices](libply::ElementBuffer& e, size_t index)
-	    {
-            double vertex[3];
-            vertices->next( 1, vertex );
-		    e[0] = vertex[0];
-		    e[1] = vertex[1];
-		    e[2] = vertex[2];
-	    };
+  libply::ElementWriteCallback vertexCallback = [&vertices]( libply::ElementBuffer & e, size_t index )
+  {
+    double vertex[3];
+    vertices->next( 1, vertex );
+    e[0] = vertex[0];
+    e[1] = vertex[1];
+    e[2] = vertex[2];
+  };
 
   // write faces
   std::vector<int> vertexIndices( mesh->faceVerticesMaximumCount() );
   std::unique_ptr<MDAL::MeshFaceIterator> faces = mesh->readFaces();
 
-    libply::ElementWriteCallback faceCallback = [&faces, &vertexIndices](libply::ElementBuffer& e, size_t index)
-	    {
-           std::cout << "Face" << std::endl;
-		    int faceOffsets[1];
-            faces->next( 1, faceOffsets, vertexIndices.size(), vertexIndices.data() );
-            libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[0] );
-            lp->define( libply::Type::UINT32, faceOffsets[0] );
-            std::cout << std::to_string(lp->size()) <<std::endl;
-            for ( int j = 0; j < faceOffsets[0]; ++j )
-            {
-		        lp->value(j) = vertexIndices[j];
-	        };
-        };
- 
+  libply::ElementWriteCallback faceCallback = [&faces, &vertexIndices]( libply::ElementBuffer & e, size_t index )
+  {
+    int faceOffsets[1];
+    faces->next( 1, faceOffsets, vertexIndices.size(), vertexIndices.data() );
+    libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[0] );
+    lp->define( libply::Type::UINT32, faceOffsets[0] );
+    for ( int j = 0; j < faceOffsets[0]; ++j )
+    {
+      lp->value( j ) = vertexIndices[j];
+    };
+  };
+
 
   // write edges
 
   std::unique_ptr<MDAL::MeshEdgeIterator> edges = mesh->readEdges();
 
-    libply::ElementWriteCallback edgeCallback = [&edges](libply::ElementBuffer& e, size_t index)
-	    {
-           std::cout << "Edge" << std::endl;
-            int startIndex;
-            int endIndex;
-            edges->next( 1, &startIndex, &endIndex );
-           std::cout << "Start :" << std::to_string(startIndex) << " : End : " << std::to_string(endIndex) << std::endl;
-           std::cout << std::to_string(e.size()) << std::endl;
-            e[0] = startIndex;
-            e[1] = endIndex;
-        };
+  libply::ElementWriteCallback edgeCallback = [&edges]( libply::ElementBuffer & e, size_t index )
+  {
+    int startIndex;
+    int endIndex;
+    edges->next( 1, &startIndex, &endIndex );
+    e[0] = startIndex;
+    e[1] = endIndex;
+  };
 
-  	file.setElementWriteCallback("vertex", vertexCallback);
-	if (mesh->facesCount() > 0 ) file.setElementWriteCallback("face", faceCallback);
-    if (mesh->edgesCount() > 0 ) file.setElementWriteCallback("edge", edgeCallback);
-    std::cout << "Start Write" << std::endl;
-	file.write();
+  file.setElementWriteCallback( "vertex", vertexCallback );
+  if ( mesh->facesCount() > 0 ) file.setElementWriteCallback( "face", faceCallback );
+  if ( mesh->edgesCount() > 0 ) file.setElementWriteCallback( "edge", edgeCallback );
+  file.write();
 }
