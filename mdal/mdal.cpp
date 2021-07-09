@@ -414,6 +414,7 @@ void MDAL_M_setMetadata( MDAL_MeshH mesh, const char *key, const char *val )
   if ( !mesh )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh,  "Mesh is not valid (null)" );
+    return;
   }
 
   if ( !key )

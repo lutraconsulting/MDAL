@@ -367,7 +367,7 @@ MDAL_EXPORT const char *MDAL_M_metadataKey( MDAL_MeshH mesh, int index );
 MDAL_EXPORT const char *MDAL_M_metadataValue( MDAL_MeshH mesh, int index );
 
 /**
- * Adds new metadata to the group
+ * Adds new metadata to the mesh
  *
  * \since MDAL 0.9.0
  */
