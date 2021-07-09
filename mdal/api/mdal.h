@@ -344,6 +344,36 @@ MDAL_EXPORT int MDAL_M_faceVerticesMaximumCount( MDAL_MeshH mesh );
 MDAL_EXPORT void MDAL_M_LoadDatasets( MDAL_MeshH mesh, const char *datasetFile );
 
 /**
+ * Returns number of metadata values
+ *
+ * \since MDAL 0.9.0
+ */
+MDAL_EXPORT int MDAL_M_metadataCount( MDAL_MeshH mesh );
+
+/**
+ * Returns dataset metadata key
+ * not thread-safe and valid only till next call
+ *
+ * \since MDAL 0.9.0
+ */
+MDAL_EXPORT const char *MDAL_M_metadataKey( MDAL_MeshH mesh, int index );
+
+/**
+ * Returns dataset metadata value
+ * not thread-safe and valid only till next call
+ *
+ * \since MDAL 0.9.0
+ */
+MDAL_EXPORT const char *MDAL_M_metadataValue( MDAL_MeshH mesh, int index );
+
+/**
+ * Adds new metadata to the group
+ *
+ * \since MDAL 0.9.0
+ */
+MDAL_EXPORT void MDAL_M_setMetadata( MDAL_MeshH mesh, const char *key, const char *val );
+
+/**
  * Returns dataset groups count
  */
 MDAL_EXPORT int MDAL_M_datasetGroupCount( MDAL_MeshH mesh );

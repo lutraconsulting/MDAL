@@ -363,6 +363,40 @@ void MDAL::Mesh::setSourceCrsFromPrjFile( const std::string &filename )
   setSourceCrs( proj );
 }
 
+std::string MDAL::Mesh::getMetadata( const std::string &key )
+{
+  for ( auto &pair : metadata )
+  {
+    if ( pair.first == key )
+    {
+      return pair.second;
+    }
+  }
+  return std::string();
+}
+
+void MDAL::Mesh::setMetadata( const std::string &key, const std::string &val )
+{
+  bool found = false;
+  for ( auto &pair : metadata )
+  {
+    if ( pair.first == key )
+    {
+      found = true;
+      pair.second = val;
+    }
+  }
+  if ( !found )
+    metadata.push_back( std::make_pair( key, val ) );
+}
+
+void MDAL::Mesh::setMetadata( const MDAL::Metadata &metadata )
+{
+  for ( const auto &meta : metadata )
+    setMetadata( meta.first, meta.second );
+}
+
+
 std::string MDAL::Mesh::uri() const
 {
   return mUri;
