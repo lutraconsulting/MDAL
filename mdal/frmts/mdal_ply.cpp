@@ -382,7 +382,7 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
   {
     if ( group->dataLocation() == MDAL_DataLocation::DataOnVertices )
     {
-      vgroups.push_back( group );
+      if ( group->name() != "Bed Elevation" ) vgroups.push_back( group );
     }
     else if ( group->dataLocation() == MDAL_DataLocation::DataOnFaces )
     {
@@ -414,7 +414,7 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
     fproperties.emplace_back( "vertex_indices", libply::Type::UINT32, true );
     for ( std::shared_ptr<DatasetGroup> group : fgroups )
     {
-      vproperties.emplace_back( group->name(), libply::Type::FLOAT64, false );
+      fproperties.emplace_back( group->name(), libply::Type::FLOAT64, false );
     }
     definitions.emplace_back( "face", mesh->facesCount(), fproperties );
   }
@@ -425,7 +425,7 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
     eproperties.emplace_back( "vertex2", libply::Type::UINT32, false );
     for ( std::shared_ptr<DatasetGroup> group : egroups )
     {
-      vproperties.emplace_back( group->name(), libply::Type::FLOAT64, false );
+      eproperties.emplace_back( group->name(), libply::Type::FLOAT64, false );
     }
     definitions.emplace_back( "edge", mesh->edgesCount(), eproperties );
   }
@@ -436,20 +436,26 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
   std::unique_ptr<MDAL::MeshVertexIterator> vertices = mesh->readVertices();
 
 
-  libply::ElementWriteCallback vertexCallback = [&vertices]( libply::ElementBuffer & e, size_t index )
+  libply::ElementWriteCallback vertexCallback = [&vertices, &vgroups]( libply::ElementBuffer & e, size_t index )
   {
     double vertex[3];
     vertices->next( 1, vertex );
     e[0] = vertex[0];
     e[1] = vertex[1];
     e[2] = vertex[2];
+    for (size_t i = 0; i < vgroups.size(); i++)
+    {
+        double val[1];
+        vgroups[i]->datasets[0]->scalarData( index, 1, &val[0] );
+        e[i+3] = val[0];
+    }
   };
 
   // write faces
   std::vector<int> vertexIndices( mesh->faceVerticesMaximumCount() );
   std::unique_ptr<MDAL::MeshFaceIterator> faces = mesh->readFaces();
 
-  libply::ElementWriteCallback faceCallback = [&faces, &vertexIndices]( libply::ElementBuffer & e, size_t index )
+  libply::ElementWriteCallback faceCallback = [&faces, &fgroups, &vertexIndices]( libply::ElementBuffer & e, size_t index )
   {
     int faceOffsets[1];
     faces->next( 1, faceOffsets, vertexIndices.size(), vertexIndices.data() );
@@ -459,6 +465,12 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
     {
       lp->value( j ) = vertexIndices[j];
     };
+    for (size_t i = 0; i < fgroups.size(); i++)
+    {
+        double val[1];
+        fgroups[i]->datasets[0]->scalarData( index, 1, &val[0] );
+        e[i+1] = val[0];
+    }
   };
 
 
@@ -466,17 +478,41 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
 
   std::unique_ptr<MDAL::MeshEdgeIterator> edges = mesh->readEdges();
 
-  libply::ElementWriteCallback edgeCallback = [&edges]( libply::ElementBuffer & e, size_t index )
+  libply::ElementWriteCallback edgeCallback = [&edges, &egroups]( libply::ElementBuffer & e, size_t index )
   {
     int startIndex;
     int endIndex;
     edges->next( 1, &startIndex, &endIndex );
     e[0] = startIndex;
     e[1] = endIndex;
+    for (size_t i = 0; i < egroups.size(); i++)
+    {
+        double val[1];
+        egroups[i]->datasets[0]->scalarData( index, 1, &val[0] );
+        e[i+2] = val[0];
+    }
   };
 
   file.setElementWriteCallback( "vertex", vertexCallback );
   if ( mesh->facesCount() > 0 ) file.setElementWriteCallback( "face", faceCallback );
   if ( mesh->edgesCount() > 0 ) file.setElementWriteCallback( "edge", edgeCallback );
   file.write();
+
+  /*
+  * Clean up
+  */
+  for ( size_t i = 0; i < vgroups.size(); ++i )
+  {
+    vgroups.pop_back();
+  };
+
+  for ( size_t i = 0; i < fgroups.size(); ++i )
+  {
+    fgroups.pop_back();
+  };
+
+  for ( size_t i = 0; i < egroups.size(); ++i )
+  {
+    egroups.pop_back();
+  };
 }

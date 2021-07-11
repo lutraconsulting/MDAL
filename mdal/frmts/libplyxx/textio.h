@@ -37,11 +37,13 @@ namespace textio
     public:
       typedef std::vector<SubString> TokenList;
     public:
-      inline Tokenizer( char delimiter );
+      inline Tokenizer( char delimiter );    
 
       inline TokenList tokenize( const std::string &buffer ) const;
       inline TokenList tokenize( const SubString &buffer ) const;
       inline void tokenize( const SubString &buffer, TokenList &tokens ) const;
+
+      inline static std::string toString( const TokenList &tokens );
 
     private:
       char m_delimiter;
@@ -275,6 +277,16 @@ namespace textio
         begin = eot + 1;
       }
     }
+  }
+
+  inline std::string Tokenizer::toString( const TokenList &tokens )
+  {
+    std::string ret = "";
+    for (textio::SubString token : tokens)
+    {
+      ret.append( token );
+    }
+    return ret;
   }
 
   template<typename PathString>

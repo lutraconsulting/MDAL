@@ -64,7 +64,7 @@ namespace libply
     {
       if ( tokens.size() != 5 )
       {
-        MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Property Definition" );
+        MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, std::string("PLY: Invalid Property Definition : ").append( textio::Tokenizer::toString(tokens) ).c_str() );
       }
       else
       {
@@ -75,7 +75,7 @@ namespace libply
     {
       if ( tokens.size() != 3 )
       {
-        MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Property Definition" );
+        MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, std::string("PLY: Invalid Property Definition : ").append( textio::Tokenizer::toString(tokens) ).c_str() );
       }
       else
       {
