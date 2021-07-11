@@ -37,7 +37,7 @@ namespace textio
     public:
       typedef std::vector<SubString> TokenList;
     public:
-      inline Tokenizer( char delimiter );    
+      inline Tokenizer( char delimiter );
 
       inline TokenList tokenize( const std::string &buffer ) const;
       inline TokenList tokenize( const SubString &buffer ) const;
@@ -282,7 +282,7 @@ namespace textio
   inline std::string Tokenizer::toString( const TokenList &tokens )
   {
     std::string ret = "";
-    for (textio::SubString token : tokens)
+    for ( textio::SubString token : tokens )
     {
       ret.append( token );
     }
