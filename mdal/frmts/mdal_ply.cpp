@@ -83,7 +83,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   size_t edgeCount = 0;
 
   //datastructures that will contain all of the datasets, categorised by vertex, face and edge datasets
-  std::vector<std::vector<double>> vertexDatasets; // conatains the data
+  std::vector<std::vector<double>> vertexDatasets; // contains the data
   std::vector<std::string> vProp2Ds; // contains the dataset name
   std::vector<std::vector<double>> faceDatasets;
   std::vector<std::string> fProp2Ds;
@@ -120,14 +120,14 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
          )
       {
         vProp2Ds.push_back( property.name );
-        vertexDatasets.push_back( * new std::vector<double> );
+        vertexDatasets.push_back( std::vector<double>() );
       }
       else if ( element.name == "face" &&
                 property.name != "vertex_indices"
               )
       {
         fProp2Ds.push_back( property.name );
-        faceDatasets.push_back( * new std::vector<double> );
+        faceDatasets.push_back( std::vector<double>() );
       }
       else if ( element.name == "edge" &&
                 property.name != "vertex1" &&
@@ -135,7 +135,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
               )
       {
         eProp2Ds.push_back( property.name );
-        edgeDatasets.push_back( * new std::vector<double> );
+        edgeDatasets.push_back( std::vector<double>() );
       }
     }
   }
@@ -165,8 +165,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           else
           {
             int dsIdx = getIndex( vProp2Ds, p.name );
-            std::vector<double> *ds = & vertexDatasets[dsIdx];
-            ds->push_back( e[i] );
+            std::vector<double> &ds = vertexDatasets[dsIdx];
+            ds.push_back( e[i] );
           }
         }
         vertices.push_back( vertex );
@@ -185,7 +185,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           {
             if ( !p.isList )
             {
-              MDAL::Log::error( MDAL_Status::Err_InvalidData, "PLY: triangles are not lists" );
+              MDAL::Log::error( MDAL_Status::Err_InvalidData, "PLY: the triangles are not a list" );
             }
             else
             {
@@ -201,8 +201,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           else
           {
             int dsIdx = getIndex( fProp2Ds, p.name );
-            std::vector<double> *ds = & faceDatasets[dsIdx];
-            ds->push_back( e[i] );
+            std::vector<double> &ds = faceDatasets[dsIdx];
+            ds.push_back( e[i] );
           }
         }
         faces.push_back( face );
@@ -228,8 +228,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           else
           {
             int dsIdx = getIndex( eProp2Ds, p.name );
-            std::vector<double> *ds = & edgeDatasets[dsIdx];
-            ds->push_back( e[i] );
+            std::vector<double> &ds = edgeDatasets[dsIdx];
+            ds.push_back( e[i] );
           }
         }
         edges.push_back( edge );
