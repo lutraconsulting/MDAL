@@ -12,9 +12,15 @@
 # MDAL
 Mesh Data Abstraction Library
 
+MDAL is [OSGeo Community Project](https://www.osgeo.org/foundation-news/osgeo-community-program-welcomes-the-mesh-data-abstraction-library-mdal-project/)
+
+![MDAL](docs/images/LogoHorizontal_01_color_400x123.png)
+![OSGeo](docs/images/OSGeo_community-370x142.png)
+
 - see [Unstructured Mesh Layers](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/119)
 - see [3D layered meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/158)
 - see [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164)
+- see [Mesh frame editing](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/228)
 
 ## Mailing List
 
@@ -53,8 +59,8 @@ You can use MDAL to load the following file formats:
 | 2DM   |  READ-WRITE | N/A | N/A | N/A | N/A | N/A |
 | XMS TIN   | READ-ONLY | N/A | N/A | N/A | N/A | N/A |
 | Esri TIN   |  READ-ONLY | N/A | N/A | N/A | N/A | N/A |
-| NetCDF   |  READ-ONLY | NO | NO | READ-ONLY | N/A | NO | 
-| GRIB   |  READ-ONLY | NO | NO | READ-ONLY | N/A | NO | 
+| GDAL-NetCDF   |  READ-ONLY | NO | NO | READ-ONLY | N/A | NO | 
+| GDAL-GRIB   |  READ-ONLY | NO | NO | READ-ONLY | N/A | NO | 
 | XMDF   |  N/A | N/A | NO | READ-ONLY | READ-ONLY | YES |
 | XDMF   |  N/A | N/A | NO | READ-ONLY | NO | YES |
 | DAT   |  N/A | N/A | READ-ONLY | READ-WRITE | N/A | NO | 
@@ -102,6 +108,8 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.14.0  | 0.6.1   |  [1D meshes](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/164) | 
 | 3.16.0  | 0.7.1   | Mesh creation, PLY format |
 | 3.18.0  | 0.8.0   | Dynamic drivers, DFSU format |
+| 3.20.0  | 0.8.1   | |
+| 3.22.0  | 0.9.x   | TBD |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 

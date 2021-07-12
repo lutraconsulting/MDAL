@@ -113,13 +113,13 @@ MDAL_EXPORT MDAL_Status MDAL_LastStatus();
 
 /**
  * Resets the last status message
- * \since MDAL 0.8.2
+ * \since MDAL 0.9.0
  */
 MDAL_EXPORT void MDAL_ResetStatus();
 
-/*
+/**
  * Sets the last status message
- * \since MDAL 0.8.2
+ * \since MDAL 0.9.0
  */
 MDAL_EXPORT void MDAL_SetStatus( MDAL_LogLevel Level, MDAL_Status status, const char *message );
 
@@ -187,7 +187,7 @@ MDAL_EXPORT const char *MDAL_DR_writeDatasetsSuffix( MDAL_DriverH driver );
  * Returns the file suffix used to save mesh frame on file
  * not thread-safe and valid only till next call
  *
- * \since MDAL 0.8.2
+ * \since MDAL 0.9.0
  */
 MDAL_EXPORT const char *MDAL_DR_saveMeshSuffix( MDAL_DriverH driver );
 
@@ -342,6 +342,36 @@ MDAL_EXPORT int MDAL_M_faceVerticesMaximumCount( MDAL_MeshH mesh );
  * can be freed manually with MDAL_CloseDataset if needed
  */
 MDAL_EXPORT void MDAL_M_LoadDatasets( MDAL_MeshH mesh, const char *datasetFile );
+
+/**
+ * Returns number of metadata values
+ *
+ * \since MDAL 0.9.0
+ */
+MDAL_EXPORT int MDAL_M_metadataCount( MDAL_MeshH mesh );
+
+/**
+ * Returns dataset metadata key
+ * not thread-safe and valid only till next call
+ *
+ * \since MDAL 0.9.0
+ */
+MDAL_EXPORT const char *MDAL_M_metadataKey( MDAL_MeshH mesh, int index );
+
+/**
+ * Returns dataset metadata value
+ * not thread-safe and valid only till next call
+ *
+ * \since MDAL 0.9.0
+ */
+MDAL_EXPORT const char *MDAL_M_metadataValue( MDAL_MeshH mesh, int index );
+
+/**
+ * Adds new metadata to the mesh
+ *
+ * \since MDAL 0.9.0
+ */
+MDAL_EXPORT void MDAL_M_setMetadata( MDAL_MeshH mesh, const char *key, const char *val );
 
 /**
  * Returns dataset groups count
