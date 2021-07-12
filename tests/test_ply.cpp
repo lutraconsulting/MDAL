@@ -379,6 +379,15 @@ TEST( MeshPlyFileTest, real_file )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshPlyTest, Save2DMeshToFile )
+{
+  saveAndCompareMesh(
+    test_file( "/ply/all_features.ply" ),
+    tmp_file( "/all_features_saved.ply" ),
+    "PLY"
+  );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
