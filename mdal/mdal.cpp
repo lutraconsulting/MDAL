@@ -361,6 +361,80 @@ void MDAL_M_LoadDatasets( MDAL_MeshH mesh, const char *datasetFile )
   MDAL::DriverManager::instance().loadDatasets( m, datasetFile );
 }
 
+int MDAL_M_metadataCount( MDAL_MeshH mesh )
+{
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+    return 0;
+  }
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  int len = static_cast<int>( m->metadata.size() );
+  return len;
+}
+
+const char *MDAL_M_metadataKey( MDAL_MeshH mesh, int index )
+{
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+    return EMPTY_STR;
+  }
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  int len = static_cast<int>( m->metadata.size() );
+  if ( len <= index )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index: " + std::to_string( index ) + " is out of scope for metadata" );
+    return EMPTY_STR;
+  }
+  size_t i = static_cast<size_t>( index );
+  return _return_str( m->metadata[i].first );
+}
+
+const char *MDAL_M_metadataValue( MDAL_MeshH mesh, int index )
+{
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh,  "Mesh is not valid (null)" );
+    return EMPTY_STR;
+  }
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  int len = static_cast<int>( m->metadata.size() );
+  if ( len <= index )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index: " + std::to_string( index ) + " is out of scope for metadata" );
+    return EMPTY_STR;
+  }
+  size_t i = static_cast<size_t>( index );
+  return _return_str( m->metadata[i].second );
+}
+
+void MDAL_M_setMetadata( MDAL_MeshH mesh, const char *key, const char *val )
+{
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh,  "Mesh is not valid (null)" );
+    return;
+  }
+
+  if ( !key )
+  {
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointer key is not valid (null)" );
+    return;
+  }
+
+  if ( !val )
+  {
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointer val is not valid (null)" );
+    return;
+  }
+
+  const std::string k( key );
+  const std::string v( val );
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  m->setMetadata( k, v );
+}
+
 int MDAL_M_datasetGroupCount( MDAL_MeshH mesh )
 {
   if ( !mesh )

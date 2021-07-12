@@ -40,5 +40,5 @@ scripts/Debug
 Thumb.db
 cmake-build-debug/*
 Testing/*
-*.sln
 *.mdproj
+*.sln

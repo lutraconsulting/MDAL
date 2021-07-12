@@ -63,6 +63,11 @@ TEST( ApiTest, MeshApi )
   EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, MDAL_DataLocation::DataOnVertices, true, nullptr, nullptr ), nullptr );
   EXPECT_EQ( MDAL_M_addDatasetGroup( nullptr, nullptr, MDAL_DataLocation::DataOnVolumes, true, nullptr, nullptr ), nullptr );
   EXPECT_EQ( MDAL_M_driverName( nullptr ), nullptr );
+  EXPECT_EQ( MDAL_M_metadataCount( nullptr ), 0 );
+  EXPECT_EQ( MDAL_M_metadataKey( nullptr, 0 ), std::string( "" ) );
+  EXPECT_EQ( MDAL_M_metadataValue( nullptr, 0 ), std::string( "" ) );
+  MDAL_M_setMetadata( nullptr, nullptr, nullptr );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
 }
 
 void _populateFaces( MDAL_MeshH m, std::vector<int> &ret, size_t faceOffsetsBufferLen, size_t vertexIndicesBufferLen )
@@ -454,6 +459,22 @@ TEST( ApiTest, MeshCreationApi )
 
   MDAL_M_setProjection( mesh, "EPSG:32620" );
   EXPECT_EQ( MDAL_LastStatus(), None );
+
+  MDAL_M_setMetadata( mesh, "test", "value" );
+  EXPECT_EQ( MDAL_LastStatus(), None );
+  EXPECT_EQ( MDAL_M_metadataCount( mesh ), 1 );
+  EXPECT_EQ( std::strcmp( MDAL_M_metadataKey( mesh, 0 ), "test" ), 0 );
+  EXPECT_EQ( std::strcmp( MDAL_M_metadataValue( mesh, 0 ), "value" ), 0 );
+  EXPECT_EQ( std::strcmp( MDAL_M_metadataKey( mesh, 1 ), "" ), 0 );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
+  MDAL_ResetStatus();
+  MDAL_M_setMetadata( mesh, "test", "value2" );
+  EXPECT_EQ( MDAL_LastStatus(), None );
+  EXPECT_EQ( MDAL_M_metadataCount( mesh ), 1 );
+  EXPECT_EQ( std::strcmp( MDAL_M_metadataKey( mesh, 0 ), "test" ), 0 );
+  EXPECT_EQ( std::strcmp( MDAL_M_metadataValue( mesh, 0 ), "value2" ), 0 );
+  MDAL_M_setMetadata( mesh, nullptr, nullptr );
+  EXPECT_EQ( MDAL_LastStatus(), Err_InvalidData );
 
   MDAL_CloseMesh( mesh );
 
