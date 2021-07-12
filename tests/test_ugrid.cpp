@@ -704,6 +704,29 @@ TEST( MeshUgridTest, magnitude_direction )
   }
 }
 
+TEST( MeshUgridTest, VoidMesh )
+{
+  std::string path = test_file( "/ugrid/meshCreation/void_mesh.nc" );
+
+  std::string uri = "Ugrid:\"" + path + "\":" + "mesh2d";
+  std::string uriToMeshNames = "Ugrid:\"" + path + "\"";
+
+  EXPECT_EQ( MDAL_MeshNames( uriToMeshNames.c_str() ), "Ugrid:\"" + path + "\":mesh2d" );
+  MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
+
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 0 );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( f_count, 0 );
+
+  MDAL_CloseMesh( m );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );

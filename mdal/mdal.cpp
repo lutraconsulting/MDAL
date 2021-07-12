@@ -21,7 +21,7 @@ static const char *EMPTY_STR = "";
 
 const char *MDAL_Version()
 {
-  return "0.8.1";
+  return "0.8.90";
 }
 
 MDAL_Status MDAL_LastStatus()
@@ -215,6 +215,7 @@ const char *MDAL_MeshNames( const char *uri )
 
 void MDAL_SaveMesh( MDAL_MeshH mesh, const char *meshFile, const char *driver )
 {
+  MDAL::Log::resetLastStatus();
   if ( !meshFile )
   {
     MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );

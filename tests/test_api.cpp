@@ -433,6 +433,9 @@ TEST( ApiTest, MeshCreationApi )
   EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
   EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 0 );
 
+  std::string createdMeshFile = tmp_file( "/createdMeshVoid" );
+  MDAL_SaveMesh( mesh, createdMeshFile.c_str(), "Ugrid" );
+  EXPECT_EQ( MDAL_LastStatus(), None );
 
   MDAL_M_addVertices( mesh, 6, coordinates.data() );
   MDAL_M_addFaces( mesh, 4, faceSizes.data(), invalidVertexIndices.data() );
@@ -445,7 +448,7 @@ TEST( ApiTest, MeshCreationApi )
   EXPECT_EQ( MDAL_M_faceCount( mesh ), 4 );
   EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 4 );
 
-  std::string createdMeshFile = tmp_file( "/createdMesh" );
+  createdMeshFile = tmp_file( "/createdMesh" );
   MDAL_SaveMesh( mesh, createdMeshFile.c_str(), "Ugrid" );
   EXPECT_EQ( MDAL_LastStatus(), None );
 
