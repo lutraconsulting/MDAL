@@ -884,12 +884,6 @@ MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group, double time, const do
     return nullptr;
   }
 
-  if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes )
-  {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Dataset Group has data on 3D volumes" );
-    return nullptr;
-  }
-
   if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Active flag is only supported on datasets with data on vertices" );
