@@ -35,7 +35,8 @@ MDAL::DriverPly::DriverPly() :
           Capability::SaveMesh |
           Capability::WriteDatasetsOnVertices |
           Capability::WriteDatasetsOnFaces |
-          Capability::WriteDatasetsOnEdges
+          Capability::WriteDatasetsOnEdges |
+          Capability::WriteDatasetsOnVolumes
         )
 {
 }
