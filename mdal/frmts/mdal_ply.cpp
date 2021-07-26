@@ -186,7 +186,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
               }
             }
             else
-            { 
+            {
               std::vector<double> &ds = vertexDatasets[dsIdx];
               ds.push_back( e[i] );
             }
@@ -236,7 +236,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
               }
             }
             else
-            { 
+            {
               std::vector<double> &ds = faceDatasets[dsIdx];
               ds.push_back( e[i] );
             }
@@ -277,7 +277,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
               }
             }
             else
-            { 
+            {
               std::vector<double> &ds = edgeDatasets[dsIdx];
               ds.push_back( e[i] );
             }
@@ -629,6 +629,7 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
     }
   };
 
+
   // write faces
   std::vector<int> vertexIndices( mesh->faceVerticesMaximumCount() );
   std::unique_ptr<MDAL::MeshFaceIterator> faces = mesh->readFaces();
@@ -651,13 +652,13 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
       {
         double val[1];
         fgroups[i]->datasets[0]->scalarData( index, 1, &val[0] );
-        e[i + 3] = val[0];
+        e[idx] = val[0];
       }
       else
       {
         double val[2];
         fgroups[i]->datasets[0]->vectorData( index, 1, &val[0] );
-        libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[i + 3] );
+        libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[idx] );
         lp->define( libply::Type::FLOAT64, 2 );
         lp->value( 0 ) = val[0];
         lp->value( 1 ) = val[1];
@@ -694,7 +695,6 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
     }
   };
 
-
   // write edges
 
   std::unique_ptr<MDAL::MeshEdgeIterator> edges = mesh->readEdges();
@@ -712,13 +712,13 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
       {
         double val[1];
         egroups[i]->datasets[0]->scalarData( index, 1, &val[0] );
-        e[i + 3] = val[0];
+        e[i + 2] = val[0];
       }
       else
       {
         double val[2];
         egroups[i]->datasets[0]->vectorData( index, 1, &val[0] );
-        libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[i + 3] );
+        libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[i + 2] );
         lp->define( libply::Type::FLOAT64, 2 );
         lp->value( 0 ) = val[0];
         lp->value( 1 ) = val[1];
@@ -729,7 +729,9 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
   file.setElementWriteCallback( "vertex", vertexCallback );
   if ( mesh->facesCount() > 0 ) file.setElementWriteCallback( "face", faceCallback );
   if ( mesh->edgesCount() > 0 ) file.setElementWriteCallback( "edge", edgeCallback );
+
   file.write();
+
 
   /*
   * Clean up
