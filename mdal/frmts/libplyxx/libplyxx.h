@@ -112,7 +112,7 @@ namespace libply
       operator float() override { return 0; };
       operator double() override { return 0; };
 
-      virtual bool isList() override { return true; }
+      bool isList() override { return true; }
 
       void define( Type type, size_t size );
       size_t size() const { return list.size(); }
