@@ -566,6 +566,11 @@ MDAL_EXPORT const char *MDAL_G_driverName( MDAL_DatasetGroupH group );
 MDAL_EXPORT bool MDAL_G_hasScalarData( MDAL_DatasetGroupH group );
 
 /**
+ * Set Whether dataset has scalar data associated
+ */
+MDAL_EXPORT void MDAL_G_setScalarData( MDAL_DatasetGroupH group, bool isScalar );
+
+/**
  * Whether dataset is on vertices
  */
 MDAL_EXPORT MDAL_DataLocation MDAL_G_dataLocation( MDAL_DatasetGroupH group );
