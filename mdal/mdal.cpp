@@ -890,6 +890,12 @@ MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group, double time, const do
     return nullptr;
   }
 
+  if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Cannot save 3D dataset as a 2D dataset" );
+    return nullptr;
+  }
+
   const size_t index = g->datasets.size();
   MDAL::RelativeTimestamp t( time, MDAL::RelativeTimestamp::hours );
   dr->createDataset( g,
