@@ -168,7 +168,7 @@ namespace MDAL
       std::vector<int> mActive;
   };
 
-class MemoryDataset3D: public Dataset3D
+  class MemoryDataset3D: public Dataset3D
   {
     public:
 
