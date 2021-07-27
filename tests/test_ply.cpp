@@ -10,7 +10,6 @@
 #include "mdal_utils.hpp"
 #include "../mdal/frmts/mdal_driver.hpp"
 #include "../mdal/mdal_data_model.hpp"
-#include "../mdal/mdal_datetime.hpp"
 
 
 TEST( MeshPlyTest, WrongFiles )
@@ -413,7 +412,6 @@ TEST( Memory3D, ScalarMesh )
 
 // create a new 3D dataset
   index = g2->datasets.size();
-  MDAL::RelativeTimestamp t( 0, MDAL::RelativeTimestamp::hours );
   size_t f_count = m->facesCount();
   std::shared_ptr<MDAL::Dataset> dataset = g->datasets[0];
   size_t v_count = dataset->volumesCount();
@@ -424,7 +422,7 @@ TEST( Memory3D, ScalarMesh )
   dataset->verticalLevelData( 0, f_count + v_count, ve.data() );
   dataset->scalarVolumesData( 0, v_count, values.data() );
   dr->createDataset( g2.get(),
-                     t,
+                     dataset->timestamp(),
                      values.data(),
                      lc.data(),
                      ve.data()
@@ -474,7 +472,6 @@ TEST( Memory3D, VectorMesh )
 
 // create a new 3D dataset
   index = g2->datasets.size();
-  MDAL::RelativeTimestamp t( 0, MDAL::RelativeTimestamp::hours );
   size_t f_count = m->facesCount();
   std::shared_ptr<MDAL::Dataset> dataset = g->datasets[0];
   size_t v_count = dataset->volumesCount();
@@ -485,7 +482,7 @@ TEST( Memory3D, VectorMesh )
   dataset->verticalLevelData( 0, f_count + v_count, ve.data() );
   dataset->vectorVolumesData( 0, v_count, values.data() );
   dr->createDataset( g2.get(),
-                     t,
+                     dataset->timestamp(),
                      values.data(),
                      lc.data(),
                      ve.data()
