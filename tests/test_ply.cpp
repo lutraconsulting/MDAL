@@ -10,6 +10,7 @@
 #include "mdal_utils.hpp"
 #include "../mdal/frmts/mdal_driver.hpp"
 #include "../mdal/mdal_data_model.hpp"
+#include "../mdal/mdal_datetime.hpp"
 
 
 TEST( MeshPlyTest, WrongFiles )

@@ -120,7 +120,7 @@ void MDAL::Driver::createDataset( MDAL::DatasetGroup *group, MDAL::RelativeTimes
 {
   size_t count = 0;
   size_t facesCount = group->mesh()->facesCount();
-  size_t maxVerticalLevel = 0;
+  int maxVerticalLevel = 0;
   for ( size_t i = 0; i < facesCount; i++ )
   {
     count += verticalLevelCounts[i];
