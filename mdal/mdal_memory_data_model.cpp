@@ -159,7 +159,7 @@ size_t MDAL::MemoryDataset3D::verticalLevelCountData( size_t indexStart, size_t 
     return 0;
 
   size_t copyValues = std::min( nValues - indexStart, count );
-  memcpy( buffer, mVerticalLevelCounts.data() + indexStart, copyValues * sizeof( double ) );
+  memcpy( buffer, mVerticalLevelCounts.data() + indexStart, copyValues * sizeof( int ) );
   return copyValues;
 }
 
@@ -185,7 +185,7 @@ size_t MDAL::MemoryDataset3D::faceToVolumeData( size_t indexStart, size_t count,
     return 0;
 
   size_t copyValues = std::min( nValues - indexStart, count );
-  memcpy( buffer, mFaceToVolume.data() + indexStart, copyValues * sizeof( double ) );
+  memcpy( buffer, mFaceToVolume.data() + indexStart, copyValues * sizeof( int ) );
   return copyValues;
 }
 
