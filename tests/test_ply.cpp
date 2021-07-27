@@ -418,9 +418,11 @@ TEST( Memory3D, ScalarMesh )
   std::shared_ptr<MDAL::Dataset> dataset = g->datasets[0];
   size_t v_count = dataset->volumesCount();
   std::vector<int> lc( f_count, 0 );
+  std::vector<int> f2V( f_count, 0 );
   std::vector<double> ve( f_count + v_count, 0 );
   std::vector<double> values( v_count, 0 );
   dataset->verticalLevelCountData( 0, f_count, lc.data() );
+  dataset->faceToVolumeData( 0, f_count, f2V.data() );
   dataset->verticalLevelData( 0, f_count + v_count, ve.data() );
   dataset->scalarVolumesData( 0, v_count, values.data() );
   dr->createDataset( g2.get(),
@@ -435,12 +437,15 @@ TEST( Memory3D, ScalarMesh )
 
   // test data equality
   std::vector<int> lc2( f_count, 0 );
+  std::vector<int> f2V2( f_count, 0 );
   std::vector<double> ve2( f_count + v_count, 0 );
   std::vector<double> values2( v_count, 0 );
   dataset2->verticalLevelCountData( 0, f_count, lc2.data() );
+  dataset2->faceToVolumeData( 0, f_count, f2V2.data() );
   dataset2->verticalLevelData( 0, f_count + v_count, ve2.data() );
   dataset2->scalarVolumesData( 0, v_count, values2.data() );
   ASSERT_TRUE( compareVectors( lc, lc2 ) );
+  ASSERT_TRUE( compareVectors( f2V, f2V2 ) );
   ASSERT_TRUE( compareVectors( ve, ve2 ) );
   ASSERT_TRUE( compareVectors( values, values2 ) );
 }
