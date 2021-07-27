@@ -382,6 +382,8 @@ TEST( MeshPlyFileTest, real_file )
   MDAL_CloseMesh( m );
 }
 
+#ifndef _WIN32
+
 // test the memorydataset3D
 TEST( Memory3D, ScalarMesh )
 {
@@ -503,6 +505,8 @@ TEST( Memory3D, VectorMesh )
   ASSERT_TRUE( compareVectors( values, values2 ) );
 }
 
+#endif
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
@@ -511,4 +515,3 @@ int main( int argc, char **argv )
   finalize_test();
   return ret;
 }
-
