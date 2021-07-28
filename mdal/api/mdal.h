@@ -215,6 +215,11 @@ MDAL_EXPORT const char *MDAL_DR_longName( MDAL_DriverH driver );
  */
 MDAL_EXPORT const char *MDAL_DR_filters( MDAL_DriverH driver );
 
+/**
+ * Returns the maximum number of vertices per face supported by the driver
+ */
+MDAL_EXPORT int MDAL_DR_faceVerticesMaximumCount( MDAL_DriverH driver );
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -331,7 +336,7 @@ MDAL_EXPORT int MDAL_M_edgeCount( MDAL_MeshH mesh );
 MDAL_EXPORT int MDAL_M_faceCount( MDAL_MeshH mesh );
 
 /**
- * Returns maximum number of vertices face can consist of, e.g. 4 for regular quad mesh
+ * Returns maximum number of vertices face can consist of, e.g. 4 for regular quad mesh.
  */
 MDAL_EXPORT int MDAL_M_faceVerticesMaximumCount( MDAL_MeshH mesh );
 
