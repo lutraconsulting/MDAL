@@ -625,7 +625,7 @@ MDAL_EXPORT MDAL_DatasetH MDAL_G_addDataset(
  * \param time time for dataset (hours)
  * \param values For scalar data, the size must be volume count
  *               For vector data , the size must be volume count * 2 (x1, y1, x2, y2, ..., xN, yN)
- * \param verticalLevelCount Int Array holding the numver of vertical levels for each face.
+ * \param verticalLevelCount Int Array holding the number of vertical levels for each face.
  *               Size must be the face count
  * \param verticalExtrusion Double Array holding the vertical level values for the voxels
  *               Size must be Face count + Volume count

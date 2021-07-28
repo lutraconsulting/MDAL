@@ -884,15 +884,15 @@ MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group, double time, const do
     return nullptr;
   }
 
-  if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices )
-  {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Active flag is only supported on datasets with data on vertices" );
-    return nullptr;
-  }
-
   if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes )
   {
     MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Cannot save 3D dataset as a 2D dataset" );
+    return nullptr;
+  }
+
+  if ( active && g->dataLocation() != MDAL_DataLocation::DataOnVertices )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Active flag is only supported on datasets with data on vertices" );
     return nullptr;
   }
 
@@ -919,7 +919,7 @@ MDAL_DatasetH MDAL_G_addDataset3D( MDAL_DatasetGroupH group, double time, const 
 
   if ( !values || !verticalLevelCount || !verticalExtrusions )
   {
-    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointer Values is not valid" );
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointer Values are not valid" );
     return nullptr;
   }
 
@@ -946,7 +946,7 @@ MDAL_DatasetH MDAL_G_addDataset3D( MDAL_DatasetGroupH group, double time, const 
 
   if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Dataset Group does not have data on 3D volumes" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Cannot write 3D data to a Dataset Group that does not have Data On Volumes" );
     return nullptr;
   }
 

@@ -410,13 +410,15 @@ TEST( Memory3D, ScalarMesh )
                         );
   ASSERT_TRUE( index < m->datasetGroups.size() );
   std::shared_ptr<MDAL::DatasetGroup> g2 = m->datasetGroups[ index ];
-  ASSERT_TRUE( g->dataLocation() == g2->dataLocation() );
+  MDAL_DatasetGroupH group2 = static_cast<MDAL_DatasetGroupH>( g2.get() );
+  ASSERT_EQ( MDAL_G_dataLocation( group2 ), MDAL_DataLocation::DataOnVolumes );
 
 // create a new 3D dataset
   index = g2->datasets.size();
   size_t f_count = m->facesCount();
   std::shared_ptr<MDAL::Dataset> dataset = g->datasets[0];
-  size_t v_count = dataset->volumesCount();
+  MDAL_DatasetH d = static_cast<MDAL_DatasetH>( dataset.get() );
+  size_t v_count = MDAL_D_valueCount( d );
   std::vector<int> lc( f_count, 0 );
   std::vector<int> f2V( f_count, 0 );
   std::vector<double> ve( f_count + v_count, 0 );
@@ -433,7 +435,8 @@ TEST( Memory3D, ScalarMesh )
                    );
   ASSERT_TRUE( index < g2->datasets.size() );
   std::shared_ptr<MDAL::Dataset> dataset2 = g2->datasets[ index ];
-  ASSERT_TRUE( dataset2->valuesCount() == v_count );
+  MDAL_DatasetH d2 = static_cast<MDAL_DatasetH>( dataset2.get() );
+  ASSERT_EQ( MDAL_D_valueCount( d2 ), v_count );
 
   // test data equality
   std::vector<int> lc2( f_count, 0 );
@@ -475,13 +478,15 @@ TEST( Memory3D, VectorMesh )
                         );
   ASSERT_TRUE( index < m->datasetGroups.size() );
   std::shared_ptr<MDAL::DatasetGroup> g2 = m->datasetGroups[ index ];
-  ASSERT_TRUE( g->dataLocation() == g2->dataLocation() );
+  MDAL_DatasetGroupH group2 = static_cast<MDAL_DatasetGroupH>( g2.get() );
+  ASSERT_EQ( MDAL_G_dataLocation( group2 ), MDAL_DataLocation::DataOnVolumes );
 
 // create a new 3D dataset
   index = g2->datasets.size();
   size_t f_count = m->facesCount();
   std::shared_ptr<MDAL::Dataset> dataset = g->datasets[0];
-  size_t v_count = dataset->volumesCount();
+  MDAL_DatasetH d = static_cast<MDAL_DatasetH>( dataset.get() );
+  size_t v_count = MDAL_D_valueCount( d );
   std::vector<int> lc( f_count, 0 );
   std::vector<double> ve( f_count + v_count, 0 );
   std::vector<double> values( 2 * v_count, 0 );
@@ -496,7 +501,8 @@ TEST( Memory3D, VectorMesh )
                    );
   ASSERT_TRUE( index < g2->datasets.size() );
   std::shared_ptr<MDAL::Dataset> dataset2 = g2->datasets[ index ];
-  ASSERT_TRUE( dataset2->valuesCount() == v_count );
+  MDAL_DatasetH d2 = static_cast<MDAL_DatasetH>( dataset2.get() );
+  ASSERT_EQ( MDAL_D_valueCount( d2 ), v_count );
 
   // test data equality
   std::vector<int> lc2( f_count, 0 );
