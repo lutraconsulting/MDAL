@@ -8,6 +8,9 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 #include "mdal_utils.hpp"
+#include "../mdal/frmts/mdal_driver.hpp"
+#include "../mdal/mdal_data_model.hpp"
+
 
 TEST( MeshPlyTest, WrongFiles )
 {
@@ -379,6 +382,114 @@ TEST( MeshPlyFileTest, real_file )
   MDAL_CloseMesh( m );
 }
 
+// test the memorydataset3D
+TEST( Memory3D, ScalarMesh )
+{
+  std::string path = test_file( "/tuflowfv/withMaxes/trap_steady_05_3D.nc" );
+  MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( mesh, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 1 );
+  ASSERT_EQ( MDAL_G_dataLocation( group ), MDAL_DataLocation::DataOnVolumes );
+
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  MDAL::Driver *dr = static_cast< MDAL::Driver * >( MDAL_driverFromName( "PLY" ) );
+
+  // create a new 3D datasetGroup
+  int index = m->datasetGroups.size();
+  dr->createDatasetGroup( m,
+                          "test",
+                          MDAL_DataLocation::DataOnVolumes,
+                          true,
+                          "test.ply"
+                        );
+  ASSERT_TRUE( index < m->datasetGroups.size() );
+  MDAL_DatasetGroupH group2 = MDAL_M_datasetGroup( m, index );
+  ASSERT_EQ( MDAL_G_dataLocation( group2 ), MDAL_DataLocation::DataOnVolumes );
+
+// create a new 3D dataset
+  int f_count = MDAL_M_faceCount( mesh );
+  MDAL_DatasetH dataset = MDAL_G_dataset( group, 0 );
+  int v_count = MDAL_D_valueCount( dataset );
+  std::vector<int> lc( f_count, 0 );
+  std::vector<int> f2V( f_count, 0 );
+  std::vector<double> ve( f_count + v_count, 0 );
+  std::vector<double> values( v_count, 0 );
+  MDAL_D_data( dataset, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc.data() );
+  MDAL_D_data( dataset, 0, f_count, MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER, f2V.data() );
+  MDAL_D_data( dataset, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve.data() );
+  MDAL_D_data( dataset, 0, v_count, MDAL_DataType::SCALAR_VOLUMES_DOUBLE, values.data() );
+  MDAL_DatasetH dataset2 = MDAL_G_addDataset3D( group2, 0, values.data(), lc.data(), ve.data() );
+  ASSERT_EQ( MDAL_D_valueCount( dataset2 ), v_count );
+
+  // test data equality
+  std::vector<int> lc2( f_count, 0 );
+  std::vector<int> f2V2( f_count, 0 );
+  std::vector<double> ve2( f_count + v_count, 0 );
+  std::vector<double> values2( v_count, 0 );
+  MDAL_D_data( dataset2, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc2.data() );
+  MDAL_D_data( dataset2, 0, f_count, MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER, f2V2.data() );
+  MDAL_D_data( dataset2, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve2.data() );
+  MDAL_D_data( dataset2, 0, v_count, MDAL_DataType::SCALAR_VOLUMES_DOUBLE, values2.data() );
+  ASSERT_TRUE( compareVectors( lc, lc2 ) );
+  ASSERT_TRUE( compareVectors( f2V, f2V2 ) );
+  ASSERT_TRUE( compareVectors( ve, ve2 ) );
+  ASSERT_TRUE( compareVectors( values, values2 ) );
+}
+
+TEST( Memory3D, VectorMesh )
+{
+  std::string path = test_file( "/tuflowfv/withMaxes/trap_steady_05_3D.nc" );
+  MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( mesh, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 6 );
+  ASSERT_EQ( MDAL_G_dataLocation( group ), MDAL_DataLocation::DataOnVolumes );
+
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  MDAL::Driver *dr = static_cast< MDAL::Driver * >( MDAL_driverFromName( "PLY" ) );
+
+  // create a new 3D datasetGroup
+  int index = m->datasetGroups.size();
+  dr->createDatasetGroup( m,
+                          "test",
+                          MDAL_DataLocation::DataOnVolumes,
+                          false,
+                          "test.ply"
+                        );
+  ASSERT_TRUE( index < m->datasetGroups.size() );
+  MDAL_DatasetGroupH group2 = MDAL_M_datasetGroup( m, index );
+  ASSERT_EQ( MDAL_G_dataLocation( group2 ), MDAL_DataLocation::DataOnVolumes );
+
+// create a new 3D dataset
+  int f_count = MDAL_M_faceCount( mesh );
+  MDAL_DatasetH dataset = MDAL_G_dataset( group, 0 );
+  int v_count = MDAL_D_valueCount( dataset );
+  std::vector<int> lc( f_count, 0 );
+  std::vector<double> ve( f_count + v_count, 0 );
+  std::vector<double> values( 2 * v_count, 0 );
+  MDAL_D_data( dataset, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc.data() );
+  MDAL_D_data( dataset, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve.data() );
+  MDAL_D_data( dataset, 0, v_count, MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE, values.data() );
+  MDAL_DatasetH dataset2 = MDAL_G_addDataset3D( group2, 0, values.data(), lc.data(), ve.data() );
+  ASSERT_EQ( MDAL_D_valueCount( dataset2 ), v_count );
+
+  // test data equality
+  std::vector<int> lc2( f_count, 0 );
+  std::vector<double> ve2( f_count + v_count, 0 );
+  std::vector<double> values2( 2 * v_count, 0 );
+  MDAL_D_data( dataset2, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc2.data() );
+  MDAL_D_data( dataset2, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve2.data() );
+  MDAL_D_data( dataset2, 0, v_count, MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE, values2.data() );
+  ASSERT_TRUE( compareVectors( lc, lc2 ) );
+  ASSERT_TRUE( compareVectors( ve, ve2 ) );
+  ASSERT_TRUE( compareVectors( values, values2 ) );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
@@ -387,4 +498,3 @@ int main( int argc, char **argv )
   finalize_test();
   return ret;
 }
-
