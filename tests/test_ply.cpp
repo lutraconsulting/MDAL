@@ -382,8 +382,6 @@ TEST( MeshPlyFileTest, real_file )
   MDAL_CloseMesh( m );
 }
 
-#ifndef _WIN32
-
 // test the memorydataset3D
 TEST( Memory3D, ScalarMesh )
 {
@@ -398,10 +396,9 @@ TEST( Memory3D, ScalarMesh )
 
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   MDAL::Driver *dr = static_cast< MDAL::Driver * >( MDAL_driverFromName( "PLY" ) );
-  MDAL::DatasetGroup *g = static_cast<MDAL::DatasetGroup *>( group );
 
   // create a new 3D datasetGroup
-  size_t index = m->datasetGroups.size();
+  int index = m->datasetGroups.size();
   dr->createDatasetGroup( m,
                           "test",
                           MDAL_DataLocation::DataOnVolumes,
@@ -409,44 +406,33 @@ TEST( Memory3D, ScalarMesh )
                           "test.ply"
                         );
   ASSERT_TRUE( index < m->datasetGroups.size() );
-  std::shared_ptr<MDAL::DatasetGroup> g2 = m->datasetGroups[ index ];
-  MDAL_DatasetGroupH group2 = static_cast<MDAL_DatasetGroupH>( g2.get() );
+  MDAL_DatasetGroupH group2 = MDAL_M_datasetGroup( m, index );
   ASSERT_EQ( MDAL_G_dataLocation( group2 ), MDAL_DataLocation::DataOnVolumes );
 
 // create a new 3D dataset
-  index = g2->datasets.size();
-  size_t f_count = m->facesCount();
-  std::shared_ptr<MDAL::Dataset> dataset = g->datasets[0];
-  MDAL_DatasetH d = static_cast<MDAL_DatasetH>( dataset.get() );
-  size_t v_count = MDAL_D_valueCount( d );
+  int f_count = MDAL_M_faceCount( mesh );
+  MDAL_DatasetH dataset = MDAL_G_dataset( group, 0 );
+  int v_count = MDAL_D_valueCount( dataset );
   std::vector<int> lc( f_count, 0 );
   std::vector<int> f2V( f_count, 0 );
   std::vector<double> ve( f_count + v_count, 0 );
   std::vector<double> values( v_count, 0 );
-  dataset->verticalLevelCountData( 0, f_count, lc.data() );
-  dataset->faceToVolumeData( 0, f_count, f2V.data() );
-  dataset->verticalLevelData( 0, f_count + v_count, ve.data() );
-  dataset->scalarVolumesData( 0, v_count, values.data() );
-  dr->createDataset( g2.get(),
-                     dataset->timestamp(),
-                     values.data(),
-                     lc.data(),
-                     ve.data()
-                   );
-  ASSERT_TRUE( index < g2->datasets.size() );
-  std::shared_ptr<MDAL::Dataset> dataset2 = g2->datasets[ index ];
-  MDAL_DatasetH d2 = static_cast<MDAL_DatasetH>( dataset2.get() );
-  ASSERT_EQ( MDAL_D_valueCount( d2 ), v_count );
+  MDAL_D_data( dataset, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc.data() );
+  MDAL_D_data( dataset, 0, f_count, MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER, f2V.data() );
+  MDAL_D_data( dataset, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve.data() );
+  MDAL_D_data( dataset, 0, v_count, MDAL_DataType::SCALAR_VOLUMES_DOUBLE, values.data() );
+  MDAL_DatasetH dataset2 = MDAL_G_addDataset3D( group2, 0, values.data(), lc.data(), ve.data() );
+  ASSERT_EQ( MDAL_D_valueCount( dataset2 ), v_count );
 
   // test data equality
   std::vector<int> lc2( f_count, 0 );
   std::vector<int> f2V2( f_count, 0 );
   std::vector<double> ve2( f_count + v_count, 0 );
   std::vector<double> values2( v_count, 0 );
-  dataset2->verticalLevelCountData( 0, f_count, lc2.data() );
-  dataset2->faceToVolumeData( 0, f_count, f2V2.data() );
-  dataset2->verticalLevelData( 0, f_count + v_count, ve2.data() );
-  dataset2->scalarVolumesData( 0, v_count, values2.data() );
+  MDAL_D_data( dataset2, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc2.data() );
+  MDAL_D_data( dataset2, 0, f_count, MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER, f2V2.data() );
+  MDAL_D_data( dataset2, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve2.data() );
+  MDAL_D_data( dataset2, 0, v_count, MDAL_DataType::SCALAR_VOLUMES_DOUBLE, values2.data() );
   ASSERT_TRUE( compareVectors( lc, lc2 ) );
   ASSERT_TRUE( compareVectors( f2V, f2V2 ) );
   ASSERT_TRUE( compareVectors( ve, ve2 ) );
@@ -466,10 +452,9 @@ TEST( Memory3D, VectorMesh )
 
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
   MDAL::Driver *dr = static_cast< MDAL::Driver * >( MDAL_driverFromName( "PLY" ) );
-  MDAL::DatasetGroup *g = static_cast<MDAL::DatasetGroup *>( group );
 
   // create a new 3D datasetGroup
-  size_t index = m->datasetGroups.size();
+  int index = m->datasetGroups.size();
   dr->createDatasetGroup( m,
                           "test",
                           MDAL_DataLocation::DataOnVolumes,
@@ -477,46 +462,33 @@ TEST( Memory3D, VectorMesh )
                           "test.ply"
                         );
   ASSERT_TRUE( index < m->datasetGroups.size() );
-  std::shared_ptr<MDAL::DatasetGroup> g2 = m->datasetGroups[ index ];
-  MDAL_DatasetGroupH group2 = static_cast<MDAL_DatasetGroupH>( g2.get() );
+  MDAL_DatasetGroupH group2 = MDAL_M_datasetGroup( m, index );
   ASSERT_EQ( MDAL_G_dataLocation( group2 ), MDAL_DataLocation::DataOnVolumes );
 
 // create a new 3D dataset
-  index = g2->datasets.size();
-  size_t f_count = m->facesCount();
-  std::shared_ptr<MDAL::Dataset> dataset = g->datasets[0];
-  MDAL_DatasetH d = static_cast<MDAL_DatasetH>( dataset.get() );
-  size_t v_count = MDAL_D_valueCount( d );
+  int f_count = MDAL_M_faceCount( mesh );
+  MDAL_DatasetH dataset = MDAL_G_dataset( group, 0 );
+  int v_count = MDAL_D_valueCount( dataset );
   std::vector<int> lc( f_count, 0 );
   std::vector<double> ve( f_count + v_count, 0 );
   std::vector<double> values( 2 * v_count, 0 );
-  dataset->verticalLevelCountData( 0, f_count, lc.data() );
-  dataset->verticalLevelData( 0, f_count + v_count, ve.data() );
-  dataset->vectorVolumesData( 0, v_count, values.data() );
-  dr->createDataset( g2.get(),
-                     dataset->timestamp(),
-                     values.data(),
-                     lc.data(),
-                     ve.data()
-                   );
-  ASSERT_TRUE( index < g2->datasets.size() );
-  std::shared_ptr<MDAL::Dataset> dataset2 = g2->datasets[ index ];
-  MDAL_DatasetH d2 = static_cast<MDAL_DatasetH>( dataset2.get() );
-  ASSERT_EQ( MDAL_D_valueCount( d2 ), v_count );
+  MDAL_D_data( dataset, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc.data() );
+  MDAL_D_data( dataset, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve.data() );
+  MDAL_D_data( dataset, 0, v_count, MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE, values.data() );
+  MDAL_DatasetH dataset2 = MDAL_G_addDataset3D( group2, 0, values.data(), lc.data(), ve.data() );
+  ASSERT_EQ( MDAL_D_valueCount( dataset2 ), v_count );
 
   // test data equality
   std::vector<int> lc2( f_count, 0 );
   std::vector<double> ve2( f_count + v_count, 0 );
   std::vector<double> values2( 2 * v_count, 0 );
-  dataset2->verticalLevelCountData( 0, f_count, lc2.data() );
-  dataset2->verticalLevelData( 0, f_count + v_count, ve2.data() );
-  dataset2->vectorVolumesData( 0, v_count, values2.data() );
+  MDAL_D_data( dataset2, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc2.data() );
+  MDAL_D_data( dataset2, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve2.data() );
+  MDAL_D_data( dataset2, 0, v_count, MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE, values2.data() );
   ASSERT_TRUE( compareVectors( lc, lc2 ) );
   ASSERT_TRUE( compareVectors( ve, ve2 ) );
   ASSERT_TRUE( compareVectors( values, values2 ) );
 }
-
-#endif
 
 int main( int argc, char **argv )
 {

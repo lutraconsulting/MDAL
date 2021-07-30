@@ -938,12 +938,6 @@ MDAL_DatasetH MDAL_G_addDataset3D( MDAL_DatasetGroupH group, double time, const 
     return nullptr;
   }
 
-  if ( !dr->hasWriteDatasetCapability( g->dataLocation() ) )
-  {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Driver " + driverName + " does not have Write Dataset capability" );
-    return nullptr;
-  }
-
   if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
   {
     MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Cannot write 3D data to a Dataset Group that does not have Data On Volumes" );
