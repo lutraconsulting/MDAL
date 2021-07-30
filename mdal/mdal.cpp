@@ -902,7 +902,7 @@ MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group, double time, const do
 
   if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Dataset Group has data on 3D volumes" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Cannot save 3D dataset as a 2D dataset" );
     return nullptr;
   }
 
@@ -918,6 +918,55 @@ MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group, double time, const do
                      t,
                      values,
                      active
+                   );
+  if ( index < g->datasets.size() ) // we have new dataset
+    return static_cast< MDAL_DatasetGroupH >( g->datasets[ index ].get() );
+  else
+    return nullptr;
+}
+
+MDAL_DatasetH MDAL_G_addDataset3D( MDAL_DatasetGroupH group, double time, const double *values, const int *verticalLevelCount, const double *verticalExtrusions )
+{
+  if ( !group )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
+    return nullptr;
+  }
+
+  if ( !values || !verticalLevelCount || !verticalExtrusions )
+  {
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointer Values are not valid" );
+    return nullptr;
+  }
+
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  if ( !g->isInEditMode() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not in edit mode" );
+    return nullptr;
+  }
+
+  const std::string driverName = g->driverName();
+  std::shared_ptr<MDAL::Driver> dr = MDAL::DriverManager::instance().driver( driverName );
+  if ( !dr )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver name " + driverName + " saved in dataset group could not be found" );
+    return nullptr;
+  }
+
+  if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Cannot write 3D data to a Dataset Group that does not have Data On Volumes" );
+    return nullptr;
+  }
+
+  const size_t index = g->datasets.size();
+  MDAL::RelativeTimestamp t( time, MDAL::RelativeTimestamp::hours );
+  dr->createDataset( g,
+                     t,
+                     values,
+                     verticalLevelCount,
+                     verticalExtrusions
                    );
   if ( index < g->datasets.size() ) // we have new dataset
     return static_cast< MDAL_DatasetGroupH >( g->datasets[ index ].get() );

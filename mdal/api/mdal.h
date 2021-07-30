@@ -616,6 +616,36 @@ MDAL_EXPORT MDAL_DatasetH MDAL_G_addDataset(
 );
 
 /**
+ * Adds empty (new) 3D dataset to the group
+ * This increases dataset group count MDAL_G_datasetCount() by 1
+ *
+ * The dataset is opened in edit mode.
+ * To persist dataset, call MDAL_G_closeEditMode() on parent group
+ *
+ * Minimum and maximum dataset values are automatically calculated
+ *
+ * Only for 3D datasets
+ *
+ * \param group parent group handle
+ * \param time time for dataset (hours)
+ * \param values For scalar data, the size must be volume count
+ *               For vector data , the size must be volume count * 2 (x1, y1, x2, y2, ..., xN, yN)
+ * \param verticalLevelCount Int Array holding the number of vertical levels for each face.
+ *               Size must be the face count
+ * \param verticalExtrusion Double Array holding the vertical level values for the voxels
+ *               Size must be Face count + Volume count
+ * \returns empty pointer if not possible to create dataset (e.g. group opened in read mode), otherwise handle to new dataset
+ */
+
+MDAL_EXPORT MDAL_DatasetH MDAL_G_addDataset3D(
+  MDAL_DatasetGroupH group,
+  double time,
+  const double *values,
+  const int *verticalLevelCount,
+  const double *verticalExtrusions
+);
+
+/**
  * Returns whether dataset group is in edit mode
  */
 MDAL_EXPORT bool MDAL_G_isInEditMode( MDAL_DatasetGroupH group );
