@@ -813,7 +813,7 @@ void MDAL_G_setScalarData( MDAL_DatasetGroupH group, bool isScalar )
     return;
   }
   MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  if ( g->datasets.empty() )
+  if ( g->empty() )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not empty" );
   }
