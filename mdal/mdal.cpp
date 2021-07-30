@@ -804,25 +804,6 @@ bool MDAL_G_hasScalarData( MDAL_DatasetGroupH group )
   return g->isScalar();
 }
 
-<<<<<<< HEAD
-void MDAL_G_setScalarData( MDAL_DatasetGroupH group, bool isScalar )
-{
-  if ( !group )
-  {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
-    return;
-  }
-  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
-  if ( g->empty() )
-  {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not empty" );
-  }
-  g->setIsScalar( isScalar );
-  return;
-}
-
-=======
->>>>>>> parent of 9e33e30 (add setHasScalar)
 MDAL_DataLocation MDAL_G_dataLocation( MDAL_DatasetGroupH group )
 {
   if ( !group )
