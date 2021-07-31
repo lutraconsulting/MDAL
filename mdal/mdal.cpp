@@ -469,7 +469,16 @@ MDAL_DatasetGroupH MDAL_M_datasetGroup( MDAL_MeshH mesh, int index )
     return nullptr;
   }
   size_t i = static_cast<size_t>( index );
-  return static_cast< MDAL_DatasetH >( m->datasetGroups[i].get() );
+
+  std::shared_ptr<MDAL::DatasetGroup> g = m->datasetGroups[i];
+  const std::string driverName = g->driverName();
+  std::shared_ptr<MDAL::Driver> dr = MDAL::DriverManager::instance().driver( driverName );
+  if ( dr->hasWriteDatasetCapability( g->dataLocation() ) )
+  {
+    g->startEditing();
+  }
+  
+  return static_cast< MDAL_DatasetH >( g.get() );
 }
 
 MDAL_DatasetGroupH MDAL_M_addDatasetGroup(
@@ -1443,3 +1452,27 @@ void MDAL_M_setProjection( MDAL_MeshH mesh, const char *projection )
   static_cast<MDAL::Mesh *>( mesh )->setSourceCrsFromWKT( std::string( projection ) );
 }
 
+void MDAL_M_addEdges( MDAL_MeshH mesh,
+                                  int edgesCount,
+                                  int *startVertexIndices,
+                                  int *endVertexIndices)
+{
+  MDAL::Log::resetLastStatus();
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+    return;
+  }
+
+  MDAL::Mesh *m = static_cast<MDAL::Mesh *>( mesh );
+
+  if ( ! m->isEditable() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not editable" );
+  }
+
+  m->datasetGroups.clear();
+  std::shared_ptr<MDAL::Driver> driver = MDAL::DriverManager::instance().driver( m->driverName() );
+
+  m->addEdges( edgesCount, startVertexIndices, endVertexIndices );
+}
