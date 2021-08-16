@@ -44,6 +44,7 @@ TEST( ApiTest, DriversApi )
   EXPECT_EQ( MDAL_DR_longName( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_DR_name( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_DR_filters( nullptr ), std::string( "" ) );
+  EXPECT_EQ( MDAL_DR_faceVerticesMaximumCount( nullptr ), -1 );
 }
 
 TEST( ApiTest, MeshApi )
