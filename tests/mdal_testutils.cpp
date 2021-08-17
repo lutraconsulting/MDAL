@@ -402,7 +402,6 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
 
   // Load saved mesh
   MDAL_MeshH savedMesh = MDAL_LoadMesh( savedFile.c_str() );
-  std::cout << savedUri << std::endl;
   EXPECT_NE( savedMesh, nullptr );
   s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
