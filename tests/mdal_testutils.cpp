@@ -7,6 +7,7 @@
 
 #include "mdal_testutils.hpp"
 #include "mdal_config.hpp"
+#include "mdal_utils.hpp"
 #include <vector>
 #include <math.h>
 #include <assert.h>
@@ -383,6 +384,8 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
   if ( !meshName.empty() )
     uri = "\"" + uri + "\":" + meshName;
 
+  std::string savedUri = MDAL::buildMeshUri( savedFile, meshName, driver );
+
   // Open mesh
   MDAL_MeshH meshToSave = MDAL_LoadMesh( uri.c_str() );
   EXPECT_NE( meshToSave, nullptr );
@@ -390,7 +393,7 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
   ASSERT_EQ( MDAL_Status::None, s );
 
   // Save the mesh
-  MDAL_SaveMesh( meshToSave, savedFile.c_str(), driver.c_str() );
+  MDAL_SaveMeshWithUri( meshToSave, savedUri.c_str() );
   s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
 

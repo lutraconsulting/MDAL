@@ -274,6 +274,16 @@ MDAL_EXPORT MDAL_MeshH MDAL_CreateMesh( MDAL_DriverH driver );
 MDAL_EXPORT void MDAL_SaveMesh( MDAL_MeshH mesh, const char *meshFile, const char *driver );
 
 /**
+ * Saves mesh (only mesh structure) on a file with an uri. On error see MDAL_LastStatus for error type.
+ *
+ * uri has form <DriverName>:"<MeshFilePath>"[:<SpecificMeshName>]
+ * examples: Ugrid:"mesh.nc":0, Ugrid:"mesh.nc":mesh2d, Ugrid:"mesh.nc"
+ *
+ * since MDAL 0.9
+ */
+MDAL_EXPORT void MDAL_SaveMeshWithUri( MDAL_MeshH mesh, const char *uri );
+
+/**
  * Returns mesh projection
  * not thread-safe and valid only till next call
  */
