@@ -16,6 +16,16 @@
 #define M_PI 3.14159265358979323846264338327
 #endif
 
+TEST( MeshUgridTest, Driver )
+{
+  MDAL_DriverH driver = MDAL_driverFromName( "Ugrid" );
+  EXPECT_EQ( strcmp( MDAL_DR_filters( driver ), "*.nc" ), 0 );
+  EXPECT_TRUE( MDAL_DR_meshLoadCapability( driver ) );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
+  EXPECT_EQ( strcmp( MDAL_DR_saveMeshSuffix( driver ), "nc" ), 0 );
+  EXPECT_EQ( MDAL_DR_faceVerticesMaximumCount( driver ), std::numeric_limits<int>::max() );
+}
+
 TEST( MeshUgridTest, SaveDFlow11Manzese )
 {
   saveAndCompareMesh(

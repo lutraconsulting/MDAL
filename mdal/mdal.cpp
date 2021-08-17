@@ -171,6 +171,17 @@ const char *MDAL_DR_filters( MDAL_DriverH driver )
   return _return_str( d->filters() );
 }
 
+int MDAL_DR_faceVerticesMaximumCount( MDAL_DriverH driver )
+{
+  if ( !driver )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
+    return -1;
+  }
+  MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
+  return d->faceVerticesMaximumCount();
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -1442,4 +1453,3 @@ void MDAL_M_setProjection( MDAL_MeshH mesh, const char *projection )
 
   static_cast<MDAL::Mesh *>( mesh )->setSourceCrsFromWKT( std::string( projection ) );
 }
-
