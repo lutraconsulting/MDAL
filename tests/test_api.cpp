@@ -45,6 +45,19 @@ TEST( ApiTest, DriversApi )
   EXPECT_EQ( MDAL_DR_name( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_DR_filters( nullptr ), std::string( "" ) );
   EXPECT_EQ( MDAL_DR_faceVerticesMaximumCount( nullptr ), -1 );
+  MDAL_SaveMeshWithUri( nullptr, "" );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_FileNotFound );
+  MDAL_SaveMeshWithUri( nullptr, "/home/aFile.nc" );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_MissingDriver );
+  MDAL_SaveMeshWithUri( nullptr, "GRIB:\"/home/aFile.nc\"" );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_MissingDriverCapability );
+  MDAL_SaveMesh( nullptr, nullptr, "Ugrid" );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_FileNotFound );
+  MDAL_SaveMesh( nullptr, "/home/aFile.nc", "Ubrid" );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_MissingDriver );
+  MDAL_SaveMesh( nullptr, "/home/aFile.nc", "GRIB" );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::Err_MissingDriverCapability );
+
 }
 
 TEST( ApiTest, MeshApi )
