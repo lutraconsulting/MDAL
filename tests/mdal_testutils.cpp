@@ -406,6 +406,19 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
   // Compare saved with the original mesh
   compareMeshFrames( meshToSave, savedMesh );
 
+  MDAL_CloseMesh( savedMesh );
+
+  // Again but with other API method
+  MDAL_SaveMesh( meshToSave,  savedFile.c_str(), driver.c_str() );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Load saved mesh
+  savedMesh = MDAL_LoadMesh( savedFile.c_str() );
+  EXPECT_NE( savedMesh, nullptr );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
   // Close meshed and delete all the files
   MDAL_CloseMesh( meshToSave );
   MDAL_CloseMesh( savedMesh );
