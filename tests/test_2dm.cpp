@@ -9,6 +9,16 @@
 #include "mdal_testutils.hpp"
 #include "mdal_utils.hpp"
 
+TEST( Mesh2DMTest, Driver )
+{
+  MDAL_DriverH driver = MDAL_driverFromName( "2DM" );
+  EXPECT_EQ( strcmp( MDAL_DR_filters( driver ), "*.2dm" ), 0 );
+  EXPECT_TRUE( MDAL_DR_meshLoadCapability( driver ) );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
+  EXPECT_EQ( strcmp( MDAL_DR_saveMeshSuffix( driver ), "2dm" ), 0 );
+  EXPECT_EQ( MDAL_DR_faceVerticesMaximumCount( driver ), 6 );
+}
+
 TEST( Mesh2DMTest, MissingFile )
 {
   MDAL_MeshH m = MDAL_LoadMesh( "non/existent/path.2dm" );

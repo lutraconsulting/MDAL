@@ -21,7 +21,7 @@ static const char *EMPTY_STR = "";
 
 const char *MDAL_Version()
 {
-  return "0.8.90";
+  return "0.8.92";
 }
 
 MDAL_Status MDAL_LastStatus()
@@ -171,6 +171,17 @@ const char *MDAL_DR_filters( MDAL_DriverH driver )
   return _return_str( d->filters() );
 }
 
+int MDAL_DR_faceVerticesMaximumCount( MDAL_DriverH driver )
+{
+  if ( !driver )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
+    return -1;
+  }
+  MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
+  return d->faceVerticesMaximumCount();
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -244,9 +255,51 @@ void MDAL_SaveMesh( MDAL_MeshH mesh, const char *meshFile, const char *driver )
   }
 
   std::string filename( meshFile );
-  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), filename, driverName );
+
+  std::string uri = MDAL::buildMeshUri( filename, "", driverName );
+
+  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), uri );
 }
 
+
+void MDAL_SaveMeshWithUri( MDAL_MeshH mesh, const char *uri )
+{
+  MDAL::Log::resetLastStatus();
+
+  std::string meshFile;
+  std::string driverName;
+  std::string meshName;
+
+  MDAL::parseDriverAndMeshFromUri( uri, driverName, meshFile, meshName );
+
+  if ( meshFile.empty() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );
+    return;
+  }
+
+  auto d = MDAL::DriverManager::instance().driver( driverName );
+
+  if ( !d )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "No driver with name: " + driverName );
+    return;
+  }
+
+  if ( !d->hasCapability( MDAL::Capability::SaveMesh ) )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Driver " + driverName + " does not have SaveMesh capability" );
+    return;
+  }
+
+  if ( d->faceVerticesMaximumCount() < MDAL_M_faceVerticesMaximumCount( mesh ) )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is incompatible with driver " + driverName );
+    return;
+  }
+
+  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), uri );
+}
 
 void MDAL_CloseMesh( MDAL_MeshH mesh )
 {
@@ -886,7 +939,7 @@ MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group, double time, const do
 
   if ( g->dataLocation() == MDAL_DataLocation::DataOnVolumes )
   {
-    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Dataset Group has data on 3D volumes" );
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Cannot save 3D dataset as a 2D dataset" );
     return nullptr;
   }
 
@@ -902,6 +955,55 @@ MDAL_DatasetH MDAL_G_addDataset( MDAL_DatasetGroupH group, double time, const do
                      t,
                      values,
                      active
+                   );
+  if ( index < g->datasets.size() ) // we have new dataset
+    return static_cast< MDAL_DatasetGroupH >( g->datasets[ index ].get() );
+  else
+    return nullptr;
+}
+
+MDAL_DatasetH MDAL_G_addDataset3D( MDAL_DatasetGroupH group, double time, const double *values, const int *verticalLevelCount, const double *verticalExtrusions )
+{
+  if ( !group )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
+    return nullptr;
+  }
+
+  if ( !values || !verticalLevelCount || !verticalExtrusions )
+  {
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, "Passed pointer Values are not valid" );
+    return nullptr;
+  }
+
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  if ( !g->isInEditMode() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not in edit mode" );
+    return nullptr;
+  }
+
+  const std::string driverName = g->driverName();
+  std::shared_ptr<MDAL::Driver> dr = MDAL::DriverManager::instance().driver( driverName );
+  if ( !dr )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver name " + driverName + " saved in dataset group could not be found" );
+    return nullptr;
+  }
+
+  if ( g->dataLocation() != MDAL_DataLocation::DataOnVolumes )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Cannot write 3D data to a Dataset Group that does not have Data On Volumes" );
+    return nullptr;
+  }
+
+  const size_t index = g->datasets.size();
+  MDAL::RelativeTimestamp t( time, MDAL::RelativeTimestamp::hours );
+  dr->createDataset( g,
+                     t,
+                     values,
+                     verticalLevelCount,
+                     verticalExtrusions
                    );
   if ( index < g->datasets.size() ) // we have new dataset
     return static_cast< MDAL_DatasetGroupH >( g->datasets[ index ].get() );
@@ -1393,4 +1495,3 @@ void MDAL_M_setProjection( MDAL_MeshH mesh, const char *projection )
 
   static_cast<MDAL::Mesh *>( mesh )->setSourceCrsFromWKT( std::string( projection ) );
 }
-
