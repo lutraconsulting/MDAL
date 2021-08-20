@@ -215,6 +215,13 @@ MDAL_EXPORT const char *MDAL_DR_longName( MDAL_DriverH driver );
  */
 MDAL_EXPORT const char *MDAL_DR_filters( MDAL_DriverH driver );
 
+/**
+ * Returns the maximum number of vertices per face supported by the driver
+ *
+ * \since MDAL 0.9.0
+ */
+MDAL_EXPORT int MDAL_DR_faceVerticesMaximumCount( MDAL_DriverH driver );
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -265,6 +272,16 @@ MDAL_EXPORT MDAL_MeshH MDAL_CreateMesh( MDAL_DriverH driver );
  * Saves mesh (only mesh structure) on a file with the specified driver. On error see MDAL_LastStatus for error type.
  */
 MDAL_EXPORT void MDAL_SaveMesh( MDAL_MeshH mesh, const char *meshFile, const char *driver );
+
+/**
+ * Saves mesh (only mesh structure) on a file with an uri. On error see MDAL_LastStatus for error type.
+ *
+ * uri has form <DriverName>:"<MeshFilePath>"[:<SpecificMeshName>]
+ * examples: Ugrid:"mesh.nc":0, Ugrid:"mesh.nc":mesh2d, Ugrid:"mesh.nc"
+ *
+ * since MDAL 0.9
+ */
+MDAL_EXPORT void MDAL_SaveMeshWithUri( MDAL_MeshH mesh, const char *uri );
 
 /**
  * Returns mesh projection
@@ -331,7 +348,7 @@ MDAL_EXPORT int MDAL_M_edgeCount( MDAL_MeshH mesh );
 MDAL_EXPORT int MDAL_M_faceCount( MDAL_MeshH mesh );
 
 /**
- * Returns maximum number of vertices face can consist of, e.g. 4 for regular quad mesh
+ * Returns maximum number of vertices per face for this mesh, can consist of, e.g. 4 for regular quad mesh.
  */
 MDAL_EXPORT int MDAL_M_faceVerticesMaximumCount( MDAL_MeshH mesh );
 

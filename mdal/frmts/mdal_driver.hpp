@@ -58,7 +58,7 @@ namespace MDAL
       // loads datasets
       virtual void load( const std::string &uri, Mesh *mesh );
       // save mesh
-      virtual void save( const std::string &uri, Mesh *mesh );
+      virtual void save( const std::string &fileName, const std::string &meshName, Mesh *mesh );
 
       // create new dataset group
       virtual void createDatasetGroup(

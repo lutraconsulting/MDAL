@@ -134,9 +134,11 @@ namespace MDAL
         return mValues[index];
       }
 
-      //! Returns pointer to internal buffer with values
-      //! Never null, already allocated
-      //! for vector datasets in form x1, y1, ..., xN, yN
+      /**
+       * Returns pointer to internal buffer with values
+       * Never null, already allocated
+       * for vector datasets in form x1, y1, ..., xN, yN
+       */
       double *values()
       {
         return mValues.data();
@@ -236,9 +238,11 @@ namespace MDAL
 
       void updateIndices();
 
-      //! Returns pointer to internal buffer with values
-      //! Never null, already allocated
-      //! for vector datasets in form x1, y1, ..., xN, yN
+      /**
+       * Returns pointer to internal buffer with values
+       * Never null, already allocated
+       * for vector datasets in form x1, y1, ..., xN, yN
+       */
       double *values()
       {
         return mValues.data();
@@ -262,21 +266,21 @@ namespace MDAL
       std::vector<double> mValues;
 
       /**
-       * Store The first index of 3D volume for particular mesh’s face in 3D Stacked Meshes
+       * Stores the first index of 3D volume for particular mesh’s face in 3D Stacked Meshes
        *
        * All values are initialised to actual values
        */
       std::vector<int> mFaceToVolume;
 
       /**
-       * Store Number of vertical level for particular mesh’s face in 3D Stacked Meshes.
+       * Stores number of vertical level for particular mesh’s face in 3D Stacked Meshes.
        *
        * All values are initialised to actual values
        */
       std::vector<int> mVerticalLevelCounts;
 
       /**
-       * Store Vertical level extrusion for particular mesh’s face in 3D Stacked Meshes.
+       * Stores vertical level extrusion for particular mesh’s face in 3D Stacked Meshes.
        *
        * All values are initialised to actual values
        */
