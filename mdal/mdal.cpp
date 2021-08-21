@@ -21,7 +21,7 @@ static const char *EMPTY_STR = "";
 
 const char *MDAL_Version()
 {
-  return "0.8.90";
+  return "0.8.92";
 }
 
 MDAL_Status MDAL_LastStatus()
@@ -171,6 +171,17 @@ const char *MDAL_DR_filters( MDAL_DriverH driver )
   return _return_str( d->filters() );
 }
 
+int MDAL_DR_faceVerticesMaximumCount( MDAL_DriverH driver )
+{
+  if ( !driver )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "Driver is not valid (null)" );
+    return -1;
+  }
+  MDAL::Driver *d = static_cast< MDAL::Driver * >( driver );
+  return d->faceVerticesMaximumCount();
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 /// MESH
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -244,9 +255,51 @@ void MDAL_SaveMesh( MDAL_MeshH mesh, const char *meshFile, const char *driver )
   }
 
   std::string filename( meshFile );
-  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), filename, driverName );
+
+  std::string uri = MDAL::buildMeshUri( filename, "", driverName );
+
+  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), uri );
 }
 
+
+void MDAL_SaveMeshWithUri( MDAL_MeshH mesh, const char *uri )
+{
+  MDAL::Log::resetLastStatus();
+
+  std::string meshFile;
+  std::string driverName;
+  std::string meshName;
+
+  MDAL::parseDriverAndMeshFromUri( uri, driverName, meshFile, meshName );
+
+  if ( meshFile.empty() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_FileNotFound, "Mesh file is not valid (null)" );
+    return;
+  }
+
+  auto d = MDAL::DriverManager::instance().driver( driverName );
+
+  if ( !d )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriver, "No driver with name: " + driverName );
+    return;
+  }
+
+  if ( !d->hasCapability( MDAL::Capability::SaveMesh ) )
+  {
+    MDAL::Log::error( MDAL_Status::Err_MissingDriverCapability, "Driver " + driverName + " does not have SaveMesh capability" );
+    return;
+  }
+
+  if ( d->faceVerticesMaximumCount() < MDAL_M_faceVerticesMaximumCount( mesh ) )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is incompatible with driver " + driverName );
+    return;
+  }
+
+  MDAL::DriverManager::instance().save( static_cast< MDAL::Mesh * >( mesh ), uri );
+}
 
 void MDAL_CloseMesh( MDAL_MeshH mesh )
 {

@@ -13,6 +13,16 @@
 #include "mdal_testutils.hpp"
 #include "frmts/mdal_selafin.hpp"
 
+TEST( MeshSLFTest, Driver )
+{
+  MDAL_DriverH driver = MDAL_driverFromName( "SELAFIN" );
+  EXPECT_EQ( strcmp( MDAL_DR_filters( driver ), "*.slf" ), 0 );
+  EXPECT_TRUE( MDAL_DR_meshLoadCapability( driver ) );
+  EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
+  EXPECT_EQ( strcmp( MDAL_DR_saveMeshSuffix( driver ), "slf" ), 0 );
+  EXPECT_EQ( MDAL_DR_faceVerticesMaximumCount( driver ), 3 );
+}
+
 TEST( MeshSLFTest, MalpassetGeometry )
 {
   std::string path = test_file( "/slf/example.slf" );

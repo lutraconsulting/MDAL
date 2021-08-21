@@ -7,6 +7,7 @@
 
 #include "mdal_testutils.hpp"
 #include "mdal_config.hpp"
+#include "mdal_utils.hpp"
 #include <vector>
 #include <math.h>
 #include <assert.h>
@@ -380,8 +381,13 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
 
   std::string uri( filename );
 
+  std::string savedUri = driver + ":\"" + savedFile + "\"";
+
   if ( !meshName.empty() )
+  {
     uri = "\"" + uri + "\":" + meshName;
+    savedUri = savedUri + ":" + meshName;
+  }
 
   // Open mesh
   MDAL_MeshH meshToSave = MDAL_LoadMesh( uri.c_str() );
@@ -390,7 +396,7 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
   ASSERT_EQ( MDAL_Status::None, s );
 
   // Save the mesh
-  MDAL_SaveMesh( meshToSave, savedFile.c_str(), driver.c_str() );
+  MDAL_SaveMeshWithUri( meshToSave, savedUri.c_str() );
   s = MDAL_LastStatus();
   ASSERT_EQ( MDAL_Status::None, s );
 
@@ -402,6 +408,19 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
 
   // Compare saved with the original mesh
   compareMeshFrames( meshToSave, savedMesh );
+
+  MDAL_CloseMesh( savedMesh );
+
+  // Again but with other API method
+  MDAL_SaveMesh( meshToSave,  savedFile.c_str(), driver.c_str() );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Load saved mesh
+  savedMesh = MDAL_LoadMesh( savedFile.c_str() );
+  EXPECT_NE( savedMesh, nullptr );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
 
   // Close meshed and delete all the files
   MDAL_CloseMesh( meshToSave );
