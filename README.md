@@ -69,7 +69,7 @@ You can use MDAL to load the following file formats:
 | FLO-2D   |  READ-ONLY  | NO | READ-ONLY | READ-WRITE | NO | NO  | 
 | Selafin   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
 | SWW   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
-| PLY   | READ-ONLY | N/A | READ-ONLY | READ-ONLY | N/A | N/A |
+| PLY   | READ-WRITE | N/A | READ-WRITE | READ-WRITE | READ-WRITE | N/A |
 | DFSU  | READ-ONLY | N/A | NO | READ-ONLY | N/A | YES | 
 
 # Standalone Installation

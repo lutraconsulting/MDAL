@@ -697,7 +697,7 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
       };
       idx++;
       std::vector<double> ex( count + 1, 0 );
-      ds->verticalLevelData( vindex + index , count + 1, ex.data() );
+      ds->verticalLevelData( vindex + index, count + 1, ex.data() );
       libply::ListProperty *lp1 = dynamic_cast<libply::ListProperty *>( &e[idx] );
       lp1->define( libply::Type::FLOAT64, count + 1 );
       for ( int j = 0; j < count + 1; ++j )
