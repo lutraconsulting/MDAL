@@ -477,7 +477,7 @@ MDAL_DatasetGroupH MDAL_M_datasetGroup( MDAL_MeshH mesh, int index )
   {
     g->startEditing();
   }
-  
+
   return static_cast< MDAL_DatasetH >( g.get() );
 }
 
@@ -1453,9 +1453,9 @@ void MDAL_M_setProjection( MDAL_MeshH mesh, const char *projection )
 }
 
 void MDAL_M_addEdges( MDAL_MeshH mesh,
-                                  int edgesCount,
-                                  int *startVertexIndices,
-                                  int *endVertexIndices)
+                      int edgesCount,
+                      int *startVertexIndices,
+                      int *endVertexIndices )
 {
   MDAL::Log::resetLastStatus();
   if ( !mesh )

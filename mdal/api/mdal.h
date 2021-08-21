@@ -328,7 +328,7 @@ MDAL_EXPORT void MDAL_M_addFaces( MDAL_MeshH mesh,
 MDAL_EXPORT void MDAL_M_addEdges( MDAL_MeshH mesh,
                                   int edgesCount,
                                   int *startVertexIndices,
-                                  int *endVertexIndices);
+                                  int *endVertexIndices );
 
 /**
  * Returns vertex count for the mesh
@@ -367,7 +367,7 @@ MDAL_EXPORT void MDAL_M_LoadDatasets( MDAL_MeshH mesh, const char *datasetFile )
 MDAL_EXPORT int MDAL_M_metadataCount( MDAL_MeshH mesh );
 
 /**
- * Returns dataset metadata key
+ * Returns mesh metadata key
  * not thread-safe and valid only till next call
  *
  * \since MDAL 0.9.0
@@ -375,7 +375,7 @@ MDAL_EXPORT int MDAL_M_metadataCount( MDAL_MeshH mesh );
 MDAL_EXPORT const char *MDAL_M_metadataKey( MDAL_MeshH mesh, int index );
 
 /**
- * Returns dataset metadata value
+ * Returns mesh metadata value
  * not thread-safe and valid only till next call
  *
  * \since MDAL 0.9.0
@@ -396,6 +396,8 @@ MDAL_EXPORT int MDAL_M_datasetGroupCount( MDAL_MeshH mesh );
 
 /**
  * Returns dataset group handle
+ *
+ * Since 0.9.0 - if the driver has Write Capability for this DatasetGroup, it is opened in edit mode
  */
 MDAL_EXPORT MDAL_DatasetGroupH MDAL_M_datasetGroup( MDAL_MeshH mesh, int index );
 
