@@ -23,7 +23,8 @@
 #include "mdal_logger.hpp"
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
-#include "libplyxx/libplyxx.h"
+#include "libplyxx.h"
+#include "mdal_driver_manager.hpp"
 
 #define DRIVER_NAME "PLY"
 
@@ -50,7 +51,7 @@ MDAL::DriverPly::~DriverPly() = default;
 
 size_t getIndex( std::vector<std::pair<std::string, bool>> v, std::string in )
 {
-  auto is_equal = [ in ](std::pair<std::string, bool> s){ return  s.first == in; };
+  auto is_equal = [ in ]( std::pair<std::string, bool> s ) { return  s.first == in; };
 
   auto it = std::find_if( v.begin(), v.end(), is_equal );
   return ( size_t )std::distance( v.begin(), it );
@@ -87,12 +88,12 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
 
   //datastructures that will contain all of the datasets, categorised by vertex, face and edge datasets
   std::vector<std::vector<double>> vertexDatasets; // contains the data
-  std::vector<std::pair<std::string, bool>> vProp2Ds; // contains the dataset name
+  std::vector<std::pair<std::string, bool>> vProp2Ds; // contains the dataset name and a flag for scalr / vector
   std::vector<std::vector<double>> faceDatasets;
   std::vector<std::pair<std::string, bool>> fProp2Ds;
   std::vector<std::vector<double>> edgeDatasets;
   std::vector<std::pair<std::string, bool>> eProp2Ds;
-  std::unordered_map<std::string, std::pair<std::vector<double>, std::vector<int>>> listProps;
+  std::unordered_map<std::string, std::pair<std::vector<double>, std::vector<int>>> listProps; // contains the list datasets as vector of values and vector indices for each face into the vector of values
 
   libply::File file( meshFile );
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) { return nullptr; }
@@ -125,7 +126,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       {
         vProp2Ds.emplace_back( property.name, property.isList );
         vertexDatasets.push_back( std::vector<double>() );
-        if ( property.isList ) listProps.emplace( property.name, std::make_pair(std::vector<double>(), std::vector<int>()));
+        if ( property.isList ) listProps.emplace( property.name, std::make_pair( std::vector<double>(), std::vector<int>() ) );
       }
       else if ( element.name == "face" &&
                 property.name != "vertex_indices"
@@ -133,7 +134,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       {
         fProp2Ds.emplace_back( property.name, property.isList );
         faceDatasets.push_back( std::vector<double>() );
-        if ( property.isList ) listProps.emplace( property.name, std::make_pair(std::vector<double>(), std::vector<int>()));
+        if ( property.isList ) listProps.emplace( property.name, std::make_pair( std::vector<double>(), std::vector<int>() ) );
       }
       else if ( element.name == "edge" &&
                 property.name != "vertex1" &&
@@ -142,7 +143,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       {
         eProp2Ds.emplace_back( property.name, property.isList );
         edgeDatasets.push_back( std::vector<double>() );
-        if ( property.isList ) listProps.emplace( property.name, std::make_pair(std::vector<double>(), std::vector<int>()));
+        if ( property.isList ) listProps.emplace( property.name, std::make_pair( std::vector<double>(), std::vector<int>() ) );
       }
     }
   }
@@ -324,17 +325,18 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   {
     if ( vProp2Ds[i].second )
     {
-       auto &vals = listProps.at( vProp2Ds[i].first );
-       auto it = vals.second.begin();
-       size_t idx = *it;
-       while ( idx < vals.first.size() )
-       {
-          vertexDatasets[i].push_back( vals.first[idx] );
-          vertexDatasets[i].push_back( vals.first[idx+1] );
-          it = std::next( it, 1 );
-          idx += *it;
-       }
-       listProps.erase( vProp2Ds[i].first );
+      auto &vals = listProps.at( vProp2Ds[i].first );
+      vertexDatasets[i].clear();
+      auto it = vals.second.begin();
+      size_t idx = 0;
+      while ( idx < vals.first.size() )
+      {
+        vertexDatasets[i].push_back( vals.first[idx] );
+        vertexDatasets[i].push_back( vals.first[idx + 1] );
+        idx += *it;
+        it = std::next( it, 1 );
+      }
+      listProps.erase( vProp2Ds[i].first );
     }
     std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), vProp2Ds[i].first, DataOnVertices, !vProp2Ds[i].second );
     addDataset2D( group.get(), vertexDatasets[i] );
@@ -345,31 +347,32 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   {
     if ( fProp2Ds[i].second )
     {
-       std::string name = fProp2Ds[i].first;
-       if ( name.find("__vols") != std::string::npos ) break;
-       auto &vals = listProps.at( name );
-       auto it = vals.second.begin();
-       int idx = *it;
-       if ( listProps.find( name + "__vols" ) == listProps.end() )
-       {
-           while ( idx < vals.first.size() )
-           {
-              vertexDatasets[i].push_back( vals.first[idx] );
-              vertexDatasets[i].push_back( vals.first[idx+1] );
-              it = std::next( it, 1 );
-              idx += *it;
-           }
-          std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), name, DataOnFaces, false  );
-          addDataset2D( group.get(), faceDatasets[i] );
-       }
-       else
-       {
+      std::string name = fProp2Ds[i].first;
+      if ( name.find( "__vols" ) != std::string::npos ) break;
+      auto &vals = listProps.at( name );
+      faceDatasets[i].clear();
+      auto it = vals.second.begin();
+      size_t idx = 0;
+      if ( listProps.find( name + "__vols" ) == listProps.end() )
+      {
+        while ( idx < vals.first.size() )
+        {
+          faceDatasets[i].push_back( vals.first[idx] );
+          faceDatasets[i].push_back( vals.first[idx + 1] );
+          idx += *it;
+          it = std::next( it, 1 );
+        }
+        std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), name, DataOnFaces, false );
+        addDataset2D( group.get(), faceDatasets[i] );
+      }
+      else
+      {
         auto levels = listProps.at( name + "__vols" );
         std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), name, DataOnVolumes, true );
         addDataset3D( group.get(), vals.first, vals.second, levels.first, levels.second );
         listProps.erase( name + "__vols" );
-       }
-       listProps.erase( name );
+      }
+      listProps.erase( name );
     }
     else
     {
@@ -383,19 +386,20 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   {
     if ( eProp2Ds[i].second )
     {
-       auto vals = listProps.at( eProp2Ds[i].first );
-       auto it = vals.second.begin();
-       size_t idx = *it;
-       while ( idx < vals.first.size() )
-       {
-          vertexDatasets[i].push_back( vals.first[idx] );
-          vertexDatasets[i].push_back( vals.first[idx+1] );
-          it = std::next( it, 1 );
-          idx += *it;
-       }
-       listProps.erase( eProp2Ds[i].first );
+      auto vals = listProps.at( eProp2Ds[i].first );
+      edgeDatasets[i].clear();
+      auto it = vals.second.begin();
+      size_t idx = 0;
+      while ( idx < vals.first.size() )
+      {
+        edgeDatasets[i].push_back( vals.first[idx] );
+        edgeDatasets[i].push_back( vals.first[idx + 1] );
+        idx += *it;
+        it = std::next( it, 1 );
+      }
+      listProps.erase( eProp2Ds[i].first );
     }
-    std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), eProp2Ds[i].first, DataOnEdges, !vProp2Ds[i].second );
+    std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), eProp2Ds[i].first, DataOnEdges, !eProp2Ds[i].second );
     addDataset2D( group.get(), edgeDatasets[i] );
   }
 
@@ -447,7 +451,6 @@ void MDAL::DriverPly::addDataset2D( MDAL::DatasetGroup *group, const std::vector
 
   size_t mult = 1;
   if ( !group->isScalar() ) mult = 2;
-
 
   MDAL::Mesh *mesh = group->mesh();
 
@@ -505,9 +508,9 @@ void MDAL::DriverPly::addDataset3D( MDAL::DatasetGroup *group,
   if ( 0 == mesh->facesCount() )
     return;
 
-  if (valueIndexes.size() != mesh->facesCount() ||
-      levelIndexes.size() != mesh->facesCount() ||
-      levels.size() != values.size() + mesh->facesCount()
+  if ( valueIndexes.size() != mesh->facesCount() ||
+       levelIndexes.size() != mesh->facesCount() ||
+       levels.size() != values.size() + mesh->facesCount()
      )
   {
     MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "Incomplete Volume Dataset" );
@@ -524,7 +527,7 @@ void MDAL::DriverPly::addDataset3D( MDAL::DatasetGroup *group,
   group->setStatistics( MDAL::calculateStatistics( group ) );
 }
 
-void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
+void MDAL::DriverPly::save( const std::string &fileName, const std::string &meshName, Mesh *mesh )
 {
   MDAL::Log::resetLastStatus();
 
@@ -552,12 +555,19 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
     }
     else if ( group->dataLocation() == MDAL_DataLocation::DataOnVolumes )
     {
-      volGroups.push_back( group );
+      if ( group->isScalar() )
+      {
+        volGroups.push_back( group );
+      }
+      else
+      {
+        MDAL_SetStatus( MDAL_LogLevel::Warn, MDAL_Status::Err_IncompatibleDatasetGroup, "PLY: Vector Datasets on Volumes are not supported" );
+      }
     }
   }
 
 
-  libply::FileOut file( uri, libply::File::Format::ASCII );
+  libply::FileOut file( fileName, libply::File::Format::ASCII );
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) return;
 
   libply::ElementsDefinition definitions;
@@ -569,6 +579,7 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
   {
     vproperties.emplace_back( group->name(), libply::Type::FLOAT64, ! group->isScalar() );
   }
+
   definitions.emplace_back( "vertex", mesh->verticesCount(), vproperties );
   if ( mesh->facesCount() > 0 )
   {
@@ -585,6 +596,7 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
     }
     definitions.emplace_back( "face", mesh->facesCount(), fproperties );
   }
+
   if ( mesh->edgesCount() > 0 )
   {
     std::vector<libply::Property> eproperties;
@@ -663,17 +675,18 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
         lp->value( 0 ) = val[0];
         lp->value( 1 ) = val[1];
       };
+      idx++;
     }
     int vCount[1];
     int f2v[1];
     for ( size_t i = 0; i < volGroups.size(); i++ )
     {
-      std::shared_ptr<MDAL::MemoryDataset3D> ds = std::dynamic_pointer_cast<MDAL::MemoryDataset3D>(volGroups[i]->datasets[0]);
+      std::shared_ptr<MDAL::MemoryDataset3D> ds = std::dynamic_pointer_cast<MDAL::MemoryDataset3D>( volGroups[i]->datasets[0] );
       ds->verticalLevelCountData( index, 1, &vCount[0] );
       const int count = vCount[0];
       ds->faceToVolumeData( index, 1, &f2v[0] );
       const int vindex = f2v[0];
-      std::vector<double> val(count, 0);
+      std::vector<double> val( count, 0 );
       ds->scalarVolumesData( vindex, count, val.data() );
       libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[idx] );
       lp->define( libply::Type::FLOAT64, count );
@@ -683,7 +696,7 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
         lp->value( j ) = val[j];
       };
       idx++;
-      std::vector<double> ex(count + 1, 0);
+      std::vector<double> ex( count + 1, 0 );
       ds->verticalLevelData( vindex + index , count + 1, ex.data() );
       libply::ListProperty *lp1 = dynamic_cast<libply::ListProperty *>( &e[idx] );
       lp1->define( libply::Type::FLOAT64, count + 1 );
@@ -754,10 +767,6 @@ void MDAL::DriverPly::save( const std::string &uri, MDAL::Mesh *mesh )
 
 bool MDAL::DriverPly::persist( DatasetGroup *group )
 {
-    save( group->mesh()->uri(), group->mesh() );
-    if ( MDAL::Log::getLastStatus() != MDAL_Status::None )
-    {
-        return true;
-    }
-    return false;
+  save( group->uri(), "", group->mesh() );
+  return false;
 }

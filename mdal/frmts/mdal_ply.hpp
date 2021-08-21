@@ -31,7 +31,7 @@ namespace MDAL
       int faceVerticesMaximumCount() const override {return 100;}
 
       std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName = "" ) override;
-      void save( const std::string &uri, Mesh *mesh ) override;
+      void save( const std::string &fileName, const std::string &meshName, Mesh *mesh ) override;
       bool persist( DatasetGroup *group ) override;
 
       std::string saveMeshOnFileSuffix() const override;

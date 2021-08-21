@@ -8,8 +8,7 @@
 #include "mdal.h"
 #include "mdal_testutils.hpp"
 #include "mdal_utils.hpp"
-#include "../mdal/frmts/mdal_driver.hpp"
-#include "../mdal/mdal_data_model.hpp"
+
 
 
 TEST( MeshPlyTest, WrongFiles )
@@ -67,6 +66,18 @@ TEST( MeshPlyTest, all_features )
   f_v = getFaceVerticesIndexAt( m, 1, 2 );
   EXPECT_EQ( 3, f_v );
 
+  int e_count = MDAL_M_edgeCount( m );
+  EXPECT_EQ( 6, e_count );
+
+  std::vector<int> start;
+  start.resize( e_count );
+  std::vector<int> end;
+  end.resize( e_count );
+
+  getEdgeVertexIndices( m, e_count, start, end );
+  EXPECT_EQ( start[0], 0 );
+  EXPECT_EQ( end[0], 1 );
+
   double minX, maxX, minY, maxY;
   MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
   EXPECT_DOUBLE_EQ( 0, minX );
@@ -75,7 +86,7 @@ TEST( MeshPlyTest, all_features )
   EXPECT_DOUBLE_EQ( 20, maxY );
 
   // Bed elevation dataset
-  ASSERT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 11, MDAL_M_datasetGroupCount( m ) );
 
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
@@ -133,9 +144,42 @@ TEST( MeshPlyTest, all_features )
   value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 255, value );
 
-  //test face data
+  //test vertex vector data
 
   g = MDAL_M_datasetGroup( m, 4 );
+  ASSERT_NE( g, nullptr );
+
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "vertex_vector" ), std::string( name ) );
+
+  scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 5, count );
+
+  value = getValueX( ds, 0 );
+  EXPECT_DOUBLE_EQ( 101, value );
+
+  value = getValueY( ds, 0 );
+  EXPECT_DOUBLE_EQ( 102, value );
+
+
+  //test face data
+
+  g = MDAL_M_datasetGroup( m, 5 );
   ASSERT_NE( g, nullptr );
 
   name = MDAL_G_name( g );
@@ -162,9 +206,41 @@ TEST( MeshPlyTest, all_features )
   value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 2000, value );
 
+  //test face vector data
+
+  g = MDAL_M_datasetGroup( m, 6 );
+  ASSERT_NE( g, nullptr );
+
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "face_vector" ), std::string( name ) );
+
+  scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 2, count );
+
+  value = getValueX( ds, 0 );
+  EXPECT_DOUBLE_EQ( 0, value );
+
+  value = getValueY( ds, 0 );
+  EXPECT_DOUBLE_EQ( 101, value );
+
   //test edge data
 
-  g = MDAL_M_datasetGroup( m, 7 );
+  g = MDAL_M_datasetGroup( m, 9 );
   ASSERT_NE( g, nullptr );
 
   name = MDAL_G_name( g );
@@ -190,6 +266,39 @@ TEST( MeshPlyTest, all_features )
 
   value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 255, value );
+
+
+  //test edge vector data
+
+  g = MDAL_M_datasetGroup( m, 10 );
+  ASSERT_NE( g, nullptr );
+
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "edge_vector" ), std::string( name ) );
+
+  scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnEdges );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 6, count );
+
+  value = getValueX( ds, 0 );
+  EXPECT_DOUBLE_EQ( 101, value );
+
+  value = getValueY( ds, 0 );
+  EXPECT_DOUBLE_EQ( 102, value );
   MDAL_CloseMesh( m );
 }
 
@@ -231,6 +340,19 @@ TEST( MeshPlyInvTest, all_features_inv )
   f_v = getFaceVerticesIndexAt( m, 1, 2 );
   EXPECT_EQ( 3, f_v );
 
+  int e_count = MDAL_M_edgeCount( m );
+  EXPECT_EQ( 6, e_count );
+
+  std::vector<int> start;
+  start.resize( e_count );
+  std::vector<int> end;
+  end.resize( e_count );
+
+  getEdgeVertexIndices( m, e_count, start, end );
+
+  EXPECT_EQ( start[0], 0 );
+  EXPECT_EQ( end[0], 1 );
+
   double minX, maxX, minY, maxY;
   MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
   EXPECT_DOUBLE_EQ( 0, minX );
@@ -239,7 +361,7 @@ TEST( MeshPlyInvTest, all_features_inv )
   EXPECT_DOUBLE_EQ( 20, maxY );
 
   // Bed elevation dataset
-  ASSERT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 11, MDAL_M_datasetGroupCount( m ) );
 
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
@@ -270,7 +392,7 @@ TEST( MeshPlyInvTest, all_features_inv )
 
   //test vertex data
 
-  g = MDAL_M_datasetGroup( m, 1 );
+  g = MDAL_M_datasetGroup( m, 2 );
   ASSERT_NE( g, nullptr );
 
   name = MDAL_G_name( g );
@@ -297,9 +419,41 @@ TEST( MeshPlyInvTest, all_features_inv )
   value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 255, value );
 
+//test vertex vector data
+
+  g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "vertex_vector" ), std::string( name ) );
+
+  scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 5, count );
+
+  value = getValueX( ds, 0 );
+  EXPECT_DOUBLE_EQ( 201, value );
+
+  value = getValueY( ds, 0 );
+  EXPECT_DOUBLE_EQ( 202, value );
+
   //test face data
 
-  g = MDAL_M_datasetGroup( m, 4 );
+  g = MDAL_M_datasetGroup( m, 6 );
   ASSERT_NE( g, nullptr );
 
   name = MDAL_G_name( g );
@@ -326,9 +480,42 @@ TEST( MeshPlyInvTest, all_features_inv )
   value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 2000, value );
 
+  //test face vector data
+
+  g = MDAL_M_datasetGroup( m, 5 );
+  ASSERT_NE( g, nullptr );
+
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "face_vector" ), std::string( name ) );
+
+  scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 2, count );
+
+  value = getValueX( ds, 0 );
+  EXPECT_DOUBLE_EQ( 200, value );
+
+  value = getValueY( ds, 0 );
+  EXPECT_DOUBLE_EQ( 201, value );
+
+
   //test edge data
 
-  g = MDAL_M_datasetGroup( m, 7 );
+  g = MDAL_M_datasetGroup( m, 10 );
   ASSERT_NE( g, nullptr );
 
   name = MDAL_G_name( g );
@@ -354,6 +541,38 @@ TEST( MeshPlyInvTest, all_features_inv )
 
   value = getValue( ds, 1 );
   EXPECT_DOUBLE_EQ( 255, value );
+
+  //test edge vector data
+
+  g = MDAL_M_datasetGroup( m, 7 );
+  ASSERT_NE( g, nullptr );
+
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "edge_vector" ), std::string( name ) );
+
+  scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( false, scalar );
+
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnEdges );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 6, count );
+
+  value = getValueX( ds, 0 );
+  EXPECT_DOUBLE_EQ( 200, value );
+
+  value = getValueY( ds, 0 );
+  EXPECT_DOUBLE_EQ( 201, value );
   MDAL_CloseMesh( m );
 }
 
@@ -390,6 +609,80 @@ TEST( MeshPlyTest, Save2DMeshToFile )
     tmp_file( "/all_features_saved.ply" ),
     "PLY"
   );
+}
+
+// test saving dataset
+TEST( MeshPlyTest, Save2DDataset )
+{
+  std::string path = test_file( "/ply/all_features.ply" );
+  MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( mesh, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  int v_count = MDAL_M_vertexCount( mesh );
+  int f_count = MDAL_M_faceCount( mesh );
+
+  MDAL_MeshH mesh2 = MDAL_CreateMesh( MDAL_driverFromName( "PLY" ) );
+
+  std::vector<double> vertices( v_count * 3 );
+  MDAL_MeshVertexIteratorH vi = MDAL_M_vertexIterator( mesh );
+  MDAL_MeshFaceIteratorH fi = MDAL_M_faceIterator( mesh );
+  MDAL_VI_next( vi, v_count, vertices.data() );
+  MDAL_M_addVertices( mesh2, v_count, vertices.data() );
+  std::vector<int> face( MDAL_M_faceVerticesMaximumCount( mesh ) );
+  int offset;
+  for ( int i = 0; i < f_count; i++ )
+  {
+    MDAL_FI_next( fi, 1, &offset, face.size(), face.data() );
+    MDAL_M_addFaces( mesh2, 1, &offset, face.data() );
+  }
+
+  MDAL_SaveMesh( mesh2, tmp_file( "/dg2d.ply" ).c_str(), "PLY" );
+
+  for ( int i = 0; i < MDAL_M_datasetGroupCount( mesh ); i++ )
+  {
+    MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, i );
+    if ( MDAL_G_dataLocation( group ) == MDAL_DataLocation::DataOnEdges ) break;
+
+    // create a new 3D datasetGroup
+    int index = MDAL_M_datasetGroupCount( mesh2 );
+    MDAL_M_addDatasetGroup( mesh2,
+                            MDAL_G_name( group ),
+                            MDAL_G_dataLocation( group ),
+                            MDAL_G_hasScalarData( group ),
+                            MDAL_driverFromName( "PLY" ),
+                            tmp_file( "/dg2d.ply" ).c_str() );
+    ASSERT_TRUE( index <  MDAL_M_datasetGroupCount( mesh2 ) );
+    MDAL_DatasetGroupH group2 = MDAL_M_datasetGroup( mesh2, index );
+
+    MDAL_DatasetH dataset = MDAL_G_dataset( group, 0 );
+    v_count = MDAL_D_valueCount( dataset );
+    if ( MDAL_G_hasScalarData( group ) )
+    {
+      std::vector<double> values( v_count, 0 );
+      MDAL_D_data( dataset, 0, v_count, MDAL_DataType::SCALAR_DOUBLE, values.data() );
+      MDAL_DatasetH dataset2 = MDAL_G_addDataset( group2, 0, values.data(), nullptr );
+      ASSERT_EQ( MDAL_D_valueCount( dataset2 ), v_count );
+    }
+    else
+    {
+      std::vector<double> values( v_count * 2, 0 );
+      MDAL_D_data( dataset, 0, v_count, MDAL_DataType::VECTOR_2D_DOUBLE, values.data() );
+      MDAL_DatasetH dataset2 = MDAL_G_addDataset( group2, 0, values.data(), nullptr );
+      ASSERT_EQ( MDAL_D_valueCount( dataset2 ), v_count );
+    }
+    MDAL_G_closeEditMode( group2 );
+    s = MDAL_LastStatus();
+    ASSERT_EQ( MDAL_Status::None, s );
+  }
+
+  MDAL_CloseMesh( mesh );
+  MDAL_CloseMesh( mesh2 );
+  MDAL_FI_close( fi );
+  MDAL_VI_close( vi );
+}
+
 // test the memorydataset3D
 TEST( Memory3D, ScalarMesh )
 {
@@ -402,25 +695,42 @@ TEST( Memory3D, ScalarMesh )
   MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 1 );
   ASSERT_EQ( MDAL_G_dataLocation( group ), MDAL_DataLocation::DataOnVolumes );
 
-  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  MDAL::Driver *dr = static_cast< MDAL::Driver * >( MDAL_driverFromName( "PLY" ) );
+  int v_count = MDAL_M_vertexCount( mesh );
+  int f_count = MDAL_M_faceCount( mesh );
+
+  MDAL_MeshH mesh2 = MDAL_CreateMesh( MDAL_driverFromName( "PLY" ) );
+
+  std::vector<double> vertices( v_count * 3 );
+  MDAL_MeshVertexIteratorH vi = MDAL_M_vertexIterator( mesh );
+  MDAL_MeshFaceIteratorH fi = MDAL_M_faceIterator( mesh );
+  MDAL_VI_next( vi, v_count, vertices.data() );
+  MDAL_M_addVertices( mesh2, v_count, vertices.data() );
+  std::vector<int> face( MDAL_M_faceVerticesMaximumCount( mesh ) );
+  int offset;
+  for ( int i = 0; i < f_count; i++ )
+  {
+    MDAL_FI_next( fi, 1, &offset, face.size(), face.data() );
+    MDAL_M_addFaces( mesh2, 1, &offset, face.data() );
+  }
+
+  MDAL_SaveMesh( mesh2, tmp_file( "/volumetric.ply" ).c_str(), "PLY" );
 
   // create a new 3D datasetGroup
-  int index = m->datasetGroups.size();
-  dr->createDatasetGroup( m,
+  int index = MDAL_M_datasetGroupCount( mesh2 );
+  MDAL_M_addDatasetGroup( mesh2,
                           "test",
                           MDAL_DataLocation::DataOnVolumes,
                           true,
-                          "test.ply"
-                        );
-  ASSERT_TRUE( index < m->datasetGroups.size() );
-  MDAL_DatasetGroupH group2 = MDAL_M_datasetGroup( m, index );
+                          MDAL_driverFromName( "PLY" ),
+                          tmp_file( "/volumetric.ply" ).c_str() );
+  ASSERT_TRUE( index <  MDAL_M_datasetGroupCount( mesh2 ) );
+  MDAL_DatasetGroupH group2 = MDAL_M_datasetGroup( mesh2, index );
   ASSERT_EQ( MDAL_G_dataLocation( group2 ), MDAL_DataLocation::DataOnVolumes );
 
 // create a new 3D dataset
-  int f_count = MDAL_M_faceCount( mesh );
+
   MDAL_DatasetH dataset = MDAL_G_dataset( group, 0 );
-  int v_count = MDAL_D_valueCount( dataset );
+  v_count = MDAL_D_valueCount( dataset );
   std::vector<int> lc( f_count, 0 );
   std::vector<int> f2V( f_count, 0 );
   std::vector<double> ve( f_count + v_count, 0 );
@@ -432,19 +742,40 @@ TEST( Memory3D, ScalarMesh )
   MDAL_DatasetH dataset2 = MDAL_G_addDataset3D( group2, 0, values.data(), lc.data(), ve.data() );
   ASSERT_EQ( MDAL_D_valueCount( dataset2 ), v_count );
 
+  MDAL_G_closeEditMode( group2 );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  MDAL_MeshH mesh3 = MDAL_LoadMesh( tmp_file( "/volumetric.ply" ).c_str() );
+  EXPECT_NE( mesh3, nullptr );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  MDAL_DatasetGroupH group3 = MDAL_M_datasetGroup( mesh3, 1 );
+  ASSERT_EQ( MDAL_G_dataLocation( group3 ), MDAL_DataLocation::DataOnVolumes );
+  f_count = MDAL_M_faceCount( mesh3 );
+  MDAL_DatasetH dataset3 = MDAL_G_dataset( group3, 0 );
+  v_count = MDAL_D_valueCount( dataset3 );
+
   // test data equality
   std::vector<int> lc2( f_count, 0 );
   std::vector<int> f2V2( f_count, 0 );
   std::vector<double> ve2( f_count + v_count, 0 );
   std::vector<double> values2( v_count, 0 );
-  MDAL_D_data( dataset2, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc2.data() );
-  MDAL_D_data( dataset2, 0, f_count, MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER, f2V2.data() );
-  MDAL_D_data( dataset2, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve2.data() );
-  MDAL_D_data( dataset2, 0, v_count, MDAL_DataType::SCALAR_VOLUMES_DOUBLE, values2.data() );
+  MDAL_D_data( dataset3, 0, f_count, MDAL_DataType::VERTICAL_LEVEL_COUNT_INTEGER, lc2.data() );
+  MDAL_D_data( dataset3, 0, f_count, MDAL_DataType::FACE_INDEX_TO_VOLUME_INDEX_INTEGER, f2V2.data() );
+  MDAL_D_data( dataset3, 0, f_count + v_count, MDAL_DataType::VERTICAL_LEVEL_DOUBLE, ve2.data() );
+  MDAL_D_data( dataset3, 0, v_count, MDAL_DataType::SCALAR_VOLUMES_DOUBLE, values2.data() );
   ASSERT_TRUE( compareVectors( lc, lc2 ) );
   ASSERT_TRUE( compareVectors( f2V, f2V2 ) );
   ASSERT_TRUE( compareVectors( ve, ve2 ) );
   ASSERT_TRUE( compareVectors( values, values2 ) );
+
+  MDAL_CloseMesh( mesh );
+  MDAL_CloseMesh( mesh2 );
+  MDAL_CloseMesh( mesh3 );
+  MDAL_FI_close( fi );
+  MDAL_VI_close( vi );
 }
 
 TEST( Memory3D, VectorMesh )
@@ -458,25 +789,39 @@ TEST( Memory3D, VectorMesh )
   MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 6 );
   ASSERT_EQ( MDAL_G_dataLocation( group ), MDAL_DataLocation::DataOnVolumes );
 
-  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  MDAL::Driver *dr = static_cast< MDAL::Driver * >( MDAL_driverFromName( "PLY" ) );
+  int v_count = MDAL_M_vertexCount( mesh );
+  int f_count = MDAL_M_faceCount( mesh );
+
+  MDAL_MeshH mesh2 = MDAL_CreateMesh( MDAL_driverFromName( "PLY" ) );
+
+  std::vector<double> vertices( v_count * 3 );
+  MDAL_MeshVertexIteratorH vi = MDAL_M_vertexIterator( mesh );
+  MDAL_MeshFaceIteratorH fi = MDAL_M_faceIterator( mesh );
+  MDAL_VI_next( vi, v_count, vertices.data() );
+  MDAL_M_addVertices( mesh2, v_count, vertices.data() );
+  std::vector<int> face( MDAL_M_faceVerticesMaximumCount( mesh ) );
+  int offset;
+  for ( int i = 0; i < f_count; i++ )
+  {
+    MDAL_FI_next( fi, 1, &offset, face.size(), face.data() );
+    MDAL_M_addFaces( mesh2, 1, &offset, face.data() );
+  }
 
   // create a new 3D datasetGroup
-  int index = m->datasetGroups.size();
-  dr->createDatasetGroup( m,
+  int index = MDAL_M_datasetGroupCount( mesh2 );
+  MDAL_M_addDatasetGroup( mesh2,
                           "test",
                           MDAL_DataLocation::DataOnVolumes,
                           false,
-                          "test.ply"
-                        );
-  ASSERT_TRUE( index < m->datasetGroups.size() );
-  MDAL_DatasetGroupH group2 = MDAL_M_datasetGroup( m, index );
+                          MDAL_driverFromName( "PLY" ),
+                          tmp_file( "/volumetric_vecttor.ply" ).c_str() );
+  ASSERT_TRUE( index <  MDAL_M_datasetGroupCount( mesh2 ) );
+  MDAL_DatasetGroupH group2 = MDAL_M_datasetGroup( mesh2, index );
   ASSERT_EQ( MDAL_G_dataLocation( group2 ), MDAL_DataLocation::DataOnVolumes );
 
 // create a new 3D dataset
-  int f_count = MDAL_M_faceCount( mesh );
   MDAL_DatasetH dataset = MDAL_G_dataset( group, 0 );
-  int v_count = MDAL_D_valueCount( dataset );
+  v_count = MDAL_D_valueCount( dataset );
   std::vector<int> lc( f_count, 0 );
   std::vector<double> ve( f_count + v_count, 0 );
   std::vector<double> values( 2 * v_count, 0 );
@@ -485,6 +830,10 @@ TEST( Memory3D, VectorMesh )
   MDAL_D_data( dataset, 0, v_count, MDAL_DataType::VECTOR_2D_VOLUMES_DOUBLE, values.data() );
   MDAL_DatasetH dataset2 = MDAL_G_addDataset3D( group2, 0, values.data(), lc.data(), ve.data() );
   ASSERT_EQ( MDAL_D_valueCount( dataset2 ), v_count );
+
+  MDAL_G_closeEditMode( group2 );
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::Err_IncompatibleDatasetGroup, s );
 
   // test data equality
   std::vector<int> lc2( f_count, 0 );
@@ -497,6 +846,10 @@ TEST( Memory3D, VectorMesh )
   ASSERT_TRUE( compareVectors( ve, ve2 ) );
   ASSERT_TRUE( compareVectors( values, values2 ) );
 
+  MDAL_CloseMesh( mesh );
+  MDAL_CloseMesh( mesh2 );
+  MDAL_FI_close( fi );
+  MDAL_VI_close( vi );
 }
 
 int main( int argc, char **argv )
