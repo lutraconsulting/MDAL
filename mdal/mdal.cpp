@@ -523,15 +523,7 @@ MDAL_DatasetGroupH MDAL_M_datasetGroup( MDAL_MeshH mesh, int index )
   }
   size_t i = static_cast<size_t>( index );
 
-  std::shared_ptr<MDAL::DatasetGroup> g = m->datasetGroups[i];
-  const std::string driverName = g->driverName();
-  std::shared_ptr<MDAL::Driver> dr = MDAL::DriverManager::instance().driver( driverName );
-  if ( dr->hasWriteDatasetCapability( g->dataLocation() ) )
-  {
-    g->startEditing();
-  }
-
-  return static_cast< MDAL_DatasetH >( g.get() );
+  return static_cast< MDAL_DatasetH >( m->datasetGroups[i].get() );
 }
 
 MDAL_DatasetGroupH MDAL_M_addDatasetGroup(
