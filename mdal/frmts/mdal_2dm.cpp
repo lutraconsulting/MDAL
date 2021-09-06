@@ -415,14 +415,16 @@ void MDAL::Driver2dm::save( const std::string &fileName, const std::string &, MD
   for ( size_t i = 0; i < mesh->facesCount(); ++i )
   {
     int faceOffsets[1];
-    faceIterator->next( 1, faceOffsets, 4, vertexIndices.data() );
+    faceIterator->next( 1, faceOffsets, 6, vertexIndices.data() );
 
-    if ( faceOffsets[0] > 2 && faceOffsets[0] < 5 )
+    if ( faceOffsets[0] > 2 && faceOffsets[0] < 7 )
     {
       if ( faceOffsets[0] == 3 )
         line = "E3T ";
       if ( faceOffsets[0] == 4 )
         line = "E4Q ";
+      if ( faceOffsets[0] == 5 ) //not in specification but added to avoid non saved mesh
+        line = "E5 ";
       if ( faceOffsets[0] == 6 )
         line = "E6T ";
 
