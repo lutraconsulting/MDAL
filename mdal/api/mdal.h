@@ -413,8 +413,6 @@ MDAL_EXPORT int MDAL_M_datasetGroupCount( MDAL_MeshH mesh );
 
 /**
  * Returns dataset group handle
- *
- * Since 0.9.0 - if the driver has Write Capability for this DatasetGroup, it is opened in edit mode
  */
 MDAL_EXPORT MDAL_DatasetGroupH MDAL_M_datasetGroup( MDAL_MeshH mesh, int index );
 
