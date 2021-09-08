@@ -242,6 +242,91 @@ TEST( ApiTest, VerticesApi )
   EXPECT_EQ( MDAL_FI_next( nullptr, 0, nullptr, 0, nullptr ), 0 );
 }
 
+void _populateEdges( MDAL_MeshH m, std::vector<int> &start, std::vector<int> &stop, size_t itemsLen )
+{
+  int edgesCount = MDAL_M_edgeCount( m );
+  start.resize( 0 );
+  stop.resize( 0 );
+  std::vector<int> buffer1( itemsLen );
+  std::vector<int> buffer2( itemsLen );
+
+  MDAL_MeshEdgeIteratorH it = MDAL_M_edgeIterator( m );
+  int edgeIndex = 0;
+  while ( edgeIndex < edgesCount )
+  {
+    int edgesRead = MDAL_EI_next( it,
+                                  static_cast<int>( itemsLen ),
+                                  buffer1.data(),
+                                  buffer2.data() );
+    if ( edgesRead == 0 )
+      break;
+
+    ASSERT_TRUE( edgesRead <= static_cast<int>( itemsLen ) );
+
+    start.insert( start.end(),
+                  buffer1.begin(),
+                  buffer1.begin() + edgesRead );
+
+    stop.insert( stop.end(),
+                 buffer1.begin(),
+                 buffer1.begin() + edgesRead );
+
+    edgeIndex += edgesRead;
+  }
+  MDAL_EI_close( it );
+}
+
+TEST( ApiTest, EdgesApi )
+{
+  std::string path = test_file( "/ply/all_features.ply" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // reference buffer where taken in one go
+  std::vector<int> refStart;
+  std::vector<int> refStop;
+  _populateEdges(
+    m,
+    refStart,
+    refStop,
+    static_cast<size_t>( MDAL_M_edgeCount( m ) )
+  );
+
+  std::vector<int> start;
+  std::vector<int> stop;
+  {
+    std::vector<int> start;
+    std::vector<int> stop;
+    _populateEdges( m,
+                    start,
+                    stop,
+                    10
+                  );
+
+    EXPECT_TRUE( compareVectors( refStart, start ) );
+    EXPECT_TRUE( compareVectors( refStop, stop ) );
+  }
+
+  {
+    std::vector<double> coords;
+    _populateEdges( m,
+                    start,
+                    stop,
+                    10000
+                  );
+
+    EXPECT_TRUE( compareVectors( refStart, start ) );
+    EXPECT_TRUE( compareVectors( refStop, stop ) );
+  }
+  MDAL_CloseMesh( m );
+
+  // Some wrong calls tests
+  EXPECT_EQ( MDAL_M_edgeIterator( nullptr ), nullptr );
+  EXPECT_EQ( MDAL_EI_next( nullptr, 0, nullptr, nullptr ), 0 );
+}
+
 TEST( ApiTest, GroupsApi )
 {
   EXPECT_EQ( MDAL_G_mesh( nullptr ), nullptr );
@@ -432,10 +517,15 @@ TEST( ApiTest, MeshCreationApi )
                                    0, 2, 1
                                   } );
 
+  std::vector<int> startIndices( {0, 1, 2, 3, 4, 5} );
+  std::vector<int> endIndices( {1, 2, 3, 4, 5, 0} );
+
   MDAL_MeshH mesh = nullptr;
   MDAL_M_addVertices( mesh, 6, coordinates.data() );
   EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
   MDAL_M_addFaces( mesh, 4, faceSizes.data(), invalidVertexIndices.data() );
+  EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
+  MDAL_M_addEdges( mesh, 6, startIndices.data(), endIndices.data() );
   EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
   MDAL_M_setProjection( mesh, "EPSG:32620" );
   EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
@@ -450,6 +540,7 @@ TEST( ApiTest, MeshCreationApi )
 
   EXPECT_EQ( MDAL_M_vertexCount( mesh ), 0 );
   EXPECT_EQ( MDAL_M_faceCount( mesh ), 0 );
+  EXPECT_EQ( MDAL_M_edgeCount( mesh ), 0 );
   EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 0 );
 
   std::string createdMeshFile = tmp_file( "/createdMeshVoid" );
@@ -466,6 +557,10 @@ TEST( ApiTest, MeshCreationApi )
   EXPECT_EQ( MDAL_M_vertexCount( mesh ), 6 );
   EXPECT_EQ( MDAL_M_faceCount( mesh ), 4 );
   EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( mesh ), 4 );
+
+  MDAL_M_addEdges( mesh, 6, startIndices.data(), endIndices.data() );
+  EXPECT_EQ( MDAL_LastStatus(), None );
+  EXPECT_EQ( MDAL_M_edgeCount( mesh ), 6 );
 
   createdMeshFile = tmp_file( "/createdMesh" );
   MDAL_SaveMesh( mesh, createdMeshFile.c_str(), "Ugrid" );
