@@ -135,6 +135,21 @@ MDAL_LIB_EXPORT bool MDAL_DRIVER_D_hasActiveFlagCapability( int meshId, int grou
 //! Returns the dataset active flags
 MDAL_LIB_EXPORT int MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer );
 
+//! Returns maximum number of vertical levels (for 3D meshes)
+MDAL_LIB_EXPORT int MDAL_DRIVER_D_maximumVerticalLevelCount( int meshId, int groupIndex, int datasetIndex );
+
+//! Returns volumes count for the mesh (for 3D meshes)
+MDAL_LIB_EXPORT int MDAL_DRIVER_D_volumeCount( int meshId, int groupIndex, int datasetIndex );
+
+//! Returns the vertical levels count data (for 3D meshes)
+MDAL_LIB_EXPORT int MDAL_DRIVER_D_verticalLevelCountData( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer );
+
+//! Returns the vertical levels data (for 3D meshes)
+MDAL_LIB_EXPORT int MDAL_DRIVER_D_verticalLevelData( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double *buffer );
+
+//! Returns the face to volume data (for 3D meshes)
+MDAL_LIB_EXPORT int MDAL_DRIVER_D_faceToVolumeData( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer );
+
 //! Unload data store in memory (for driver that support lazy loading, data are unloaded after statistic calculation)
 MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int meshId, int groupIndex, int datasetIndex );
 

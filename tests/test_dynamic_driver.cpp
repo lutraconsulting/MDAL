@@ -81,7 +81,7 @@ TEST( MeshDynamicDriverTest, openMesh )
 
 
   // Dataset
-  ASSERT_EQ( MDAL_M_datasetGroupCount( m ), 6 );
+  ASSERT_EQ( MDAL_M_datasetGroupCount( m ), 8 );
 
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
@@ -189,6 +189,80 @@ TEST( MeshDynamicDriverTest, openMesh )
   MDAL_G_minimumMaximum( g, &min, &max );
   EXPECT_TRUE( MDAL::equals( 1.4142, min, 0.001 ) );
   EXPECT_TRUE( MDAL::equals( 2.236, max, 0.001 ) );
+
+  // Dataset on volume
+  g = MDAL_M_datasetGroup( m, 6 );
+  ASSERT_NE( g, nullptr );
+
+  EXPECT_EQ( 5, MDAL_G_maximumVerticalLevelCount( g ) );
+  EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+  EXPECT_EQ( 2, MDAL_G_datasetCount( g ) );
+
+  ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+  EXPECT_EQ( 5, MDAL_D_maximumVerticalLevelCount( ds ) );
+  EXPECT_EQ( 6, MDAL_D_volumesCount( ds ) );
+  EXPECT_EQ( 5, getLevelsCount3D( ds, 0 ) );
+  EXPECT_EQ( 1, getLevelsCount3D( ds, 1 ) );
+  EXPECT_EQ( 0, get3DFrom2D( ds, 0 ) );
+  EXPECT_EQ( 5, get3DFrom2D( ds, 1 ) );
+
+  int faceIndex = 0;
+  EXPECT_EQ( -0.1, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex + 1 ) );
+  EXPECT_EQ( -0.2, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex + 2 ) );
+  EXPECT_EQ( 2, getValue3D( ds, get3DFrom2D( ds, faceIndex ) + 1 ) );
+
+  faceIndex = 1;
+  EXPECT_EQ( 0, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex ) );
+  EXPECT_EQ( -0.2, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex + 1 ) );
+  EXPECT_EQ( 8, getValue3D( ds, get3DFrom2D( ds, faceIndex ) ) );
+
+  ds = MDAL_G_dataset( g, 1 );
+  ASSERT_NE( ds, nullptr );
+  EXPECT_EQ( 3, MDAL_D_maximumVerticalLevelCount( ds ) );
+  EXPECT_EQ( 5, MDAL_D_volumesCount( ds ) );
+  EXPECT_EQ( 3, getLevelsCount3D( ds, 0 ) );
+  EXPECT_EQ( 2, getLevelsCount3D( ds, 1 ) );
+  EXPECT_EQ( 0, get3DFrom2D( ds, 0 ) );
+  EXPECT_EQ( 3, get3DFrom2D( ds, 1 ) );
+
+  faceIndex = 0;
+  EXPECT_EQ( -0.1, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex + 1 ) );
+  EXPECT_EQ( -0.2, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex + 2 ) );
+  EXPECT_EQ( 4, getValue3D( ds, get3DFrom2D( ds, faceIndex ) + 1 ) );
+
+  faceIndex = 1;
+  EXPECT_EQ( 0.5, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex ) );
+  EXPECT_EQ( 0.4, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex + 1 ) );
+  EXPECT_EQ( 1, getValue3D( ds, get3DFrom2D( ds, faceIndex ) + 1 ) );
+
+  g = MDAL_M_datasetGroup( m, 7 );
+  ASSERT_NE( g, nullptr );
+
+  EXPECT_EQ( 5, MDAL_G_maximumVerticalLevelCount( g ) );
+  EXPECT_FALSE( MDAL_G_hasScalarData( g ) );
+  EXPECT_EQ( 2, MDAL_G_datasetCount( g ) );
+
+  ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+  EXPECT_EQ( 5, MDAL_D_maximumVerticalLevelCount( ds ) );
+  EXPECT_EQ( 6, MDAL_D_volumesCount( ds ) );
+  EXPECT_EQ( 5, getLevelsCount3D( ds, 0 ) );
+  EXPECT_EQ( 1, getLevelsCount3D( ds, 1 ) );
+
+  faceIndex = 0;
+  EXPECT_EQ( -0.2, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex + 2 ) );
+  EXPECT_EQ( -0.3, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex + 3 ) );
+  EXPECT_EQ( 3, getValue3DX( ds, get3DFrom2D( ds, faceIndex ) + 2 ) );
+  EXPECT_EQ( 4.2, getValue3DY( ds, get3DFrom2D( ds, faceIndex ) + 2 ) );
+
+  faceIndex = 1;
+  EXPECT_EQ( 0, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex ) );
+  EXPECT_EQ( -0.2, getLevelZ3D( ds, get3DFrom2D( ds, faceIndex ) + faceIndex + 1 ) );
+  EXPECT_EQ( 8, getValue3DX( ds, get3DFrom2D( ds, faceIndex ) ) );
+  EXPECT_EQ( 3, getValue3DY( ds, get3DFrom2D( ds, faceIndex ) ) );
+  EXPECT_EQ( 0, get3DFrom2D( ds, 0 ) );
+  EXPECT_EQ( 5, get3DFrom2D( ds, 1 ) );
 
   MDAL_CloseMesh( m );
 }
