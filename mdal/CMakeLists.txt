@@ -17,8 +17,6 @@ SET(MDAL_SOURCES
   frmts/mdal_binary_dat.cpp
   frmts/mdal_selafin.cpp
   frmts/mdal_esri_tin.cpp
-  frmts/mdal_ply.cpp
-  3rdparty/libplyxx/libplyxx.cpp
 )
 
 SET(MDAL_HEADERS
@@ -37,11 +35,20 @@ SET(MDAL_HEADERS
   frmts/mdal_binary_dat.hpp
   frmts/mdal_selafin.hpp
   frmts/mdal_esri_tin.hpp
-  frmts/mdal_ply.hpp
-  3rdparty/libplyxx.h
-  3rdparty/libplyxx/libplyxx_internal.h
-  3rdparty/textio.h
 )
+
+IF(BUILD_PLY)
+  SET(MDAL_SOURCES ${MDAL_SOURCES}
+    frmts/mdal_ply.cpp
+    3rdparty/libplyxx/libplyxx.cpp
+  )
+  SET(MDAL_HEADERS ${MDAL_HEADERS}
+    frmts/mdal_ply.hpp
+    3rdparty/libplyxx.h
+    3rdparty/libplyxx/libplyxx_internal.h
+    3rdparty/textio.h
+  )
+ENDIF(BUILD_PLY)
 
 IF(HDF5_FOUND)
   SET(MDAL_SOURCES ${MDAL_SOURCES}

@@ -12,7 +12,7 @@ MDAL supports reading and writing of `PLY`_ format in ASCII and BINARY formats. 
 
 Note that:
 
-- This driver can read and write Meshes containing any (constistent) combination of vertices, faces and edges and can access Scalar and Vector datasets on vertices, faces & edges and Scalar (only) datasets on volumes.
+- This driver can read and write Meshes containing any (consistent) combination of vertices, faces and edges and can access Scalar and Vector datasets on vertices, faces & edges and Scalar (only) datasets on volumes.
 - All MDAL Scalar datasets are stored in PLY as doubles,
 - Vector Datasets are stored as PLY double lists. When Reading a PLY file, a list data type is converted into an MDAL Vector dataset with only the first two values of the list used,
 - Datasets on Volumes are stored as TWO equal sized lists on the face elements (one containing the values using the name of the MDAL DatasetGroup and one containing the extrusion values which has "__vol" appended to the name). This is a format that is totally consistent with the PLY format but is unique to this driver. 

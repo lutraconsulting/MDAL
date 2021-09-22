@@ -86,9 +86,9 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   size_t faceCount = 0;
   size_t edgeCount = 0;
 
-  //datastructures that will contain all of the datasets, categorised by vertex, face and edge datasets
+  //data structures that will contain all of the datasets, categorised by vertex, face and edge datasets
   std::vector<std::vector<double>> vertexDatasets; // contains the data
-  std::vector<std::pair<std::string, bool>> vProp2Ds; // contains the dataset name and a flag for scalr / vector
+  std::vector<std::pair<std::string, bool>> vProp2Ds; // contains the dataset name and a flag for scalar / vector
   std::vector<std::vector<double>> faceDatasets;
   std::vector<std::pair<std::string, bool>> fProp2Ds;
   std::vector<std::vector<double>> edgeDatasets;
@@ -462,19 +462,31 @@ void MDAL::DriverPly::addDataset2D( MDAL::DatasetGroup *group, const std::vector
 
   if ( group->dataLocation() == DataOnVertices )
   {
-    assert( values.size() == mesh->verticesCount()*mult );
+    if ( values.size() != mesh->verticesCount()*mult )
+    {
+      MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Number of Data Values" );
+      return;
+    }
   }
 
   if ( group->dataLocation() == DataOnFaces )
   {
-    assert( values.size() == mesh->facesCount()*mult );
+    if ( values.size() != mesh->facesCount()*mult )
+    {
+      MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Number of Data Values" );
+      return;
+    }
     if ( mesh->facesCount() == 0 )
       return;
   }
 
   if ( group->dataLocation() == DataOnEdges )
   {
-    assert( values.size() == mesh->edgesCount()*mult );
+    if ( values.size() != mesh->edgesCount()*mult )
+    {
+      MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Number of Data Values" );
+      return;
+    }
     if ( mesh->edgesCount() == 0 )
       return;
   }

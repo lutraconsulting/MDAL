@@ -86,7 +86,7 @@ namespace libply
     assert( std::string( tokens.at( 0 ) ) == "element" );
     if ( tokens.size() != 3 || tokens.at( 2 ).size() == 0 )
     {
-      MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Element Defintion" );
+      MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "PLY: Invalid Element Definition" );
       elementDefinitions.emplace_back( );
     }
     else
