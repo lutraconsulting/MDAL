@@ -73,8 +73,13 @@ SET(TESTS
     test_binary_dat.cpp
     test_selafin.cpp
     test_esri_tin.cpp
-    test_ply.cpp
 )
+
+IF(BUILD_PLY)
+  SET(TESTS ${TESTS}
+    test_ply.cpp
+  )
+ENDIF(BUILD_PLY)
 
 IF(HDF5_FOUND)
   SET(TESTS ${TESTS}

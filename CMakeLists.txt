@@ -9,7 +9,7 @@ IF(MSVC)
   CMAKE_POLICY(SET CMP0074 OLD)
 ENDIF()
 
-SET (CMAKE_CXX_STANDARD 11)
+SET (CMAKE_CXX_STANDARD 17)
 # set path to additional CMake modules
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
@@ -27,6 +27,7 @@ SET (BUILD_STATIC FALSE CACHE BOOL "Build static mdal library" )
 SET (BUILD_SHARED TRUE CACHE BOOL "Build shared mdal library" )
 SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables")
 SET (BUILD_EXTERNAL_DRIVERS TRUE CACHE BOOL "Build external drivers")
+SET (BUILD_PLY TRUE CACHE BOOL "Build the PLY driver")
 IF ( MSVC )
   SET (EXTERNAL_DRIVER_DHI_DFSU TRUE CACHE BOOL "Build dhi unstructured mesh driver")
 ENDIF( MSVC )
