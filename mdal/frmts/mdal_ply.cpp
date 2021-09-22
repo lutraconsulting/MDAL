@@ -508,9 +508,6 @@ void MDAL::DriverPly::addDataset3D( MDAL::DatasetGroup *group,
   if ( !group )
     return;
 
-  size_t mult = 1;
-  if ( !group->isScalar() ) mult = 2;
-
 
   MDAL::Mesh *mesh = group->mesh();
 
