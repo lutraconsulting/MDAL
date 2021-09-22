@@ -36,6 +36,8 @@ struct Dataset
   double time;
   std::vector<double> values;
   std::vector<int> isFaceActive;
+  std::vector<int> volumeCounts;
+  std::vector<double> volumeLevels;
 };
 
 struct Datasetgroup
@@ -159,6 +161,7 @@ static Mesh parseMesh( const std::string &uri )
         }
         else
           break;
+
         if ( group.dataType == "onFace" )
         {
           if ( getline( file, line ) )
@@ -166,6 +169,21 @@ static Mesh parseMesh( const std::string &uri )
             std::vector<std::string> valuesStr = split( line, ',' );
             for ( const std::string &valStr : valuesStr )
               dataset.isFaceActive.push_back( atoi( valStr.c_str() ) );
+          }
+        }
+        else if ( group.dataType == "onVolume" )
+        {
+          if ( getline( file, line ) )
+          {
+            std::vector<std::string> valuesStr = split( line, ',' );
+            for ( const std::string &valStr : valuesStr )
+              dataset.volumeCounts.push_back( atoi( valStr.c_str() ) );
+          }
+          if ( getline( file, line ) )
+          {
+            std::vector<std::string> valuesStr = split( line, ',' );
+            for ( const std::string &valStr : valuesStr )
+              dataset.volumeLevels.push_back( atof( valStr.c_str() ) );
           }
         }
 
@@ -509,8 +527,10 @@ bool MDAL_DRIVER_G_datasetsDescription( int meshId, int groupIndex, bool *isScal
       *dataLocation = 1;
     if ( datasetGroup.dataType == "onFace" )
       *dataLocation = 2;
-    if ( datasetGroup.dataType == "onEdge" )
+    if ( datasetGroup.dataType == "onVolume" )
       *dataLocation = 3;
+    if ( datasetGroup.dataType == "onEdge" )
+      *dataLocation = 4;
 
     *datasetCount = static_cast<int>( datasetGroup.dataset.size() );
 
@@ -610,6 +630,157 @@ int MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int
   }
 
   return false;
+}
+
+int MDAL_DRIVER_D_maximumVerticalLevelCount( int meshId, int groupIndex, int datasetIndex )
+{
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    const Mesh &mesh = sMeshes[meshId];
+    if ( groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) )
+      return -1;
+    const Datasetgroup &datasetGroup = mesh.datasetGroups.at( size_t( groupIndex ) );
+    if ( datasetGroup.dataType != "onVolume" )
+      return 0;
+
+    if ( datasetIndex >= static_cast<int>( datasetGroup.dataset.size() ) )
+      return -1;
+    const Dataset &dataset = datasetGroup.dataset.at( size_t( datasetIndex ) );
+
+    int maxLevelcount = 0;
+    for ( const int levelCount : dataset.volumeCounts )
+    {
+      if ( maxLevelcount < levelCount )
+        maxLevelcount = levelCount;
+    }
+
+    return maxLevelcount;
+
+  }
+
+  return -1;
+}
+
+int MDAL_DRIVER_D_volumeCount( int meshId, int groupIndex, int datasetIndex )
+{
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    const Mesh &mesh = sMeshes[meshId];
+    if ( groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) )
+      return -1;
+    const Datasetgroup &datasetGroup = mesh.datasetGroups.at( size_t( groupIndex ) );
+    if ( datasetGroup.dataType != "onVolume" )
+      return 0;
+
+    if ( datasetIndex >= static_cast<int>( datasetGroup.dataset.size() ) )
+      return -1;
+    const Dataset &dataset = datasetGroup.dataset.at( size_t( datasetIndex ) );
+
+    int volCount = 0;
+    for ( const int levelCount : dataset.volumeCounts )
+    {
+      volCount += levelCount;
+    }
+
+    return volCount;
+  }
+
+  return -1;
+}
+
+int MDAL_DRIVER_D_verticalLevelCountData( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer )
+{
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    const Mesh &mesh = sMeshes[meshId];
+    if ( groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) )
+      return -1;
+    const Datasetgroup &datasetGroup = mesh.datasetGroups.at( size_t( groupIndex ) );
+    if ( datasetGroup.dataType != "onVolume" )
+      return 0;
+
+    if ( datasetIndex >= static_cast<int>( datasetGroup.dataset.size() ) )
+      return -1;
+    const Dataset &dataset = datasetGroup.dataset.at( size_t( datasetIndex ) );
+
+    int totalValueCount = static_cast<int>( dataset.volumeCounts.size() );
+
+    int effectiveCount = std::min( count,  totalValueCount - indexStart );
+
+    int bufferValues = effectiveCount;
+    for ( int i = 0; i < bufferValues; ++i )
+      buffer[i] = dataset.volumeCounts.at( i + indexStart );
+
+    return effectiveCount;
+  }
+
+  return -1;
+}
+
+int MDAL_DRIVER_D_verticalLevelData( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double *buffer )
+{
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    const Mesh &mesh = sMeshes[meshId];
+    if ( groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) )
+      return -1;
+    const Datasetgroup &datasetGroup = mesh.datasetGroups.at( size_t( groupIndex ) );
+    if ( datasetGroup.dataType != "onVolume" )
+      return 0;
+
+    if ( datasetIndex >= static_cast<int>( datasetGroup.dataset.size() ) )
+      return -1;
+    const Dataset &dataset = datasetGroup.dataset.at( size_t( datasetIndex ) );
+
+    int totalValueCount = static_cast<int>( dataset.volumeLevels.size() );
+
+    int effectiveCount = std::min( count,  totalValueCount - indexStart );
+
+    int bufferValues = effectiveCount;
+    for ( int i = 0; i < bufferValues; ++i )
+      buffer[i] = dataset.volumeLevels.at( i + indexStart );
+
+    return effectiveCount;
+  }
+
+  return -1;
+}
+
+int MDAL_DRIVER_D_faceToVolumeData( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer )
+{
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    const Mesh &mesh = sMeshes[meshId];
+    if ( groupIndex >= static_cast<int>( mesh.datasetGroups.size() ) )
+      return -1;
+    const Datasetgroup &datasetGroup = mesh.datasetGroups.at( size_t( groupIndex ) );
+    if ( datasetGroup.dataType != "onVolume" )
+      return 0;
+
+    if ( datasetIndex >= static_cast<int>( datasetGroup.dataset.size() ) )
+      return -1;
+    const Dataset &dataset = datasetGroup.dataset.at( size_t( datasetIndex ) );
+
+    std::vector<int> faceToVolume;
+    int i = 0;
+    for ( const int volCount : dataset.volumeCounts )
+    {
+      faceToVolume.push_back( i );
+      i += volCount;
+    }
+
+    int totalValueCount = static_cast<int>( dataset.volumeLevels.size() );
+
+    int effectiveCount = std::min( count,  totalValueCount - indexStart );
+
+    int bufferValues = effectiveCount;
+    for ( int i = 0; i < bufferValues; ++i )
+      buffer[i] = faceToVolume.at( i + indexStart );
+
+    return effectiveCount;
+  }
+
+  return -1;
 }
 
 MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int, int, int )
