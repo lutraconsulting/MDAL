@@ -14,45 +14,29 @@ Mesh::~Mesh()
 
 bool Mesh::canRead( const std::string &uri )
 {
-  LPFILE      Fp;
-  LPHEAD      pdfs;
-  LPCTSTR fileName = uri.c_str();
+    LPFILE      Fp;
+    LPHEAD      pdfs;
+    LPCTSTR fileName = uri.c_str();
 
-  ufsErrors rc = static_cast<ufsErrors>( dfsFileRead( fileName, &pdfs, &Fp ) );
-  if ( rc != F_NO_ERROR )
-    return false;
-
-  LONG dataType = dfsGetDataType( pdfs );
-
-  if ( dataType != 2001 && dataType != 2000 )
-    return false;
-
-  LPBLOCK customBlock;
-  LONG error = dfsGetCustomBlockRef( pdfs, &customBlock );
-  if ( error != F_NO_ERROR )
-    return false;
-  // Search for "MIKE_FM" custom block containing int data
-  while ( customBlock )
-  {
-    SimpleType dataType;
-    LPCTSTR name;
-    LONG size;
-    void *customblockData = nullptr;
-    error = dfsGetCustomBlock( customBlock, &dataType, &name, &size, &customblockData, &customBlock );
-    if ( error != F_NO_ERROR )
-      return false;
-
-    if ( 0 == strcmp( name, "MIKE_FM" ) && dataType == UFS_INT )
+    bool ok = false;
+    ufsErrors rc = static_cast<ufsErrors>(dfsFileRead(fileName, &pdfs, &Fp));
+    
+    if (rc == F_NO_ERROR)
     {
-      int *intData = static_cast<int *>( customblockData );
+        int totalNodeCount;
+        int elementCount;
+        int dimension;
+        int maxNumberOfLayer;
+        int numberOfSigmaLayer;
 
-      int dimension = intData[2];
-      if ( dimension != 2 )
-        return false;
+        if (fileInfo(pdfs, totalNodeCount, elementCount, dimension, maxNumberOfLayer, numberOfSigmaLayer))
+            ok = dimension == 2 || dimension == 3;
     }
-  }
 
-  return true;
+    dfsFileClose(pdfs, &Fp);
+    dfsHeaderDestroy(&pdfs);
+
+  return ok;
 
 }
 
@@ -67,9 +51,22 @@ std::unique_ptr<Mesh> Mesh::loadMesh( const std::string &uri )
   if ( rc != F_NO_ERROR )
     return nullptr;
 
+  int totalNodeCount; 
+  int elementCount; 
+  int dimension; 
+  int maxNumberOfLayer; 
+  int numberOfSigmaLayer;
+
+  if(!fileInfo(pdfs, totalNodeCount, elementCount, dimension, maxNumberOfLayer, numberOfSigmaLayer))
+      return nullptr;
+
   std::unique_ptr<Mesh> mesh( new Mesh );
   mesh->mFp = Fp;
   mesh->mPdfs = pdfs;
+  mesh->mDimension = dimension;
+  mesh->mMaxNumberOfLayer = maxNumberOfLayer;
+  mesh->mTotalNodeCount = size_t(totalNodeCount);
+  mesh->mTotalElementCount = size_t(elementCount);
 
   GeoInfoType geoInfoType = dfsGetGeoInfoType( pdfs );
   LPCTSTR projectionWkt;
@@ -90,6 +87,7 @@ std::unique_ptr<Mesh> Mesh::loadMesh( const std::string &uri )
 
 void Mesh::close()
 {
+  dfsFileClose(mPdfs, &mFp);
   dfsFileClose( mPdfs, &mFp );
 }
 
@@ -220,7 +218,67 @@ size_t Mesh::connectivityPosition( int faceIndex ) const
   return conPos;
 }
 
+bool Mesh::fileInfo(LPHEAD pdfs, int& totalNodeCount, int& elementCount, int& dimension, int& maxNumberOfLayer, int& numberOfSigmaLayer)
+{
+    bool ok = false;
+    LONG dataType = dfsGetDataType(pdfs);
+    if (dataType == 2001 || dataType != 2000)
+    {
+        LPBLOCK customBlock;
+        LONG error = dfsGetCustomBlockRef(pdfs, &customBlock);
+        if (error == F_NO_ERROR)
+        {
+            // Search for "MIKE_FM" custom block containing int data
+            while (customBlock)
+            {
+                SimpleType dataType;
+                LPCTSTR name;
+                LONG size;
+                void* customblockData = nullptr;
+                error = dfsGetCustomBlock(customBlock, &dataType, &name, &size, &customblockData, &customBlock);
+                if (error != F_NO_ERROR)
+                    break;
+
+                if (0 == strcmp(name, "MIKE_FM") && dataType == UFS_INT)
+                {
+                    int* intData = static_cast<int*>(customblockData);
+
+                    totalNodeCount = intData[0];
+                    elementCount = intData[1];
+                    dimension = intData[2];
+                    maxNumberOfLayer = intData[3];
+                    numberOfSigmaLayer = intData[4];
+                    ok = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    return ok;
+}
+
 bool Mesh::populateMeshFrame()
+{
+    mVertexCoordinates.resize(mTotalNodeCount * 3);
+    mFaceNodeCount.resize(mTotalElementCount);
+
+    switch (mDimension)
+    {
+    case 2:
+        return populate2DMeshFrame();
+        break;
+    case 3:
+        return populate3DMeshFrame();
+        break;
+    default:
+        break;
+    }
+
+    return false;
+}
+
+bool Mesh::populate2DMeshFrame()
 {
   LPVECTOR pvec;
   LONG error;
@@ -238,16 +296,10 @@ bool Mesh::populateMeshFrame()
 
     if ( lstrcmp( itemName, "Node id" ) == 0 )
     {
-
       size_t nodeIdCount = static_cast<size_t>( dfsGetItemElements( staticItem ) );
       size_t size = dfsGetItemBytes( staticItem );
-      if ( nodeIdCount * sizeof( int ) == size )
+      if ( nodeIdCount * sizeof( int ) == size  && nodeIdCount==mTotalNodeCount)
       {
-        if ( mVertexCoordinates.size() == 0 )
-        {
-          mVertexCoordinates.resize( nodeIdCount * 3 );
-        }
-
         if ( nodeIdCount == mVertexCoordinates.size() / 3 )
         {
           std::vector<int> vertexToNode( nodeIdCount );
@@ -284,11 +336,8 @@ bool Mesh::populateMeshFrame()
     {
       size_t elemIdCount = static_cast<size_t>( dfsGetItemElements( staticItem ) );
       size_t size = dfsGetItemBytes( staticItem );
-      if ( elemIdCount * sizeof( int ) == size )
+      if ( elemIdCount * sizeof( int ) == size  && elemIdCount==mTotalElementCount)
       {
-        if ( mFaceNodeCount.empty() )
-          mFaceNodeCount.resize( elemIdCount );
-
         if ( elemIdCount == mFaceNodeCount.size() )
         {
           std::vector<int> faceToElement( elemIdCount );
@@ -359,6 +408,13 @@ bool Mesh::populateMeshFrame()
   return !fail;
 }
 
+bool Mesh::populate3DMeshFrame()
+{
+    //load all the element connectivity and vertices
+    populate2DMeshFrame();
+    return true;
+}
+
 bool Mesh::setCoordinate( LPVECTOR pvec, LPITEM staticItem, SimpleType itemDatatype, size_t offset, double &min, double &max )
 {
   LONG valueCount = dfsGetItemElements( staticItem );
@@ -366,11 +422,6 @@ bool Mesh::setCoordinate( LPVECTOR pvec, LPITEM staticItem, SimpleType itemDatat
   bool coordinateIsDouble = itemDatatype == UFS_DOUBLE;
   if ( valueCount * ( coordinateIsDouble ? sizeof( double ) : sizeof( float ) ) == size )
   {
-    if ( mVertexCoordinates.size() == 0 )
-    {
-      mVertexCoordinates.resize( valueCount * 3 );
-    }
-
     if ( valueCount * 3 == mVertexCoordinates.size() )
     {
       if ( coordinateIsDouble )
@@ -479,8 +530,6 @@ static bool isVector( const std::string &rawName, std::string &name, bool &isX )
   return isVector;
 }
 
-typedef std::map<std::string, std::pair<LONG, bool>> VectorGroups;
-
 
 static double convertTimeToHours( double time, LONG timeUnit )
 {
@@ -493,6 +542,8 @@ static double convertTimeToHours( double time, LONG timeUnit )
 
   return result;
 }
+
+typedef std::map<std::string, std::pair<LONG, bool>> VectorGroups; // used to temporarily store component of vector datasetgroup until the second component is found
 
 bool Mesh::populateDatasetGroups()
 {

@@ -976,6 +976,7 @@ MDAL::Library::Library( std::string libraryFile )
 {
   d = new Data;
   d->mLibraryFile = libraryFile;
+  d->mRef++;
 }
 
 MDAL::Library::~Library()
@@ -993,6 +994,7 @@ MDAL::Library::~Library()
 MDAL::Library::Library( const MDAL::Library &other )
 {
   *this = other;
+  d->mRef++;
 }
 
 MDAL::Library &MDAL::Library::operator=( const MDAL::Library &other )

@@ -149,7 +149,7 @@ class Mesh
     int verticesCount() const;
     int facesCount() const;
 
-    //! Returqn a pointer to the vertices coordinates for \a index
+    //! Returns a pointer to the vertices coordinates for \a index
     double *vertexCoordinates( int index );
 
     //! Returns connectivty informations
@@ -174,8 +174,12 @@ class Mesh
 
   private:
     Mesh() = default;
-    LPFILE mFp;
-    LPHEAD  mPdfs;
+    LPFILE mFp = nullptr;
+    LPHEAD  mPdfs = nullptr;
+    int mDimension = 0;
+    int mMaxNumberOfLayer = 0;
+    size_t mTotalNodeCount = 0;
+    size_t mTotalElementCount = 0;
     std::string mWktProjection = "projection";
     std::vector<double> mVertexCoordinates;
     std::map<int, size_t> mNodeId2VertexIndex;
@@ -186,7 +190,7 @@ class Mesh
     double mYmax = -std::numeric_limits<double>::max();
 
     std::vector<std::unique_ptr<DatasetGroup>> mDatasetGroups;
-    int mTimeStepCount;
+    int mTimeStepCount=0;
     std::string mReferenceTime;
     std::vector<double> mTimes;
 
@@ -203,7 +207,11 @@ class Mesh
     size_t mNextFaceIndexForConnectivity = 0; //cache to speed up acces to connectivity
     size_t mNextConnectivityPosition = 0; //cache to speed up acces to connectivity
 
+    static bool fileInfo(LPHEAD  pdfs, int& totalNodeCount, int& elementCount, int& dimension, int& maxNumberOfLayer, int& numberOfSigmaLayer);
+
     bool populateMeshFrame();
+    bool populate2DMeshFrame();
+    bool populate3DMeshFrame();
     bool setCoordinate( LPVECTOR pvec, LPITEM staticItem, SimpleType    itemDatatype, size_t offset, double &min, double &max );
 
     bool populateDatasetGroups();

@@ -301,6 +301,52 @@ int MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int
   return 0;
 }
 
+int MDAL_DRIVER_D_maximumVerticalLevelCount(int meshId, int groupIndex, int datasetIndex)
+{
+    if (sMeshes.find(meshId) != sMeshes.end())
+    {
+    }
+
+    return -1;
+}
+
+int MDAL_DRIVER_D_volumeCount(int meshId, int groupIndex, int datasetIndex)
+{
+    if (sMeshes.find(meshId) != sMeshes.end())
+    {
+    }
+
+    return -1;
+}
+
+int MDAL_DRIVER_D_verticalLevelCountData(int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int* buffer)
+{
+    if (sMeshes.find(meshId) != sMeshes.end())
+    {
+    }
+
+    return -1;
+}
+
+int MDAL_DRIVER_D_verticalLevelData(int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double* buffer)
+{
+    if (sMeshes.find(meshId) != sMeshes.end())
+    {
+    }
+
+    return -1;
+}
+
+int MDAL_DRIVER_D_faceToVolumeData(int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int* buffer)
+{
+    if (sMeshes.find(meshId) != sMeshes.end())
+    {
+
+    }
+
+    return -1;
+}
+
 MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int meshId, int groupIndex, int datasetIndex )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )
@@ -313,8 +359,6 @@ MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int meshId, int groupIndex, int datas
     if ( ds )
       return ds->unload();
   }
-
-
 }
 
 #ifdef __cplusplus

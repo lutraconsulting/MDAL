@@ -22,6 +22,16 @@ TEST( MeshDhiDriverTest, loadDriver )
   EXPECT_EQ( longName, std::string( "DHI dfsu" ) );
 }
 
+TEST(MeshDhiDriverTest, loadMesh3DStacked)
+{
+	std::string path = test_file("/dhi/OdenseHD3D.dfsu");
+	MDAL_MeshH m = MDAL_LoadMesh(path.c_str());
+	ASSERT_TRUE(m);
+
+	int verticesCount = MDAL_M_vertexCount(m);
+	ASSERT_EQ(verticesCount, 0);
+}
+
 TEST( MeshDhiDriverTest, loadMesh )
 {
   std::string path = test_file( "/dhi/small.dfsu" );
@@ -187,6 +197,8 @@ TEST( MeshDhiDriverTest, meshWithVectorGroup )
   valueY = getValueY( ds, 100 );
   EXPECT_TRUE( MDAL::equals( 0.237487, valueX, 0.00001 ) );
   EXPECT_TRUE( MDAL::equals( -0.399625, valueY, 0.00001 ) );
+
+  MDAL_CloseMesh(m);
 }
 
 TEST( MeshDhiDriverTest, meshWithVectorGroupDifferentName )
@@ -253,6 +265,8 @@ TEST( MeshDhiDriverTest, meshWithVectorGroupDifferentName )
   valueY = getValueY( ds, 100 );
   EXPECT_TRUE( MDAL::equals( -0.04948761, valueX, 0.00001 ) );
   EXPECT_TRUE( MDAL::equals( -0.02867248, valueY, 0.00001 ) );
+
+  MDAL_CloseMesh(m);
 }
 
 int main( int argc, char **argv )
