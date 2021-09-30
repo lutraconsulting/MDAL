@@ -23,8 +23,8 @@ static std::map<int, std::unique_ptr<Mesh>> sMeshes;
 static int sIdGenerator = 0;
 
 static std::string sName( "DHI" );
-static std::string sLongName( "DHI dfsu" );
-static std::string sFilters( "*.dfsu" );
+static std::string sLongName( "DHI dfs" );
+static std::string sFilters( "*.dfs*" );
 
 #define MAX_VERTEX_PER_FACE 4
 
@@ -242,7 +242,7 @@ bool MDAL_DRIVER_G_datasetsDescription( int meshId, int groupIndex, bool *isScal
     Mesh *mesh = sMeshes[meshId].get();
     DatasetGroup *dsg = mesh->datasetgroup( groupIndex );
     *isScalar = dsg->isScalar();
-    *dataLocation = 2;
+    *dataLocation = mesh->is3D() ? 3 : 2;
     *datasetCount = dsg->datasetCount();
     return true;
   }
@@ -301,50 +301,94 @@ int MDAL_DRIVER_D_activeFlags( int meshId, int groupIndex, int datasetIndex, int
   return 0;
 }
 
-int MDAL_DRIVER_D_maximumVerticalLevelCount(int meshId, int groupIndex, int datasetIndex)
+int MDAL_DRIVER_D_maximumVerticalLevelCount( int meshId, int groupIndex, int datasetIndex )
 {
-    if (sMeshes.find(meshId) != sMeshes.end())
-    {
-    }
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    Mesh *mesh = sMeshes[meshId].get();
+    DatasetGroup *dsg = mesh->datasetgroup( groupIndex );
+    if ( !dsg )
+      return 0;
+    Dataset *ds = dsg->dataset( datasetIndex );
 
-    return -1;
+    if ( !ds )
+      return 0;
+    return ds->maximum3DLevelCount();
+  }
+
+  return -1;
 }
 
-int MDAL_DRIVER_D_volumeCount(int meshId, int groupIndex, int datasetIndex)
+int MDAL_DRIVER_D_volumeCount( int meshId, int groupIndex, int datasetIndex )
 {
-    if (sMeshes.find(meshId) != sMeshes.end())
-    {
-    }
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    Mesh *mesh = sMeshes[meshId].get();
+    DatasetGroup *dsg = mesh->datasetgroup( groupIndex );
+    if ( !dsg )
+      return 0;
+    Dataset *ds = dsg->dataset( datasetIndex );
 
-    return -1;
+    if ( !ds )
+      return 0;
+    return ds->volumeCount();
+  }
+
+  return -1;
 }
 
-int MDAL_DRIVER_D_verticalLevelCountData(int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int* buffer)
+int MDAL_DRIVER_D_verticalLevelCountData( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer )
 {
-    if (sMeshes.find(meshId) != sMeshes.end())
-    {
-    }
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    Mesh *mesh = sMeshes[meshId].get();
+    DatasetGroup *dsg = mesh->datasetgroup( groupIndex );
+    if ( !dsg )
+      return 0;
+    Dataset *ds = dsg->dataset( datasetIndex );
 
-    return -1;
+    if ( !ds )
+      return 0;
+    return ds->verticalLevelCountData( indexStart, count, buffer );
+  }
+
+  return -1;
 }
 
-int MDAL_DRIVER_D_verticalLevelData(int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double* buffer)
+int MDAL_DRIVER_D_verticalLevelData( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double *buffer )
 {
-    if (sMeshes.find(meshId) != sMeshes.end())
-    {
-    }
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    Mesh *mesh = sMeshes[meshId].get();
+    DatasetGroup *dsg = mesh->datasetgroup( groupIndex );
+    if ( !dsg )
+      return 0;
+    Dataset *ds = dsg->dataset( datasetIndex );
 
-    return -1;
+    if ( !ds )
+      return 0;
+    return ds->verticalLevelData( indexStart, count, buffer );
+  }
+
+  return -1;
 }
 
-int MDAL_DRIVER_D_faceToVolumeData(int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int* buffer)
+int MDAL_DRIVER_D_faceToVolumeData( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, int *buffer )
 {
-    if (sMeshes.find(meshId) != sMeshes.end())
-    {
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    Mesh *mesh = sMeshes[meshId].get();
+    DatasetGroup *dsg = mesh->datasetgroup( groupIndex );
+    if ( !dsg )
+      return 0;
+    Dataset *ds = dsg->dataset( datasetIndex );
 
-    }
+    if ( !ds )
+      return 0;
+    return ds->faceToVolume( indexStart, count, buffer );
+  }
 
-    return -1;
+  return -1;
 }
 
 MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int meshId, int groupIndex, int datasetIndex )
