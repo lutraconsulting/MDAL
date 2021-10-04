@@ -3,7 +3,7 @@
  Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
 */
 
-#include "mdal_dhi_dfsu.hpp"
+#include "mdal_dhi_dfs.hpp"
 
 #include <cassert>
 
@@ -12,103 +12,20 @@ Mesh::~Mesh()
   close();
 }
 
-bool Mesh::canRead( const std::string &uri )
-{
-  LPFILE      Fp;
-  LPHEAD      pdfs;
-  LPCTSTR fileName = uri.c_str();
-
-  bool ok = false;
-  ufsErrors rc = static_cast<ufsErrors>( dfsFileRead( fileName, &pdfs, &Fp ) );
-
-  if ( rc == F_NO_ERROR )
-  {
-    int totalNodeCount;
-    int elementCount;
-    int dimension;
-    int maxNumberOfLayer;
-    int numberOfSigmaLayer;
-
-    if ( fileInfo( pdfs, totalNodeCount, elementCount, dimension, maxNumberOfLayer, numberOfSigmaLayer ) )
-      ok = dimension == 2 || dimension == 3;
-  }
-
-  dfsFileClose( pdfs, &Fp );
-  dfsHeaderDestroy( &pdfs );
-
-  return ok;
-
-}
-
-std::unique_ptr<Mesh> Mesh::loadMesh( const std::string &uri )
-{
-  LPFILE      Fp;
-  LPHEAD      pdfs;
-  LPCTSTR fileName = uri.c_str();
-
-  ufsErrors rc = static_cast<ufsErrors>( dfsFileRead( fileName, &pdfs, &Fp ) );
-
-  if ( rc != F_NO_ERROR )
-    return nullptr;
-
-  int totalNodeCount;
-  int elementCount;
-  int dimension;
-  int maxNumberOfLayer;
-  int numberOfSigmaLayer;
-
-  if ( !fileInfo( pdfs, totalNodeCount, elementCount, dimension, maxNumberOfLayer, numberOfSigmaLayer ) )
-    return nullptr;
-
-  std::unique_ptr<Mesh> mesh( new Mesh );
-  mesh->mFp = Fp;
-  mesh->mPdfs = pdfs;
-  mesh->mIs3D = dimension == 3;
-  mesh->mMaxNumberOfLayer = maxNumberOfLayer;
-  mesh->mTotalNodeCount = size_t( totalNodeCount );
-  mesh->mTotalElementCount = size_t( elementCount );
-
-  GeoInfoType geoInfoType = dfsGetGeoInfoType( pdfs );
-  LPCTSTR projectionWkt;
-  if ( geoInfoType == F_UTM_PROJECTION )
-  {
-    dfsGetGeoInfoUTMProj( pdfs, &projectionWkt, nullptr, nullptr, nullptr );
-    mesh->mWktProjection = projectionWkt;
-  }
-
-  if ( !mesh->populateMeshFrame() )
-    return nullptr;
-
-  if ( !mesh->populateDatasetGroups() )
-    return nullptr;
-
-  return mesh;
-}
 
 void Mesh::close()
 {
   dfsFileClose( mPdfs, &mFp );
-  dfsFileClose( mPdfs, &mFp );
-}
-
-int Mesh::verticesCount() const
-{
-  return static_cast<int>( mVertexCoordinates.size() / 3 );
-}
-
-int Mesh::facesCount() const
-{
-  return static_cast<int>( mFaceNodeCount.size() );
 }
 
 //! return a pointer to the vertices coordinates for \a index
-
 double *Mesh::vertexCoordinates( int index )
 {
   return &mVertexCoordinates[static_cast<size_t>( index * 3 )];
 }
 
-int Mesh::connectivity( int startFaceIndex, int faceCount, int *faceOffsetsBuffer, int vertexIndicesBufferLen, int *vertexIndicesBuffer )
+
+int Mesh::connectivity( int startFaceIndex, int faceCount, int *faceOffsetsBuffer, int vertexIndicesBufferLen, int *vertexIndicesBuffer ) const
 {
   int maxFaceCount = std::max( 0, std::min( facesCount() - startFaceIndex, faceCount ) );
   size_t conPos = connectivityPosition( startFaceIndex );
@@ -117,14 +34,15 @@ int Mesh::connectivity( int startFaceIndex, int faceCount, int *faceOffsetsBuffe
   size_t effectiveFaceCount = 0;
   for ( size_t i = 0; i < maxFaceCount; ++i )
   {
-    if ( conCount + mFaceNodeCount[i + startFaceIndex] > vertexIndicesBufferLen )
+    int nc = nodeCount( i + startFaceIndex );
+    if ( conCount + nc > vertexIndicesBufferLen )
       break;
-    conCount += mFaceNodeCount[i + startFaceIndex];
+    conCount += nc;
     faceOffset[i] = static_cast<int>( conCount );
     effectiveFaceCount++;
   }
 
-  if ( startFaceIndex + effectiveFaceCount < mFaceNodeCount.size() )
+  if ( startFaceIndex + effectiveFaceCount < facesCount() )
   {
     mNextFaceIndexForConnectivity = startFaceIndex + effectiveFaceCount;
     mNextConnectivityPosition = conPos + conCount;
@@ -135,8 +53,6 @@ int Mesh::connectivity( int startFaceIndex, int faceCount, int *faceOffsetsBuffe
 
   return static_cast<int>( effectiveFaceCount );
 }
-
-//! Returns mesh extent
 
 void Mesh::extent( double *xMin, double *xMax, double *yMin, double *yMax ) const
 {
@@ -187,367 +103,6 @@ bool Mesh::is3D() const
   return mIs3D;
 }
 
-size_t Mesh::vertexIdToIndex( int id ) const
-{
-  if ( !mNodeId2VertexIndex.empty() )
-  {
-    std::map<int, size_t>::const_iterator it = mNodeId2VertexIndex.find( id );
-    if ( it != mNodeId2VertexIndex.end() )
-      return it->second;
-  }
-
-  return static_cast<size_t>( id - mGapFromVertexToNode );
-}
-
-size_t Mesh::connectivityPosition( int faceIndex ) const
-{
-  size_t fi = static_cast<size_t>( faceIndex );
-  if ( fi == mNextFaceIndexForConnectivity )
-    return mNextConnectivityPosition;
-  size_t conPos = 0;
-  for ( int i = 0; i < fi; i++ )
-    conPos += mFaceNodeCount[i];
-
-  return conPos;
-}
-
-bool Mesh::fileInfo( LPHEAD pdfs, int &totalNodeCount, int &elementCount, int &dimension, int &maxNumberOfLayer, int &numberOfSigmaLayer )
-{
-  bool ok = false;
-  LONG dataType = dfsGetDataType( pdfs );
-  if ( dataType == 2001 || dataType != 2000 ) //dfsu file
-  {
-    LPBLOCK customBlock;
-    LONG error = dfsGetCustomBlockRef( pdfs, &customBlock );
-    if ( error == F_NO_ERROR )
-    {
-      // Search for "MIKE_FM" custom block containing int data
-      while ( customBlock )
-      {
-        SimpleType dataType;
-        LPCTSTR name;
-        LONG size;
-        void *customblockData = nullptr;
-        error = dfsGetCustomBlock( customBlock, &dataType, &name, &size, &customblockData, &customBlock );
-        if ( error != F_NO_ERROR )
-          break;
-
-        if ( 0 == strcmp( name, "MIKE_FM" ) && dataType == UFS_INT )
-        {
-          int *intData = static_cast<int *>( customblockData );
-
-          totalNodeCount = intData[0];
-          elementCount = intData[1];
-          dimension = intData[2];
-          maxNumberOfLayer = intData[3];
-          numberOfSigmaLayer = intData[4];
-          ok = true;
-          break;
-        }
-      }
-    }
-  }
-
-  return ok;
-}
-
-bool Mesh::populateMeshFrame()
-{
-  mVertexCoordinates.resize( mTotalNodeCount * 3 );
-  mFaceNodeCount.resize( mTotalElementCount );
-
-  if ( mIs3D )
-    return populate3DMeshFrame();
-  else
-    return populate2DMeshFrame();
-
-  return false;
-}
-
-bool Mesh::populate2DMeshFrame()
-{
-  LPVECTOR pvec;
-  LONG error;
-  LONG          itemType;
-  LPCTSTR       itemName;
-  SimpleType    itemDataType;
-
-  bool fail = false;
-
-  while ( ( pvec = dfsStaticRead( mFp, &error ) ) && !fail )
-  {
-    LPITEM staticItem;
-    staticItem = dfsItemS( pvec );
-    dfsGetItemInfo_( staticItem, &itemType, &itemName, nullptr, &itemDataType );
-
-    if ( lstrcmp( itemName, "Node id" ) == 0 )
-    {
-      size_t nodeIdCount = static_cast<size_t>( dfsGetItemElements( staticItem ) );
-      size_t size = dfsGetItemBytes( staticItem );
-      if ( nodeIdCount * sizeof( int ) == size  && nodeIdCount == mTotalNodeCount )
-      {
-        if ( nodeIdCount == mVertexCoordinates.size() / 3 )
-        {
-          std::vector<int> vertexToNode( nodeIdCount );
-          dfsStaticGetData( pvec, vertexToNode.data() );
-
-          if ( !vertexToNode.empty() )
-          {
-            mGapFromVertexToNode = vertexToNode.at( 0 );
-            for ( size_t i = 1; i < vertexToNode.size(); ++i )
-              if ( vertexToNode.at( i ) - i != mGapFromVertexToNode )
-                mNodeId2VertexIndex[vertexToNode.at( i )] = i;
-          }
-        }
-        else
-          fail = true;
-      }
-      else
-        fail = true;
-    }
-    else if ( lstrcmp( itemName, "X-coord" ) == 0 )
-    {
-      fail = !setCoordinate( pvec, staticItem, itemDataType, 0, mXmin, mXmax );
-    }
-    else if ( lstrcmp( itemName, "Y-coord" ) == 0 )
-    {
-      fail = !setCoordinate( pvec, staticItem, itemDataType, 1, mYmin, mYmax );
-    }
-    else if ( lstrcmp( itemName, "Z-coord" ) == 0 )
-    {
-      double zMin, zMax;
-      fail = !setCoordinate( pvec, staticItem, itemDataType, 2, zMin, zMax );
-    }
-    else if ( lstrcmp( itemName, "Element id" ) == 0 )
-    {
-      // not needed, in any cases, the element ad associated data are always stored in the same order
-    }
-    else if ( lstrcmp( itemName, "Element type" ) == 0 )
-    {
-      // not needed, use directly "No of nodes"
-    }
-    else if ( lstrcmp( itemName, "No of nodes" ) == 0 )
-    {
-      size_t elemCount = static_cast<size_t>( dfsGetItemElements( staticItem ) );
-      size_t size = dfsGetItemBytes( staticItem );
-      if ( elemCount * sizeof( int ) == size )
-      {
-        if ( mFaceNodeCount.empty() )
-          mFaceNodeCount.resize( elemCount );
-
-        if ( elemCount == mFaceNodeCount.size() )
-        {
-          error = dfsStaticGetData( pvec, mFaceNodeCount.data() );
-          if ( error != F_NO_ERROR )
-            fail = true;
-        }
-        else
-          fail = true;
-      }
-      else
-        fail = true;
-    }
-    else if ( lstrcmp( itemName, "Connectivity" ) == 0 )
-    {
-      size_t valueCount = static_cast<size_t>( dfsGetItemElements( staticItem ) );
-      size_t size = dfsGetItemBytes( staticItem );
-      if ( valueCount * sizeof( int ) == size )
-      {
-        mConnectivity.resize( valueCount );
-        error = dfsStaticGetData( pvec, mConnectivity.data() );
-        if ( error != F_NO_ERROR )
-          fail = true;
-        //transform node id to vertex indexes
-        if ( !fail )
-          for ( size_t i = 0; i < mConnectivity.size(); ++i )
-            mConnectivity[i] = static_cast<int>( vertexIdToIndex( mConnectivity.at( i ) ) );
-      }
-      else
-        fail = true;
-    }
-
-    dfsStaticDestroy( &pvec );
-  }
-
-  return !fail;
-}
-
-bool Mesh::populate3DMeshFrame()
-{
-  //load all the element connectivity and vertices
-  if ( !populate2DMeshFrame() )
-    return false;
-  //now, we have all the data, we can build the real 2D mesh
-
-  std::vector<int> connecticity2D;
-  std::vector<int> faceNodeCount2D;
-  std::unordered_map<int, int> vertices3DToVertices2D;
-
-  size_t connectivityPosition = 0;
-  size_t maxColumneSize = 0;
-  size_t currentColumnSize = 0;
-  std::vector<size_t> bottomVerticesCount;
-  std::vector<double> bottomVerticesZValueSum;
-  std::vector<double> currentBottomZvalue;
-  size_t maxPos = 0;
-  VertexIndexesOfLevelsOnFace currentLevels;
-  size_t totalVolumeCount = 0;
-
-  size_t elementCount = mFaceNodeCount.size();
-
-  for ( size_t fi = 0; fi < elementCount; ++fi )
-  {
-    size_t elementSize = mFaceNodeCount.at( fi );
-    size_t faceSize = elementSize / 2;
-    size_t connectivityPositionTop = connectivityPosition + faceSize;
-
-    VertexIndexesOfLevel level;
-    for ( size_t n = 0; n < faceSize; ++n )
-      level.push_back( mConnectivity.at( connectivityPosition + n ) );
-    currentLevels.push_back( std::move( level ) );
-
-    bool topExist = true;
-    if ( fi < elementCount - 1 )
-    {
-      for ( size_t n = 0; n < faceSize; ++n )
-      {
-        topExist = mConnectivity.at( connectivityPositionTop + n ) == mConnectivity.at( connectivityPositionTop + n + faceSize );
-        if ( !topExist )
-          break;
-      }
-    }
-    else
-      topExist = false;
-
-    if ( currentColumnSize == 0 )
-    {
-      currentBottomZvalue.clear();
-      for ( size_t n = 0; n < faceSize; ++n )
-      {
-        int vertexIndex3D = mConnectivity.at( connectivityPosition + n );
-        currentBottomZvalue.push_back( mVertexCoordinates.at( vertexIndex3D * 3 + 2 ) );
-      }
-    }
-
-    if ( ! topExist )
-    {
-      VertexIndexesOfLevel lastLevel;
-      faceNodeCount2D.push_back( faceSize );
-
-      for ( size_t n = 0; n < faceSize; ++n )
-      {
-        int vertexIndex3D = mConnectivity.at( connectivityPositionTop + n );
-        lastLevel.push_back( vertexIndex3D );
-
-        std::unordered_map<int, int>::const_iterator it = vertices3DToVertices2D.find( vertexIndex3D );
-
-        int vertexIndex2D;
-        if ( it == vertices3DToVertices2D.end() )
-        {
-          vertexIndex2D = vertices3DToVertices2D.size();
-          bottomVerticesZValueSum.push_back( 0.0 );
-          bottomVerticesCount.push_back( 0 );
-          vertices3DToVertices2D[vertexIndex3D] = vertexIndex2D;
-        }
-        else
-        {
-          vertexIndex2D = it->second;
-        }
-
-        connecticity2D.push_back( vertexIndex2D );
-        mFaceToVolume.push_back( fi );
-        bottomVerticesZValueSum[vertexIndex2D] += currentBottomZvalue.at( n );
-        bottomVerticesCount[vertexIndex2D] += 1;
-      }
-
-      currentLevels.push_back( std::move( lastLevel ) );
-
-      mLevels.push_back( std::move( currentLevels ) );
-      currentLevels = std::vector<std::vector<int>>();
-
-      totalVolumeCount += currentColumnSize;
-      currentColumnSize = 0;
-    }
-    else
-      currentColumnSize++;
-
-    connectivityPosition += elementSize;
-  }
-
-  size_t vertex3DCount = mVertexCoordinates.size() / 3;
-
-
-  std::vector<double> vertexCoordinates2D( vertices3DToVertices2D.size() * 3 );
-  for ( std::unordered_map<int, int>::const_iterator it = vertices3DToVertices2D.cbegin(); it != vertices3DToVertices2D.cend(); ++it )
-  {
-    int vertexIndex3D = it->first;
-    int vertexIndex2D = it->second;
-    for ( size_t vc = 0; vc < 2; ++vc )
-      vertexCoordinates2D[vertexIndex2D * 3 + vc] = mVertexCoordinates.at( vertexIndex3D * 3 + vc );
-  }
-
-  // now vertices of the 2D mesh are on the top levels, to be representative of the terrain elevation,
-  // we need to take the vertices of the bottom level. But with non Sigma Z layer,
-  // there could be several vertices on the bottom (staircase bottom). We take the average value
-  for ( size_t vi = 0; vi < vertexCoordinates2D.size() / 3; ++vi )
-    vertexCoordinates2D[vi * 3 + 2] = bottomVerticesZValueSum.at( vi ) / bottomVerticesCount.at( vi );
-
-  mVertexCoordinates = std::move( vertexCoordinates2D );
-  mConnectivity = std::move( connecticity2D );
-  mFaceNodeCount = std::move( faceNodeCount2D );
-
-  mLevelGenerator = std::make_unique<LevelValuesGenerator>( mFp, mPdfs, mLevels, vertex3DCount );
-
-  return true;
-}
-
-bool Mesh::setCoordinate( LPVECTOR pvec, LPITEM staticItem, SimpleType itemDatatype, size_t offset, double &min, double &max )
-{
-  LONG valueCount = dfsGetItemElements( staticItem );
-  size_t size = dfsGetItemBytes( staticItem );
-  bool coordinateIsDouble = itemDatatype == UFS_DOUBLE;
-  if ( valueCount * ( coordinateIsDouble ? sizeof( double ) : sizeof( float ) ) == size )
-  {
-    if ( valueCount * 3 == mVertexCoordinates.size() )
-    {
-      if ( coordinateIsDouble )
-      {
-        std::vector<double> values( valueCount );
-        LONG error = dfsStaticGetData( pvec, values.data() );
-        if ( error != F_NO_ERROR )
-          return false;
-        for ( int i = 0; i < valueCount; ++i )
-        {
-          mVertexCoordinates[i * 3 + offset] = values.at( i );
-          if ( values.at( i ) < min )
-            min = values.at( i );
-          if ( values.at( i ) > max )
-            max = values.at( i );
-        }
-      }
-      else
-      {
-        std::vector<float> values( valueCount );
-        LONG error = dfsStaticGetData( pvec, values.data() );
-        if ( error != F_NO_ERROR )
-          return false;
-        for ( int i = 0; i < valueCount; ++i )
-        {
-          mVertexCoordinates[i * 3 + offset] = values.at( i );
-          if ( values.at( i ) < min )
-            min = values.at( i );
-          if ( values.at( i ) > max )
-            max = values.at( i );
-        }
-      }
-
-      return true;
-    }
-  }
-
-  return false;
-}
-
 static std::vector<std::string> split( const std::string &str,
                                        const char delimiter )
 {
@@ -573,7 +128,7 @@ static std::vector<std::string> split( const std::string &str,
 }
 
 
-static bool isVector( const std::string &rawName, std::string &name, bool &isX )
+static bool isVector( const std::string &rawName, std::string &name, LONG type, bool &isX )
 {
   std::vector<std::string> splitName = split( rawName, ' ' );
   if ( splitName.empty() )
@@ -584,12 +139,16 @@ static bool isVector( const std::string &rawName, std::string &name, bool &isX )
 
   while ( vectorIndicatorPos < splitName.size() && !isVector )
   {
-    if ( splitName.at( vectorIndicatorPos ) == "U" )
+    std::string vectorIndicator = splitName.at( vectorIndicatorPos );
+
+    if ( vectorIndicator == "U" ||
+         ( type == 100080 && vectorIndicator == "P" ) )
     {
       isX = true;
       isVector = true;
     }
-    else if ( splitName.at( vectorIndicatorPos ) == "V" )
+    else if ( vectorIndicator == "V" ||
+              ( type == 100080 && vectorIndicator == "Q" ) )
     {
       isX = false;
       isVector = true;
@@ -609,47 +168,47 @@ static bool isVector( const std::string &rawName, std::string &name, bool &isX )
     for ( size_t i = 1; i < splitName.size(); ++i )
       name += " " + splitName.at( i );
 
-    std::transform( name.begin(), name.begin() + 1, name.begin(), toupper );
+    std::transform( name.begin(), name.begin() + 1, name.begin(), []( char c )-> char { return static_cast<char>( ( int( c ) ) ); } );
   }
 
   return isVector;
 }
 
-static bool isVelocity(LONG itemType, std::string& name, bool& isX, bool &isVerticalComponent)
+static bool isVelocity( LONG itemType, std::string &name, bool &isX, bool &isVerticalComponent )
 {
-    LPCTSTR eumIdent;
-    if (!eumGetItemTypeIdent(itemType, &eumIdent))
-        return false;
+  LPCTSTR eumIdent;
+  if ( !eumGetItemTypeIdent( itemType, &eumIdent ) )
+    return false;
 
-    std::string ident(eumIdent);
+  std::string ident( eumIdent );
 
-    if (std::strcmp(eumIdent, "eumIuVelocity") == 0)
-    {
-        isX = true;
-        isVerticalComponent = false;
-        name = "Velocity";
-        return true;
-    }
+  if ( std::strcmp( eumIdent, "eumIuVelocity" ) == 0 )
+  {
+    isX = true;
+    isVerticalComponent = false;
+    name = "Velocity";
+    return true;
+  }
 
-    if (std::strcmp(eumIdent, "eumIvVelocity") == 0)
-    {
-        isX = false;
-        isVerticalComponent = false;
-        name = "Velocity";
-        return true;
-    }
-
-    if (std::strcmp(eumIdent, "eumIwVelocity") == 0)
-    {
-        isX = false;
-        isVerticalComponent = true;
-        name = "Vertical velocity";
-        return true;
-    }
-
+  if ( std::strcmp( eumIdent, "eumIvVelocity" ) == 0 )
+  {
     isX = false;
     isVerticalComponent = false;
-    return false;
+    name = "Velocity";
+    return true;
+  }
+
+  if ( std::strcmp( eumIdent, "eumIwVelocity" ) == 0 )
+  {
+    isX = false;
+    isVerticalComponent = true;
+    name = "Vertical velocity";
+    return true;
+  }
+
+  isX = false;
+  isVerticalComponent = false;
+  return false;
 }
 
 
@@ -658,7 +217,6 @@ static double convertTimeToHours( double time, LONG timeUnit )
   LONG idHour = 0;
   double result = time;
   LPCTSTR ident = "hour";
-  LONG count = eumGetItemTypeCount();
   if ( eumGetUnitTag( ident, &idHour ) )
     eumConvertUnit( timeUnit, time, idHour, &result );
 
@@ -749,14 +307,14 @@ bool Mesh::populateDatasetGroups()
     bool isX;
 
     bool isVectorDataset = false;
-    bool isVerticalVelocity=false;
+    bool isVerticalVelocity = false;
 
-    isVectorDataset = isVelocity(itemType, groupName, isX, isVerticalVelocity);
+    isVectorDataset = isVelocity( itemType, groupName, isX, isVerticalVelocity );
 
-    if (!isVectorDataset)
-        isVectorDataset = isVector(itemName, groupName, isX);
+    if ( !isVectorDataset )
+      isVectorDataset = isVector( itemName, groupName, itemType, isX );
 
-    if (isVectorDataset && !isVerticalVelocity)
+    if ( isVectorDataset && !isVerticalVelocity )
     {
       VectorGroups::const_iterator it = vectorGroups.find( groupName );
       if ( it == vectorGroups.end() )
@@ -776,8 +334,8 @@ bool Mesh::populateDatasetGroups()
     }
     else
     {
-        if (isVerticalVelocity)
-            name = groupName;
+      if ( isVerticalVelocity )
+        name = groupName;
       mDatasetGroups.emplace_back( new DatasetGroup( name, itemUnit, i, doublePrecision, mFp, mPdfs ) );
       mDatasetGroups.back()->setLevelValueGenerator( mLevelGenerator.get() );
     }
@@ -796,8 +354,8 @@ Dataset::Dataset( LPFILE Fp, LPHEAD Pdfs, LONG timeStepNo, size_t size, bool dou
   mTimeStepNo( timeStepNo ),
   mSize( size ),
   mIsDoublePrecision( doublePrecision ),
-  mDoubleDeleteValue(doubleDeleteValue),
-  mFloatDeleteValue(floatDeleteValue)
+  mDoubleDeleteValue( doubleDeleteValue ),
+  mFloatDeleteValue( floatDeleteValue )
 {}
 
 int Dataset::getActive( int indexStart, int count, int *buffer )
@@ -849,7 +407,7 @@ ScalarDataset::ScalarDataset( LPFILE Fp,
                               bool doublePrecision,
                               double deleteDoubleValue,
                               float deleteFloatValue ) :
-  Dataset( Fp, Pdfs, timeStepNo, size, doublePrecision, deleteDoubleValue, deleteFloatValue),
+  Dataset( Fp, Pdfs, timeStepNo, size, doublePrecision, deleteDoubleValue, deleteFloatValue ),
   mItemNo( itemNo )
 {}
 int ScalarDataset::getData( int indexStart, int count, double *buffer )
@@ -865,30 +423,36 @@ int ScalarDataset::getData( int indexStart, int count, double *buffer )
 
       for ( size_t i = 0; i < mSize; ++i )
         if ( mData.at( i ) == mDoubleDeleteValue )
+        {
           mActive[i] = 0;
+          mData[i] = std::numeric_limits<double>::quiet_NaN();
+        }
         else
           mActive[i] = 1;
     }
     else
     {
-      std::vector<float> floatData( mSize, -1 );
+      std::vector<float> floatData( mSize );
       if ( !readData( mItemNo, floatData.data() ) )
         return 0;
 
       for ( size_t i = 0; i < mSize; ++i )
         if ( floatData.at( i ) == mFloatDeleteValue )
+        {
           mActive[i] = 0;
+          mData[i] = std::numeric_limits<double>::quiet_NaN();
+        }
         else
+        {
           mActive[i] = 1;
-
-      for ( size_t i = 0; i < mSize; ++i )
-        mData[i] = floatData[i];
+          mData[i] = floatData[i];
+        }
     }
     mLoaded = true;
   }
 
-  if (buffer == nullptr)
-      return 0;
+  if ( buffer == nullptr )
+    return 0;
 
   int effectiveCount = std::max( 0, std::min( count, static_cast<int>( mData.size() ) - indexStart ) );
   double *dataStart = &mData[indexStart];
@@ -933,7 +497,11 @@ int VectorDataset::getData( int indexStart, int count, double *buffer )
         mData[2 * i + 1] = yData.at( i );
 
         if ( xData.at( i ) == mDoubleDeleteValue )
+        {
           mActive[i] = 0;
+          mData[2 * i] = std::numeric_limits<double>::quiet_NaN();
+          mData[2 * i + 1] = std::numeric_limits<double>::quiet_NaN();
+        }
         else
           mActive[i] = 1;
       }
@@ -949,20 +517,25 @@ int VectorDataset::getData( int indexStart, int count, double *buffer )
 
       for ( size_t i = 0; i < mSize; ++i )
       {
-        mData[2 * i] = xData.at( i );
-        mData[2 * i + 1] = yData.at( i );
-
         if ( xData.at( i ) == mFloatDeleteValue )
+        {
+          mData[2 * i] = std::numeric_limits<double>::quiet_NaN();
+          mData[2 * i + 1] = std::numeric_limits<double>::quiet_NaN();
           mActive[i] = 0;
+        }
         else
+        {
+          mData[2 * i] = xData.at( i );
+          mData[2 * i + 1] = yData.at( i );
           mActive[i] = 1;
+        }
       }
     }
     mLoaded = true;
   }
 
-  if (buffer == nullptr)
-      return 0;
+  if ( buffer == nullptr )
+    return 0;
 
   int effectiveCount = std::max( 0, std::min( count, static_cast<int>( mData.size() ) / 2 - indexStart ) );
   double *dataStart = &mData[indexStart * 2];
@@ -1032,10 +605,10 @@ void DatasetGroup::init( LONG timeStepCount, size_t elementsCount, double delete
   {
     if ( mLevelValueGenerator ) //3D stacked mesh
     {
-        if (mIdY == 0) //scalar dataset group
-            mDatasets.emplace_back(new ScalarDatasetOnVolumes(mFp, mPdfs, index, mIdX, elementsCount, mIsDoublePrecision, deleteDoubleValue, deleteFloatValue, mLevelValueGenerator));
-        else
-            mDatasets.emplace_back(new VectorDatasetOnVolumes(mFp, mPdfs, index, mIdX, mIdY, elementsCount, mIsDoublePrecision, deleteDoubleValue, deleteFloatValue, mLevelValueGenerator));
+      if ( mIdY == 0 ) //scalar dataset group
+        mDatasets.emplace_back( new ScalarDatasetOnVolumes( mFp, mPdfs, index, mIdX, elementsCount, mIsDoublePrecision, deleteDoubleValue, deleteFloatValue, mLevelValueGenerator ) );
+      else
+        mDatasets.emplace_back( new VectorDatasetOnVolumes( mFp, mPdfs, index, mIdX, mIdY, elementsCount, mIsDoublePrecision, deleteDoubleValue, deleteFloatValue, mLevelValueGenerator ) );
     }
     else
     {
@@ -1064,7 +637,7 @@ void LevelValuesGenerator::initializeTimeStep( size_t timeStepCount, bool double
   mFaceLevelCountPerTimeStep = std::vector<std::vector<int>>( timeStepCount, std::vector<int>() );
   mFaceLevelsDataPerTimeStep = std::vector<std::vector<double>>( timeStepCount, std::vector<double>() );
 
-  mVolumeCountPerTimeStep = std::vector<size_t>( timeStepCount, 0 );
+  mVolumeCountPerTimeStep = std::vector<int>( timeStepCount, 0 );
   mMaximumeLevelCountPerTimeStep = std::vector<int>( timeStepCount, -1 );
 }
 
@@ -1131,7 +704,7 @@ int LevelValuesGenerator::faceToVolume( LONG timeStepNo, int indexStart, int cou
   return effectiveCount;
 }
 
-size_t LevelValuesGenerator::totalVolumesCount( LONG timeStepNo )
+int LevelValuesGenerator::totalVolumesCount( LONG timeStepNo )
 {
   if ( timeStepNo >= mVolumeCountPerTimeStep.size() )
     return 0;
@@ -1169,14 +742,14 @@ const std::vector<int> &LevelValuesGenerator::levelCounts( LONG timeStepNo )
   return mFaceLevelCountPerTimeStep.at( timeStepNo );
 }
 
-void LevelValuesGenerator::unload(LONG timeStep)
+void LevelValuesGenerator::unload( LONG timeStep )
 {
-    mFaceToStartVolumePositionPerTimeStep.at(timeStep).clear();
-    mFaceToStartVolumePositionPerTimeStep.at(timeStep).shrink_to_fit();
-    mFaceLevelCountPerTimeStep.at(timeStep).clear();
-    mFaceLevelCountPerTimeStep.at(timeStep).shrink_to_fit();
-    mFaceLevelsDataPerTimeStep.at(timeStep).clear();
-    mFaceLevelsDataPerTimeStep.at(timeStep).shrink_to_fit();
+  mFaceToStartVolumePositionPerTimeStep.at( timeStep ).clear();
+  mFaceToStartVolumePositionPerTimeStep.at( timeStep ).shrink_to_fit();
+  mFaceLevelCountPerTimeStep.at( timeStep ).clear();
+  mFaceLevelCountPerTimeStep.at( timeStep ).shrink_to_fit();
+  mFaceLevelsDataPerTimeStep.at( timeStep ).clear();
+  mFaceLevelsDataPerTimeStep.at( timeStep ).shrink_to_fit();
 }
 
 void *LevelValuesGenerator::rawDataPointerForRead( size_t size )
@@ -1215,22 +788,22 @@ double LevelValuesGenerator::rawDataValue( size_t i )
   }
 }
 
-bool LevelValuesGenerator::buildVolumeForTimeStep( LONG timeStepNo )
+void LevelValuesGenerator::buildVolumeForTimeStep( LONG timeStepNo )
 {
   LONG err = dfsFindItemDynamic( mPdfs, mFp, timeStepNo, 1 );
   if ( err != F_NO_ERROR )
-    return false;
+    return;
 
   double time;
   err = dfsReadItemTimeStep( mPdfs, mFp, &time, rawDataPointerForRead( m3DVertexCount ) );
   if ( err != F_NO_ERROR )
-    return false;
+    return;
 
   std::vector<int> levelCounts;
   std::vector<double> levelValues;
   std::vector<int> faceToStartVolumePosition;
 
-  size_t &volumeCount = mVolumeCountPerTimeStep.at( timeStepNo );
+  int &volumeCount = mVolumeCountPerTimeStep.at( timeStepNo );
   int &maxLevelCount = mMaximumeLevelCountPerTimeStep.at( timeStepNo );
   volumeCount = 0;
   maxLevelCount = 0;
@@ -1242,7 +815,7 @@ bool LevelValuesGenerator::buildVolumeForTimeStep( LONG timeStepNo )
   {
     const VertexIndexesOfLevelsOnFace &vertexIndexOfLevelsOnFace = mVertexIndexesOfLevelsOnMesh.at( faceIndex );
     size_t totalFaceLevelsCount = vertexIndexOfLevelsOnFace.size();
-    size_t effectiveLevelCount = 0;
+    int effectiveLevelCount = 0;
 
     faceToStartVolumePosition[faceIndex] = volumeCount;
 
@@ -1273,12 +846,9 @@ bool LevelValuesGenerator::buildVolumeForTimeStep( LONG timeStepNo )
       effectiveLevelCount++;
     }
 
-    if (faceIndex == 1500)
-        int a = 1;
-
     levelCounts[faceIndex] = effectiveLevelCount - 1;
 
-    zValues.resize( effectiveLevelCount );
+    zValues.resize( static_cast<size_t>( effectiveLevelCount ) );
     size_t firstlevelPos = levelValues.size();
     levelValues.resize( firstlevelPos + zValues.size() );
     //as MDAL consider volume with Z decreasing, we need to reverse values
@@ -1295,19 +865,19 @@ bool LevelValuesGenerator::buildVolumeForTimeStep( LONG timeStepNo )
   mFaceToStartVolumePositionPerTimeStep[timeStepNo] = std::move( faceToStartVolumePosition );
   mFaceLevelsDataPerTimeStep[timeStepNo] = std::move( levelValues );
 
-  rawDataPointerForRead(0); //clear the temporary raw data container
+  rawDataPointerForRead( 0 ); //clear the temporary raw data container
 }
 
 ScalarDatasetOnVolumes::ScalarDatasetOnVolumes( LPFILE Fp,
-    LPHEAD Pdfs, 
-    LONG timeStepNo, 
-    LONG itemNo, 
+    LPHEAD Pdfs,
+    LONG timeStepNo,
+    LONG itemNo,
     size_t maxSize,
-    bool doublePrecision, 
+    bool doublePrecision,
     double deleteDoubleValue,
-    float deleteFloatValue, 
+    float deleteFloatValue,
     LevelValuesGenerator *levelValueGenerator )
-  : DatasetOnVolumes( Fp, Pdfs, timeStepNo, maxSize, doublePrecision, deleteDoubleValue, deleteFloatValue, levelValueGenerator)
+  : DatasetOnVolumes( Fp, Pdfs, timeStepNo, maxSize, doublePrecision, deleteDoubleValue, deleteFloatValue, levelValueGenerator )
   , mItemNo( itemNo )
 {
 }
@@ -1316,9 +886,9 @@ int ScalarDatasetOnVolumes::getData( int indexStart, int count, double *buffer )
 {
   if ( !mLoaded )
   {
-    mActive.resize(mLevelValueGenerator->levelCounts(mTimeStepNo).size());
-    for (size_t i = 0; i<mActive.size(); ++i)
-        mActive[i] = false;
+    mActive.resize( mLevelValueGenerator->levelCounts( mTimeStepNo ).size() );
+    for ( size_t i = 0; i < mActive.size(); ++i )
+      mActive[i] = false;
 
     mData.resize( mSize );
     if ( mIsDoublePrecision )
@@ -1326,8 +896,8 @@ int ScalarDatasetOnVolumes::getData( int indexStart, int count, double *buffer )
       if ( !readData( mItemNo, mData.data() ) )
         return 0;
 
-      mData.resize(mLevelValueGenerator->totalVolumesCount(mTimeStepNo));
-      reverseAndActiveData(mData,mDoubleDeleteValue);
+      mData.resize( mLevelValueGenerator->totalVolumesCount( mTimeStepNo ) );
+      reverseAndActiveData( mData, mDoubleDeleteValue );
     }
     else
     {
@@ -1336,10 +906,10 @@ int ScalarDatasetOnVolumes::getData( int indexStart, int count, double *buffer )
       if ( !readData( mItemNo, floatData.data() ) )
         return 0;
 
-      floatData.resize(mLevelValueGenerator->totalVolumesCount(mTimeStepNo));
-      reverseAndActiveData(floatData, mFloatDeleteValue);
+      floatData.resize( mLevelValueGenerator->totalVolumesCount( mTimeStepNo ) );
+      reverseAndActiveData( floatData, mFloatDeleteValue );
 
-      mData.resize(mLevelValueGenerator->totalVolumesCount(mTimeStepNo));
+      mData.resize( mLevelValueGenerator->totalVolumesCount( mTimeStepNo ) );
       for ( size_t i = 0; i < mSize; ++i )
         mData[i] = floatData[i];
     }
@@ -1349,8 +919,8 @@ int ScalarDatasetOnVolumes::getData( int indexStart, int count, double *buffer )
     mLoaded = true;
   }
 
-  if (buffer == nullptr)
-      return 0;
+  if ( buffer == nullptr )
+    return 0;
 
   int effectiveCount = std::max( 0, std::min( count, static_cast<int>( mData.size() ) - indexStart ) );
   double *dataStart = &mData[indexStart];
@@ -1361,7 +931,7 @@ int ScalarDatasetOnVolumes::getData( int indexStart, int count, double *buffer )
 }
 
 
-VectorDatasetOnVolumes::VectorDatasetOnVolumes(LPFILE Fp, 
+VectorDatasetOnVolumes::VectorDatasetOnVolumes( LPFILE Fp,
     LPHEAD Pdfs,
     LONG timeStepNo,
     LONG itemNoX,
@@ -1370,74 +940,74 @@ VectorDatasetOnVolumes::VectorDatasetOnVolumes(LPFILE Fp,
     bool doublePrecision,
     double deleteDoubleValue,
     float deleteFloatValue,
-    LevelValuesGenerator* levelValueGenerator)
-    : DatasetOnVolumes(Fp, Pdfs, timeStepNo, maxSize, doublePrecision, deleteDoubleValue, deleteFloatValue, levelValueGenerator)
-    , mItemNoX(itemNoX)
-    , mItemNoY(itemNoY)
+    LevelValuesGenerator *levelValueGenerator )
+  : DatasetOnVolumes( Fp, Pdfs, timeStepNo, maxSize, doublePrecision, deleteDoubleValue, deleteFloatValue, levelValueGenerator )
+  , mItemNoX( itemNoX )
+  , mItemNoY( itemNoY )
 {
 }
 
-int VectorDatasetOnVolumes::getData(int indexStart, int count, double* buffer)
+int VectorDatasetOnVolumes::getData( int indexStart, int count, double *buffer )
 {
-    if (!mLoaded)
+  if ( !mLoaded )
+  {
+    mActive.resize( mLevelValueGenerator->levelCounts( mTimeStepNo ).size() );
+    for ( size_t i = 0; i < mActive.size(); ++i )
+      mActive[i] = false;
+
+    mData.resize( mSize * 2 );
+
+    if ( mIsDoublePrecision )
     {
-        mActive.resize(mLevelValueGenerator->levelCounts(mTimeStepNo).size());
-        for (size_t i = 0; i<mActive.size(); ++i)
-            mActive[i] = false;
-
-        mData.resize(mSize * 2);
-
-        if (mIsDoublePrecision)
-        {
-            std::vector<double> xData(mSize);
-            std::vector<double> yData(mSize);
-            if (!readData(mItemNoX, xData.data()))
-                return 0;
-            if (!readData(mItemNoY, yData.data()))
-                return 0;
-
-            reverseAndActiveData(xData,mDoubleDeleteValue);
-            reverseAndActiveData(yData, mDoubleDeleteValue);
-
-            for (size_t i = 0; i < mSize; ++i)
-            {
-                mData[2 * i] = xData.at(i);
-                mData[2 * i + 1] = yData.at(i);
-            }
-        }
-        else
-        {
-            std::vector<float> xData(mSize);
-            std::vector<float> yData(mSize);
-            if (!readData(mItemNoX, xData.data()))
-                return 0;
-            if (!readData(mItemNoY, yData.data()))
-                return 0;
-
-            reverseAndActiveData(xData,mFloatDeleteValue);
-            reverseAndActiveData(yData,mFloatDeleteValue);
-
-            for (size_t i = 0; i < mSize; ++i)
-            {
-                mData[2 * i] = xData.at(i);
-                mData[2 * i + 1] = yData.at(i);
-            }
-        }
-        mLoaded = true;
-    }
-
-    if (buffer == nullptr)
+      std::vector<double> xData( mSize );
+      std::vector<double> yData( mSize );
+      if ( !readData( mItemNoX, xData.data() ) )
+        return 0;
+      if ( !readData( mItemNoY, yData.data() ) )
         return 0;
 
-    int effectiveCount = std::max(0, std::min(count, static_cast<int>(mData.size()) / 2 - indexStart));
-    double* dataStart = &mData[indexStart * 2];
+      reverseAndActiveData( xData, mDoubleDeleteValue );
+      reverseAndActiveData( yData, mDoubleDeleteValue );
 
-    memcpy(buffer, dataStart, sizeof(double) * effectiveCount * 2);
+      for ( size_t i = 0; i < mSize; ++i )
+      {
+        mData[2 * i] = xData.at( i );
+        mData[2 * i + 1] = yData.at( i );
+      }
+    }
+    else
+    {
+      std::vector<float> xData( mSize );
+      std::vector<float> yData( mSize );
+      if ( !readData( mItemNoX, xData.data() ) )
+        return 0;
+      if ( !readData( mItemNoY, yData.data() ) )
+        return 0;
 
-    return effectiveCount;
+      reverseAndActiveData( xData, mFloatDeleteValue );
+      reverseAndActiveData( yData, mFloatDeleteValue );
+
+      for ( size_t i = 0; i < mSize; ++i )
+      {
+        mData[2 * i] = xData.at( i );
+        mData[2 * i + 1] = yData.at( i );
+      }
+    }
+    mLoaded = true;
+  }
+
+  if ( buffer == nullptr )
+    return 0;
+
+  int effectiveCount = std::max( 0, std::min( count, static_cast<int>( mData.size() ) / 2 - indexStart ) );
+  double *dataStart = &mData[indexStart * 2];
+
+  memcpy( buffer, dataStart, sizeof( double ) * effectiveCount * 2 );
+
+  return effectiveCount;
 }
 
-inline int DatasetOnVolumes::volumeCount() { return mLevelValueGenerator->totalVolumesCount( mTimeStepNo ); }
+int DatasetOnVolumes::volumeCount() { return mLevelValueGenerator->totalVolumesCount( mTimeStepNo ); }
 
 int DatasetOnVolumes::verticalLevelCountData( int indexStart, int count, int *buffer )
 {

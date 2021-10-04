@@ -12,7 +12,7 @@
 #include <string>
 
 #include "mdal_external_driver.h"
-#include "mdal_dhi_dfsu.hpp"
+#include "mdal_dhi_dfs2.hpp"
 
 #include "limits.h"
 
@@ -22,9 +22,9 @@
 static std::map<int, std::unique_ptr<Mesh>> sMeshes;
 static int sIdGenerator = 0;
 
-static std::string sName( "DHI" );
-static std::string sLongName( "DHI dfs" );
-static std::string sFilters( "*.dfs*" );
+static std::string sName( "DHI DFS2" );
+static std::string sLongName( "DHI dfs2" );
+static std::string sFilters( "*.dfs2" );
 
 #define MAX_VERTEX_PER_FACE 4
 
@@ -60,12 +60,12 @@ int MDAL_DRIVER_maxVertexPerFace()
 
 bool MDAL_DRIVER_canReadMesh( const char *uri )
 {
-  return Mesh::canRead( uri );
+  return MeshDfs2::canRead( uri );
 }
 
 int MDAL_DRIVER_openMesh( const char *uri, const char * )
 {
-  std::unique_ptr<Mesh> mesh = Mesh::loadMesh( uri );
+  std::unique_ptr<Mesh> mesh = MeshDfs2::loadMesh( uri );
   if ( mesh )
   {
     std::pair<std::map<int, std::unique_ptr<Mesh>>::iterator, bool> ret = sMeshes.emplace( sIdGenerator++, mesh.release() );

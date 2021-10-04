@@ -47,7 +47,7 @@ MDAL_LIB_EXPORT int MDAL_DRIVER_maxVertexPerFace();
 //! Returns whether the driver can read the file
 MDAL_LIB_EXPORT bool MDAL_DRIVER_canReadMesh( const char * );
 
-//! Opens  mesh and return the id of the mesh. This id is used to access to the mesh latter.
+//! Opens mesh and return the id of the mesh. This id is used to access to the mesh later.
 MDAL_LIB_EXPORT int MDAL_DRIVER_openMesh( const char *uri, const char *name );
 
 //! Closes the mesh

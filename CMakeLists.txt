@@ -29,7 +29,7 @@ SET (BUILD_TOOLS TRUE CACHE BOOL "Build tool executables")
 SET (BUILD_EXTERNAL_DRIVERS TRUE CACHE BOOL "Build external drivers")
 SET (BUILD_PLY TRUE CACHE BOOL "Build the PLY driver")
 IF ( MSVC )
-  SET (EXTERNAL_DRIVER_DHI_DFSU TRUE CACHE BOOL "Build dhi unstructured mesh driver")
+  SET (EXTERNAL_DRIVER_DHI_DFS TRUE CACHE BOOL "Build dhi mesh drivers")
 ENDIF( MSVC )
 
 #############################################################

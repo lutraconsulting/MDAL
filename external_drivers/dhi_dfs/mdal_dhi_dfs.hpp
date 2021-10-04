@@ -3,8 +3,8 @@
  Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
 */
 
-#ifndef MDAL_DHI_HPP
-#define MDAL_DHI_HPP
+#ifndef MDAL_DHI_DFS_HPP
+#define MDAL_DHI_DFS_HPP
 
 #include <string>
 #include <map>
@@ -28,7 +28,7 @@ typedef std::vector<VertexIndexesOfLevelsOnFace> VertexIndexesOfLevelsOnMesh;
 class Dataset
 {
   public:
-    Dataset( LPFILE Fp, LPHEAD  Pdfs, LONG timeStepNo, size_t size, bool doublePrecision,double doubleDeleteValue, float floatDeleteValue  );
+    Dataset( LPFILE Fp, LPHEAD  Pdfs, LONG timeStepNo, size_t size, bool doublePrecision, double doubleDeleteValue, float floatDeleteValue );
     virtual ~Dataset() = default;
 
     //! Fills the buffer with data
@@ -42,9 +42,9 @@ class Dataset
 
     virtual int maximum3DLevelCount() { return  -1; }
     virtual int volumeCount() { return -1; }
-    virtual int verticalLevelCountData( int indexStart, int count, int *buffer ) { return -1; }
-    virtual int verticalLevelData( int indexStart, int count, double *buffer ) { return -1; }
-    virtual int faceToVolume( int indexStart, int count, int *buffer ) { return -1; }
+    virtual int verticalLevelCountData( int, int, int * ) { return -1; }
+    virtual int verticalLevelData( int, int, double * ) { return -1; }
+    virtual int faceToVolume( int, int, int * ) { return -1; }
 
   protected:
     LPFILE mFp;
@@ -111,14 +111,14 @@ class LevelValuesGenerator
     int verticalLevelCountData( LONG timeStepNo, int indexStart, int count, int *buffer );
     int verticalLevelData( LONG timeStepNo, int indexStart, int count, double *buffer );
     int faceToVolume( LONG timeStepNo, int indexStart, int count, int *buffer );
-    size_t totalVolumesCount( LONG timeStepNo );
+    int totalVolumesCount( LONG timeStepNo );
     int maximumLevelCount( LONG timeStepNo );
 
 
     const std::vector<int> &faceTostartVolumePosition( LONG timeStepNo );
     const std::vector<int> &levelCounts( LONG timeStepNo );
 
-    void unload(LONG timeStep);
+    void unload( LONG timeStep );
 
   private:
     LPFILE mFp = nullptr;
@@ -131,7 +131,7 @@ class LevelValuesGenerator
     float mFloatDeleteValue = 0.0;
 
     //LevelValues mLevelValues;
-    std::vector<size_t> mVolumeCountPerTimeStep;
+    std::vector<int> mVolumeCountPerTimeStep;
     std::vector<int> mMaximumeLevelCountPerTimeStep;
     std::vector<std::vector<int>> mFaceToStartVolumePositionPerTimeStep;
     std::vector<std::vector<int>> mFaceLevelCountPerTimeStep;
@@ -142,69 +142,70 @@ class LevelValuesGenerator
 
     void *rawDataPointerForRead( size_t size );
     double rawDataValue( size_t i );
-    bool buildVolumeForTimeStep( LONG timeStepNo );
+    void buildVolumeForTimeStep( LONG timeStepNo );
 };
 
 
 
 class DatasetOnVolumes : public Dataset
 {
-public:
-    DatasetOnVolumes(LPFILE Fp,
-        LPHEAD  Pdfs,
-        LONG timeStepNo,
-        size_t maxSize,
-        bool doublePrecision,
-        double deleteDoubleValue,
-        float deleteFloatValue,
-        LevelValuesGenerator* levelValueGenerator)
-        : Dataset(Fp, Pdfs, timeStepNo, maxSize, doublePrecision, deleteDoubleValue, deleteFloatValue)
-        , mLevelValueGenerator(levelValueGenerator) {}
+  public:
+    DatasetOnVolumes( LPFILE Fp,
+                      LPHEAD  Pdfs,
+                      LONG timeStepNo,
+                      size_t maxSize,
+                      bool doublePrecision,
+                      double deleteDoubleValue,
+                      float deleteFloatValue,
+                      LevelValuesGenerator *levelValueGenerator )
+      : Dataset( Fp, Pdfs, timeStepNo, maxSize, doublePrecision, deleteDoubleValue, deleteFloatValue )
+      , mLevelValueGenerator( levelValueGenerator ) {}
 
     virtual int volumeCount() override;
-    virtual int verticalLevelCountData(int indexStart, int count, int* buffer) override;
-    virtual int verticalLevelData(int indexStart, int count, double* buffer) override;
+    virtual int verticalLevelCountData( int indexStart, int count, int *buffer ) override;
+    virtual int verticalLevelData( int indexStart, int count, double *buffer ) override;
     virtual int maximum3DLevelCount() override;
-    int faceToVolume(int indexStart, int count, int* buffer);
+    int faceToVolume( int indexStart, int count, int *buffer );
     void unload() override;
 
     template<typename T>
-    void reverseAndActiveData(std::vector<T> &dataArray,T deleteValue)
+    void reverseAndActiveData( std::vector<T> &dataArray, T deleteValue )
     {
-        // need to reorder the data, MDAL need to have level data from top to bottom
-        const std::vector<int>& faceToStartVolumePosition = mLevelValueGenerator->faceTostartVolumePosition(mTimeStepNo);
-        const std::vector<int>& levelCounts = mLevelValueGenerator->levelCounts(mTimeStepNo);
+      // need to reorder the data, MDAL need to have level data from top to bottom
+      const std::vector<int> &faceToStartVolumePosition = mLevelValueGenerator->faceTostartVolumePosition( mTimeStepNo );
+      const std::vector<int> &levelCounts = mLevelValueGenerator->levelCounts( mTimeStepNo );
 
-        assert(levelCounts.size() == faceToStartVolumePosition.size());
+      assert( levelCounts.size() == faceToStartVolumePosition.size() );
 
-        mActive.resize(levelCounts.size());
+      mActive.resize( levelCounts.size() );
 
-        for (size_t faceIndex = 0; faceIndex < faceToStartVolumePosition.size(); ++faceIndex)
+      for ( size_t faceIndex = 0; faceIndex < faceToStartVolumePosition.size(); ++faceIndex )
+      {
+        size_t volumeStartIndex = faceToStartVolumePosition.at( faceIndex );
+        if ( levelCounts.at( faceIndex ) > 1 )
         {
-            size_t volumeStartIndex = faceToStartVolumePosition.at(faceIndex);
-            if (levelCounts.at(faceIndex) > 1)
-            {
-                size_t volumeCount = levelCounts.at(faceIndex);
-                std::vector<T>::iterator it = dataArray.begin() + volumeStartIndex;
-                std::reverse(it, it + volumeCount);
-                
-                for (std::vector<T>::iterator it = dataArray.begin() + volumeStartIndex; it != dataArray.begin() + volumeStartIndex + volumeCount; ++it)
-                {
-                    bool isActive= (*it) != deleteValue;
-                    if (!isActive)
-                        (*it) = 0.0;
-                    mActive[faceIndex] |= isActive;
-                }
-            }
-            else
-            {
-                mActive[faceIndex] = false;
-            }
+          size_t volumeCount = levelCounts.at( faceIndex );
+          std::vector<T>::iterator it = dataArray.begin() + volumeStartIndex;
+          std::reverse( it, it + volumeCount );
+
+          for ( std::vector<T>::iterator itv = dataArray.begin() + volumeStartIndex; itv != dataArray.begin() + volumeStartIndex + volumeCount; ++itv )
+          {
+            bool isActive = ( *itv ) != deleteValue;
+            if ( !isActive )
+              ( *itv ) = 0.0;
+            if ( mActive.at( faceIndex ) == 1 || isActive )
+              mActive[faceIndex] = 1;
+          }
         }
+        else
+        {
+          mActive[faceIndex] = false;
+        }
+      }
     }
 
-protected:
-    LevelValuesGenerator* mLevelValueGenerator = nullptr;
+  protected:
+    LevelValuesGenerator *mLevelValueGenerator = nullptr;
 };
 
 class ScalarDatasetOnVolumes : public DatasetOnVolumes
@@ -229,21 +230,21 @@ class ScalarDatasetOnVolumes : public DatasetOnVolumes
 
 class VectorDatasetOnVolumes : public DatasetOnVolumes
 {
-public:
-    VectorDatasetOnVolumes(LPFILE Fp,
-        LPHEAD  Pdfs,
-        LONG timeStepNo,
-        LONG itemNoX,
-        LONG itemNoY,
-        size_t maxSize,
-        bool doublePrecision,
-        double deleteDoubleValue,
-        float deleteFloatValue,
-        LevelValuesGenerator* levelValueGenerator);
+  public:
+    VectorDatasetOnVolumes( LPFILE Fp,
+                            LPHEAD  Pdfs,
+                            LONG timeStepNo,
+                            LONG itemNoX,
+                            LONG itemNoY,
+                            size_t maxSize,
+                            bool doublePrecision,
+                            double deleteDoubleValue,
+                            float deleteFloatValue,
+                            LevelValuesGenerator *levelValueGenerator );
 
-    int getData(int indexStart, int count, double* buffer) override;
+    int getData( int indexStart, int count, double *buffer ) override;
 
-private:
+  private:
     LONG mItemNoX = 0;
     LONG mItemNoY = 0;
 };
@@ -303,20 +304,18 @@ class DatasetGroup
 class Mesh
 {
   public:
-    ~Mesh();
-    static bool canRead( const std::string &uri );
-    static std::unique_ptr<Mesh> loadMesh( const std::string &uri );
+    virtual ~Mesh();
     void close();
 
     //**************** Mesh frame *************
-    int verticesCount() const;
-    int facesCount() const;
+    virtual int verticesCount() const = 0;
+    virtual int facesCount() const = 0;
 
     //! Returns a pointer to the vertices coordinates for \a index
     double *vertexCoordinates( int index );
 
     //! Returns connectivty informations
-    int connectivity( int startFaceIndex, int faceCount, int *faceOffsetsBuffer, int vertexIndicesBufferLen, int *vertexIndicesBuffer );
+    int connectivity( int startFaceIndex, int faceCount, int *faceOffsetsBuffer, int vertexIndicesBufferLen, int *vertexIndicesBuffer ) const;
 
     //! Returns wkt projection
     const std::string &projection() const { return mWktProjection; }
@@ -337,18 +336,18 @@ class Mesh
 
     bool is3D() const;
 
-  private:
+  protected:
     Mesh() = default;
     LPFILE mFp = nullptr;
     LPHEAD  mPdfs = nullptr;
     bool mIs3D = false;
-    int mMaxNumberOfLayer = 0;
-    size_t mTotalNodeCount = 0;
-    size_t mTotalElementCount = 0;
     std::string mWktProjection = "projection";
+    size_t mTotalElementCount = 0;
     std::vector<double> mVertexCoordinates;
-    std::map<int, size_t> mNodeId2VertexIndex;
-    int mGapFromVertexToNode = 0;
+    std::vector<int> mConnectivity;
+    mutable size_t mNextFaceIndexForConnectivity = 0; //cache to speed up acces to connectivity
+    mutable size_t mNextConnectivityPosition = 0; //cache to speed up acces to connectivity
+
     double mXmin = std::numeric_limits<double>::max();
     double mXmax = -std::numeric_limits<double>::max();
     double mYmin = std::numeric_limits<double>::max();
@@ -359,30 +358,12 @@ class Mesh
     std::string mReferenceTime;
     std::vector<double> mTimes;
 
-    size_t vertexIdToIndex( int id ) const;
-
-    std::vector<int> mFaceNodeCount;
-    std::map<int, size_t> mElemId2faceIndex;
-    int mGapFromFaceToElement = 0;
-
-    std::vector<int> mConnectivity;
-    size_t connectivityPosition( int faceIndex ) const;;
-    size_t mNextFaceIndexForConnectivity = 0; //cache to speed up acces to connectivity
-    size_t mNextConnectivityPosition = 0; //cache to speed up acces to connectivity
-
-    // for 3D stacked mesh
-    std::vector<int> mFaceToVolume;
-    VertexIndexesOfLevelsOnMesh mLevels;
     std::unique_ptr<LevelValuesGenerator> mLevelGenerator;
 
-    static bool fileInfo( LPHEAD  pdfs, int &totalNodeCount, int &elementCount, int &dimension, int &maxNumberOfLayer, int &numberOfSigmaLayer );
-
-    bool populateMeshFrame();
-    bool populate2DMeshFrame();
-    bool populate3DMeshFrame();
-    bool setCoordinate( LPVECTOR pvec, LPITEM staticItem, SimpleType    itemDatatype, size_t offset, double &min, double &max );
-
     bool populateDatasetGroups();
+
+    virtual size_t connectivityPosition( int faceIndex ) const = 0;
+    virtual int nodeCount( size_t faceIndex ) const = 0;
 };
 
-#endif //MDAL_DHI_HPPD;
+#endif //MDAL_DHI_DFS_HPP;

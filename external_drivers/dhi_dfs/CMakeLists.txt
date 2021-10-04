@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.15)
-PROJECT(mdal_dhi_dfsu_external_driver)
+PROJECT(mdal_dhi_dfs_external_driver)
 
 IF (MDAL_EXTERNAL_DRIVER_HEADER_DIRECTORY)
 	SET (MDAL_HEADER ${MDAL_EXTERNAL_DRIVER_HEADER_DIRECTORY})
@@ -12,13 +12,24 @@ SET(MDAL_EXTERNAL_DRIVERS_LIB ${MDAL_EXTERNAL_DRIVERS_LIB}
 
 SET(MDAL_DHI_DFSU_DRIVER_SRC
 		${CMAKE_CURRENT_SOURCE_DIR}/mdal_dhi_dfsu_external_driver.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/mdal_dhi_dfsu.cpp)
+		${CMAKE_CURRENT_SOURCE_DIR}/mdal_dhi_dfsu.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/mdal_dhi_dfs.cpp)
+
+SET(MDAL_DHI_DFS2_DRIVER_SRC
+		${CMAKE_CURRENT_SOURCE_DIR}/mdal_dhi_dfs2_external_driver.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/mdal_dhi_dfs2.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/mdal_dhi_dfs.cpp)
 
 ADD_LIBRARY(mdal_dhi_dfsu_driver SHARED
 		${MDAL_DHI_DFSU_DRIVER_SRC})
-		
+
 TARGET_INCLUDE_DIRECTORIES(mdal_dhi_dfsu_driver
     PRIVATE
     ${MDAL_HEADER})
 
-  
+ADD_LIBRARY(mdal_dhi_dfs2_driver SHARED
+		${MDAL_DHI_DFS2_DRIVER_SRC})
+
+TARGET_INCLUDE_DIRECTORIES(mdal_dhi_dfs2_driver
+    PRIVATE
+    ${MDAL_HEADER})
