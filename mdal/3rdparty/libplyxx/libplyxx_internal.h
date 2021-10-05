@@ -46,7 +46,11 @@ SOFTWARE.
 #pragma once
 
 #include "libplyxx.h"
+#include "mdal_utils.hpp"
+
 #include <sstream>
+#include <iostream>
+
 
 // a custom specialisation (and yes, you are allowed (and have to) put this in std)
 // from http://www.cplusplus.com/forum/general/238538/
@@ -197,25 +201,31 @@ namespace libply
 
   inline std::stringstream &write_convert_UINT( IProperty &property, std::stringstream &ss )
   {
-    ss << static_cast<unsigned int>( property );
+    ss << std::to_string( static_cast<unsigned int>( property ) );
     return ss;
   }
 
   inline std::stringstream &write_convert_INT( IProperty &property, std::stringstream &ss )
   {
-    ss << static_cast<int>( property );
+    ss << std::to_string( static_cast<int>( property ) );
     return ss;
   }
 
   inline std::stringstream &write_convert_FLOAT( IProperty &property, std::stringstream &ss )
   {
-    ss << static_cast<float>( property );
+    ss << std::to_string( static_cast<float>( property ) );
     return ss;
   }
 
   inline std::stringstream &write_convert_DOUBLE( IProperty &property, std::stringstream &ss )
   {
-    ss << static_cast<double>( property );
+    ss << MDAL::doubleToString( static_cast<double>( property ) );
+    return ss;
+  }
+
+  inline std::stringstream &write_convert_COORDINATE( IProperty &property, std::stringstream &ss )
+  {
+    ss << MDAL::coordinateToString( static_cast<double>( property ) );
     return ss;
   }
 
@@ -231,7 +241,8 @@ namespace libply
     { Type::INT32, write_convert_INT },
     { Type::UINT32, write_convert_UINT },
     { Type::FLOAT32, write_convert_FLOAT },
-    { Type::FLOAT64, write_convert_DOUBLE }
+    { Type::FLOAT64, write_convert_DOUBLE },
+    { Type::COORDINATE, write_convert_COORDINATE }
   };
 
   inline void write_cast_UINT( IProperty &property, char *buffer, size_t &size )
@@ -258,6 +269,12 @@ namespace libply
     size = sizeof( double );
   }
 
+  inline void write_cast_COORDINATE( IProperty &property, char *buffer, size_t &size )
+  {
+    *reinterpret_cast<double *>( buffer ) = static_cast<double>( property );
+    size = sizeof( double );
+  }
+
   typedef void( *WriteCastFunction )( IProperty &property, char *buffer, size_t &size );
   typedef std::unordered_map<Type, WriteCastFunction> WriteCastFunctionMap;
 
@@ -270,7 +287,8 @@ namespace libply
     { Type::INT32, write_cast_INT },
     { Type::UINT32, write_cast_UINT },
     { Type::FLOAT32, write_cast_FLOAT },
-    { Type::FLOAT64, write_cast_DOUBLE }
+    { Type::FLOAT64, write_cast_DOUBLE },
+    { Type::COORDINATE, write_cast_COORDINATE }
   };
 
   struct PropertyDefinition
