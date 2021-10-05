@@ -45,39 +45,39 @@ std::unique_ptr<MeshDfsu> MeshDfsu::loadMesh( const std::string &uri )
 
   bool ok = false;
 
-  if (rc == F_NO_ERROR)
+  if ( rc == F_NO_ERROR )
   {
-      int totalNodeCount;
-      int elementCount;
-      int dimension;
-      int maxNumberOfLayer;
-      int numberOfSigmaLayer;
+    int totalNodeCount;
+    int elementCount;
+    int dimension;
+    int maxNumberOfLayer;
+    int numberOfSigmaLayer;
 
-      if (fileInfo(pdfs, totalNodeCount, elementCount, dimension, maxNumberOfLayer, numberOfSigmaLayer))
+    if ( fileInfo( pdfs, totalNodeCount, elementCount, dimension, maxNumberOfLayer, numberOfSigmaLayer ) )
+    {
+      std::unique_ptr<MeshDfsu> mesh( new MeshDfsu );
+      mesh->mFp = Fp;
+      mesh->mPdfs = pdfs;
+      mesh->mIs3D = dimension == 3;
+      mesh->mMaxNumberOfLayer = maxNumberOfLayer;
+      mesh->mTotalNodeCount = size_t( totalNodeCount );
+      mesh->mTotalElementCount = size_t( elementCount );
+
+      GeoInfoType geoInfoType = dfsGetGeoInfoType( pdfs );
+      LPCTSTR projectionWkt;
+      if ( geoInfoType == F_UTM_PROJECTION )
       {
-          std::unique_ptr<MeshDfsu> mesh(new MeshDfsu);
-          mesh->mFp = Fp;
-          mesh->mPdfs = pdfs;
-          mesh->mIs3D = dimension == 3;
-          mesh->mMaxNumberOfLayer = maxNumberOfLayer;
-          mesh->mTotalNodeCount = size_t(totalNodeCount);
-          mesh->mTotalElementCount = size_t(elementCount);
-
-          GeoInfoType geoInfoType = dfsGetGeoInfoType(pdfs);
-          LPCTSTR projectionWkt;
-          if (geoInfoType == F_UTM_PROJECTION)
-          {
-              dfsGetGeoInfoUTMProj(pdfs, &projectionWkt, nullptr, nullptr, nullptr);
-              mesh->mWktProjection = projectionWkt;
-          }
-
-          if (mesh->populateMeshFrame() && mesh->populateDatasetGroups())
-              return mesh;
+        dfsGetGeoInfoUTMProj( pdfs, &projectionWkt, nullptr, nullptr, nullptr );
+        mesh->mWktProjection = projectionWkt;
       }
+
+      if ( mesh->populateMeshFrame() && mesh->populateDatasetGroups() )
+        return mesh;
+    }
   }
 
-  dfsFileClose(pdfs, &Fp);
-  dfsHeaderDestroy(&pdfs);
+  dfsFileClose( pdfs, &Fp );
+  dfsHeaderDestroy( &pdfs );
   return nullptr;
 }
 

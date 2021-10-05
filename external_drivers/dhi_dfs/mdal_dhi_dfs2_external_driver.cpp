@@ -81,7 +81,7 @@ void MDAL_DRIVER_closeMesh( int meshId )
   {
     Mesh *mesh = sMeshes[meshId].get();
     mesh->close();
-    sMeshes.erase(sMeshes.find(meshId));
+    sMeshes.erase( sMeshes.find( meshId ) );
   }
 }
 

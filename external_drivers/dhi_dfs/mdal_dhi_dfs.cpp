@@ -15,7 +15,7 @@ Mesh::~Mesh()
 void Mesh::close()
 {
   dfsFileClose( mPdfs, &mFp );
-  dfsHeaderDestroy(&mPdfs);
+  dfsHeaderDestroy( &mPdfs );
 }
 
 double *Mesh::vertexCoordinates( int index )

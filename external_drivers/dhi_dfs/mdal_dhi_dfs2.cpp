@@ -41,7 +41,7 @@ bool MeshDfs2::canRead( const std::string &uri )
 
 std::unique_ptr<MeshDfs2> MeshDfs2::loadMesh( const std::string &uri )
 {
-  LPFILE      Fp=nullptr;
+  LPFILE      Fp = nullptr;
   LPHEAD      pdfs = nullptr;
   LPCTSTR fileName = uri.c_str();
 
@@ -107,14 +107,14 @@ std::unique_ptr<MeshDfs2> MeshDfs2::loadMesh( const std::string &uri )
 
         mesh->buildMesh( vertexX0, vertexY0, dIx, dIy, dJx, dJy, countX, countY );
 
-        if (mesh->populateDatasetGroups())
-            return mesh;
+        if ( mesh->populateDatasetGroups() )
+          return mesh;
       }
     }
   }
 
-  dfsFileClose(pdfs, &Fp);
-  dfsHeaderDestroy(&pdfs);
+  dfsFileClose( pdfs, &Fp );
+  dfsHeaderDestroy( &pdfs );
   return nullptr;
 
 }
