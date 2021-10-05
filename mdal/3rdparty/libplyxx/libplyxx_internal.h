@@ -102,7 +102,8 @@ namespace libply
     { Type::INT32, 4},
     { Type::UINT32, 4},
     { Type::FLOAT32, 4},
-    { Type::FLOAT64, 8}
+    { Type::FLOAT64, 8},
+    { Type::COORDINATE, 8}
   };
 
   /// Type conversion functions.
@@ -139,7 +140,8 @@ namespace libply
     { Type::INT32, convert_INT },
     { Type::UINT32, convert_UINT },
     { Type::FLOAT32, convert_FLOAT },
-    { Type::FLOAT64, convert_DOUBLE }
+    { Type::FLOAT64, convert_DOUBLE },
+    { Type::COORDINATE, convert_DOUBLE }
   };
 
   /// Type casting functions.
@@ -196,7 +198,8 @@ namespace libply
     { Type::INT32, cast_INT32 },
     { Type::UINT32, cast_UINT32 },
     { Type::FLOAT32, cast_FLOAT },
-    { Type::FLOAT64, cast_DOUBLE }
+    { Type::FLOAT64, cast_DOUBLE },
+    { Type::COORDINATE, cast_DOUBLE }
   };
 
   inline std::stringstream &write_convert_UINT( IProperty &property, std::stringstream &ss )
