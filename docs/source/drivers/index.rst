@@ -38,3 +38,4 @@ MDAL drivers
    adcirc
    xms-tin
    dfsu
+   dfs2

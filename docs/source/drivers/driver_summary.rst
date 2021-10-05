@@ -37,7 +37,12 @@
      - DHI flexible file format
      - No
      - No
-     - ???
+     - External driver (win)
+   * - :ref:`dfs2 <driver.dfs2>`
+     - DHI grid series file
+     - No
+     - No
+     - External driver (win)
    * - :ref:`Esri TIN <driver.esri-tin>`
      - Elevation model as TIN
      - No
