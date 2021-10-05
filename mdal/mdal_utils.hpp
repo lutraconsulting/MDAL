@@ -304,7 +304,7 @@ namespace MDAL
 #else
         void *mLibrary = nullptr;
 #endif
-        mutable int mRef = 1;
+        mutable int mRef = 0;
         std::string mLibraryFile;
       };
 
