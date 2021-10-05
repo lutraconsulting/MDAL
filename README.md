@@ -48,6 +48,8 @@ You can use MDAL to load the following file formats:
 - [ADCIRC***](https://adcirc.org): ADCIRC hydrodynamic model results
 - [PLY](https://en.wikipedia.org/wiki/PLY_(file_format)): Stanford Polygon Format also useful for mesh created from point clouds by [PDAL](https://pdal.io)
 - [DFSU*](https://www.dhigroup.com):DHI Flexible File Format (External Driver)
+- [DFS2*](https://www.dhigroup.com):DHI Grid Series File (External Driver)
+ 
 \* Data lazy loaded
 
 \*\* Formats can be preprocessed using QGIS [Crayfish](https://plugins.qgis.org/plugins/crayfish/) Mesh processing algorithm to one of supported formats
@@ -70,7 +72,8 @@ You can use MDAL to load the following file formats:
 | Selafin   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
 | SWW   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
 | PLY   | READ-WRITE | N/A | READ-WRITE | READ-WRITE | READ-WRITE | N/A |
-| DFSU  | READ-ONLY | N/A | NO | READ-ONLY | N/A | YES | 
+| DFSU  | READ-ONLY | N/A | NO | READ-ONLY | READ-ONLY | YES | 
+| DFS2  | READ-ONLY | N/A | NO | READ-ONLY | N/A | YES |
 
 # Standalone Installation
 
@@ -109,7 +112,8 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.16.0  | 0.7.1   | Mesh creation, PLY format |
 | 3.18.0  | 0.8.0   | Dynamic drivers, DFSU format |
 | 3.20.0  | 0.8.1   | |
-| 3.22.0  | 0.9.x   | TBD |
+| 3.22.0  | 0.9.x   | DFS2, DFSU 3D, PLY write |
+| 3.24.0  | 1.0.x   | TBD |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
