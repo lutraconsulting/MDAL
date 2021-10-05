@@ -1,8 +1,7 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
+ Copyright (C) 2021 Vincent Cloarec (vcloarec at gmail dot com)
 */
-
 
 // compile with: /clr
 

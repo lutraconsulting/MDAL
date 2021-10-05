@@ -1,22 +1,22 @@
-#include "mdal_dhi_dfs.hpp"
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
+ Copyright (C) 2021 Vincent Cloarec (vcloarec at gmail dot com)
 */
 
 #include "mdal_dhi_dfs2.hpp"
 
 #include <cassert>
 
-#define M_PI 3.14159265358979323846264338327
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 using namespace DHI;
 using namespace Projections;
 
 bool MeshDfs2::canRead( const std::string &uri )
 {
-  LPFILE      Fp;
-  LPHEAD      pdfs;
+  LPFILE      Fp = nullptr;
+  LPHEAD      pdfs = nullptr;
   LPCTSTR fileName = uri.c_str();
 
   bool ok = false;
@@ -41,8 +41,8 @@ bool MeshDfs2::canRead( const std::string &uri )
 
 std::unique_ptr<MeshDfs2> MeshDfs2::loadMesh( const std::string &uri )
 {
-  LPFILE      Fp;
-  LPHEAD      pdfs;
+  LPFILE      Fp=nullptr;
+  LPHEAD      pdfs = nullptr;
   LPCTSTR fileName = uri.c_str();
 
   ufsErrors rc = static_cast<ufsErrors>( dfsFileRead( fileName, &pdfs, &Fp ) );
@@ -107,18 +107,16 @@ std::unique_ptr<MeshDfs2> MeshDfs2::loadMesh( const std::string &uri )
 
         mesh->buildMesh( vertexX0, vertexY0, dIx, dIy, dJx, dJy, countX, countY );
 
-        ok = mesh->populateDatasetGroups();
+        if (mesh->populateDatasetGroups())
+            return mesh;
       }
     }
   }
 
-  if ( ok )
-    return mesh;
-  else
-  {
-    dfsFileClose( pdfs, &Fp );
-    return nullptr;
-  }
+  dfsFileClose(pdfs, &Fp);
+  dfsHeaderDestroy(&pdfs);
+  return nullptr;
+
 }
 
 void MeshDfs2::buildMesh( double vertexX0, double vertexY0, double dIx, double dIy, double dJx, double dJy, size_t countI, size_t countJ )

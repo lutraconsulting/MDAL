@@ -1,6 +1,6 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
+ Copyright (C) 2021 Vincent Cloarec (vcloarec at gmail dot com)
 */
 
 #ifndef MDAL_DHI_DFS_HPP
@@ -192,7 +192,7 @@ class DatasetOnVolumes : public Dataset
           {
             bool isActive = ( *itv ) != deleteValue;
             if ( !isActive )
-              ( *itv ) = 0.0;
+              ( *itv ) = std::numeric_limits<T>::quiet_NaN();
             if ( mActive.at( faceIndex ) == 1 || isActive )
               mActive[faceIndex] = 1;
           }

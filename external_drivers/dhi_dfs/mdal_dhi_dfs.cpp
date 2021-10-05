@@ -1,6 +1,6 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
+ Copyright (C) 2021 Vincent Cloarec (vcloarec at gmail dot com)
 */
 
 #include "mdal_dhi_dfs.hpp"
@@ -12,18 +12,16 @@ Mesh::~Mesh()
   close();
 }
 
-
 void Mesh::close()
 {
   dfsFileClose( mPdfs, &mFp );
+  dfsHeaderDestroy(&mPdfs);
 }
 
-//! return a pointer to the vertices coordinates for \a index
 double *Mesh::vertexCoordinates( int index )
 {
   return &mVertexCoordinates[static_cast<size_t>( index * 3 )];
 }
-
 
 int Mesh::connectivity( int startFaceIndex, int faceCount, int *faceOffsetsBuffer, int vertexIndicesBufferLen, int *vertexIndicesBuffer ) const
 {
@@ -410,6 +408,7 @@ ScalarDataset::ScalarDataset( LPFILE Fp,
   Dataset( Fp, Pdfs, timeStepNo, size, doublePrecision, deleteDoubleValue, deleteFloatValue ),
   mItemNo( itemNo )
 {}
+
 int ScalarDataset::getData( int indexStart, int count, double *buffer )
 {
   if ( !mLoaded )

@@ -7,11 +7,10 @@
 
 #include <cassert>
 
-
 bool MeshDfsu::canRead( const std::string &uri )
 {
-  LPFILE      Fp;
-  LPHEAD      pdfs;
+  LPFILE      Fp = nullptr;;
+  LPHEAD      pdfs = nullptr;;
   LPCTSTR fileName = uri.c_str();
 
   bool ok = false;
@@ -38,47 +37,48 @@ bool MeshDfsu::canRead( const std::string &uri )
 
 std::unique_ptr<MeshDfsu> MeshDfsu::loadMesh( const std::string &uri )
 {
-  LPFILE      Fp;
-  LPHEAD      pdfs;
+  LPFILE      Fp = nullptr;
+  LPHEAD      pdfs = nullptr;;
   LPCTSTR fileName = uri.c_str();
 
   ufsErrors rc = static_cast<ufsErrors>( dfsFileRead( fileName, &pdfs, &Fp ) );
 
-  if ( rc != F_NO_ERROR )
-    return nullptr;
+  bool ok = false;
 
-  int totalNodeCount;
-  int elementCount;
-  int dimension;
-  int maxNumberOfLayer;
-  int numberOfSigmaLayer;
-
-  if ( !fileInfo( pdfs, totalNodeCount, elementCount, dimension, maxNumberOfLayer, numberOfSigmaLayer ) )
-    return nullptr;
-
-  std::unique_ptr<MeshDfsu> mesh( new MeshDfsu );
-  mesh->mFp = Fp;
-  mesh->mPdfs = pdfs;
-  mesh->mIs3D = dimension == 3;
-  mesh->mMaxNumberOfLayer = maxNumberOfLayer;
-  mesh->mTotalNodeCount = size_t( totalNodeCount );
-  mesh->mTotalElementCount = size_t( elementCount );
-
-  GeoInfoType geoInfoType = dfsGetGeoInfoType( pdfs );
-  LPCTSTR projectionWkt;
-  if ( geoInfoType == F_UTM_PROJECTION )
+  if (rc == F_NO_ERROR)
   {
-    dfsGetGeoInfoUTMProj( pdfs, &projectionWkt, nullptr, nullptr, nullptr );
-    mesh->mWktProjection = projectionWkt;
+      int totalNodeCount;
+      int elementCount;
+      int dimension;
+      int maxNumberOfLayer;
+      int numberOfSigmaLayer;
+
+      if (fileInfo(pdfs, totalNodeCount, elementCount, dimension, maxNumberOfLayer, numberOfSigmaLayer))
+      {
+          std::unique_ptr<MeshDfsu> mesh(new MeshDfsu);
+          mesh->mFp = Fp;
+          mesh->mPdfs = pdfs;
+          mesh->mIs3D = dimension == 3;
+          mesh->mMaxNumberOfLayer = maxNumberOfLayer;
+          mesh->mTotalNodeCount = size_t(totalNodeCount);
+          mesh->mTotalElementCount = size_t(elementCount);
+
+          GeoInfoType geoInfoType = dfsGetGeoInfoType(pdfs);
+          LPCTSTR projectionWkt;
+          if (geoInfoType == F_UTM_PROJECTION)
+          {
+              dfsGetGeoInfoUTMProj(pdfs, &projectionWkt, nullptr, nullptr, nullptr);
+              mesh->mWktProjection = projectionWkt;
+          }
+
+          if (mesh->populateMeshFrame() && mesh->populateDatasetGroups())
+              return mesh;
+      }
   }
 
-  if ( !mesh->populateMeshFrame() )
-    return nullptr;
-
-  if ( !mesh->populateDatasetGroups() )
-    return nullptr;
-
-  return mesh;
+  dfsFileClose(pdfs, &Fp);
+  dfsHeaderDestroy(&pdfs);
+  return nullptr;
 }
 
 int MeshDfsu::verticesCount() const
