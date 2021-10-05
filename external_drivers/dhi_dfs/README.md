@@ -1,4 +1,4 @@
-### For bulding mdal_dhi_dfsu_driver.dll and mdal_dhi_dfs2_driver:
+# Building mdal_dhi_dfsu_driver.dll and mdal_dhi_dfs2_driver:
 
 Requirements:
 * OS : Windows
@@ -27,6 +27,7 @@ Install-Package DHI.DFS -ProjectName mdal_dhi_dfsu_driver
 ```
 
 * To build the DHI driver, the MFC needs to be installed and you need to change project configuration :
+
 "Properties" -> "Configuration Properties"->"Advanced" -> "Use of MFC" -> set "Use MFC in a Shared DLL"
 
 * Start building ->"Build"
@@ -38,10 +39,15 @@ the mesh could be a projected system. To convert origin and orientation in proje
 also available as Nuget package.
 
 First, you need to go to change the project configuration:
+
 "Properties" -> "Configuration Properties" -> "Advanced" -> "Use of MFC" -> set "Use MFC in a Shared DLL"
+
 "Properties" -> "Configuration Properties" -> "Advanced"-> "C++/CLI Properties" -> "Common Language Runtime Support" -> set "Common Language Runtime Support (/clr)"
+
 "Properties" -> "Configuration Properties" -> "Advanced"-> "C++/CLI Properties" -> ".Net Target Framework Version" -> set the version as vX.X.X, for example "v4.7.2"
+
 "Properties" -> "Configuration Properties" -> "C/C++"-> "Code Generation" -> "Enable C++ Exceptions" -> set "yes with SEH Exceptions (/EHa)"
+
 "Properties" -> "Configuration Properties" -> "C/C++"-> "Code Generation" -> "Basic Run Time Checks" -> set "Default"
 
 Then, for Dfs2 driver, you need to install Nuget packages DHI.EUM, DHI.DFS **and** DHI.Projections:
@@ -49,7 +55,7 @@ Then, for Dfs2 driver, you need to install Nuget packages DHI.EUM, DHI.DFS **and
 ```
 Install-Package DHI.EUM -ProjectName mdal_dhi_dfs2_driver
 Install-Package DHI.DFS -ProjectName mdal_dhi_dfs2_driver
-Install-Package DHI.Projections mdal_dhi_dfs2_driver
+Install-Package DHI.Projections -ProjectName mdal_dhi_dfs2_driver
 ```
 
 As Visual Studio do not configure automaticly the .Net assembly references for C++ project, in the file "packages.config" (in Solution Explorer, 
@@ -65,10 +71,14 @@ by this one:
 'version' and 'targetFramework' could change depending of your configuration.
 
 To finish, you must specify where the assembly dll is:
-In the "Solution Explorer", in the "mdal_dhi_dfs2_driver" folder, right click on "References" -> "Add Reference" -> "Browse..." -> search and select "DHI.Projections.dll", 
+In the "Solution Explorer", in the "mdal_dhi_dfs2_driver" folder:
+
+right click on "References" -> "Add Reference" -> "Browse..." -> search and select "DHI.Projections.dll", 
+
 that could be in the build directory under ".\packages\DHI.Projections.19.1.0\lib\netstandart2.0\".
 
 Then you can build the project...
+
 ----
 
 ### For testing under Visual Studio IDE:
