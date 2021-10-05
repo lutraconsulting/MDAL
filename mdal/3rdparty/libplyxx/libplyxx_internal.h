@@ -272,12 +272,6 @@ namespace libply
     size = sizeof( double );
   }
 
-  inline void write_cast_COORDINATE( IProperty &property, char *buffer, size_t &size )
-  {
-    *reinterpret_cast<double *>( buffer ) = static_cast<double>( property );
-    size = sizeof( double );
-  }
-
   typedef void( *WriteCastFunction )( IProperty &property, char *buffer, size_t &size );
   typedef std::unordered_map<Type, WriteCastFunction> WriteCastFunctionMap;
 
@@ -291,7 +285,7 @@ namespace libply
     { Type::UINT32, write_cast_UINT },
     { Type::FLOAT32, write_cast_FLOAT },
     { Type::FLOAT64, write_cast_DOUBLE },
-    { Type::COORDINATE, write_cast_COORDINATE }
+    { Type::COORDINATE, write_cast_DOUBLE }
   };
 
   struct PropertyDefinition
