@@ -611,6 +611,15 @@ TEST( MeshPlyTest, Save2DMeshToFile )
   );
 }
 
+TEST( MeshPlyTest, TestSavePrecsion )
+{
+  saveAndCompareMesh(
+    test_file( "/ply/test_precision.ply" ),
+    tmp_file( "/test_precision_saved.ply" ),
+    "PLY"
+  );
+}
+
 // test saving dataset
 TEST( MeshPlyTest, Save2DDataset )
 {
