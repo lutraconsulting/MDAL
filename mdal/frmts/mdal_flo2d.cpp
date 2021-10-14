@@ -22,8 +22,6 @@
 
 #define FLO2D_NAN 0.0
 
-#define INVALID_INDEX std::numeric_limits<size_t>::max()
-
 static std::string fileNameFromDir( const std::string &mainFileName, const std::string &name )
 {
   std::string dir = MDAL::dirName( mainFileName );
@@ -808,19 +806,19 @@ void MDAL::DriverFlo2D::createMesh2d( const std::vector<CellCenter> &cells, cons
 {
   // Create all Faces from cell centers.
   // Vertexs must be also created, they are not stored in FLO-2D files
-  // try to reuse Vertexs already created for other Faces by usage of unique_Vertexs set.
+  // try to reuse vertices already created for other Faces by usage of uniqueVertices set.
 
   double half_cell_size = cell_size / 2;
   Faces faces( cells.size(), Face( 4 ) );
 
-  BBox vertexExtent( cellCenterExtent.minX - half_cell_size,
-                     cellCenterExtent.maxX + half_cell_size,
-                     cellCenterExtent.minY - half_cell_size,
-                     cellCenterExtent.maxY + half_cell_size );
+  //BBox vertexExtent( cellCenterExtent.minX - half_cell_size,
+  //                   cellCenterExtent.maxX + half_cell_size,
+  //                   cellCenterExtent.minY - half_cell_size,
+  //                   cellCenterExtent.maxY + half_cell_size );
 
-  size_t width = MDAL::toSizeT( ( vertexExtent.maxX - vertexExtent.minX ) / cell_size + 1 );
-  size_t heigh = MDAL::toSizeT( ( vertexExtent.maxY - vertexExtent.minY ) / cell_size + 1 );
-  std::vector<std::vector<size_t>> vertexGrid( width, std::vector<size_t>( heigh, INVALID_INDEX ) );
+  //size_t width = MDAL::toSizeT( ( vertexExtent.maxX - vertexExtent.minX ) / cell_size + 1 );
+  //size_t heigh = MDAL::toSizeT( ( vertexExtent.maxY - vertexExtent.minY ) / cell_size + 1 );
+  std::map<std::pair<size_t, size_t>, size_t > uniqueVertices;
 
   Vertices vertices;
 
@@ -828,8 +826,8 @@ void MDAL::DriverFlo2D::createMesh2d( const std::vector<CellCenter> &cells, cons
   {
     Face &e = faces[i];
 
-    size_t xVertexIdx = MDAL::toSizeT( ( cells[i].x - vertexExtent.minX ) / cell_size );
-    size_t yVertexIdx = MDAL::toSizeT( ( cells[i].y - vertexExtent.minY ) / cell_size );
+    size_t xVertexIdx = MDAL::toSizeT( ( cells[i].x - cellCenterExtent.minX ) / cell_size + 1 );
+    size_t yVertexIdx = MDAL::toSizeT( ( cells[i].y - cellCenterExtent.minY ) / cell_size + 1 );
 
     for ( size_t position = 0; position < 4; ++position )
     {
@@ -839,33 +837,38 @@ void MDAL::DriverFlo2D::createMesh2d( const std::vector<CellCenter> &cells, cons
       switch ( position )
       {
         case 0:
-          xPos = 1;
-          yPos = 0;
+          xPos = 0;
+          yPos = -1;
           break;
 
         case 1:
-          xPos = 1;
-          yPos = 1;
-          break;
-
-        case 2:
-          xPos = 0;
-          yPos = 1;
-          break;
-
-        case 3:
           xPos = 0;
           yPos = 0;
           break;
+
+        case 2:
+          xPos = -1;
+          yPos = 0;
+          break;
+
+        case 3:
+          xPos = -1;
+          yPos = -1;
+          break;
       }
 
-      if ( vertexGrid[xVertexIdx + xPos][yVertexIdx + yPos] == INVALID_INDEX )
+      const auto index = std::make_pair<size_t, size_t>( xVertexIdx + xPos, yVertexIdx + yPos );
+      const auto vertexIt = uniqueVertices.find( index );
+      if ( vertexIt != uniqueVertices.end() )
+      {
+        e[position] = vertexIt->second;
+      }
+      else
       {
         vertices.push_back( createVertex( position, half_cell_size, cells.at( i ) ) );
-        vertexGrid[xVertexIdx + xPos][yVertexIdx + yPos] = vertices.size() - 1;
+        uniqueVertices[index] = vertices.size() - 1;
+        e[position] = vertices.size() - 1;
       }
-
-      e[position] = vertexGrid[xVertexIdx + xPos][yVertexIdx + yPos];
     }
   }
 
