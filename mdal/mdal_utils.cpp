@@ -57,7 +57,7 @@ std::ifstream MDAL::openInputFile( const std::string &fileName, std::ios_base::o
   std::wstring wStr = converter.from_bytes( fileName );
   ret.open( wStr, mode );
 #else
-  ret.open( ( fileName, mode );
+  ret.open( fileName, mode );
 #endif
 
   return ret;
@@ -72,7 +72,7 @@ std::ofstream MDAL::openOutputFile( const std::string &fileName, std::ios_base::
   std::wstring wStr = converter.from_bytes( fileName );
   ret.open( wStr, mode );
 #else
-  ret.open( ( fileName, mode );
+  ret.open( fileName, mode );
 #endif
 
   return ret;
