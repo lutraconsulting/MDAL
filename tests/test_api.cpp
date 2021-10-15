@@ -84,6 +84,15 @@ TEST( ApiTest, MeshApi )
   EXPECT_EQ( MDAL_LastStatus(), Err_IncompatibleMesh );
 }
 
+TEST( ApiTest, SpecialCharApi )
+{
+  std::string path = test_file( "/2dm/área.2dm" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+
+  EXPECT_NE( m, nullptr );
+  MDAL_CloseMesh( m );
+}
+
 void _populateFaces( MDAL_MeshH m, std::vector<int> &ret, size_t faceOffsetsBufferLen, size_t vertexIndicesBufferLen )
 {
   int facesCount = MDAL_M_faceCount( m );
@@ -605,6 +614,11 @@ TEST( ApiTest, MeshCreationApi )
   EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 0 ), 0 );
   EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 1 ), 2 );
   EXPECT_EQ( getFaceVerticesIndexAt( mesh, 3, 2 ), 1 );
+
+  //try saving with special char
+  createdMeshFile = tmp_file( "/área.2dm" );
+  MDAL_SaveMesh( mesh, createdMeshFile.c_str(), "2DM" );
+  EXPECT_EQ( MDAL_LastStatus(), None );
 
   MDAL_CloseMesh( mesh );
 
