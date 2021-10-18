@@ -818,8 +818,8 @@ void MDAL::DriverFlo2D::createMesh2d( const std::vector<CellCenter> &cells, cons
                      cellCenterExtent.minY - half_cell_size,
                      cellCenterExtent.maxY + half_cell_size );
 
-  size_t width = MDAL::toSizeT( ( vertexExtent.maxX - vertexExtent.minX ) / cell_size + 1 );
-  size_t heigh = MDAL::toSizeT( ( vertexExtent.maxY - vertexExtent.minY ) / cell_size + 1 );
+  size_t width = MDAL::toSizeT( ( vertexExtent.maxX - vertexExtent.minX ) / cell_size + 1.5 );
+  size_t heigh = MDAL::toSizeT( ( vertexExtent.maxY - vertexExtent.minY ) / cell_size + 1.5 );
   std::vector<std::vector<size_t>> vertexGrid( width, std::vector<size_t>( heigh, INVALID_INDEX ) );
 
   Vertices vertices;
