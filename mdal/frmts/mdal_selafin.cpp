@@ -615,7 +615,7 @@ void MDAL::SelafinFile::ignoreArrayLength( )
 MDAL::DriverSelafin::DriverSelafin():
   Driver( "SELAFIN",
           "Selafin File",
-          "*.slf",
+          "*.slf;;*.ser;;*.geo;;*.res",
           Capability::ReadMesh | Capability::SaveMesh | Capability::WriteDatasetsOnVertices | Capability::ReadDatasets
         )
 {
