@@ -163,7 +163,7 @@ cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Rel  ^
     -DGDAL_INCLUDE_DIR="C:\OSGeo4W64\include" ^
     -DLIBXML2_LIBRARIES="C:\OSGeo4W64\lib\libxml2.lib ^
     -DLIBXML2_INCLUDE_DIR="C:\OSGeo4W64\include\libxml2" ^
-    -D EXTERNAL_DRIVER_DHI_DFSU=OFF ^
+    -D EXTERNAL_DRIVER_DHI_DFS=OFF ^
     ..
 ```
 * Build the executables `cmake --build .  --config Release`
