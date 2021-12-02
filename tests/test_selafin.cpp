@@ -16,7 +16,7 @@
 TEST( MeshSLFTest, Driver )
 {
   MDAL_DriverH driver = MDAL_driverFromName( "SELAFIN" );
-  EXPECT_EQ( strcmp( MDAL_DR_filters( driver ), "*.slf" ), 0 );
+  EXPECT_EQ( strcmp( MDAL_DR_filters( driver ), "*.slf;;*.ser;;*.geo;;*.res" ), 0 );
   EXPECT_TRUE( MDAL_DR_meshLoadCapability( driver ) );
   EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
   EXPECT_EQ( strcmp( MDAL_DR_saveMeshSuffix( driver ), "slf" ), 0 );
