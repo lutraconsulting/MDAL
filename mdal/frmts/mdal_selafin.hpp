@@ -60,7 +60,7 @@ namespace MDAL
       //! Initializes and open the file file with the \a fileName
       void initialize();
 
-      //! Read the header of the file and return the project name
+      //! Reads the header of the file and return the project name
       std::string readHeader();
 
       //! Extracts data from the file

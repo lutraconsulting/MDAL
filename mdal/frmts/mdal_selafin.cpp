@@ -158,8 +158,9 @@ void MDAL::SelafinFile::parseMeshFrame()
 
   /* 1 record containing table X (real array of dimension NPOIN containing the
      abscisse of the points)
-     AND it is here we can now if float is simple or double precision:
-     size of record / number of vertices gives the size of the float -> 4 : simple precision -> 8 : double precision
+     AND here, we can know if float of this file is simple or double precision:
+     reuslt of size of record divided by number of vertices gives the byte size of the float:
+     -> 4 : simple precision -> 8 : double precision
   */
   size = mVerticesCount;
   size_t recordSize = readSizeT();
