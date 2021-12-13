@@ -114,7 +114,7 @@ void MDAL::SelafinFile::parseMeshFrame()
   mXOrigin = static_cast<double>( mParameters[2] );
   mYOrigin = static_cast<double>( mParameters[3] );
 
-  if ( mParameters[6] != 0 )
+  if ( mParameters[6] != 0 && mParameters[6] != 1 ) //some tools set this value to one for 2D mesh
   {
     // would need additional parsing
     throw MDAL::Error( MDAL_Status::Err_MissingDriver, "File " + mFileName + " would need additional parsing" );
