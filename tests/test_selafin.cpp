@@ -663,7 +663,7 @@ TEST( MeshSLFTest, JanetFile )
   MDAL_CloseMesh( m );
 }
 
-TEST( MeshSLFTest, FudaaFile )
+TEST( MeshSLFTest, FudaaFileDoublePrecision )
 {
   std::string path = test_file( "/slf/geo_Fudaa_doublePrecision.geo" );
   EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
@@ -678,6 +678,177 @@ TEST( MeshSLFTest, FudaaFile )
 
   std::string driverName = MDAL_M_driverName( m );
   EXPECT_EQ( driverName, "SELAFIN" );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 8215 );
+  double x = getVertexXCoordinatesAt( m, 0 );
+  double y = getVertexYCoordinatesAt( m, 0 );
+  double z = getVertexZCoordinatesAt( m, 0 );
+  EXPECT_DOUBLE_EQ( 515638.68018023379, x );
+  EXPECT_DOUBLE_EQ( 6476431.3079803586, y );
+  EXPECT_DOUBLE_EQ( 0.0, z );
+
+  x = getVertexXCoordinatesAt( m, 1000 );
+  y = getVertexYCoordinatesAt( m, 1000 );
+  z = getVertexZCoordinatesAt( m, 1000 );
+  EXPECT_DOUBLE_EQ( 515843.41624046268, x );
+  EXPECT_DOUBLE_EQ( 6474959.9174060756, y );
+  EXPECT_DOUBLE_EQ( 0.0, z );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 16099, f_count );
+
+
+  double xmin, xmax, ymin, ymax;
+  MDAL_M_extent( m, &xmin, &xmax, &ymin, &ymax );
+  EXPECT_EQ( xmin, 515638.6801802338 );
+  EXPECT_EQ( xmax, 517986.85726595984 );
+  EXPECT_EQ( ymin, 6474893.417353791 );
+  EXPECT_EQ( ymax, 6476852.987668288 );
+
+  // test face 1
+  int f_v_count = getFaceVerticesCountAt( m, 1 );
+  EXPECT_EQ( 3, f_v_count ); //only triangles!
+  int f_v = getFaceVerticesIndexAt( m, 100, 0 );
+  EXPECT_EQ( 44, f_v );
+  f_v = getFaceVerticesIndexAt( m, 100, 1 );
+  EXPECT_EQ( 54, f_v ); \
+  f_v = getFaceVerticesIndexAt( m, 100, 2 );
+  EXPECT_EQ( 82, f_v );
+
+  // Datasets
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  std::string tim = MDAL_G_referenceTime( g );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1969-12-01T01:00:00" ) );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "fond            m" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 8215, count );
+
+  double value = getValue( ds, 0 );
+  EXPECT_TRUE( MDAL::equals( 0, value ) );
+  value = getValue( ds, 20 );
+  EXPECT_TRUE( MDAL::equals( 0, value ) );
+  value = getValue( ds, 0 );
+  EXPECT_TRUE( MDAL::equals( 0, value ) );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshSLFTest, FudaaFileSimplePrecision )
+{
+  std::string path = test_file( "/slf/init_Fudaa_simplePrecision.ser" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
+
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "" ), std::string( projection ) );
+
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "SELAFIN" );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 8215 );
+  double x = getVertexXCoordinatesAt( m, 0 );
+  double y = getVertexYCoordinatesAt( m, 0 );
+  double z = getVertexZCoordinatesAt( m, 0 );
+  EXPECT_DOUBLE_EQ( 515638.6875, x );
+  EXPECT_DOUBLE_EQ( 6476431.5, y );
+  EXPECT_DOUBLE_EQ( 0.0, z );
+
+  x = getVertexXCoordinatesAt( m, 1000 );
+  y = getVertexYCoordinatesAt( m, 1000 );
+  z = getVertexZCoordinatesAt( m, 1000 );
+  EXPECT_DOUBLE_EQ( 515843.40625, x );
+  EXPECT_DOUBLE_EQ( 6474960.0, y );
+  EXPECT_DOUBLE_EQ( 0.0, z );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 16099, f_count );
+
+
+  double xmin, xmax, ymin, ymax;
+  MDAL_M_extent( m, &xmin, &xmax, &ymin, &ymax );
+  EXPECT_EQ( xmin, 515638.6875 );
+  EXPECT_EQ( xmax, 517986.84375 );
+  EXPECT_EQ( ymin, 6474893.5 );
+  EXPECT_EQ( ymax, 6476853 );
+
+  // test face 1
+  int f_v_count = getFaceVerticesCountAt( m, 1 );
+  EXPECT_EQ( 3, f_v_count ); //only triangles!
+  int f_v = getFaceVerticesIndexAt( m, 100, 0 );
+  EXPECT_EQ( 44, f_v );
+  f_v = getFaceVerticesIndexAt( m, 100, 1 );
+  EXPECT_EQ( 54, f_v ); \
+  f_v = getFaceVerticesIndexAt( m, 100, 2 );
+  EXPECT_EQ( 82, f_v );
+
+  // Datasets
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  std::string tim = MDAL_G_referenceTime( g );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1969-12-01T01:00:00" ) );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "surface libre   m" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVertices );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 8215, count );
+
+  double value = getValue( ds, 0 );
+  EXPECT_TRUE( MDAL::equals( 159.97970581054688, value ) );
+  value = getValue( ds, 20 );
+  EXPECT_TRUE( MDAL::equals( 149.5483856201172, value ) );
+  value = getValue( ds, 0 );
+  EXPECT_TRUE( MDAL::equals( 159.97970581054688, value ) );
 
   MDAL_CloseMesh( m );
 }

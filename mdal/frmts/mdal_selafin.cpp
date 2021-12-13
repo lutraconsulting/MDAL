@@ -67,9 +67,8 @@ void MDAL::SelafinFile::initialize()
   mParsed = false;
 }
 
-void MDAL::SelafinFile::parseFile()
+void MDAL::SelafinFile::parseMeshFrame()
 {
-
   /* 1 record containing the title of the study (72 characters) and a 8 characters
   string indicating the type of format (SERAFIN or SERAFIND)
   */
@@ -159,10 +158,14 @@ void MDAL::SelafinFile::parseFile()
 
   /* 1 record containing table X (real array of dimension NPOIN containing the
      abscisse of the points)
+     AND it is here we can now if float is simple or double precision:
+     size of record / number of vertices gives the size of the float -> 4 : simple precision -> 8 : double precision
   */
   size = mVerticesCount;
-  if ( ! checkDoubleArraySize( size ) )
-    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading abscisse values" );
+  size_t recordSize = readSizeT();
+  mStreamInFloatPrecision = recordSize / size == 4;
+  if ( !mStreamInFloatPrecision && recordSize / size != 8 )
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem: could not determine if simple or double precision" );
   mXStreamPosition = passThroughDoubleArray( size );
 
   /* 1 record containing table Y (real array of dimension NPOIN containing the
@@ -172,6 +175,11 @@ void MDAL::SelafinFile::parseFile()
   if ( ! checkDoubleArraySize( size ) )
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading abscisse values" );
   mYStreamPosition = passThroughDoubleArray( size );
+}
+
+void MDAL::SelafinFile::parseFile()
+{
+  parseMeshFrame();
 
   /* Next, for each time step, the following are found:
      - 1 record containing time T (real),
@@ -204,20 +212,6 @@ std::string MDAL::SelafinFile::readHeader()
 
   std::string title = header.substr( 0, 72 );
   title = trim( title );
-
-  std::string varType = header.substr( 72, 8 );
-  varType = trim( varType );
-
-  if ( varType == "SERAFIN" )
-  {
-    mStreamInFloatPrecision = true;
-  }
-  else if ( varType == "SERAFIND" )
-  {
-    mStreamInFloatPrecision = false;
-  }
-  else
-    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Not found stream precision" );
 
   if ( header.size() < 80 ) // IF "SERAFIN", the readString method remove the last character that is a space
     header.append( " " );
@@ -635,7 +629,7 @@ bool MDAL::DriverSelafin::canReadMesh( const std::string &uri )
   try
   {
     SelafinFile file( uri );
-    file.readHeader();
+    file.parseMeshFrame();
     return true;
   }
   catch ( ... )
@@ -651,7 +645,7 @@ bool MDAL::DriverSelafin::canReadDatasets( const std::string &uri )
   try
   {
     SelafinFile file( uri );
-    file.readHeader();
+    file.parseMeshFrame();
     return true;
   }
   catch ( ... )
