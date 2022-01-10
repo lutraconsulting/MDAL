@@ -204,11 +204,7 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read double array" );
     for ( size_t i = 0; i < count_dim; ++i )
     {
-      const int val = arr_val_int[i];
-      if ( std::isnan( val ) )
-        arr_val[i] = std::numeric_limits<double>::quiet_NaN();
-      else
-        arr_val[i] = static_cast<double>( val );
+      arr_val[i] = static_cast<double>( arr_val_int[i] );
     }
   }
   else if ( typep == NC_DOUBLE )
