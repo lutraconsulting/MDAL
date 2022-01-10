@@ -737,6 +737,83 @@ TEST( MeshUgridTest, VoidMesh )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshUgridTest, flow_3d )
+{
+  std::string path = test_file( std::string( "/ugrid/D-Flow3/sampleNew.nc" ) );
+
+  std::string uri = "Ugrid:\"" + path + "\":" + "mesh2d";
+  std::string uriToMeshNames = "Ugrid:\"" + path + "\"";
+
+  EXPECT_EQ( MDAL_MeshNames( uriToMeshNames.c_str() ), "Ugrid:\"" + path + "\":mesh2d" );
+
+  MDAL_MeshH mesh = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( mesh, nullptr );
+
+  // ///////////
+  // Vertices
+  // ///////////
+  int v_count = MDAL_M_vertexCount( mesh );
+  EXPECT_EQ( v_count, 11200 );
+
+  // ///////////
+  // Faces
+  // ///////////
+  int f_count = MDAL_M_faceCount( mesh );
+  EXPECT_EQ( 16769, f_count );
+
+  // test face
+  int f_v_count = getFaceVerticesCountAt( mesh, 1 );
+  EXPECT_EQ( 3, f_v_count ); //triangle
+  int f_v = getFaceVerticesIndexAt( mesh, 1, 0 );
+  EXPECT_EQ( 4, f_v );
+
+  // ///////////
+  // scalar dataset
+  // ///////////
+  ASSERT_EQ( 12, MDAL_M_datasetGroupCount( mesh ) );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( mesh, 2 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 2, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Flow element center velocity" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+  ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 1 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 16769, count );
+
+  double value = getValue( ds, 500 );
+  MDAL::equals( 0.000267, value, 6 );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  MDAL::equals( 0.000267, min, 6 );
+  MDAL::equals( 0.002715, max, 6 );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  MDAL::equals( 0.000267, min, 6 );
+  MDAL::equals( 0.002715, max, 6 );
+
+  MDAL_CloseMesh( mesh );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
