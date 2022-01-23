@@ -34,6 +34,8 @@ namespace MDAL
         std::string meshName;
         std::string nodesFile;
         std::string linksFile;
+        std::string referenceTime;
+        std::string timeStepFile;
         std::string crs;
       };
 
@@ -56,6 +58,8 @@ namespace MDAL
                           double &yMin,
                           double &yMax ) const;
       void parseLinkFile( std::vector<CellH2i> &cells, const MetadataH2i &meta ) const;
+
+      void parseTime( const MetadataH2i &metadata, MDAL::DateTime &referenceTime, std::vector<MDAL::RelativeTimestamp> &timeSteps );
   };
 
 }

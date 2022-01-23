@@ -45,7 +45,6 @@ bool MDAL::DriverH2i::canReadMesh( const std::string &uri )
   if ( !parseJsonFile( uri, metadata ) )
     return false;
 
-
   const std::string nodesFilePath = metadata.dirPath + '/' + metadata.nodesFile;
   if ( !MDAL::fileExists( nodesFilePath ) )
   {
@@ -97,6 +96,8 @@ bool MDAL::DriverH2i::parseJsonFile( const std::string filePath, MetadataH2i &me
     metadata.crs = jsonFile["crs"].get<std::string>();
     metadata.nodesFile = jsonFile["topology"]["2d_nodes_file"].get<std::string>();
     metadata.linksFile = jsonFile["topology"]["2d_links_file"].get<std::string>();
+    metadata.referenceTime = jsonFile["timesteps"]["start_datetime"];
+    metadata.timeStepFile = jsonFile["timesteps"]["timesteps_file"];
 
     metadata.metadataFilePath = filePath;
     metadata.dirPath = MDAL::dirName( filePath );
@@ -257,6 +258,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::load( const std::string &meshFile, 
 
   std::unique_ptr<Mesh> mesh = createMeshFrame( metadata );
 
+  DateTime referenceTime;
+  std::vector<RelativeTimestamp> timeSteps;
+  parseTime( metadata, referenceTime, timeSteps );
+
   return mesh;
 }
 
@@ -319,9 +324,9 @@ void MDAL::DriverH2i::parseNodeFile( std::vector<MDAL::DriverH2i::CellH2i> &cell
   }
 }
 
-void MDAL::DriverH2i::parseLinkFile( std::vector<MDAL::DriverH2i::CellH2i> &cells, const MDAL::DriverH2i::MetadataH2i &meta ) const
+void MDAL::DriverH2i::parseLinkFile( std::vector<MDAL::DriverH2i::CellH2i> &cells, const MDAL::DriverH2i::MetadataH2i &metadata ) const
 {
-  const std::string filePath = meta.dirPath + '/' + meta.linksFile;
+  const std::string filePath = metadata.dirPath + '/' + metadata.linksFile;
   std::ifstream nodeFile = MDAL::openInputFile( filePath );
 
   if ( !nodeFile.is_open() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not open file " + filePath );
@@ -347,5 +352,25 @@ void MDAL::DriverH2i::parseLinkFile( std::vector<MDAL::DriverH2i::CellH2i> &cell
 
     cellFrom.neighborsCellCountperSide[posInCellFrom]++;
     cellTo.neighborsCellCountperSide[posInCellTo]++;
+  }
+}
+
+void MDAL::DriverH2i::parseTime( const MDAL::DriverH2i::MetadataH2i &metadata, MDAL::DateTime &referenceTime, std::vector<MDAL::RelativeTimestamp> &timeSteps )
+{
+  referenceTime = DateTime( metadata.referenceTime );
+
+  const std::string timeFilePath = metadata.dirPath + '/' + metadata.timeStepFile;
+  std::ifstream timeFile = MDAL::openInputFile( timeFilePath );
+
+  if ( !timeFile.is_open() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not open file " + timeFilePath );
+
+  timeSteps.clear();
+  std::string line;
+  while ( std::getline( timeFile, line ) )
+  {
+    const std::vector<std::string> lineElements = split( line, ' ' );
+    if ( lineElements.size() != 2 ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format not recognized: " + timeFilePath );
+
+    timeSteps.emplace_back( toDouble( lineElements.at( 1 ) ), RelativeTimestamp::seconds );
   }
 }
