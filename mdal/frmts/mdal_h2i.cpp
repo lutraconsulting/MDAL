@@ -16,7 +16,7 @@
 
 #include "mdal_h2i.hpp"
 
-#include <iostream>
+#include <fstream>
 #include <nlohmann_json/json.hpp>
 
 #include "mdal_utils.hpp"
@@ -47,17 +47,11 @@ bool MDAL::DriverH2i::canReadMesh( const std::string &uri )
 
   const std::string nodesFilePath = metadata.dirPath + '/' + metadata.nodesFile;
   if ( !MDAL::fileExists( nodesFilePath ) )
-  {
-    MDAL::Log::error( MDAL_Status::Err_FileNotFound, name(), nodesFilePath + " could not be opened" );
     return false;
-  }
 
   const std::string linksFilePath =  metadata.dirPath + '/' + metadata.linksFile;
   if ( !MDAL::fileExists( linksFilePath ) )
-  {
-    MDAL::Log::error( MDAL_Status::Err_FileNotFound, name(), linksFilePath + " could not be opened" );
     return false;
-  }
 
   return true;
 }
@@ -89,15 +83,27 @@ bool MDAL::DriverH2i::parseJsonFile( const std::string filePath, MetadataH2i &me
 
   try
   {
-    Json jsonFile;
-    jsonFile = Json::parse( jsonString );
+    Json jsonMeta;
+    jsonMeta = Json::parse( jsonString );
 
-    metadata.meshName = jsonFile["name"].get<std::string>();
-    metadata.crs = jsonFile["crs"].get<std::string>();
-    metadata.nodesFile = jsonFile["topology"]["2d_nodes_file"].get<std::string>();
-    metadata.linksFile = jsonFile["topology"]["2d_links_file"].get<std::string>();
-    metadata.referenceTime = jsonFile["timesteps"]["start_datetime"];
-    metadata.timeStepFile = jsonFile["timesteps"]["timesteps_file"];
+    metadata.meshName = jsonMeta["name"].get<std::string>();
+    metadata.crs = jsonMeta["crs"].get<std::string>();
+    metadata.nodesFile = jsonMeta["topology"]["2d_nodes_file"].get<std::string>();
+    metadata.linksFile = jsonMeta["topology"]["2d_links_file"].get<std::string>();
+    metadata.referenceTime = jsonMeta["timesteps"]["start_datetime"];
+    metadata.timeStepFile = jsonMeta["timesteps"]["timesteps_file"];
+
+    for ( Json::iterator it = jsonMeta["results"].begin(); it != jsonMeta["results"].end(); ++it )
+    {
+      MetadataH2iDataset metaDataset;
+      metaDataset.layer = ( *it )["layer"];
+      metaDataset.file = ( *it )["result_file"];
+      metaDataset.type = ( *it )["type"];
+      metaDataset.units = ( *it )["units"];
+      metaDataset.topology_file = ( *it )["topology_file"];
+
+      metadata.datasetGroups.push_back( metaDataset );
+    }
 
     metadata.metadataFilePath = filePath;
     metadata.dirPath = MDAL::dirName( filePath );
@@ -198,7 +204,7 @@ struct VertexFactory
   int yIntervalsCount;
 };
 
-std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::createMeshFrame( const MDAL::DriverH2i::MetadataH2i &metadata )
+std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::createMeshFrame( const MDAL::DriverH2i::MetadataH2i &metadata, std::vector<double> &topography )
 {
   double minSize = 0;
   double maxSize = 0;
@@ -217,6 +223,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::createMeshFrame( const MDAL::Driver
   vertexFactory.setUp( xMin, xMax, yMin, yMax, minSize, maxSize );
 
   std::vector<Face> faces( cells.size() );
+  topography.resize( cells.size() );
 
   std::map<std::pair<int, int>, int> gridPositionToVertex;
 
@@ -235,6 +242,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::createMeshFrame( const MDAL::Driver
 
     if ( face.size() > maxVerticesCount )
       maxVerticesCount = face.size();
+
+    topography[ci] = cell.z;
   }
 
   std::unique_ptr<MDAL::MemoryMesh> mesh( new MemoryMesh( name(), toInt( maxVerticesCount ), metadata.metadataFilePath ) );
@@ -249,6 +258,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::createMeshFrame( const MDAL::Driver
 
 std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::load( const std::string &meshFile, const std::string & )
 {
+  MDAL::Log::resetLastStatus();
   MetadataH2i metadata;
   if ( !parseJsonFile( meshFile, metadata ) )
   {
@@ -256,12 +266,57 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::load( const std::string &meshFile, 
     return nullptr;
   }
 
-  std::unique_ptr<Mesh> mesh = createMeshFrame( metadata );
+  std::vector<double> topography;
+  std::unique_ptr<Mesh> mesh = createMeshFrame( metadata, topography );
+
+  std::shared_ptr<DatasetGroup> topographyGroup = std::make_shared<DatasetGroup>( name(), mesh.get(), meshFile, "topography" );
+  topographyGroup->setDataLocation( MDAL_DataLocation::DataOnFaces );
+  std::shared_ptr<MemoryDataset2D> topographyDataset = std::make_shared<MemoryDataset2D>( topographyGroup.get() );
+  memcpy( topographyDataset->values(), topography.data(), topography.size()*sizeof( double ) );
+  topographyDataset->setStatistics( MDAL::calculateStatistics( topographyDataset ) );
+  topographyGroup->datasets.push_back( topographyDataset );
+  topographyGroup->setStatistics( MDAL::calculateStatistics( topographyGroup ) );
+  mesh->datasetGroups.push_back( topographyGroup );
 
   DateTime referenceTime;
   std::vector<RelativeTimestamp> timeSteps;
   parseTime( metadata, referenceTime, timeSteps );
 
+  const std::vector<MetadataH2iDataset> &metaGroups = metadata.datasetGroups;
+  for ( const MetadataH2iDataset &metadatasetGroup : metaGroups )
+  {
+    std::shared_ptr<DatasetGroup> group =
+      std::make_shared<DatasetGroup>( name(), mesh.get(), metadatasetGroup.file, metadatasetGroup.layer );
+
+    std::string datasetGroupFile = metadata.dirPath + '/' + metadatasetGroup.file;
+    std::shared_ptr<std::ifstream> in = std::make_shared<std::ifstream>( datasetGroupFile, std::ifstream::binary );
+
+    if ( !in->is_open() )
+      continue;
+
+    if ( metadatasetGroup.topology_file == "2d_nodes_file" )
+    {
+      group->setReferenceTime( referenceTime );
+      group->setDataLocation( MDAL_DataLocation::DataOnFaces );
+
+      for ( size_t datasetIndex = 0; datasetIndex < timeSteps.size(); ++datasetIndex )
+      {
+        std::shared_ptr<DatasetH2iOnNode> dataset = std::make_shared<DatasetH2iOnNode>( group.get(), in, datasetIndex );
+        dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+        group->datasets.push_back( dataset );
+        dataset->clear();
+        dataset->setTime( timeSteps.at( datasetIndex ) );
+      }
+      group->setStatistics( MDAL::calculateStatistics( group ) );
+
+      group->setMetadata( "units", metadatasetGroup.units );
+      group->setMetadata( "type", metadatasetGroup.type );
+    }
+    else
+      continue;;
+
+    mesh->datasetGroups.push_back( group );
+  }
   return mesh;
 }
 
@@ -286,7 +341,6 @@ void MDAL::DriverH2i::parseNodeFile( std::vector<MDAL::DriverH2i::CellH2i> &cell
   yMin = std::numeric_limits<double>::max();
   yMax = -std::numeric_limits<double>::max();;
 
-
   std::string line;
   while ( std::getline( nodeFile, line ) )
   {
@@ -297,8 +351,7 @@ void MDAL::DriverH2i::parseNodeFile( std::vector<MDAL::DriverH2i::CellH2i> &cell
     cell.x = toDouble( lineElements.at( 1 ) );
     cell.y = toDouble( lineElements.at( 2 ) );
     cell.size = toDouble( lineElements.at( 4 ) );
-    cell.zmin = toDouble( lineElements.at( 5 ) );
-    cell.zmax = toDouble( lineElements.at( 6 ) );
+    cell.z = ( toDouble( lineElements.at( 5 ) ) + toDouble( lineElements.at( 6 ) ) ) / 2;
 
     cell.neighborsCellCountperSide = std::vector<int>( 4, 0 );
 
@@ -373,4 +426,57 @@ void MDAL::DriverH2i::parseTime( const MDAL::DriverH2i::MetadataH2i &metadata, M
 
     timeSteps.emplace_back( toDouble( lineElements.at( 1 ) ), RelativeTimestamp::seconds );
   }
+}
+
+MDAL::DatasetH2iOnNode::DatasetH2iOnNode( MDAL::DatasetGroup *grp, std::shared_ptr<std::ifstream> in, size_t datasetIndex )
+  : Dataset2D( grp )
+  , mIn( in )
+  , mDatasetIndex( datasetIndex )
+{}
+
+size_t MDAL::DatasetH2iOnNode::scalarData( size_t indexStart, size_t count, double *buffer )
+{
+  if ( !mDataloaded )
+    loadData();
+  size_t nValues = valuesCount();
+
+  if ( ( count < 1 ) || ( indexStart >= nValues ) )
+    return 0;
+
+  size_t copyValues = std::min( nValues - indexStart, count );
+  memcpy( buffer, mValues.data() + indexStart, copyValues * sizeof( double ) );
+  return copyValues;
+}
+
+
+
+void MDAL::DatasetH2iOnNode::clear()
+{
+  mValues.clear();
+  mDataloaded = false;
+}
+
+void MDAL::DatasetH2iOnNode::loadData()
+{
+  mIn->seekg( beginingInFile() );
+  int datasetSize = 0;
+  bool changeEndianness = false;
+  MDAL::readValue( datasetSize, *mIn, changeEndianness );
+
+  if ( datasetSize != MDAL::toInt( valuesCount() *sizeof( double ) ) )
+  {
+    changeEndianness = true;
+    mIn->seekg( beginingInFile() );
+    MDAL::readValue( datasetSize, *mIn, changeEndianness );
+    if ( datasetSize != MDAL::toInt( valuesCount() *sizeof( double ) ) ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format not recognized: " + group()->uri() );
+  }
+
+  mValues.resize( valuesCount() );
+  for ( size_t i = 0; i < valuesCount(); ++i )
+    readValue( mValues[i], *mIn, changeEndianness );
+}
+
+std::streampos MDAL::DatasetH2iOnNode::beginingInFile() const
+{
+  return ( sizeof( int ) * 2 + sizeof( double ) * valuesCount() ) * mDatasetIndex;
 }

@@ -580,7 +580,7 @@ MDAL::Statistics MDAL::calculateStatistics( DatasetGroup *grp )
   if ( !grp )
     return ret;
 
-  for ( std::shared_ptr<Dataset> ds : grp->datasets )
+  for ( std::shared_ptr<Dataset> &ds : grp->datasets )
   {
     MDAL::Statistics dsStats = ds->statistics();
     combineStatistics( ret, dsStats );
