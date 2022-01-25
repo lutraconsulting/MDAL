@@ -71,7 +71,9 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_TRUE( MDAL::equals( max, 0.415 ) );
   EXPECT_TRUE( MDAL::equals( getValue( dataset, 15 ), -1.59, 0.001 ) );
 
-  group = MDAL_M_datasetGroup( m, 1 );
+  ////////////////////////////
+  /// water depth dataset group
+  group = MDAL_M_datasetGroup( m, 3 );
   ASSERT_EQ( std::string( "thin water depth" ), std::string( MDAL_G_name( group ) ) );
   EXPECT_TRUE( MDAL_G_hasScalarData( group ) );
   ASSERT_EQ( MDAL_G_dataLocation( group ), MDAL_DataLocation::DataOnFaces );
@@ -97,7 +99,7 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_TRUE( MDAL::equals( getValue( dataset, 200 ), 0, 0.001 ) );
 
   dataset = MDAL_G_dataset( group, 1 );
-  compareDurationInHours( MDAL_D_time( dataset ), MDAL::RelativeTimestamp( 4, MDAL::RelativeTimestamp::seconds ).value( MDAL::RelativeTimestamp::hours ) );
+  compareDurationInHours( MDAL_D_time( dataset ), 4 / 3600 );
   max = -std::numeric_limits<double>::max();
   min = std::numeric_limits<double>::max();
   MDAL_D_minimumMaximum( dataset, &min, &max );
@@ -106,7 +108,7 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_TRUE( MDAL::equals( getValue( dataset, 200 ), 0.116, 0.001 ) );
 
   dataset = MDAL_G_dataset( group, 200 );
-  compareDurationInHours( MDAL_D_time( dataset ), MDAL::RelativeTimestamp( 4, MDAL::RelativeTimestamp::seconds ).value( MDAL::RelativeTimestamp::hours ) );
+  compareDurationInHours( MDAL_D_time( dataset ), 11944 / 3600 );
   max = -std::numeric_limits<double>::max();
   min = std::numeric_limits<double>::max();
   MDAL_D_minimumMaximum( dataset, &min, &max );
@@ -114,7 +116,9 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_TRUE( MDAL::equals( max, 1.804, 0.001 ) );
   EXPECT_TRUE( MDAL::equals( getValue( dataset, 200 ), 0, 0.001 ) );
 
-  group = MDAL_M_datasetGroup( m, 3 );
+  ////////////////////////////
+  /// water level group
+  group = MDAL_M_datasetGroup( m, 5 );
   ASSERT_EQ( std::string( "water level" ), std::string( MDAL_G_name( group ) ) );
   EXPECT_TRUE( MDAL_G_hasScalarData( group ) );
   ASSERT_EQ( MDAL_G_dataLocation( group ), MDAL_DataLocation::DataOnFaces );
@@ -140,7 +144,7 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_TRUE( MDAL::equals( getValue( dataset, 200 ), -1.8, 0.001 ) );
 
   dataset = MDAL_G_dataset( group, 1 );
-  compareDurationInHours( MDAL_D_time( dataset ), MDAL::RelativeTimestamp( 4, MDAL::RelativeTimestamp::seconds ).value( MDAL::RelativeTimestamp::hours ) );
+  EXPECT_TRUE( compareDurationInHours( MDAL_D_time( dataset ), 4.0 / 3600 ) );
   max = -std::numeric_limits<double>::max();
   min = std::numeric_limits<double>::max();
   MDAL_D_minimumMaximum( dataset, &min, &max );
@@ -149,13 +153,110 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_TRUE( MDAL::equals( getValue( dataset, 200 ), -1.799999775394419 ) );
 
   dataset = MDAL_G_dataset( group, 200 );
-  compareDurationInHours( MDAL_D_time( dataset ), MDAL::RelativeTimestamp( 4, MDAL::RelativeTimestamp::seconds ).value( MDAL::RelativeTimestamp::hours ) );
+  EXPECT_TRUE( compareDurationInHours( MDAL_D_time( dataset ), 11944.0 / 3600 ) );
   max = -std::numeric_limits<double>::max();
   min = std::numeric_limits<double>::max();
   MDAL_D_minimumMaximum( dataset, &min, &max );
   EXPECT_TRUE( MDAL::equals( min, -1.9818994301404425 ) );
   EXPECT_TRUE( MDAL::equals( max, 0.40068558242701124 ) );
   EXPECT_TRUE( MDAL::equals( getValue( dataset, 200 ), -1.535845010541368 ) );
+
+
+  ////////////////////////////
+  /// discharge dataset group
+  group = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_EQ( std::string( "unit discharge" ), std::string( MDAL_G_name( group ) ) );
+  EXPECT_FALSE( MDAL_G_hasScalarData( group ) );
+  ASSERT_EQ( MDAL_G_dataLocation( group ), MDAL_DataLocation::DataOnFaces );
+  ASSERT_EQ( MDAL_G_datasetCount( group ), 301 );
+  ASSERT_EQ( MDAL_G_metadataCount( group ), 3 );
+  EXPECT_EQ( std::string( "units" ), std::string( MDAL_G_metadataKey( group, 1 ) ) );
+  EXPECT_EQ( std::string( MDAL_G_metadataValue( group, 1 ) ), std::string( "m2/s" ) );
+  EXPECT_EQ( std::string( "type" ), std::string( MDAL_G_metadataKey( group, 2 ) ) );
+  EXPECT_EQ( std::string( MDAL_G_metadataValue( group, 2 ) ), std::string( "discharge" ) );
+  MDAL_G_minimumMaximum( group, &min, &max );
+  EXPECT_TRUE( MDAL::equals( min, 0 ) );
+  EXPECT_TRUE( MDAL::equals( max, 0.42281672556701516 ) );
+
+  compareReferenceTime( group, "2001-01-01T00:00:00" );
+
+  dataset = MDAL_G_dataset( group, 0 );
+  compareDurationInHours( MDAL_D_time( dataset ), 0 );
+  max = -std::numeric_limits<double>::max();
+  min = std::numeric_limits<double>::max();
+  MDAL_D_minimumMaximum( dataset, &min, &max );
+  EXPECT_TRUE( MDAL::equals( min, 0 ) );
+  EXPECT_TRUE( MDAL::equals( max, 0 ) );
+  EXPECT_TRUE( MDAL::equals( getValueX( dataset, 200 ), 0 ) );
+
+  dataset = MDAL_G_dataset( group, 1 );
+  compareDurationInHours( MDAL_D_time( dataset ), 4 / 3600 );
+  max = -std::numeric_limits<double>::max();
+  min = std::numeric_limits<double>::max();
+  MDAL_D_minimumMaximum( dataset, &min, &max );
+  EXPECT_TRUE( MDAL::equals( min, 0 ) );
+  EXPECT_TRUE( MDAL::equals( max, 3.858713411120921e-07 ) );
+
+  EXPECT_TRUE( MDAL::equals( getValueX( dataset, 250 ), -1.9082423691870207e-08 ) );
+  EXPECT_TRUE( MDAL::equals( getValueY( dataset, 250 ), 2.142051116262502e-08 ) );
+
+  dataset = MDAL_G_dataset( group, 200 );
+  compareDurationInHours( MDAL_D_time( dataset ), 11944 / 3600 );
+  max = -std::numeric_limits<double>::max();
+  min = std::numeric_limits<double>::max();
+  MDAL_D_minimumMaximum( dataset, &min, &max );
+  EXPECT_TRUE( MDAL::equals( min, 0 ) );
+  EXPECT_TRUE( MDAL::equals( max, 0.36365641466454834 ) );
+  EXPECT_TRUE( MDAL::equals( getValueX( dataset, 250 ), -0.011015540811333473 ) );
+  EXPECT_TRUE( MDAL::equals( getValueY( dataset, 250 ), -0.0065293025932666735 ) );
+
+  ////////////////////////////
+  /// velocity dataset group
+  group = MDAL_M_datasetGroup( m, 2 );
+  ASSERT_EQ( std::string( "velocity" ), std::string( MDAL_G_name( group ) ) );
+  EXPECT_FALSE( MDAL_G_hasScalarData( group ) );
+  ASSERT_EQ( MDAL_G_dataLocation( group ), MDAL_DataLocation::DataOnFaces );
+  ASSERT_EQ( MDAL_G_datasetCount( group ), 301 );
+  ASSERT_EQ( MDAL_G_metadataCount( group ), 3 );
+  EXPECT_EQ( std::string( "units" ), std::string( MDAL_G_metadataKey( group, 1 ) ) );
+  EXPECT_EQ( std::string( MDAL_G_metadataValue( group, 1 ) ), std::string( "m/s" ) );
+  EXPECT_EQ( std::string( "type" ), std::string( MDAL_G_metadataKey( group, 2 ) ) );
+  EXPECT_EQ( std::string( MDAL_G_metadataValue( group, 2 ) ), std::string( "velocity" ) );
+  MDAL_G_minimumMaximum( group, &min, &max );
+  EXPECT_TRUE( MDAL::equals( min, 0 ) );
+  EXPECT_TRUE( MDAL::equals( max, 3.5648450490803714 ) );
+
+  compareReferenceTime( group, "2001-01-01T00:00:00" );
+
+  dataset = MDAL_G_dataset( group, 0 );
+  compareDurationInHours( MDAL_D_time( dataset ), 0 );
+  max = -std::numeric_limits<double>::max();
+  min = std::numeric_limits<double>::max();
+  MDAL_D_minimumMaximum( dataset, &min, &max );
+  EXPECT_TRUE( MDAL::equals( min, 0 ) );
+  EXPECT_TRUE( MDAL::equals( max, 0 ) );
+  EXPECT_TRUE( MDAL::equals( getValueX( dataset, 200 ), 0 ) );
+
+  dataset = MDAL_G_dataset( group, 1 );
+  compareDurationInHours( MDAL_D_time( dataset ), 4 / 3600 );
+  max = -std::numeric_limits<double>::max();
+  min = std::numeric_limits<double>::max();
+  MDAL_D_minimumMaximum( dataset, &min, &max );
+  EXPECT_TRUE( MDAL::equals( min, 0 ) );
+  EXPECT_TRUE( MDAL::equals( max, 1.1972175260805653e-05 ) );
+
+  EXPECT_TRUE( MDAL::equals( getValueX( dataset, 250 ), -3.3873910858682106e-08 ) );
+  EXPECT_TRUE( MDAL::equals( getValueY( dataset, 250 ), 2.637530545593399e-08 ) );
+
+  dataset = MDAL_G_dataset( group, 200 );
+  compareDurationInHours( MDAL_D_time( dataset ), 11944 / 3600 );
+  max = -std::numeric_limits<double>::max();
+  min = std::numeric_limits<double>::max();
+  MDAL_D_minimumMaximum( dataset, &min, &max );
+  EXPECT_TRUE( MDAL::equals( min, 0 ) );
+  EXPECT_TRUE( MDAL::equals( max, 3.5562601801108404 ) );
+  EXPECT_TRUE( MDAL::equals( getValueX( dataset, 250 ), -0.011063229489062722 ) );
+  EXPECT_TRUE( MDAL::equals( getValueY( dataset, 250 ), -0.006451940286861343 ) );
 
   MDAL_CloseMesh( m );
 }

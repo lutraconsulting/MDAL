@@ -4836,7 +4836,8 @@ namespace nlohmann
     }
 
     template < typename BasicJsonType, typename CompatibleObjectType,
-               enable_if_t < is_compatible_object_type<BasicJsonType, CompatibleObjectType>::value&& !is_basic_json<CompatibleObjectType>::value, int > = 0 >
+               enable_if_t < is_compatible_object_type<BasicJsonType, CompatibleObjectType>::value &&
+                             !is_basic_json<CompatibleObjectType>::value, int > = 0 >
     void to_json( BasicJsonType &j, const CompatibleObjectType &obj )
     {
       external_constructor<value_t::object>::construct( j, obj );
