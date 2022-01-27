@@ -16,7 +16,7 @@
 
 TEST( MeshH2iTest, Driver )
 {
-  MDAL_DriverH driver = MDAL_driverFromName( "H2i" );
+  MDAL_DriverH driver = MDAL_driverFromName( "H2I" );
   EXPECT_EQ( strcmp( MDAL_DR_filters( driver ), "*.json" ), 0 );
   EXPECT_TRUE( MDAL_DR_meshLoadCapability( driver ) );
   EXPECT_FALSE( MDAL_DR_saveMeshCapability( driver ) );
@@ -26,7 +26,7 @@ TEST( MeshH2iTest, Driver )
 TEST( MeshH2iTest, LoadMesh )
 {
   std::string path = test_file( "/h2i/de_tol_small/metadata.json" );
-  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "H2i:\"" + path + "\":de tol small" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "H2I:\"" + path + "\":de tol small" );
 
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   ASSERT_NE( m, nullptr );
@@ -176,7 +176,7 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_EQ( std::string( MDAL_G_metadataValue( group, 2 ) ), std::string( "discharge" ) );
   MDAL_G_minimumMaximum( group, &min, &max );
   EXPECT_TRUE( MDAL::equals( min, 0 ) );
-  EXPECT_TRUE( MDAL::equals( max, 0.42281672556701516 ) );
+  EXPECT_TRUE( MDAL::equals( max, 0.41628520143256503 ) );
 
   compareReferenceTime( group, "2001-01-01T00:00:00" );
 
@@ -195,8 +195,10 @@ TEST( MeshH2iTest, LoadMesh )
   min = std::numeric_limits<double>::max();
   MDAL_D_minimumMaximum( dataset, &min, &max );
   EXPECT_TRUE( MDAL::equals( min, 0 ) );
-  EXPECT_TRUE( MDAL::equals( max, 3.858713411120921e-07 ) );
+  EXPECT_TRUE( MDAL::equals( max, 2.2033972458650335e-07 ) );
 
+  double vx = getValueX( dataset, 250 );
+  double vy = getValueY( dataset, 250 );
   EXPECT_TRUE( MDAL::equals( getValueX( dataset, 250 ), -1.9082423691870207e-08 ) );
   EXPECT_TRUE( MDAL::equals( getValueY( dataset, 250 ), 2.142051116262502e-08 ) );
 
@@ -206,7 +208,9 @@ TEST( MeshH2iTest, LoadMesh )
   min = std::numeric_limits<double>::max();
   MDAL_D_minimumMaximum( dataset, &min, &max );
   EXPECT_TRUE( MDAL::equals( min, 0 ) );
-  EXPECT_TRUE( MDAL::equals( max, 0.36365641466454834 ) );
+  EXPECT_TRUE( MDAL::equals( max, 0.3516141096101225 ) );
+  vx = getValueX( dataset, 250 );
+  vy = getValueY( dataset, 250 );
   EXPECT_TRUE( MDAL::equals( getValueX( dataset, 250 ), -0.011015540811333473 ) );
   EXPECT_TRUE( MDAL::equals( getValueY( dataset, 250 ), -0.0065293025932666735 ) );
 
@@ -224,7 +228,7 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_EQ( std::string( MDAL_G_metadataValue( group, 2 ) ), std::string( "velocity" ) );
   MDAL_G_minimumMaximum( group, &min, &max );
   EXPECT_TRUE( MDAL::equals( min, 0 ) );
-  EXPECT_TRUE( MDAL::equals( max, 3.5648450490803714 ) );
+  EXPECT_TRUE( MDAL::equals( max, 1.9170254202699033 ) );
 
   compareReferenceTime( group, "2001-01-01T00:00:00" );
 
@@ -235,7 +239,11 @@ TEST( MeshH2iTest, LoadMesh )
   MDAL_D_minimumMaximum( dataset, &min, &max );
   EXPECT_TRUE( MDAL::equals( min, 0 ) );
   EXPECT_TRUE( MDAL::equals( max, 0 ) );
+  vx = getValueX( dataset, 200 );
+  vy = getValueY( dataset, 200 );
   EXPECT_TRUE( MDAL::equals( getValueX( dataset, 200 ), 0 ) );
+  EXPECT_TRUE( MDAL::equals( getValueY( dataset, 200 ), 0 ) );
+
 
   dataset = MDAL_G_dataset( group, 1 );
   compareDurationInHours( MDAL_D_time( dataset ), 4 / 3600 );
@@ -245,6 +253,8 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_TRUE( MDAL::equals( min, 0 ) );
   EXPECT_TRUE( MDAL::equals( max, 1.1972175260805653e-05 ) );
 
+  vx = getValueX( dataset, 250 );
+  vy = getValueY( dataset, 250 );
   EXPECT_TRUE( MDAL::equals( getValueX( dataset, 250 ), -3.3873910858682106e-08 ) );
   EXPECT_TRUE( MDAL::equals( getValueY( dataset, 250 ), 2.637530545593399e-08 ) );
 
@@ -254,7 +264,9 @@ TEST( MeshH2iTest, LoadMesh )
   min = std::numeric_limits<double>::max();
   MDAL_D_minimumMaximum( dataset, &min, &max );
   EXPECT_TRUE( MDAL::equals( min, 0 ) );
-  EXPECT_TRUE( MDAL::equals( max, 3.5562601801108404 ) );
+  EXPECT_TRUE( MDAL::equals( max, 1.9122031636962096 ) );
+  vx = getValueX( dataset, 250 );
+  vy = getValueY( dataset, 250 );
   EXPECT_TRUE( MDAL::equals( getValueX( dataset, 250 ), -0.011063229489062722 ) );
   EXPECT_TRUE( MDAL::equals( getValueY( dataset, 250 ), -0.006451940286861343 ) );
 

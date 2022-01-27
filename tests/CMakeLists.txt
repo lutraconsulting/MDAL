@@ -127,7 +127,7 @@ IF(BUILD_EXTERNAL_DRIVERS)
     test_dynamic_driver.cpp
   )
 
-  IF(EXTERNAL_DRIVER_DHI_DFSU)
+  IF(EXTERNAL_DRIVER_DHI_DFS)
     SET(TESTS ${TESTS}
         test_dhi_driver.cpp
     )

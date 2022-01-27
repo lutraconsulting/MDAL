@@ -13,7 +13,7 @@
 #include "mdal_memory_data_model.hpp"
 
 
-#define DRIVER_NAME "H2i"
+#define DRIVER_NAME "H2I"
 
 MDAL::DriverH2i::DriverH2i():
   Driver( DRIVER_NAME,
@@ -181,14 +181,16 @@ struct VertexFactory
 
   std::vector<MDAL::Vertex> &verticesRef;
   std::map<std::pair<int, int>, size_t> createdVertexPosition;
+  // this map stores created vertex indexes (size_t) considering the position
+  // in a grid (int,int) that have a resolution of minimum quad width
 
-  double xMin;
-  double yMin;
-  double totalWidth;
-  double totalHeight;
+  double xMin = std::numeric_limits<double>::max();
+  double yMin = std::numeric_limits<double>::max();
+  double totalWidth = 0;
+  double totalHeight = 0;
 
-  int xIntervalsCount;
-  int yIntervalsCount;
+  int xIntervalsCount = 0;
+  int yIntervalsCount = 0;
 };
 
 std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::createMeshFrame( const MDAL::DriverH2i::MetadataH2i &metadata, std::vector<double> &topography, LinksH2i links )
@@ -368,7 +370,7 @@ void MDAL::DriverH2i::parseNodeFile( std::vector<MDAL::DriverH2i::CellH2i> &cell
     cell.size = toDouble( lineElements.at( 4 ) );
     cell.z = ( toDouble( lineElements.at( 5 ) ) + toDouble( lineElements.at( 6 ) ) ) / 2;
 
-    cell.neighborsCellCountperSide = std::vector<int>( 4, 0 );
+    cell.neighborsCellCountPerSide = std::vector<int>( 4, 0 );
 
     if ( cell.size < minSize )
       minSize = cell.size;
@@ -425,8 +427,8 @@ void MDAL::DriverH2i::parseLinkFile( std::vector<CellH2i> &cells, LinksH2i links
     links->push_back( {cellFromIndex,
                        cellToIndex,
                        static_cast<unsigned char>( ori ),
-                       dir * std::max( cellTo.size / cellFrom.size, 1.0 ),
-                       dir * std::max( cellFrom.size / cellTo.size, 1.0 ),
+                       dir * std::min( 1 / cellFrom.size, 1.0 ),
+                       dir * std::min( 1 / cellTo.size, 1.0 ),
                        std::min( cellFrom.size, cellTo.size )} );
   }
 }
@@ -559,8 +561,8 @@ void MDAL::DatasetH2iOnLink::loadData()
     {
       const LinkH2i &link = mLinks->at( i );
 
-      mValues[2 * link.cell0 + link.ori] += ( linkValue * link.ratioSize0 / 2 ) / ( mIsFlux ? link.minSize : 1 );
-      mValues[2 * link.cell1 + link.ori] += ( linkValue * link.ratioSize1 / 2 ) / ( mIsFlux ? link.minSize : 1 );
+      mValues[2 * link.cell0 + link.ori] += ( linkValue * link.ratioSize0 / 2 ) * ( mIsFlux ? 1 : link.minSize );
+      mValues[2 * link.cell1 + link.ori] += ( linkValue * link.ratioSize1 / 2 ) * ( mIsFlux ? 1 : link.minSize );
     }
     else  throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error when reading file: " + group()->uri() );
 
