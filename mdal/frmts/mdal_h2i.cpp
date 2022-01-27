@@ -223,7 +223,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::createMeshFrame( const MDAL::Driver
     {
       face.push_back( vertexFactory.getVertex( cell.x, cell.y, side, false, cell.size ) );
 
-      if ( cell.neighborsCellCountperSide.at( side ) == 2 ) //two quads neighbors, need another vertex on the mid of this side
+      if ( cell.neighborsCellCountPerSide.at( side ) == 2 ) //two quads neighbors, need another vertex on the mid of this side
         face.push_back( vertexFactory.getVertex( cell.x, cell.y, side, true, cell.size ) );
     }
 
@@ -421,8 +421,8 @@ void MDAL::DriverH2i::parseLinkFile( std::vector<CellH2i> &cells, LinksH2i links
 
     if ( posInCellFrom > 3 || posInCellTo > 3 ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Data invalid: " + filePath );
 
-    cellFrom.neighborsCellCountperSide[posInCellFrom]++;
-    cellTo.neighborsCellCountperSide[posInCellTo]++;
+    cellFrom.neighborsCellCountPerSide[posInCellFrom]++;
+    cellTo.neighborsCellCountPerSide[posInCellTo]++;
 
     links->push_back( {cellFromIndex,
                        cellToIndex,

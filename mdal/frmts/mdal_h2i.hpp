@@ -92,7 +92,7 @@ namespace MDAL
         double x, y, z;
         double size;
 
-        std::vector<int> neighborsCellCountperSide;
+        std::vector<int> neighborsCellCountPerSide;
       };
 
       std::unique_ptr<Mesh> createMeshFrame( const MetadataH2i &metadata, std::vector<double> &topography, LinksH2i links );
