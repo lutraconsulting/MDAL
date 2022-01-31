@@ -49,7 +49,8 @@ You can use MDAL to load the following file formats:
 - [PLY](https://en.wikipedia.org/wiki/PLY_(file_format)): Stanford Polygon Format also useful for mesh created from point clouds by [PDAL](https://pdal.io)
 - [DFSU*](https://www.dhigroup.com):DHI Flexible File Format (External Driver)
 - [DFS2*](https://www.dhigroup.com):DHI Grid Series File (External Driver)
- 
+- [H2i*](https://github.com/d2hydro/H2i_code_factory/blob/main/docs/data_format.md): Outputs of the H2i modelling package
+
 \* Data lazy loaded
 
 \*\* Formats can be preprocessed using QGIS [Crayfish](https://plugins.qgis.org/plugins/crayfish/) Mesh processing algorithm to one of supported formats
@@ -69,11 +70,12 @@ You can use MDAL to load the following file formats:
 | 3Di   |  READ-ONLY | NO |  READ-ONLY | READ-ONLY | NO | NO | 
 | UGRID   |  READ-WRITE | NO | READ-ONLY | READ-ONLY | NO | NO | 
 | FLO-2D   |  READ-ONLY  | NO | READ-ONLY | READ-WRITE | NO | NO  | 
-| Selafin   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
+| Selafin   |  READ-WRITE | NO | NO | READ-WRITE | NO | NO | 
 | SWW   |  READ-ONLY | NO | NO | READ-ONLY | NO | NO | 
 | PLY   | READ-WRITE | N/A | READ-WRITE | READ-WRITE | READ-WRITE | N/A |
 | DFSU  | READ-ONLY | N/A | NO | READ-ONLY | READ-ONLY | YES | 
 | DFS2  | READ-ONLY | N/A | NO | READ-ONLY | N/A | YES |
+| H2i | READ-ONLY | NO | NO | READ-ONLY | N/A | YES |
 
 # Standalone Installation
 
