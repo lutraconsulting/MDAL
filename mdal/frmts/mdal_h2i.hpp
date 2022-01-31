@@ -35,7 +35,7 @@ namespace MDAL
    * - a json file with:
    *    - some information about the mesh (mesh name, crs, reference time and time steps)
    *    - relative path of the files containing the nodes definition and the links definition
-   *    - relative pathto the file containing the quantity dataset groups.
+   *    - relative path to the file containing the quantity dataset groups.
    * - text file containing the nodes information
    * - text file containing the links information
    * - text file containing the time step
@@ -43,7 +43,7 @@ namespace MDAL
    *
    * Dataset groups on nodes have scalar values (water depth, water level) that are interpreted by MDAL as scalar value on faces.
    *
-   * Dataset groups on links have also scalar values butrelated to quantities that are vectors. Theses values as interpreted by MDAL as vector value on
+   * Dataset groups on links have also scalar values but related to quantities that are vectors. Theses values as interpreted by MDAL as vector value on
    * faces using direction of the link and converting value like this:
    * for each face (node), X or Y vector value is average of value of link in X or Y direction weighted by the side lenght of the node on the other side of the link.
    *
