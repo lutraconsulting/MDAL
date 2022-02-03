@@ -44,6 +44,11 @@ static HdfDataset openHdfDataset( const HdfGroup &hdfGroup, const std::string &n
   return dsFileType;
 }
 
+static bool existsHdfDataset( const HdfGroup &hdfGroup, const std::string &name )
+{
+  return hdfGroup.dataset( name ).isValid();
+}
+
 static std::string openHdfAttribute( const HdfFile &hdfFile, const std::string &name )
 {
   HdfAttribute attr = hdfFile.attribute( name );
@@ -761,12 +766,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverHec2D::load( const std::string &resultsF
   {
     HdfFile hdfFile = openHdfFile( mFileName );
 
-    // Verify it is correct file
-    std::string fileType = openHdfAttribute( hdfFile, "File Type" );
-    bool oldFormat = canReadOldFormat( fileType );
-
     HdfGroup gGeom = openHdfGroup( hdfFile, "Geometry" );
     HdfGroup gGeom2DFlowAreas = openHdfGroup( gGeom, "2D Flow Areas" );
+
+    bool oldFormat( existsHdfDataset( gGeom2DFlowAreas, "Names" ) );
 
     std::vector<std::string> flowAreaNames;
     if ( oldFormat )
