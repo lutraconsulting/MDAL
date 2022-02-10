@@ -520,6 +520,109 @@ TEST( MeshHec2dTest, hec_6_0 )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshHec2dTest, hec_6_1 )
+{
+  std::string path = test_file( "/hec2d/2d_6.1/Muncie2DOnly_SI.p01.hdf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "HEC2D:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  // ///////////
+  // Vertices
+  // ///////////
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 3805 );
+
+  // ///////////
+  // Faces
+  // ///////////
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 3224, f_count );
+
+  // ///////////
+  // Dataset groups
+  // ///////////
+
+  ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+
+  // Bed Elevation
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 3224, count );
+
+  double value = getValue( ds, 0 );
+  EXPECT_TRUE( MDAL::equals( 289.453125, value, 0.001 ) );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_TRUE( MDAL::equals( 278.0609, min, 0.001 ) );
+  EXPECT_TRUE( MDAL::equals( 295.2801, max, 0.001 ) );
+
+  g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+
+  meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Water Surface" ), std::string( name ) );
+
+  scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+  ASSERT_EQ( 49, MDAL_G_datasetCount( g ) );
+  ds = MDAL_G_dataset( g, 25 );
+  ASSERT_NE( ds, nullptr );
+
+  valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( 3224, count );
+
+  value = getValue( ds, 435 );
+  EXPECT_TRUE( MDAL::equals( 283.2630, value, 0.001 ) );
+
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_TRUE( MDAL::equals( 280.5592, min, 0.001 ) );
+  EXPECT_TRUE( MDAL::equals( 293.8203, max, 0.001 ) );
+
+  double time = MDAL_D_time( ds );
+  EXPECT_TRUE( compareDurationInHours( 2.0833333333333335, time ) );
+
+  EXPECT_TRUE( compareReferenceTime( g, "1900-01-02T00:00:00" ) );
+
+  MDAL_CloseMesh( m );
+}
+
 
 int main( int argc, char **argv )
 {
