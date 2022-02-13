@@ -37,10 +37,14 @@ static HdfGroup openHdfGroup( const HdfGroup &hdfGroup, const std::string &name 
   return grp;
 }
 
-static HdfDataset openHdfDataset( const HdfGroup &hdfGroup, const std::string &name )
+
+static HdfDataset openHdfDataset( const HdfGroup &hdfGroup, const std::string &name, bool *ok = nullptr )
 {
   HdfDataset dsFileType = hdfGroup.dataset( name );
-  if ( !dsFileType.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf dataset " + name );
+  if ( ok )
+    *ok = dsFileType.isValid();
+  else if ( !dsFileType.isValid() ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open Hdf dataset " + name );
+
   return dsFileType;
 }
 
@@ -542,8 +546,11 @@ void MDAL::DriverHec2D::readElemResults(
 
 std::vector<std::string> MDAL::DriverHec2D::read2DFlowAreasNamesFromNameDataset( HdfGroup gGeom2DFlowAreas ) const
 {
-  HdfDataset dsNames = openHdfDataset( gGeom2DFlowAreas, "Names" );
-  std::vector<std::string> names = dsNames.readArrayString();
+  bool ok = false;
+  HdfDataset dsNames = openHdfDataset( gGeom2DFlowAreas, "Names", &ok );
+  std::vector<std::string> names;
+  if ( ok )
+    names = dsNames.readArrayString();
   return names;
 }
 
@@ -591,7 +598,11 @@ typedef struct FlowAreasAttribute505
 
 std::vector<std::string> MDAL::DriverHec2D::read2DFlowAreasNamesFromAttributesDataset( HdfGroup gGeom2DFlowAreas ) const
 {
-  HdfDataset dsAttributes = openHdfDataset( gGeom2DFlowAreas, "Attributes" );
+  bool ok = false;
+  std::vector<std::string> names;
+  HdfDataset dsAttributes = openHdfDataset( gGeom2DFlowAreas, "Attributes", &ok );
+  if ( !ok )
+    return names;
   hid_t attributeHID = H5Tcreate( H5T_COMPOUND, sizeof( FlowAreasAttribute505 ) );
   hid_t stringHID = H5Tcopy( H5T_C_S1 );
   H5Tset_size( stringHID, HDF_MAX_NAME );
@@ -611,7 +622,6 @@ std::vector<std::string> MDAL::DriverHec2D::read2DFlowAreasNamesFromAttributesDa
   std::vector<FlowAreasAttribute505> attributes = dsAttributes.readArray<FlowAreasAttribute505>( attributeHID );
   H5Tclose( attributeHID );
   H5Tclose( stringHID );
-  std::vector<std::string> names;
   if ( attributes.empty() ) throw MDAL::Error( MDAL_Status::Err_InvalidData, "Unable to read 2D Flow Area Names, no attributes found" );
 
   for ( const auto &attr : attributes )
@@ -765,22 +775,9 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverHec2D::load( const std::string &resultsF
 
     std::vector<std::string> flowAreaNames;
 
-    try
-    {
-      flowAreaNames = read2DFlowAreasNamesFromNameDataset( gGeom2DFlowAreas );
-    }
-    catch ( MDAL::Error & )
-    {}
-
+    flowAreaNames = read2DFlowAreasNamesFromNameDataset( gGeom2DFlowAreas );
     if ( flowAreaNames.empty() )
-    {
-      try
-      {
-        flowAreaNames = read2DFlowAreasNamesFromAttributesDataset( gGeom2DFlowAreas );
-      }
-      catch ( MDAL::Error & )
-      {}
-    }
+      flowAreaNames = read2DFlowAreasNamesFromAttributesDataset( gGeom2DFlowAreas );
 
     if ( flowAreaNames.empty() )
       throw MDAL::Error( MDAL_Status::Err_InvalidData, "Unable to read 2D Flow area names, no names found" );
