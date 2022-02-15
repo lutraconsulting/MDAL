@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   windows_tests:
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
       - name: Checkout MDAL
