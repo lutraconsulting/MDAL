@@ -39,4 +39,3 @@ MDAL drivers
    xms-tin
    dfsu
    dfs2
-   h2i
