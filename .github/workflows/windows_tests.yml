@@ -12,7 +12,7 @@ jobs:
       - name: Choco install qgis
         uses: crazy-max/ghaction-chocolatey@v1
         with:
-          args: install qgis --version 3.16.16 -y --verbose
+          args: install qgis-ltr --version 3.16.16 -y --verbose
 
       - name: Move SDK to OSGeo4W folder
         shell: pwsh
