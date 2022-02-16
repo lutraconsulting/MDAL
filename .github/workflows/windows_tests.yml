@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   windows_tests:
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     steps:
       - name: Checkout MDAL
@@ -12,12 +12,12 @@ jobs:
       - name: Choco install qgis
         uses: crazy-max/ghaction-chocolatey@v1
         with:
-          args: install qgis --version 3.4.3 -y --verbose
+          args: install qgis --version 3.16.16 -y --verbose
 
       - name: Move SDK to OSGeo4W folder
         shell: pwsh
         run: |
-            mv "C:\Program Files\QGIS 3.4" "C:\OSGeo4W64"
+            mv "C:\Program Files\QGIS 3.16" "C:\OSGeo4W64"
 
       - name: Set compiler environment
         shell: cmd
@@ -38,7 +38,7 @@ jobs:
             cd $env:GITHUB_WORKSPACE
             mkdir build
             cd build
-            exec { cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Rel  -DENABLE_TESTS=ON  -DEXTERNAL_DRIVER_DHI_DFS=OFF -DNETCDF_PREFIX="C:\OSGeo4W64" -DHDF5_ROOT="C:\OSGeo4W64" -DGDAL_DIR="C:\OSGeo4W64" -DGDAL_LIBRARY="C:\OSGeo4W64\lib\gdal_i.lib" -DGDAL_INCLUDE_DIR="C:\OSGeo4W64\include" -DLIBXML2_LIBRARIES="C:\OSGeo4W64\lib\libxml2.lib" -DLIBXML2_INCLUDE_DIR="C:\OSGeo4W64\include\libxml2" ..  }
+            exec { cmake -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Rel  -DENABLE_TESTS=ON  -DEXTERNAL_DRIVER_DHI_DFS=OFF -DNETCDF_PREFIX="C:\OSGeo4W64" -DHDF5_ROOT="C:\OSGeo4W64" -DGDAL_DIR="C:\OSGeo4W64" -DGDAL_LIBRARY="C:\OSGeo4W64\lib\gdal_i.lib" -DGDAL_INCLUDE_DIR="C:\OSGeo4W64\include" -DLIBXML2_LIBRARIES="C:\OSGeo4W64\lib\libxml2.lib" -DLIBXML2_INCLUDE_DIR="C:\OSGeo4W64\include\libxml2" ..  }
             exec { cmake --build . }
 
       - name: Run tests
