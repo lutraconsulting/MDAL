@@ -1078,7 +1078,6 @@ void MDAL::DriverFlo2D::load( const std::string &uri, MDAL::Mesh *mesh )
 
 std::unique_ptr< MDAL::Mesh > MDAL::DriverFlo2D::load( const std::string &resultsFile, const std::string &meshName )
 {
-  MDAL::Log::resetLastStatus();
   mDatFileName = resultsFile;
   std::string mesh2DTopologyFile( fileNameFromDir( resultsFile, "FPLAIN.DAT" ) );
   std::string mesh1DTopologyFile( fileNameFromDir( resultsFile, "CHAN.DAT" ) );
@@ -1116,6 +1115,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverFlo2D::loadMesh1d()
 
 std::unique_ptr<MDAL::Mesh> MDAL::DriverFlo2D::loadMesh2d()
 {
+  MDAL::Log::resetLastStatus();
   mMesh.reset();
   std::vector<CellCenter> cells;
 
