@@ -22,7 +22,7 @@ jobs:
       - name: Set compiler environment
         shell: cmd
         run: |
-            CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=x86
+            CALL "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=x86
 
       - name: Build
         shell: pwsh
