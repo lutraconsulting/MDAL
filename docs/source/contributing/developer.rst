@@ -10,25 +10,17 @@ Build:
 
 ::
 
-   cd gdal
-   ./configure [options]
-   make -j8 -s
-   cd apps; make -s test_ogrsf; cd ..
+   cd MDAL
+   mkdir build && cd build
+   cmake [options] ..
+   make
 
-Run command line utilities (without installing):
-
-::
-
-   . scripts/setdevenv.sh
-   gdalinfo --version
-
-Run autotest suite:
+Run test suite:
 
 ::
 
-   cd ../autotest
-   pip install -r requirements.txt
-   pytest
+   ctest -VV
+
 
 Git workflows with MDAL
 --------------------------------------------------------------------------------
@@ -52,13 +44,13 @@ fixes it)
 Initiate your work repository
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Fork `lutraconsulting/MDAL <https://github.com/lutraconsulting/gdal>`__ from GitHub UI, and then
+Fork `lutraconsulting/MDAL <https://github.com/lutraconsulting/MDAL>`__ from GitHub UI, and then
 
 ::
 
-   git clone https://github.com/lutraconsulting/gdal
+   git clone https://github.com/lutraconsulting/MDAL
    cd gdal
-   git remote add my_user_name https://github.com/my_user_name/gdal.git
+   git remote add my_user_name https://github.com/my_user_name/MDAL.git
 
 Updating your local master against upstream master
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -130,6 +122,6 @@ If changes are needed, do them and ``git commit -a --amend``
 Things you should NOT do
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-(For anyone with push rights to github.com/lutraconsulting/gdal) Never modify a
+(For anyone with push rights to github.com/lutraconsulting/MDAL) Never modify a
 commit or the history of anything that has been committed to
-https://github.com/lutraconsulting/gdal
+https://github.com/lutraconsulting/MDAL
