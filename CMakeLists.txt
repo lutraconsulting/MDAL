@@ -64,6 +64,10 @@ ENDIF(MSVC)
 # optional libraries
 IF (WITH_HDF5)
   FIND_PACKAGE(HDF5 REQUIRED)
+  if(MSVC)
+    # HDF5 with enabled thread safety (HDF5_ENABLE_THREADSAFE=ON) on Windows needs Threads::Threads
+    find_package(Threads)
+  endif()
   IF (HDF5_FOUND)
     # following variable is used in mdal_config.h
     SET (HAVE_HDF5 TRUE)
