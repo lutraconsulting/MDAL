@@ -17,7 +17,6 @@ SET(MDAL_SOURCES
   frmts/mdal_binary_dat.cpp
   frmts/mdal_selafin.cpp
   frmts/mdal_esri_tin.cpp
-  frmts/mdal_h2i.cpp
 )
 
 SET(MDAL_HEADERS
@@ -36,7 +35,6 @@ SET(MDAL_HEADERS
   frmts/mdal_binary_dat.hpp
   frmts/mdal_selafin.hpp
   frmts/mdal_esri_tin.hpp
-  frmts/mdal_h2i.hpp
 )
 
 IF(BUILD_PLY)
@@ -71,10 +69,12 @@ IF(GDAL_FOUND)
   SET(MDAL_SOURCES ${MDAL_SOURCES}
     frmts/mdal_gdal.cpp
     frmts/mdal_gdal_grib.cpp
+    frmts/mdal_h2i.cpp
   )
   SET(MDAL_HEADERS ${MDAL_HEADERS}
     frmts/mdal_gdal.hpp
     frmts/mdal_gdal_grib.hpp
+    frmts/mdal_h2i.hpp
   )
 ENDIF(GDAL_FOUND)
 

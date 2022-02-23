@@ -1,0 +1,104 @@
+{
+	"module_version": "0.0.3",
+	"gridgen_version": "win_22_2_0",
+	"flow_version": "win_22_2_0",
+	"name": "de tol small",
+	"crs": "epsg:28992",
+	"timesteps": {
+		"default": {
+			"timesteps_file": "flows/ts/timesteps.asc",
+			"start_datetime": "2001-01-01T00:00:00Z"
+		}
+	},
+	"subgrid": {
+		"elevation": {
+			"file": "../depthfile,imax=   642,jmax=   706.  1",
+			"rows": 706,
+			"columns": 645,
+			"cell_size": 0.5,
+			"xllcorner": 0,
+			"yllcorner": 0,
+			"nodata": -99
+		},
+		"node_dem": {
+			"file": "grids/node_dem.dia",
+			"rows": 680,
+			"columns": 720,
+			"cell_size": 0.5,
+			"xllcorner": 0,
+			"yllcorner": 0,
+			"nodata": 0
+		}
+	},
+	"topology": {
+		"2d_nodes": {
+			"file": "grids/grid.gpkg",
+			"layer": "node_coordinates"
+		},
+		"2d_links": {
+			"file": "grids/grid.gpkg",
+			"layer": "link_coordinates"
+		}
+	},
+	"mesh": {
+		"nodes_mesh": {
+			"file": "grids/grid.gpkg",
+			"layer": "node_mesh"
+		},
+		"links_edges": {
+			"file": "grids/grid.gpkg",
+			"layer": "link_edges"
+		}
+	},
+	"results": [
+		{
+			"layer": "discharge",
+			"result_file": "flows/ts/discharges2d.dat",
+			"type": "discharge",
+			"units": "m3/s",
+			"topology_file": "2d_links",
+			"timesteps_file": "default"
+		},
+		{
+			"layer": "velocity",
+			"result_file": "flows/ts/velocities2d.dat",
+			"type": "velocity",
+			"units": "m/s",
+			"topology_file": "2d_links",
+			"timesteps_file": "default"
+		},
+		{
+			"layer": "thin water depth",
+			"result_file": "flows/ts/thinwaterdepths2d.dat",
+			"type": "depth",
+			"units": "m",
+			"topology_file": "2d_nodes",
+			"timesteps_file": "default"
+		},
+		{
+			"layer": "volume",
+			"result_file": "flows/ts/volumes2d.dat",
+			"type": "volume",
+			"units": "m3",
+			"topology_file": "2d_nodes",
+			"timesteps_file": "default"
+		},
+		{
+			"layer": "water level",
+			"result_file": "flows/ts/waterlevels2d.dat",
+			"type": "level",
+			"units": "m+datum",
+			"topology_file": "2d_nodes",
+			"timesteps_file": "default"
+		},
+		{
+			"layer": "upwind velocity",
+			"result_file": "flows/ts/velocityupwind2d.dat",
+			"type": "velocity",
+			"units": "m/s",
+			"vector": true,
+			"topology_file": "2d_nodes",
+			"timesteps_file": "default"
+		}
+	]
+}
