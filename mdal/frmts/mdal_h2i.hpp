@@ -54,6 +54,7 @@ namespace MDAL
   class DriverH2i: public Driver
   {
     public:
+
       DriverH2i();
 
       DriverH2i *create() override;
@@ -62,6 +63,7 @@ namespace MDAL
       std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName = "" ) override;
 
     private:
+
       std::string buildUri( const std::string &meshFile ) override;
 
       struct MetadataH2iDataset
@@ -71,6 +73,7 @@ namespace MDAL
         std::string type;
         std::string units;
         std::string topology_file;
+        bool isScalar;
       };
 
       struct MetadataH2i
@@ -78,8 +81,8 @@ namespace MDAL
         std::string metadataFilePath;
         std::string dirPath;
         std::string meshName;
-        std::string nodesFile;
-        std::string linksFile;
+        std::string gridFile;
+        std::string gridlayer;
         std::string referenceTime;
         std::string timeStepFile;
         std::string crs;
@@ -87,77 +90,62 @@ namespace MDAL
         std::vector<MetadataH2iDataset> datasetGroups;
       };
 
-      struct CellH2i
-      {
-        double x, y, z;
-        double size;
+      std::unique_ptr<Mesh> createMeshFrame( const MetadataH2i &metadata );
 
-        std::vector<int> neighborsCellCountPerSide;
-      };
-
-      std::unique_ptr<Mesh> createMeshFrame( const MetadataH2i &metadata, std::vector<double> &topography, LinksH2i links );
       bool parseJsonFile( const std::string filePath, MetadataH2i &metadata );
-      void parseNodeFile( std::vector<CellH2i> &cells,
-                          const MetadataH2i &meta,
-                          double &minSize,
-                          double &maxSize,
-                          double &xMin,
-                          double &xMax,
-                          double &yMin,
-                          double &yMax ) const;
-      void parseLinkFile( std::vector<CellH2i> &cells, LinksH2i links, const MetadataH2i &meta ) const;
 
       void parseTime( const MetadataH2i &metadata, MDAL::DateTime &referenceTime, std::vector<MDAL::RelativeTimestamp> &timeSteps );
   };
 
-  /**
-   * Dataset group of
-   *
-   */
-  class DatasetH2iOnNode: public Dataset2D
+  class DatasetH2i: public Dataset2D
   {
     public:
-      DatasetH2iOnNode( DatasetGroup *grp, std::shared_ptr<std::ifstream> in, size_t datasetIndex );
+
+      DatasetH2i( DatasetGroup *grp, std::shared_ptr<std::ifstream> in, size_t datasetIndex );
+
+      void clear();
+
+    protected:
+
+      std::shared_ptr<std::ifstream> mIn;
+      bool mDataLoaded = false;
+      std::vector<double> mValues;
+      size_t mDatasetIndex = 0;
+  };
+
+  /**
+   * Dataset group of H2i format for scalor
+   *
+   */
+  class DatasetH2iScalar: public DatasetH2i
+  {
+    public:
+
+      DatasetH2iScalar( DatasetGroup *grp, std::shared_ptr<std::ifstream> in, size_t datasetIndex );
 
       size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
       size_t vectorData( size_t, size_t, double * ) override {return 0;}
 
-      void clear();
-
     private:
-      std::shared_ptr<std::ifstream> mIn;
-      bool mDataloaded = false;
-      std::vector<double> mValues;
-      size_t mDatasetIndex;
 
       void loadData();
-
       std::streampos beginingInFile() const;
   };
 
-  class DatasetH2iOnLink: public Dataset2D
+  class DatasetH2iVector: public DatasetH2i
   {
     public:
-      DatasetH2iOnLink( DatasetGroup *grp,
+
+      DatasetH2iVector( DatasetGroup *grp,
                         std::shared_ptr<std::ifstream> in,
-                        LinksH2i links,
-                        size_t datasetIndex, bool isFlux );
+                        size_t datasetIndex );
 
       size_t scalarData( size_t, size_t, double * ) override {return 0;}
       size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
 
-      void clear();
-
     private:
-      std::shared_ptr<std::ifstream> mIn;
-      LinksH2i mLinks;
-      bool mDataloaded = false;
-      std::vector<double> mValues;
-      size_t mDatasetIndex;
-      bool mIsFlux = false;
 
       void loadData();
-
       std::streampos beginingInFile() const;
   };
 
