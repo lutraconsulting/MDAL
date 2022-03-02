@@ -24,6 +24,7 @@ cp -Rv ./cmake $QGIS_MDAL_DIR/
 rm $QGIS_MDAL_DIR/cmake/FindSQLite3.cmake 
 cp -Rv ./cmake_templates $QGIS_MDAL_DIR/
 cp -Rv ./mdal/* $QGIS_MDAL_DIR
+rm -r $QGIS_MDAL_DIR/3rdparty/nlohmann
 find $QGIS_MDAL_DIR -name "*CMakeLists.txt" -type f -delete
 find $QGIS_MDAL_DIR -name "*astyle" -type f -delete
 find $QGIS_MDAL_DIR -name "*~" -type f -delete
