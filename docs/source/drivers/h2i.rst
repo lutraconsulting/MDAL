@@ -21,5 +21,7 @@ Files of H2i format are:
 * text file containing the time step
 * one binary file per dataset group, dataset group can be relied to nodes or links.
 
+Format's specifications are detailled in the link below.
+
 .. _H2I: https://github.com/d2hydro/H2i_code_factory/blob/main/docs/data_format.md
 
