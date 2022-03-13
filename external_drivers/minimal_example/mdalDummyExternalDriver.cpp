@@ -13,7 +13,7 @@
 
 #include "mdal_external_driver.h"
 
-#include <limits.h>
+#include <limits>
 //-----------------------------------------------------------------
 //          Mesh structure
 
