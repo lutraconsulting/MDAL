@@ -30,6 +30,8 @@ namespace MDAL
 
       std::string saveMeshOnFileSuffix() const override;
 
+      bool persist( DatasetGroup *group ) override;
+
     private:
       std::string buildUri( const std::string &meshFile ) override;
       CFDimensions populateDimensions( ) override;
@@ -69,7 +71,7 @@ namespace MDAL
       void ignore2DMeshVariables( const std::string &mesh, std::set<std::string> &ignoreVariables );
 
       void writeDimensions( MDAL::Mesh *mesh );
-      void writeVariables( MDAL::Mesh *mesh );
+      void writeVariables( MDAL::Mesh *mesh, const std::string &meshName );
       void writeGlobals();
       int faceVerticesMaximumCount() const override
       { return std::numeric_limits<int>::max(); }

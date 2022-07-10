@@ -20,7 +20,10 @@ MDAL::DriverUgrid::DriverUgrid()
       "Ugrid",
       "UGRID",
       "*.nc",
-      Capability::ReadMesh | Capability::SaveMesh )
+      Capability::ReadMesh |
+      Capability::SaveMesh |
+      Capability::WriteDatasetsOnVertices |
+      Capability::WriteDatasetsOnFaces )
 {}
 
 MDAL::DriverUgrid *MDAL::DriverUgrid::create()
@@ -671,9 +674,14 @@ void MDAL::DriverUgrid::parse2VariablesFromAttribute( const std::string &name, c
   }
 }
 
-void MDAL::DriverUgrid::save( const std::string &fileName, const std::string &, MDAL::Mesh *mesh )
+void MDAL::DriverUgrid::save( const std::string &fileName, const std::string &meshName, MDAL::Mesh *mesh )
 {
   mFileName = fileName;
+  std::string effectiveMeshName;
+  if ( meshName.empty() )
+    effectiveMeshName = "mesh2d";
+  else
+    effectiveMeshName = replace( meshName, " ", "_" );
 
   try
   {
@@ -685,7 +693,7 @@ void MDAL::DriverUgrid::save( const std::string &fileName, const std::string &, 
     writeGlobals( );
 
     // Write variables
-    writeVariables( mesh );
+    writeVariables( mesh, effectiveMeshName );
   }
   catch ( MDAL_Status error )
   {
@@ -702,48 +710,99 @@ std::string MDAL::DriverUgrid::saveMeshOnFileSuffix() const
   return "nc";
 }
 
-void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
+bool writeDatasetGroup( MDAL::DatasetGroup *group, const std::string &fileName, const std::string &meshName )
 {
+
+}
+
+bool MDAL::DriverUgrid::persist( MDAL::DatasetGroup *group )
+{
+  if ( !group ||
+       ( group->dataLocation() != MDAL_DataLocation::DataOnVertices  &&
+         group->dataLocation() != MDAL_DataLocation::DataOnFaces ) )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, name(), "Ugrid can store only 2D vertices datasets or 2D faces datasets" );
+    return true;
+  }
+
+  try
+  {
+    std::string fileName;
+    std::string driver;
+    std::string meshName;
+    parseDriverAndMeshFromUri( group->uri(), driver, fileName, meshName );
+    std::string effectiveName = meshName;
+
+    if ( ! MDAL::fileExists( fileName ) )
+    {
+      //create a new mesh file
+      save( fileName, effectiveName, group->mesh() );
+      if ( ! MDAL::fileExists( fileName ) )
+        throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Unable to create new file" );
+    }
+
+    return writeDatasetGroup( group, fileName, meshName );
+  }
+  catch ( MDAL::Error err )
+  {
+    MDAL::Log::error( err, name() );
+    return true;
+  }
+}
+
+void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh, const std::string &meshName )
+{
+  // Mesh 2D Definition
+  const std::string dimNodeName = "n" + meshName + "_node";
+  const std::string dimFaceName = "n" + meshName + "_face";
+  const std::string dimEdgeName = "n" + meshName + "_edge";
+  const std::string dimMaxFaceNodesName = "max_n" + meshName + "_face_nodes";
+
   // Global dimensions
-  ;
-  int dimNodeCountId = mNcFile->defineDimension( "nmesh2d_node", mesh->verticesCount() == 0 ? 1 : mesh->verticesCount() ); //if no vertices, set 1 since 0==NC_UNLIMITED
-  int dimFaceCountId = mNcFile->defineDimension( "nmesh2d_face", mesh->facesCount() == 0 ? 1 : mesh->facesCount() ); //if no vertices, set 1 since 0==NC_UNLIMITED
-  mNcFile->defineDimension( "nmesh2d_edge", 1 ); // no data on edges, cannot be 0, since 0==NC_UNLIMITED
+  int dimNodeCountId = mNcFile->defineDimension( dimNodeName, mesh->verticesCount() == 0 ? 1 : mesh->verticesCount() ); //if no vertices, set 1 since 0==NC_UNLIMITED
+  int dimFaceCountId = mNcFile->defineDimension( dimFaceName, mesh->facesCount() == 0 ? 1 : mesh->facesCount() ); //if no vertices, set 1 since 0==NC_UNLIMITED
+  mNcFile->defineDimension( dimEdgeName, 1 ); // no data on edges, cannot be 0, since 0==NC_UNLIMITED
   int dimTimeId = mNcFile->defineDimension( "time", NC_UNLIMITED );
-  int dimMaxNodesPerFaceId = mNcFile->defineDimension( "max_nmesh2d_face_nodes",
+  int dimMaxNodesPerFaceId = mNcFile->defineDimension( dimMaxFaceNodesName,
                              mesh->faceVerticesMaximumCount() == 0 ? 1 : mesh->faceVerticesMaximumCount() ); //if 0, set 1 since 0==NC_UNLIMITED
 
-  // Mesh 2D Definition
-  int mesh2dId = mNcFile->defineVar( "mesh2d", NC_INT, 0, nullptr );
+
+
+  const std::string varNodeXName = meshName + "_node_x";
+  const std::string varNodeYName = meshName + "_node_y";
+  const std::string varNodeZName = meshName + "_node_z";
+  const std::string varConnectivityName = meshName + "_face_nodes";
+
+  int mesh2dId = mNcFile->defineVar( meshName, NC_INT, 0, nullptr );
   mNcFile->putAttrStr( mesh2dId, "cf_role", "mesh_topology" );
   mNcFile->putAttrStr( mesh2dId, "long_name", "Topology data of 2D network" );
   mNcFile->putAttrInt( mesh2dId, "topology_dimension", 2 );
-  mNcFile->putAttrStr( mesh2dId, "node_coordinates", "mesh2d_node_x mesh2d_node_y" );
-  mNcFile->putAttrStr( mesh2dId, "node_dimension", "nmesh2d_node" );
-  mNcFile->putAttrStr( mesh2dId, "edge_dimension", "nmesh2d_edge" );
-  mNcFile->putAttrStr( mesh2dId, "max_face_nodes_dimension", "max_nmesh2d_face_nodes" );
-  mNcFile->putAttrStr( mesh2dId, "face_node_connectivity", "mesh2d_face_nodes" );
-  mNcFile->putAttrStr( mesh2dId, "face_dimension", "nmesh2d_face" );
+  mNcFile->putAttrStr( mesh2dId, "node_coordinates", varNodeXName + " " + varNodeYName );
+  mNcFile->putAttrStr( mesh2dId, "node_dimension", dimNodeName );
+  mNcFile->putAttrStr( mesh2dId, "edge_dimension", dimEdgeName );
+  mNcFile->putAttrStr( mesh2dId, "max_face_nodes_dimension", dimMaxFaceNodesName );
+  mNcFile->putAttrStr( mesh2dId, "face_node_connectivity", varConnectivityName );
+  mNcFile->putAttrStr( mesh2dId, "face_dimension", dimFaceName );
 
   // Nodes X coordinate
-  int mesh2dNodeXId = mNcFile->defineVar( "mesh2d_node_x", NC_DOUBLE, 1, &dimNodeCountId );
+  int mesh2dNodeXId = mNcFile->defineVar( varNodeXName, NC_DOUBLE, 1, &dimNodeCountId );
   mNcFile->putAttrStr( mesh2dNodeXId, "standard_name", "projection_x_coordinate" );
   mNcFile->putAttrStr( mesh2dNodeXId, "long_name", "x-coordinate of mesh nodes" );
-  mNcFile->putAttrStr( mesh2dNodeXId, "mesh", "mesh2d" );
+  mNcFile->putAttrStr( mesh2dNodeXId, "mesh", meshName );
   mNcFile->putAttrStr( mesh2dNodeXId, "location", "node" );
 
   // Nodes Y coordinate
-  int mesh2dNodeYId = mNcFile->defineVar( "mesh2d_node_y", NC_DOUBLE, 1, &dimNodeCountId );
+  int mesh2dNodeYId = mNcFile->defineVar( varNodeYName, NC_DOUBLE, 1, &dimNodeCountId );
   mNcFile->putAttrStr( mesh2dNodeYId, "standard_name", "projection_y_coordinate" );
   mNcFile->putAttrStr( mesh2dNodeYId, "long_name", "y-coordinate of mesh nodes" );
-  mNcFile->putAttrStr( mesh2dNodeYId, "mesh", "mesh2d" );
+  mNcFile->putAttrStr( mesh2dNodeYId, "mesh", meshName );
   mNcFile->putAttrStr( mesh2dNodeYId, "location", "node" );
 
   // Nodes Z coordinate
-  int mesh2dNodeZId = mNcFile->defineVar( "mesh2d_node_z", NC_DOUBLE, 1, &dimNodeCountId );
-  mNcFile->putAttrStr( mesh2dNodeZId, "mesh", "mesh2d" );
+  int mesh2dNodeZId = mNcFile->defineVar( varNodeZName, NC_DOUBLE, 1, &dimNodeCountId );
+  mNcFile->putAttrStr( mesh2dNodeZId, "mesh", meshName );
   mNcFile->putAttrStr( mesh2dNodeZId, "location", "node" );
-  mNcFile->putAttrStr( mesh2dNodeZId, "coordinates", "mesh2d_node_x mesh2d_node_y" );
+  mNcFile->putAttrStr( mesh2dNodeZId, "coordinates", varNodeXName + " " + varNodeYName );
   mNcFile->putAttrStr( mesh2dNodeZId, "standard_name", "altitude" );
   mNcFile->putAttrStr( mesh2dNodeZId, "long_name", "z-coordinate of mesh nodes" );
   mNcFile->putAttrStr( mesh2dNodeZId, "grid_mapping", "projected_coordinate_system" );
@@ -751,9 +810,9 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
 
   // Faces 2D Variable
   int mesh2FaceNodesId_dimIds [] { dimFaceCountId, dimMaxNodesPerFaceId };
-  int mesh2FaceNodesId = mNcFile->defineVar( "mesh2d_face_nodes", NC_INT, 2, mesh2FaceNodesId_dimIds );
+  int mesh2FaceNodesId = mNcFile->defineVar( varConnectivityName, NC_INT, 2, mesh2FaceNodesId_dimIds );
   mNcFile->putAttrStr( mesh2FaceNodesId, "cf_role", "face_node_connectivity" );
-  mNcFile->putAttrStr( mesh2FaceNodesId, "mesh", "mesh2d" );
+  mNcFile->putAttrStr( mesh2FaceNodesId, "mesh", meshName );
   mNcFile->putAttrStr( mesh2FaceNodesId, "location", "face" );
   mNcFile->putAttrStr( mesh2FaceNodesId, "long_name", "Mapping from every face to its corner nodes (counterclockwise)" );
   mNcFile->putAttrInt( mesh2FaceNodesId, "start_index", 0 );
@@ -881,9 +940,6 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh )
 
   // Time values (not implemented)
   mNcFile->putDataDouble( timeId, 0, 0.0 );
-
-  // Turning on define mode
-  nc_redef( mNcFile->handle() );
 }
 
 void MDAL::DriverUgrid::writeGlobals()

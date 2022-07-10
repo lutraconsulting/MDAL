@@ -814,6 +814,20 @@ TEST( MeshUgridTest, flow_3d )
   MDAL_CloseMesh( mesh );
 }
 
+TEST( MeshUgridTest, WriteDatasetExistingFile )
+{
+  std::string tmpFile = tmp_file( "simplebox_hex7_map.nc" );
+  copy( test_file( "/ugrid/D-Flow1.1/simplebox_hex7_map.nc" ), tmpFile );
+  EXPECT_EQ( MDAL_MeshNames( tmpFile.c_str() ), "Ugrid:\"" + tmpFile + "\":mesh2d" );
+  MDAL_MeshH m = MDAL_LoadMesh( tmpFile.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  //MDAL_M_addDatasetGroup( m, "new group vertices", MDAL_DataLocation::DataOnVertices, false, "Ugrid", tmpfile );
+
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );

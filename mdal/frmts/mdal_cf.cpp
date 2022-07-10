@@ -573,7 +573,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
       new MemoryMesh(
         name(),
         mDimensions.size( mDimensions.MaxVerticesInFace ),
-        mFileName
+        buildMeshUri( fileName, meshName, name() )
       )
     );
     mesh->setFaces( std::move( faces ) );
