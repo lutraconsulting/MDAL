@@ -824,8 +824,48 @@ TEST( MeshUgridTest, WriteDatasetExistingFile )
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
 
-  //MDAL_M_addDatasetGroup( m, "new group vertices", MDAL_DataLocation::DataOnVertices, false, "Ugrid", tmpfile );
+  int groupCount = MDAL_M_datasetGroupCount( m );
 
+  int faceCount = MDAL_M_faceCount( m );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 7 );
+  ASSERT_EQ( MDAL_G_dataLocation( g ), MDAL_DataLocation::DataOnFaces );
+  int datasetCount = MDAL_G_datasetCount( g );
+  std::string refTime( MDAL_G_referenceTime( g ) );
+
+
+  MDAL_DriverH driver = MDAL_driverFromName( "Ugrid" );
+  MDAL_DatasetGroupH newGroup = MDAL_M_addDatasetGroup( m, "new group vertices", MDAL_DataLocation::DataOnFaces, true, driver, tmpFile.c_str() );
+  MDAL_G_setReferenceTime( newGroup, refTime.c_str() );
+
+  for ( int i = 0; i < datasetCount; ++i )
+  {
+    MDAL_DatasetH ds = MDAL_G_dataset( g, i );
+    double time = MDAL_D_time( ds );
+
+    std::vector<double> values( faceCount );
+    std::vector<int> actives( faceCount );
+    MDAL_D_data( ds, 0, faceCount, MDAL_DataType::SCALAR_DOUBLE, values.data() );
+
+    for ( size_t vi = 0; vi < values.size(); ++vi )
+      values[vi] = values[vi] + 1.23;
+
+    MDAL_G_addDataset( newGroup, time, values.data(), nullptr );
+  }
+
+  MDAL_G_closeEditMode( newGroup );
+
+  ASSERT_EQ( MDAL_M_datasetGroupCount( m ), groupCount + 1 );
+
+  MDAL_CloseMesh( m );
+
+  m = MDAL_LoadMesh( tmpFile.c_str() );
+
+  ASSERT_NE( m, nullptr );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  ASSERT_EQ( MDAL_M_datasetGroupCount( m ), groupCount + 1 );
 }
 
 int main( int argc, char **argv )

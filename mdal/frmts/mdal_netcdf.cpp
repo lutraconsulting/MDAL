@@ -30,9 +30,9 @@ int NetCDFFile::handle() const
   return mNcid;
 }
 
-void NetCDFFile::openFile( const std::string &fileName )
+void NetCDFFile::openFile( const std::string &fileName, bool write )
 {
-  int res = nc_open( fileName.c_str(), NC_NOWRITE, &mNcid );
+  int res = nc_open( fileName.c_str(), write ? NC_WRITE : NC_NOWRITE, &mNcid );
   if ( res != NC_NOERR )
   {
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not open file " + fileName );
@@ -441,6 +441,17 @@ void NetCDFFile::putAttrDouble( int varId, const std::string &attrName, double v
 void NetCDFFile::putDataDouble( int varId, const size_t index, const double value )
 {
   int res = nc_put_var1_double( mNcid, varId, &index, &value );
+  if ( res != NC_NOERR )
+  {
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, nc_strerror( res ) );
+  }
+}
+
+void NetCDFFile::putDataScalarArrayDouble( int varId, const size_t firstIndex, const std::vector<double> &values )
+{
+  std::array<size_t, 2> indexes = {firstIndex, 0};
+  std::array<size_t, 2> sizes = {1, values.size()};
+  int res = nc_put_vara_double( mNcid, varId, indexes.data(), sizes.data(), values.data() );
   if ( res != NC_NOERR )
   {
     throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, nc_strerror( res ) );

@@ -64,8 +64,8 @@ namespace MDAL
       int mMeshDimension;
       std::string nodeZVariableName() const;
 
-      void populate1DMeshDimensions( MDAL::CFDimensions &dims );
-      void populate2DMeshDimensions( MDAL::CFDimensions &dims, int &ncid );
+      void populate1DMeshDimensions( MDAL::CFDimensions &dims ) const;
+      void populate2DMeshDimensions( MDAL::CFDimensions &dims, int &ncid ) const;
 
       void ignore1DMeshVariables( const std::string &mesh, std::set<std::string> &ignoreVariables );
       void ignore2DMeshVariables( const std::string &mesh, std::set<std::string> &ignoreVariables );
@@ -75,6 +75,8 @@ namespace MDAL
       void writeGlobals();
       int faceVerticesMaximumCount() const override
       { return std::numeric_limits<int>::max(); }
+
+      bool writeDatasetGroup( MDAL::DatasetGroup *group, const std::string &fileName, const std::string &meshName );
   };
 
 } // namespace MDAL

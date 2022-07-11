@@ -176,7 +176,7 @@ MDAL::CFDimensions MDAL::DriverUgrid::populateDimensions( )
   return dims;
 }
 
-void MDAL::DriverUgrid::populate1DMeshDimensions( MDAL::CFDimensions &dims )
+void MDAL::DriverUgrid::populate1DMeshDimensions( MDAL::CFDimensions &dims ) const
 {
   /* Parse number of edges ( dimension ) from mesh */
   std::string edgeConnectivityVariableName = mNcFile->getAttrStr( mMeshName, "edge_node_connectivity" );
@@ -195,7 +195,7 @@ void MDAL::DriverUgrid::populate1DMeshDimensions( MDAL::CFDimensions &dims )
   dims.setDimension( CFDimensions::Edge, edgesCount, edgesCountId );
 }
 
-void MDAL::DriverUgrid::populate2DMeshDimensions( MDAL::CFDimensions &dims, int &ncid )
+void MDAL::DriverUgrid::populate2DMeshDimensions( MDAL::CFDimensions &dims, int &ncid ) const
 {
   // face dimension location is retrieved from the face_node_connectivity variable
   // if face_dimension is defined as attribute, the dimension at this location help to desambiguate vertex per faces and number of faces
@@ -710,9 +710,98 @@ std::string MDAL::DriverUgrid::saveMeshOnFileSuffix() const
   return "nc";
 }
 
-bool writeDatasetGroup( MDAL::DatasetGroup *group, const std::string &fileName, const std::string &meshName )
+bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std::string &fileName, const std::string &meshName )
 {
+  mDimensions = populateDimensions();
 
+  size_t existingTimeStepCount = mDimensions.size( CFDimensions::Time );
+  if ( existingTimeStepCount != 0 &&  group->datasets.size() != 1 ) // existing and new dataset group are not static
+  {
+    std::vector<MDAL::RelativeTimestamp> times;
+    MDAL::DateTime referenceTime = parseTime( times );
+    if ( times.size() != group->datasets.size() )
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Existing time steps count is incompatible with new dataset count" );
+
+    for ( size_t i = 0; i < times.size(); ++i )
+      if ( referenceTime + times.at( i )  != group->referenceTime() + group->datasets.at( i )->timestamp() )
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "At least one existing time is incompatible with new dataset count time" );
+  }
+
+  mNcFile.reset( new NetCDFFile );
+
+  try
+  {
+    mNcFile->openFile( fileName, true );
+  }
+  catch ( MDAL::Error &err )
+  {
+    err.setDriver( name() );
+    MDAL::Log::error( err );
+    return true;
+  }
+
+  CFDimensions::Type type;
+
+  std::string elementType;
+  switch ( group->dataLocation() )
+  {
+    case DataInvalidLocation:
+      type = CFDimensions::UnknownType;
+      break;
+    case DataOnVertices:
+      type = CFDimensions::Vertex;
+      elementType = "node";
+      break;
+    case DataOnFaces:
+      type = CFDimensions::Face ;
+      elementType = "face";
+      break;
+    case DataOnVolumes:
+      type = CFDimensions::Volume3D ;
+      break;
+    case DataOnEdges:
+      type = CFDimensions::Edge;
+      break;
+  }
+
+  int dimElemId = mDimensions.netCfdId( type );
+  int dimTimeId = mDimensions.netCfdId( CFDimensions::Time );
+
+  std::vector<int> writeDim( {dimTimeId, dimElemId} );
+  size_t elementCount = mDimensions.size( type );
+
+  int er = nc_redef( mNcFile->handle() );
+
+  if ( group->isScalar() )
+  {
+    int groupId = mNcFile->defineVar( meshName + "_" + group->name(), NC_DOUBLE, 2, writeDim.data() );
+    mNcFile->putAttrStr( groupId, "standard_name", group->name() );
+    mNcFile->putAttrStr( groupId, "units", group->getMetadata( "units" ) );
+    mNcFile->putAttrStr( groupId, "location", elementType );
+    mNcFile->putAttrStr( groupId, "coordinates", meshName + "_face_x " + meshName + "_face_y" );
+
+    nc_enddef( mNcFile->handle() );
+
+    for ( size_t di = 0; di < group->datasets.size(); ++di )
+    {
+      for ( size_t vi = 0; vi < elementCount; vi++ )
+      {
+
+        std::vector<double> values( elementCount );
+        size_t valueCount = group->datasets.at( di )->scalarData( 0, elementCount, values.data() );
+        if ( valueCount != elementCount )
+          throw MDAL::Error( MDAL_Status::Err_IncompatibleDataset, "Wrong dataset values count" );
+
+        for ( size_t i = 0; i < values.size(); ++i )
+          if ( std::isnan( values.at( i ) ) )
+            values[i] = NC_FILL_DOUBLE;
+
+        mNcFile->putDataScalarArrayDouble( groupId, di, values );
+      }
+    }
+  }
+
+  return false;
 }
 
 bool MDAL::DriverUgrid::persist( MDAL::DatasetGroup *group )
@@ -765,8 +854,6 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh, const std::string &mes
   int dimTimeId = mNcFile->defineDimension( "time", NC_UNLIMITED );
   int dimMaxNodesPerFaceId = mNcFile->defineDimension( dimMaxFaceNodesName,
                              mesh->faceVerticesMaximumCount() == 0 ? 1 : mesh->faceVerticesMaximumCount() ); //if 0, set 1 since 0==NC_UNLIMITED
-
-
 
   const std::string varNodeXName = meshName + "_node_x";
   const std::string varNodeYName = meshName + "_node_y";

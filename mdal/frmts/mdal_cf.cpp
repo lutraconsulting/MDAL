@@ -643,6 +643,15 @@ bool MDAL::CFDimensions::isDatasetType( MDAL::CFDimensions::Type type ) const
          );
 }
 
+int MDAL::CFDimensions::netCfdId( MDAL::CFDimensions::Type type ) const
+{
+  for ( const auto &it : mNcId )
+    if ( it.second == type )
+      return it.first;
+
+  return -1;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 MDAL::CFDataset2D::CFDataset2D( MDAL::DatasetGroup *parent,
                                 double fill_val_x,
