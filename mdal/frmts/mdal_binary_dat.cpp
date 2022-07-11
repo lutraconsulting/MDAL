@@ -135,6 +135,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh )
 
   size_t vertexCount = mesh->verticesCount();
   size_t elemCount = mesh->facesCount();
+  size_t meshIdCount = maximumId( mesh ) + 1;
 
   int card = 0;
   int version;
@@ -222,7 +223,7 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh )
       case CT_NUMDATA:
         // Num data
         if ( read( in, reinterpret_cast< char * >( &numdata ), 4 ) ) return exit_with_error( MDAL_Status::Err_UnknownFormat, "unable to read num data" );
-        if ( numdata != static_cast< int >( vertexCount ) ) return exit_with_error( MDAL_Status::Err_IncompatibleMesh, "invalid num data" );
+        if ( numdata != static_cast< int >( meshIdCount ) ) return exit_with_error( MDAL_Status::Err_IncompatibleMesh, "invalid num data" );
         break;
 
       case CT_NUMCELLS:
@@ -307,6 +308,15 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh )
     groupMax->setStatistics( MDAL::calculateStatistics( groupMax ) );
     mesh->datasetGroups.push_back( groupMax );
   }
+}
+
+size_t MDAL::DriverBinaryDat::maximumId( const MDAL::Mesh *mesh ) const
+{
+  const Mesh2dm *m2dm = dynamic_cast<const Mesh2dm *>( mesh );
+  if ( m2dm )
+    return m2dm->maximumVertexId();
+  else
+    return mesh->verticesCount() - 1;
 }
 
 bool MDAL::DriverBinaryDat::readVertexTimestep(
