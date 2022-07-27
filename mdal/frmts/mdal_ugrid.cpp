@@ -720,11 +720,11 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
     std::vector<MDAL::RelativeTimestamp> times;
     MDAL::DateTime referenceTime = parseTime( times );
     if ( times.size() != group->datasets.size() )
-      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Existing time steps count is incompatible with new dataset count" );
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Existing time steps count is incompatible with new dataset count", name() );
 
     for ( size_t i = 0; i < times.size(); ++i )
       if ( referenceTime + times.at( i )  != group->referenceTime() + group->datasets.at( i )->timestamp() )
-        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "At least one new time is incompatible with existing dataset time" );
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "At least one new time is incompatible with existing dataset time", name() );
   }
 
   mNcFile.reset( new NetCDFFile );
@@ -746,7 +746,7 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
   switch ( group->dataLocation() )
   {
     case DataInvalidLocation:
-      type = CFDimensions::UnknownType;
+      throw MDAL::Error( MDAL_Status::Err_UnsupportedElement, "Unable to write unknown dataset location", name() );
       break;
     case DataOnVertices:
       type = CFDimensions::Vertex;
@@ -757,10 +757,10 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
       elementType = "face";
       break;
     case DataOnVolumes:
-      type = CFDimensions::Volume3D ;
+      throw MDAL::Error( MDAL_Status::Err_UnsupportedElement, "Writing dataset on volume not supported", name() );
       break;
     case DataOnEdges:
-      type = CFDimensions::Edge;
+      throw MDAL::Error( MDAL_Status::Err_UnsupportedElement, "Writing dataset on edge not supported", name() );
       break;
   }
 
@@ -774,7 +774,7 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
 
   if ( group->isScalar() )
   {
-    int groupId = mNcFile->defineVar( meshName + "_" + group->name(), NC_DOUBLE, 2, writeDim.data() );
+    int groupId = mNcFile->defineVar( meshName + "_" + replace( group->name(), " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
     mNcFile->putAttrStr( groupId, "standard_name", group->name() );
     mNcFile->putAttrStr( groupId, "units", group->getMetadata( "units" ) );
     mNcFile->putAttrStr( groupId, "location", elementType );
@@ -784,20 +784,59 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
 
     for ( size_t di = 0; di < group->datasets.size(); ++di )
     {
-      for ( size_t vi = 0; vi < elementCount; vi++ )
+      std::vector<double> values( elementCount );
+      size_t valueCount = group->datasets.at( di )->scalarData( 0, elementCount, values.data() );
+      if ( valueCount != elementCount )
+        throw MDAL::Error( MDAL_Status::Err_IncompatibleDataset, "Wrong dataset values count", name() );
+
+      for ( size_t i = 0; i < values.size(); ++i )
+        if ( std::isnan( values.at( i ) ) )
+          values[i] = NC_FILL_DOUBLE;
+
+      mNcFile->putDataArrayDouble( groupId, di, values );
+    }
+  }
+  else
+  {
+    std::string nameX = group->name() + "_x_";
+    std::string nameY = group->name() + "_y_";
+    int groupIdX = mNcFile->defineVar( meshName + "_" + replace( nameX, " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
+    mNcFile->putAttrStr( groupIdX, "standard_name", nameX );
+    mNcFile->putAttrStr( groupIdX, "units", group->getMetadata( "units" ) );
+    mNcFile->putAttrStr( groupIdX, "location", elementType );
+    mNcFile->putAttrStr( groupIdX, "coordinates", meshName + "_face_x " + meshName + "_face_y" );
+
+    int groupIdY = mNcFile->defineVar( meshName + "_" + replace( nameY, " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
+    mNcFile->putAttrStr( groupIdY, "standard_name", nameY );
+    mNcFile->putAttrStr( groupIdY, "units", group->getMetadata( "units" ) );
+    mNcFile->putAttrStr( groupIdY, "location", elementType );
+    mNcFile->putAttrStr( groupIdY, "coordinates", meshName + "_face_x " + meshName + "_face_y" );
+
+    nc_enddef( mNcFile->handle() );
+
+    for ( size_t di = 0; di < group->datasets.size(); ++di )
+    {
+      std::vector<double> values( elementCount * 2 );
+      std::vector<double> valuesX( elementCount );
+      std::vector<double> valuesY( elementCount );
+      size_t valueCount = group->datasets.at( di )->vectorData( 0, elementCount, values.data() );
+      if ( valueCount != elementCount )
+        throw MDAL::Error( MDAL_Status::Err_IncompatibleDataset, "Wrong dataset values count", name() );
+
+      for ( size_t i = 0; i < elementCount; ++i )
       {
+        valuesX[i] = values.at( i * 2 );
+        valuesY[i] = values.at( i * 2 + 1 );
 
-        std::vector<double> values( elementCount );
-        size_t valueCount = group->datasets.at( di )->scalarData( 0, elementCount, values.data() );
-        if ( valueCount != elementCount )
-          throw MDAL::Error( MDAL_Status::Err_IncompatibleDataset, "Wrong dataset values count" );
+        if ( std::isnan( valuesX.at( i ) ) )
+          valuesX[i] = NC_FILL_DOUBLE;
 
-        for ( size_t i = 0; i < values.size(); ++i )
-          if ( std::isnan( values.at( i ) ) )
-            values[i] = NC_FILL_DOUBLE;
-
-        mNcFile->putDataScalarArrayDouble( groupId, di, values );
+        if ( std::isnan( valuesY.at( i ) ) )
+          valuesY[i] = NC_FILL_DOUBLE;
       }
+
+      mNcFile->putDataArrayDouble( groupIdX, di, valuesX );
+      mNcFile->putDataArrayDouble( groupIdY, di, valuesY );
     }
   }
 

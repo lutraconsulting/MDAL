@@ -84,7 +84,7 @@ class NetCDFFile
     void putAttrInt( int varId, const std::string &attrName, int value );
     void putAttrDouble( int varId, const std::string &attrName, double value );
     void putDataDouble( int varId, const size_t index, const double value );
-    void putDataScalarArrayDouble( int varId, const size_t firstIndex, const std::vector<double> &values );
+    void putDataArrayDouble( int varId, const size_t index, const std::vector<double> &values );
     void putDataArrayInt( int varId, size_t line, size_t faceVerticesMax, int *values );
 
     std::string getFileName() const;

@@ -447,9 +447,9 @@ void NetCDFFile::putDataDouble( int varId, const size_t index, const double valu
   }
 }
 
-void NetCDFFile::putDataScalarArrayDouble( int varId, const size_t firstIndex, const std::vector<double> &values )
+void NetCDFFile::putDataArrayDouble( int varId, const size_t index, const std::vector<double> &values )
 {
-  std::array<size_t, 2> indexes = {firstIndex, 0};
+  std::array<size_t, 2> indexes = {index, 0};
   std::array<size_t, 2> sizes = {1, values.size()};
   int res = nc_put_vara_double( mNcid, varId, indexes.data(), sizes.data(), values.data() );
   if ( res != NC_NOERR )
