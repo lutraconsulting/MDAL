@@ -97,6 +97,7 @@ namespace MDAL
   size_t toSizeT( const std::string &str );
   size_t toSizeT( const char &str );
   size_t toSizeT( const double value );
+  size_t toSizeT( const int value );
   int toInt( const std::string &str );
   int toInt( const size_t value );
   double toDouble( const std::string &str );

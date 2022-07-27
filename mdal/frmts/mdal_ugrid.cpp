@@ -724,7 +724,7 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
 
     for ( size_t i = 0; i < times.size(); ++i )
       if ( referenceTime + times.at( i )  != group->referenceTime() + group->datasets.at( i )->timestamp() )
-        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "At least one existing time is incompatible with new dataset count time" );
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "At least one new time is incompatible with existing dataset time" );
   }
 
   mNcFile.reset( new NetCDFFile );
@@ -770,7 +770,7 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
   std::vector<int> writeDim( {dimTimeId, dimElemId} );
   size_t elementCount = mDimensions.size( type );
 
-  int er = nc_redef( mNcFile->handle() );
+  nc_redef( mNcFile->handle() );
 
   if ( group->isScalar() )
   {
