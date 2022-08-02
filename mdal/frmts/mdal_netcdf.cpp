@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <array>
 #include <assert.h>
 #include <netcdf.h>
 #include <cmath>
