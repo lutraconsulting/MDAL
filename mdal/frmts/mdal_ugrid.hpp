@@ -28,6 +28,7 @@ namespace MDAL
       DriverUgrid *create() override;
       void save( const std::string &fileName, const std::string &meshName, Mesh *mesh ) override;
 
+      std::string writeDatasetOnFileSuffix() const override;
       std::string saveMeshOnFileSuffix() const override;
 
       bool persist( DatasetGroup *group ) override;

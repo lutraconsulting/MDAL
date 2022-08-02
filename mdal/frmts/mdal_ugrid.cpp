@@ -706,6 +706,11 @@ void MDAL::DriverUgrid::save( const std::string &fileName, const std::string &me
   mNcFile.reset();
 }
 
+std::string MDAL::DriverUgrid::writeDatasetOnFileSuffix() const
+{
+  return "nc";
+}
+
 std::string MDAL::DriverUgrid::saveMeshOnFileSuffix() const
 {
   return "nc";
