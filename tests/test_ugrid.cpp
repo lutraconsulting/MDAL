@@ -814,16 +814,16 @@ TEST( MeshUgridTest, flow_3d )
   MDAL_CloseMesh( mesh );
 }
 
-static void createNewDatasetGroup( MDAL_MeshH existingMesh,
-                                   const std::string &meshFile,
-                                   const std::string &refTime,
-                                   const std::vector<double> &timeSteps,
-                                   const std::string groupName,
-                                   MDAL_DataLocation location,
-                                   size_t elemCount,
-                                   bool isScalar,
-                                   double value,
-                                   bool &success )
+static void createNewDatasetGroupOnExistingFile( MDAL_MeshH existingMesh,
+    const std::string &meshFile,
+    const std::string &refTime,
+    const std::vector<double> &timeSteps,
+    const std::string groupName,
+    MDAL_DataLocation location,
+    size_t elemCount,
+    bool isScalar,
+    double value,
+    bool &success )
 {
   int groupCount = MDAL_M_datasetGroupCount( existingMesh );
 
@@ -911,6 +911,9 @@ TEST( MeshUgridTest, WriteDatasetExistingFile )
   MDAL_Status s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
 
+  int groupCount = MDAL_M_datasetGroupCount( m );
+  ASSERT_EQ( 10, groupCount );
+
   int faceCount = MDAL_M_faceCount( m );
   int vertexCount = MDAL_M_vertexCount( m );
 
@@ -923,33 +926,178 @@ TEST( MeshUgridTest, WriteDatasetExistingFile )
 
   bool success = false;
 
-  createNewDatasetGroup( m, tmpFile, refTime, timeSteps, "new group scalar faces", MDAL_DataLocation::DataOnFaces, faceCount, true, 1.23, success );
+  createNewDatasetGroupOnExistingFile( m, tmpFile, refTime, timeSteps, "new group scalar faces", MDAL_DataLocation::DataOnFaces, faceCount, true, 1.23, success );
   EXPECT_TRUE( success );
-  createNewDatasetGroup( m, tmpFile, refTime, timeSteps, "new group scalar vertices", MDAL_DataLocation::DataOnVertices, vertexCount, true, 4.56, success );
+  createNewDatasetGroupOnExistingFile( m, tmpFile, refTime, timeSteps, "new group scalar vertices", MDAL_DataLocation::DataOnVertices, vertexCount, true, 4.56, success );
   EXPECT_TRUE( success );
 
-  createNewDatasetGroup( m, tmpFile, refTime, timeSteps, "new group vector faces", MDAL_DataLocation::DataOnFaces, faceCount, false, 1.23, success );
+  createNewDatasetGroupOnExistingFile( m, tmpFile, refTime, timeSteps, "new group vector faces", MDAL_DataLocation::DataOnFaces, faceCount, false, 1.23, success );
   EXPECT_TRUE( success );
-  createNewDatasetGroup( m, tmpFile, refTime, timeSteps, "new group vector vertices", MDAL_DataLocation::DataOnVertices, vertexCount, false, 4.56, success );
+  createNewDatasetGroupOnExistingFile( m, tmpFile, refTime, timeSteps, "new group vector vertices", MDAL_DataLocation::DataOnVertices, vertexCount, false, 4.56, success );
   EXPECT_TRUE( success );
 
   std::vector<double> badTimeSteps = timeSteps;
   badTimeSteps[0] = 1234;
-  createNewDatasetGroup( m, tmpFile, refTime, badTimeSteps, "new group scalar faces bad time step", MDAL_DataLocation::DataOnFaces, faceCount, true, 1.23, success );
+  createNewDatasetGroupOnExistingFile( m, tmpFile, refTime, badTimeSteps, "new group scalar faces bad time step", MDAL_DataLocation::DataOnFaces, faceCount, true, 1.23, success );
   EXPECT_FALSE( success );
   badTimeSteps.erase( badTimeSteps.begin() );
-  createNewDatasetGroup( m, tmpFile, refTime, badTimeSteps, "new group scalar vertices", MDAL_DataLocation::DataOnVertices, vertexCount, true, 4.56, success );
+  createNewDatasetGroupOnExistingFile( m, tmpFile, refTime, badTimeSteps, "new group scalar vertices", MDAL_DataLocation::DataOnVertices, vertexCount, true, 4.56, success );
   EXPECT_FALSE( success );
 
   //not supported
-  createNewDatasetGroup( m, tmpFile, refTime, timeSteps, "new group scalar volume", MDAL_DataLocation::DataOnVolumes, 10, true, 1.23, success );
+  createNewDatasetGroupOnExistingFile( m, tmpFile, refTime, timeSteps, "new group scalar volume", MDAL_DataLocation::DataOnVolumes, 10, true, 1.23, success );
   EXPECT_FALSE( success );
   //not supported
-  createNewDatasetGroup( m, tmpFile, refTime, timeSteps, "new group scalar edge", MDAL_DataLocation::DataOnEdges, 10, true, 1.23, success );
+  createNewDatasetGroupOnExistingFile( m, tmpFile, refTime, timeSteps, "new group scalar edge", MDAL_DataLocation::DataOnEdges, 10, true, 1.23, success );
   EXPECT_FALSE( success );
   //not supported
-  createNewDatasetGroup( m, tmpFile, refTime, timeSteps, "new group scalar unknow location", MDAL_DataLocation::DataInvalidLocation, 10, true, 1.23, success );
+  createNewDatasetGroupOnExistingFile( m, tmpFile, refTime, timeSteps, "new group scalar unknow location", MDAL_DataLocation::DataInvalidLocation, 10, true, 1.23, success );
   EXPECT_FALSE( success );
+
+  MDAL_CloseMesh( m );
+
+  m = MDAL_LoadMesh( tmpFile.c_str() );
+  ASSERT_NE( m, nullptr );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  groupCount = MDAL_M_datasetGroupCount( m );
+  ASSERT_EQ( 14, groupCount );
+
+  MDAL_CloseMesh( m );
+
+  deleteFile( tmpFile );
+}
+
+static void createNewDatasetGroupOnNewFile( MDAL_MeshH currentMesh,
+    const std::string &meshFile,
+    const std::string &refTime,
+    const std::vector<double> &timeSteps,
+    const std::string groupName,
+    MDAL_DataLocation location,
+    size_t elemCount,
+    bool isScalar,
+    double value,
+    bool &success )
+{
+  // Create a new grouptimeSteps
+  MDAL_DriverH driver = MDAL_driverFromName( "Ugrid" );
+  MDAL_DatasetGroupH newGroup = MDAL_M_addDatasetGroup( currentMesh, groupName.c_str(), location, isScalar, driver, meshFile.c_str() );
+  MDAL_G_setReferenceTime( newGroup, refTime.c_str() );
+
+  size_t valueCount = elemCount * ( isScalar ? 1 : 2 );
+
+  // populate dataset in the new group
+  for ( size_t i = 0; i < timeSteps.size(); ++i )
+  {
+    double time = timeSteps.at( i );
+    std::vector<double> values( valueCount );
+
+    for ( size_t vi = 0; vi < valueCount ; ++vi )
+      values[vi] = i * 10.0 + vi * 2.0 + value;
+
+    MDAL_G_addDataset( newGroup, time, values.data(), nullptr );
+  }
+
+  // persist the new group
+  MDAL_G_closeEditMode( newGroup );
+  MDAL_Status s = MDAL_LastStatus();
+  if ( s != MDAL_Status::None )
+  {
+    success = false;
+    return;
+  }
+
+  // reload another mesh from the destination file
+  MDAL_MeshH m = MDAL_LoadMesh( meshFile.c_str() );
+  ASSERT_NE( m, nullptr );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  int groupCount = MDAL_M_datasetGroupCount( m );
+
+  ASSERT_EQ( groupCount, 2 );
+
+  for ( int i = 0; i < groupCount; ++i )
+  {
+    newGroup = MDAL_M_datasetGroup( m, i );
+    if ( groupName == std::string( MDAL_G_name( newGroup ) ) )
+      break;
+    else
+      newGroup = nullptr;
+  }
+
+  ASSERT_NE( newGroup, nullptr );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( newGroup );
+  EXPECT_EQ( dataLocation, location );
+  compareReferenceTime( newGroup, refTime.c_str() );
+
+  int datasetCount = MDAL::toInt( timeSteps.size() );
+
+  ASSERT_EQ( datasetCount, MDAL_G_datasetCount( newGroup ) );
+
+  for ( int i = 0; i < datasetCount; ++i )
+  {
+    MDAL_DatasetH ds = MDAL_G_dataset( newGroup, i );
+    EXPECT_TRUE( compareDurationInHours( timeSteps.at( MDAL::toSizeT( i ) ), MDAL_D_time( ds ) ) );
+    std::vector<double> values( valueCount );
+    MDAL_D_data( ds, 0, elemCount, isScalar ? MDAL_DataType::SCALAR_DOUBLE : MDAL_DataType::VECTOR_2D_DOUBLE, values.data() );
+
+    for ( size_t vi = 0; vi < values.size(); ++vi )
+      EXPECT_TRUE( MDAL::equals( i * 10.0 + vi * 2.0 + value, values.at( vi ), 0.001 ) );
+  }
+
+  MDAL_CloseMesh( m );
+
+  success = true;
+}
+
+TEST( MeshUgridTest, WriteDatasetNewFile )
+{
+  std::string tmpFile = tmp_file( "/new_file.nc" );
+
+  if ( fileExists( tmpFile ) )
+    deleteFile( tmpFile );
+
+  std::string baseFile = test_file( "/ugrid/D-Flow1.1/simplebox_hex7_map.nc" );
+  EXPECT_EQ( MDAL_MeshNames( baseFile.c_str() ), "Ugrid:\"" + baseFile + "\":mesh2d" );
+  MDAL_MeshH m = MDAL_LoadMesh( baseFile.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  int groupCount = MDAL_M_datasetGroupCount( m );
+  ASSERT_EQ( 10, groupCount );
+
+  int faceCount = MDAL_M_faceCount( m );
+  int vertexCount = MDAL_M_vertexCount( m );
+
+  MDAL_DatasetGroupH existingGroup = MDAL_M_datasetGroup( m, 7 );
+  int datasetCount = MDAL_G_datasetCount( existingGroup );
+  std::vector<double> timeSteps( MDAL::toSizeT( datasetCount ) );
+  for ( size_t i = 0; i < timeSteps.size(); ++i )
+    timeSteps[i] = MDAL_D_time( MDAL_G_dataset( existingGroup, MDAL::toInt( i ) ) );
+  std::string refTime( MDAL_G_referenceTime( existingGroup ) );
+
+  bool success = false;
+
+  createNewDatasetGroupOnNewFile( m, tmpFile, refTime, timeSteps, "new group scalar faces", MDAL_DataLocation::DataOnFaces, faceCount, true, 1.23,  success );
+  EXPECT_TRUE( success );
+  deleteFile( tmpFile );
+  createNewDatasetGroupOnNewFile( m, tmpFile, refTime, timeSteps, "new group scalar vertices", MDAL_DataLocation::DataOnVertices, vertexCount, true, 4.56, success );
+  EXPECT_TRUE( success );
+  deleteFile( tmpFile );
+  createNewDatasetGroupOnNewFile( m, tmpFile, refTime, timeSteps, "new group vector faces", MDAL_DataLocation::DataOnFaces, faceCount, false, 1.23, success );
+  EXPECT_TRUE( success );
+  deleteFile( tmpFile );
+  createNewDatasetGroupOnNewFile( m, tmpFile, refTime, timeSteps, "new group vector vertices", MDAL_DataLocation::DataOnVertices, vertexCount, false, 4.56, success );
+  EXPECT_TRUE( success );
+  deleteFile( tmpFile );
+
+  MDAL_CloseMesh( m );
+
+  deleteFile( tmpFile );
 }
 
 int main( int argc, char **argv )

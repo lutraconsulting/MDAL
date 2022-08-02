@@ -677,11 +677,10 @@ void MDAL::DriverUgrid::parse2VariablesFromAttribute( const std::string &name, c
 void MDAL::DriverUgrid::save( const std::string &fileName, const std::string &meshName, MDAL::Mesh *mesh )
 {
   mFileName = fileName;
-  std::string effectiveMeshName;
-  if ( meshName.empty() )
+
+  std::string effectiveMeshName = meshName;
+  if ( effectiveMeshName.empty() )
     effectiveMeshName = "mesh2d";
-  else
-    effectiveMeshName = replace( meshName, " ", "_" );
 
   try
   {
@@ -703,6 +702,8 @@ void MDAL::DriverUgrid::save( const std::string &fileName, const std::string &me
   {
     MDAL::Log::error( err, name() );
   }
+
+  mNcFile.reset();
 }
 
 std::string MDAL::DriverUgrid::saveMeshOnFileSuffix() const
@@ -712,21 +713,6 @@ std::string MDAL::DriverUgrid::saveMeshOnFileSuffix() const
 
 bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std::string &fileName, const std::string &meshName )
 {
-  mDimensions = populateDimensions();
-
-  size_t existingTimeStepCount = mDimensions.size( CFDimensions::Time );
-  if ( existingTimeStepCount != 0 &&  group->datasets.size() != 1 ) // existing and new dataset group are not static
-  {
-    std::vector<MDAL::RelativeTimestamp> times;
-    MDAL::DateTime referenceTime = parseTime( times );
-    if ( times.size() != group->datasets.size() )
-      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Existing time steps count is incompatible with new dataset count", name() );
-
-    for ( size_t i = 0; i < times.size(); ++i )
-      if ( referenceTime + times.at( i )  != group->referenceTime() + group->datasets.at( i )->timestamp() )
-        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "At least one new time is incompatible with existing dataset time", name() );
-  }
-
   mNcFile.reset( new NetCDFFile );
 
   try
@@ -738,6 +724,24 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
     err.setDriver( name() );
     MDAL::Log::error( err );
     return true;
+  }
+
+  mRequestedMeshName = meshName;
+
+  mDimensions = populateDimensions();
+
+  bool needAddingTime = mDimensions.size( CFDimensions::Time ) == 0;
+
+  if ( ! needAddingTime &&  group->datasets.size() != 1 ) // existing and new dataset group are not static
+  {
+    std::vector<MDAL::RelativeTimestamp> times;
+    MDAL::DateTime referenceTime = parseTime( times );
+    if ( times.size() != group->datasets.size() )
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Existing time steps count is incompatible with new dataset count", name() );
+
+    for ( size_t i = 0; i < times.size(); ++i )
+      if ( referenceTime + times.at( i )  != group->referenceTime() + group->datasets.at( i )->timestamp() )
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "At least one new time is incompatible with existing dataset time", name() );
   }
 
   CFDimensions::Type type;
@@ -765,20 +769,34 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
   }
 
   int dimElemId = mDimensions.netCfdId( type );
-  int dimTimeId = mDimensions.netCfdId( CFDimensions::Time );
-
-  std::vector<int> writeDim( {dimTimeId, dimElemId} );
   size_t elementCount = mDimensions.size( type );
 
   nc_redef( mNcFile->handle() );
 
+  std::vector<double> timeSteps;
+  int dimTimeId = -1;
+  int timeId = -1;
+  if ( needAddingTime )
+  {
+    dimTimeId = mNcFile->defineDimension( "time", NC_UNLIMITED );
+    timeId = mNcFile->defineVar( "time", NC_DOUBLE, 1, &dimTimeId );
+    std::string refTimeString = group->referenceTime().toStandardCalendarISO8601();
+    refTimeString = replace( refTimeString, "T", " " );
+    mNcFile->putAttrStr( timeId, "units", "hours since " + refTimeString );
+    timeSteps.resize( group->datasets.size() );
+  }
+  else
+    dimTimeId = mDimensions.netCfdId( CFDimensions::Time );
+
+  std::vector<int> writeDim( {dimTimeId, dimElemId} );
+
   if ( group->isScalar() )
   {
-    int groupId = mNcFile->defineVar( meshName + "_" + replace( group->name(), " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
+    int groupId = mNcFile->defineVar( mMeshName + "_" + replace( group->name(), " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
     mNcFile->putAttrStr( groupId, "standard_name", group->name() );
     mNcFile->putAttrStr( groupId, "units", group->getMetadata( "units" ) );
     mNcFile->putAttrStr( groupId, "location", elementType );
-    mNcFile->putAttrStr( groupId, "coordinates", meshName + "_face_x " + meshName + "_face_y" );
+    mNcFile->putAttrStr( groupId, "coordinates", mMeshName + "_face_x " + mMeshName + "_face_y" );
 
     nc_enddef( mNcFile->handle() );
 
@@ -794,23 +812,25 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
           values[i] = NC_FILL_DOUBLE;
 
       mNcFile->putDataArrayDouble( groupId, di, values );
+      if ( needAddingTime )
+        mNcFile->putDataDouble( timeId, di, group->datasets.at( di )->time( RelativeTimestamp::hours ) );
     }
   }
   else
   {
     std::string nameX = group->name() + "_x_";
     std::string nameY = group->name() + "_y_";
-    int groupIdX = mNcFile->defineVar( meshName + "_" + replace( nameX, " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
+    int groupIdX = mNcFile->defineVar( mMeshName + "_" + replace( nameX, " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
     mNcFile->putAttrStr( groupIdX, "standard_name", nameX );
     mNcFile->putAttrStr( groupIdX, "units", group->getMetadata( "units" ) );
     mNcFile->putAttrStr( groupIdX, "location", elementType );
-    mNcFile->putAttrStr( groupIdX, "coordinates", meshName + "_face_x " + meshName + "_face_y" );
+    mNcFile->putAttrStr( groupIdX, "coordinates", mMeshName + "_face_x " + mMeshName + "_face_y" );
 
-    int groupIdY = mNcFile->defineVar( meshName + "_" + replace( nameY, " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
+    int groupIdY = mNcFile->defineVar( mMeshName + "_" + replace( nameY, " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
     mNcFile->putAttrStr( groupIdY, "standard_name", nameY );
     mNcFile->putAttrStr( groupIdY, "units", group->getMetadata( "units" ) );
     mNcFile->putAttrStr( groupIdY, "location", elementType );
-    mNcFile->putAttrStr( groupIdY, "coordinates", meshName + "_face_x " + meshName + "_face_y" );
+    mNcFile->putAttrStr( groupIdY, "coordinates", mMeshName + "_face_x " + mMeshName + "_face_y" );
 
     nc_enddef( mNcFile->handle() );
 
@@ -837,6 +857,8 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
 
       mNcFile->putDataArrayDouble( groupIdX, di, valuesX );
       mNcFile->putDataArrayDouble( groupIdY, di, valuesY );
+      if ( needAddingTime )
+        mNcFile->putDataDouble( timeId, di, group->datasets.at( di )->time( RelativeTimestamp::hours ) );
     }
   }
 
@@ -853,18 +875,24 @@ bool MDAL::DriverUgrid::persist( MDAL::DatasetGroup *group )
     return true;
   }
 
+  mNcFile.reset();
+
   try
   {
     std::string fileName;
     std::string driver;
     std::string meshName;
     parseDriverAndMeshFromUri( group->uri(), driver, fileName, meshName );
-    std::string effectiveName = meshName;
 
     if ( ! MDAL::fileExists( fileName ) )
     {
+      if ( meshName.empty() )
+        meshName = "mesh2d";
+      else
+        meshName = replace( meshName, " ", "_" );
+
       //create a new mesh file
-      save( fileName, effectiveName, group->mesh() );
+      save( fileName, meshName, group->mesh() );
       if ( ! MDAL::fileExists( fileName ) )
         throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Unable to create new file" );
     }
@@ -890,7 +918,6 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh, const std::string &mes
   int dimNodeCountId = mNcFile->defineDimension( dimNodeName, mesh->verticesCount() == 0 ? 1 : mesh->verticesCount() ); //if no vertices, set 1 since 0==NC_UNLIMITED
   int dimFaceCountId = mNcFile->defineDimension( dimFaceName, mesh->facesCount() == 0 ? 1 : mesh->facesCount() ); //if no vertices, set 1 since 0==NC_UNLIMITED
   mNcFile->defineDimension( dimEdgeName, 1 ); // no data on edges, cannot be 0, since 0==NC_UNLIMITED
-  int dimTimeId = mNcFile->defineDimension( "time", NC_UNLIMITED );
   int dimMaxNodesPerFaceId = mNcFile->defineDimension( dimMaxFaceNodesName,
                              mesh->faceVerticesMaximumCount() == 0 ? 1 : mesh->faceVerticesMaximumCount() ); //if 0, set 1 since 0==NC_UNLIMITED
 
@@ -966,10 +993,6 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh, const std::string &mes
       mNcFile->putAttrStr( pcsId, "wkt", mesh->crs() );
     }
   }
-
-  // Time array
-  int timeId = mNcFile->defineVar( "time", NC_DOUBLE, 1, &dimTimeId );
-  mNcFile->putAttrStr( timeId, "units", "hours since 2000-01-01 00:00:00" );
 
   // Turning off define mode - allows data write
   nc_enddef( mNcFile->handle() );
@@ -1063,9 +1086,6 @@ void MDAL::DriverUgrid::writeVariables( MDAL::Mesh *mesh, const std::string &mes
       faceIndex += facesRead;
     }
   }
-
-  // Time values (not implemented)
-  mNcFile->putDataDouble( timeId, 0, 0.0 );
 }
 
 void MDAL::DriverUgrid::writeGlobals()
