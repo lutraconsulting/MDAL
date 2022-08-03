@@ -573,7 +573,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
       new MemoryMesh(
         name(),
         mDimensions.size( mDimensions.MaxVerticesInFace ),
-        mFileName
+        buildMeshUri( fileName, meshName, name() )
       )
     );
     mesh->setFaces( std::move( faces ) );
@@ -641,6 +641,15 @@ bool MDAL::CFDimensions::isDatasetType( MDAL::CFDimensions::Type type ) const
            ( type == Face ) ||
            ( type == Volume3D )
          );
+}
+
+int MDAL::CFDimensions::netCfdId( MDAL::CFDimensions::Type type ) const
+{
+  for ( const auto &it : mNcId )
+    if ( it.second == type )
+      return it.first;
+
+  return -1;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
