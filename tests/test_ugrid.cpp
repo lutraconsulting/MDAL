@@ -814,6 +814,30 @@ TEST( MeshUgridTest, flow_3d )
   MDAL_CloseMesh( mesh );
 }
 
+TEST( MeshUgridTest, IntegerTimeMesh )
+{
+  std::string path = test_file( "/ugrid/time_integer/simple_time_integer.nc" );
+
+  std::string uri = "Ugrid:\"" + path + "\":" + "mesh2d";
+  std::string uriToMeshNames = "Ugrid:\"" + path + "\"";
+
+  EXPECT_EQ( MDAL_MeshNames( uriToMeshNames.c_str() ), "Ugrid:\"" + path + "\":mesh2d" );
+  MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
+
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 6 );
+
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( f_count, 2 );
+
+  MDAL_CloseMesh( m );
+}
+
+
 static void createNewDatasetGroupOnExistingFile( MDAL_MeshH existingMesh,
     const std::string &meshFile,
     const std::string &refTime,
