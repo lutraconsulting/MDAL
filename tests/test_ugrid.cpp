@@ -841,7 +841,12 @@ static void createNewDatasetGroupOnExistingFile( MDAL_MeshH existingMesh,
     std::vector<double> values( valueCount );
 
     for ( size_t vi = 0; vi < valueCount ; ++vi )
-      values[vi] = i * 10.0 + vi * 2.0 + value;
+    {
+      if ( vi % 100 == 0 )
+        values[vi] = std::numeric_limits<double>::quiet_NaN(); //No data value
+      else
+        values[vi] = i * 10.0 + vi * 2.0 + value;
+    }
 
     MDAL_G_addDataset( newGroup, time, values.data(), nullptr );
   }
@@ -893,7 +898,10 @@ static void createNewDatasetGroupOnExistingFile( MDAL_MeshH existingMesh,
     MDAL_D_data( ds, 0, elemCount, isScalar ? MDAL_DataType::SCALAR_DOUBLE : MDAL_DataType::VECTOR_2D_DOUBLE, values.data() );
 
     for ( size_t vi = 0; vi < values.size(); ++vi )
-      EXPECT_TRUE( MDAL::equals( i * 10.0 + vi * 2.0 + value, values.at( vi ), 0.001 ) );
+      if ( vi % 100 == 0 )
+        EXPECT_TRUE( std::isnan( values.at( vi ) ) ); // No data value
+      else
+        EXPECT_TRUE( MDAL::equals( i * 10.0 + vi * 2.0 + value, values.at( vi ), 0.001 ) );
   }
 
   MDAL_CloseMesh( m );
@@ -994,7 +1002,12 @@ static void createNewDatasetGroupOnNewFile( MDAL_MeshH currentMesh,
     std::vector<double> values( valueCount );
 
     for ( size_t vi = 0; vi < valueCount ; ++vi )
-      values[vi] = i * 10.0 + vi * 2.0 + value;
+    {
+      if ( vi % 100 == 0 )
+        values[vi] = std::numeric_limits<double>::quiet_NaN(); //No data value
+      else
+        values[vi] = i * 10.0 + vi * 2.0 + value;
+    }
 
     MDAL_G_addDataset( newGroup, time, values.data(), nullptr );
   }
@@ -1045,7 +1058,10 @@ static void createNewDatasetGroupOnNewFile( MDAL_MeshH currentMesh,
     MDAL_D_data( ds, 0, elemCount, isScalar ? MDAL_DataType::SCALAR_DOUBLE : MDAL_DataType::VECTOR_2D_DOUBLE, values.data() );
 
     for ( size_t vi = 0; vi < values.size(); ++vi )
-      EXPECT_TRUE( MDAL::equals( i * 10.0 + vi * 2.0 + value, values.at( vi ), 0.001 ) );
+      if ( vi % 100 == 0 )
+        EXPECT_TRUE( std::isnan( values.at( vi ) ) ); // No data value
+      else
+        EXPECT_TRUE( MDAL::equals( i * 10.0 + vi * 2.0 + value, values.at( vi ), 0.001 ) );
   }
 
   MDAL_CloseMesh( m );

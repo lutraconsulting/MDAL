@@ -72,6 +72,7 @@ class NetCDFFile
     std::string getAttrStr( const std::string &attr_name, int varid ) const;
 
     double getFillValue( int varid ) const;
+    void setFillValue( int varid, double fillValue );
     int getVarId( const std::string &name );
     void getDimension( const std::string &name, size_t *val, int *ncid_val ) const;
     void getDimensions( const std::string &variableName, std::vector<size_t> &dimensionsId, std::vector<int> &dimensionIds );

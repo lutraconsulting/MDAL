@@ -320,6 +320,11 @@ double NetCDFFile::getFillValue( int varid ) const
   return getAttrDouble( varid, "_FillValue" );
 }
 
+void NetCDFFile::setFillValue( int varid, double fillValue )
+{
+  putAttrDouble( varid, "_FillValue", fillValue );
+}
+
 bool NetCDFFile::hasAttrDouble( int varid, const std::string &attr_name ) const
 {
   double res;

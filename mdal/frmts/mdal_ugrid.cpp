@@ -802,6 +802,7 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
     mNcFile->putAttrStr( groupId, "units", group->getMetadata( "units" ) );
     mNcFile->putAttrStr( groupId, "location", elementType );
     mNcFile->putAttrStr( groupId, "coordinates", mMeshName + "_face_x " + mMeshName + "_face_y" );
+    mNcFile->setFillValue( groupId, NC_FILL_DOUBLE );
 
     nc_enddef( mNcFile->handle() );
 
@@ -830,12 +831,14 @@ bool MDAL::DriverUgrid::writeDatasetGroup( MDAL::DatasetGroup *group, const std:
     mNcFile->putAttrStr( groupIdX, "units", group->getMetadata( "units" ) );
     mNcFile->putAttrStr( groupIdX, "location", elementType );
     mNcFile->putAttrStr( groupIdX, "coordinates", mMeshName + "_face_x " + mMeshName + "_face_y" );
+    mNcFile->setFillValue( groupIdX, NC_FILL_DOUBLE );
 
     int groupIdY = mNcFile->defineVar( mMeshName + "_" + replace( nameY, " ", "_" ), NC_DOUBLE, 2, writeDim.data() );
     mNcFile->putAttrStr( groupIdY, "standard_name", nameY );
     mNcFile->putAttrStr( groupIdY, "units", group->getMetadata( "units" ) );
     mNcFile->putAttrStr( groupIdY, "location", elementType );
     mNcFile->putAttrStr( groupIdY, "coordinates", mMeshName + "_face_x " + mMeshName + "_face_y" );
+    mNcFile->setFillValue( groupIdY, NC_FILL_DOUBLE );
 
     nc_enddef( mNcFile->handle() );
 
