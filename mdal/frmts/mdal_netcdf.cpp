@@ -199,7 +199,7 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   else if ( typep == NC_INT )
   {
     std::vector<int> arr_val_int( count_dim1 * count_dim2 );
-    if ( nc_get_vars_int( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read integer array" );
+    if ( nc_get_vars_int( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read double array" );
     for ( size_t i = 0; i < count_dim1 * count_dim2; ++i )
     {
       arr_val[i] = arr_val_int[i];
@@ -208,7 +208,7 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   else if ( typep == NC_UINT )
   {
     std::vector<unsigned int> arr_val_uint( count_dim1 * count_dim2 );
-    if ( nc_get_vars_uint( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_uint.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read integer array" );
+    if ( nc_get_vars_uint( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_uint.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read double array" );
     for ( size_t i = 0; i < count_dim1 * count_dim2; ++i )
     {
       arr_val[i] = arr_val_uint[i];
@@ -217,7 +217,7 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   else if ( typep == NC_INT64 )
   {
     std::vector<long long> arr_val_int( count_dim1 * count_dim2 );
-    if ( nc_get_vars_longlong( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read integer array" );
+    if ( nc_get_vars_longlong( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read double array" );
     for ( size_t i = 0; i < count_dim1 * count_dim2; ++i )
     {
       arr_val[i] = arr_val_int[i];
@@ -226,7 +226,7 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   else if ( typep == NC_UINT64 )
   {
     std::vector<unsigned long long> arr_val_int( count_dim1 * count_dim2 );
-    if ( nc_get_vars_ulonglong( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read integer array" );
+    if ( nc_get_vars_ulonglong( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read double array" );
     for ( size_t i = 0; i < count_dim1 * count_dim2; ++i )
     {
       arr_val[i] = arr_val_int[i];
@@ -288,7 +288,7 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   else if ( typep == NC_UINT )
   {
     std::vector<unsigned int> arr_val_uint( count_dim );
-    if ( nc_get_vars_uint( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_uint.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read integer array" );
+    if ( nc_get_vars_uint( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_uint.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read double array" );
     for ( size_t i = 0; i < count_dim; ++i )
     {
       arr_val[i] = arr_val_uint[i];
@@ -297,7 +297,7 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   else if ( typep == NC_INT64 )
   {
     std::vector<long long> arr_val_int( count_dim );
-    if ( nc_get_vars_longlong( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read integer array" );
+    if ( nc_get_vars_longlong( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read double array" );
     for ( size_t i = 0; i < count_dim; ++i )
     {
       arr_val[i] = arr_val_int[i];
@@ -306,7 +306,7 @@ std::vector<double> NetCDFFile::readDoubleArr( int arr_id,
   else if ( typep == NC_UINT64 )
   {
     std::vector<unsigned long long> arr_val_int( count_dim );
-    if ( nc_get_vars_ulonglong( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read integer array" );
+    if ( nc_get_vars_ulonglong( mNcid, arr_id, startp.data(), countp.data(), stridep.data(), arr_val_int.data() ) != NC_NOERR ) throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read double array" );
     for ( size_t i = 0; i < count_dim; ++i )
     {
       arr_val[i] = arr_val_int[i];
