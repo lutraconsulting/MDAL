@@ -468,6 +468,7 @@ bool MDAL::DriverCF::canReadMesh( const std::string &uri )
     mNcFile.reset( new NetCDFFile );
     mNcFile->openFile( uri );
     populateDimensions( );
+    mNcFile.reset();
   }
   catch ( MDAL_Status )
   {
