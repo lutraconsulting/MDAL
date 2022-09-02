@@ -66,7 +66,7 @@ class HdfFile
       Create
     };
     typedef HdfH<H5I_FILE> Handle;
-    typedef std::shared_ptr<HdfH<H5I_FILE>> SharedHandle;
+    typedef std::shared_ptr<Handle> SharedHandle;
 
     HdfFile( const std::string &path, HdfFile::Mode mode );
     ~HdfFile();
@@ -129,10 +129,8 @@ class HdfGroup
 
     inline HdfGroup group( const std::string &groupName ) const;
     inline HdfDataset dataset( const std::string &dsName ) const;
-
     inline HdfAttribute attribute( const std::string &attr_name ) const;
     inline bool pathExists( const std::string &path ) const;
-
   protected:
     std::vector<std::string> objects( H5G_obj_t type ) const;
 
@@ -209,7 +207,6 @@ class HdfDataset
     //! creates invalid dataset
     HdfDataset() = default;
     ~HdfDataset();
-
     bool isValid() const;
     hid_t id() const;
 
