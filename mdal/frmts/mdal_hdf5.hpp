@@ -139,7 +139,7 @@ class HdfGroup
     HdfGroup( std::shared_ptr<Handle> handle, HdfFile::SharedHandle file );
 
   private:
-    HdfFile::SharedHandle mFile; //must be the last destroyed
+    HdfFile::SharedHandle mFile; //must be declared before "std::shared_ptr<Handle> d" to be sure it will be the last destroyed
 
   protected:
     std::shared_ptr<Handle> d;
@@ -300,7 +300,7 @@ class HdfDataset
     HdfDataset( HdfFile::SharedHandle file, const std::string &path );
 
   private:
-    HdfFile::SharedHandle mFile; //must be the last destroyed
+    HdfFile::SharedHandle mFile; //must be declared before "std::shared_ptr<Handle> d" to be sure it will be the last destroyed
 
   protected:
     std::shared_ptr<Handle> d;
