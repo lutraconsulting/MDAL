@@ -299,6 +299,27 @@ TEST( MeshXmdfTest, withReferenceTime )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshXmdfTest, unlockWhenClose )
+{
+  std::string tmpXmdf = tmp_file( "temp.xmdf" );
+  copy( test_file( "/xmdf/withReferenceTime/PTM_005_QGIS_Axis.xmdf" ), tmpXmdf );
+
+  ASSERT_TRUE( fileExists( tmpXmdf ) );
+
+  std::string path = test_file( "/xmdf/withReferenceTime/hydraul_006.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_M_LoadDatasets( m, tmpXmdf.c_str() );
+  ASSERT_EQ( 12, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_CloseMesh( m );
+
+  deleteFile( tmpXmdf );
+
+  ASSERT_FALSE( fileExists( tmpXmdf ) );
+}
+
 TEST( MeshXmdfTest, HydroAs2D )
 {
   std::string path = test_file( "/xmdf/hydro-as-2d/hydro_as-2d.2dm" );

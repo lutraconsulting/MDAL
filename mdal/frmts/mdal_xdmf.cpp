@@ -338,8 +338,7 @@ HdfDataset MDAL::DriverXdmf::parseHdf5Node( const XMLFile &xmfFile, xmlNodePtr n
     hdfFile = mHdfFiles[hdf5Name];
   }
 
-  HdfDataset hdfDataset( hdfFile->id(), hdf5Path );
-  return hdfDataset;
+  return hdfFile->dataset( hdf5Path );
 }
 
 void MDAL::DriverXdmf::hdf5NamePath( const std::string &dataItemPath, std::string &filePath, std::string &hdf5Path )
