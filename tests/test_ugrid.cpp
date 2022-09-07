@@ -1154,6 +1154,22 @@ TEST( MeshUgridTest, WriteDatasetNewFile )
   deleteFile( tmpFile4 );
 }
 
+TEST( MeshUgridTest, unlockWhenClose )
+{
+  std::string tmpUgridFile = tmp_file( "temp.nc" );
+  copy( test_file( "/ugrid/D-Flow1.1/manzese_1d2d_small_map.nc" ), tmpUgridFile );
+
+  ASSERT_TRUE( fileExists( tmpUgridFile ) );
+
+  MDAL_MeshH m = MDAL_LoadMesh( tmpUgridFile.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_CloseMesh( m );
+
+  deleteFile( tmpUgridFile );
+
+  ASSERT_FALSE( fileExists( tmpUgridFile ) );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
