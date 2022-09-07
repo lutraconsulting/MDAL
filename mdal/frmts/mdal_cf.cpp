@@ -472,10 +472,12 @@ bool MDAL::DriverCF::canReadMesh( const std::string &uri )
   }
   catch ( MDAL_Status )
   {
+    mNcFile.reset();
     return false;
   }
   catch ( MDAL::Error )
   {
+    mNcFile.reset();
     return false;
   }
   return true;
@@ -591,6 +593,8 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
 
     // Create datasets
     addDatasetGroups( mesh.get(), times, dsinfo_map, referenceTime );
+
+    mNcFile.reset();
 
     return std::unique_ptr<Mesh>( mesh.release() );
   }
