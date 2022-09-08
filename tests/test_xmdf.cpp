@@ -301,7 +301,7 @@ TEST( MeshXmdfTest, withReferenceTime )
 
 TEST( MeshXmdfTest, unlockWhenClose )
 {
-  std::string tmpXmdf = tmp_file( "temp.xmdf" );
+  std::string tmpXmdf = tmp_file( "/temp.xmdf" );
   copy( test_file( "/xmdf/withReferenceTime/PTM_005_QGIS_Axis.xmdf" ), tmpXmdf );
 
   ASSERT_TRUE( fileExists( tmpXmdf ) );
