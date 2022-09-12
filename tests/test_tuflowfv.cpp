@@ -483,6 +483,9 @@ TEST( MeshTuflowFVTest, NonTemporalDatasetGroup )
     EXPECT_TRUE( MDAL::equals( 0.00188, min, 0.00001 ) );
     EXPECT_TRUE( MDAL::equals( 4.53498, max, 0.00001 ) );
   }
+
+  // Close mesh
+  MDAL_CloseMesh( m );
 }
 
 int main( int argc, char **argv )
