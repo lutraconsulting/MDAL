@@ -9,6 +9,7 @@
 //mdal
 #include "mdal.h"
 #include "mdal_testutils.hpp"
+#include "mdal_utils.hpp"
 
 TEST( MeshTuflowFVTest, TrapSteady053D )
 {
@@ -364,6 +365,124 @@ TEST( MeshTuflowFVTest, TrapSteady053DWithMaxes )
     EXPECT_FALSE( MDAL_G_isTemporal( g ) );
   }
 
+  // Close mesh
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshTuflowFVTest, NonTemporalDatasetGroup )
+{
+  std::string path = test_file( "/tuflowfv/withMaxes/Cone_003.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "TUFLOWFV:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // ///////////
+  // Vertices
+  // ///////////
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 1497 );
+
+  // ///////////
+  // Faces
+  // ///////////
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 2866, f_count );
+
+  // /////////////////////////////////
+  // Dataset: scalar on volumes
+  // /////////////////////////////////
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 8 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 2, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "water depth/Maximums" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( true, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 2866, count );
+
+    EXPECT_TRUE( MDAL::equals( 0.02222, getValue( ds, 10 ), 0.0001 ) );
+
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+
+    EXPECT_TRUE( MDAL::equals( 0.0100, min, 0.0001 ) );
+    EXPECT_TRUE( MDAL::equals( 2.0076, max, 0.0001 ) );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_TRUE( MDAL::equals( 0.0100, min, 0.0001 ) );
+    EXPECT_TRUE( MDAL::equals( 2.0076, max, 0.0001 ) );
+  }
+
+  // /////////////////////////////////
+  // Dataset: vector on volumes
+  // /////////////////////////////////
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    ASSERT_NE( g, nullptr );
+
+    int meta_count = MDAL_G_metadataCount( g );
+    ASSERT_EQ( 2, meta_count );
+
+    const char *name = MDAL_G_name( g );
+    EXPECT_EQ( std::string( "velocity/Maximums" ), std::string( name ) );
+
+    bool scalar = MDAL_G_hasScalarData( g );
+    EXPECT_EQ( false, scalar );
+
+    MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+    EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnVolumes );
+
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    ASSERT_NE( ds, nullptr );
+
+    bool valid = MDAL_D_isValid( ds );
+    EXPECT_EQ( true, valid );
+
+    EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+    int count = MDAL_D_valueCount( ds );
+    ASSERT_EQ( 2866, count );
+
+    int volumes = MDAL_D_volumesCount( ds );
+    ASSERT_EQ( 2866, volumes );
+
+    double valueX = getValue3DX( ds, 10 );
+    EXPECT_TRUE( MDAL::equals( -0.2257, valueX, 0.0001 ) );
+
+    double valueY = getValue3DY( ds, 10 );
+    EXPECT_TRUE( MDAL::equals( -0.1149, valueY, 0.0001 ) );
+
+    double min, max;
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_TRUE( MDAL::equals( 0.00188, min, 0.00001 ) );
+    EXPECT_TRUE( MDAL::equals( 4.53498, max, 0.00001 ) );
+
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_TRUE( MDAL::equals( 0.00188, min, 0.00001 ) );
+    EXPECT_TRUE( MDAL::equals( 4.53498, max, 0.00001 ) );
+  }
 
   // Close mesh
   MDAL_CloseMesh( m );
