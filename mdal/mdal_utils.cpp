@@ -16,7 +16,7 @@
 #include <ctime>
 #include <stdlib.h>
 
-#if defined _WIN32
+#ifdef _WIN32
 #define UNICODE
 #include <locale>
 #include <codecvt>
@@ -38,7 +38,7 @@ std::string MDAL::getEnvVar( const std::string &varname, const std::string &defa
 
 bool MDAL::openInputFile( std::ifstream &inputFileStream, const std::string &fileName, std::ios_base::openmode mode )
 {
-#if defined _MSC_VER
+#ifdef _WIN32
   std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
   std::wstring wStr = converter.from_bytes( fileName );
   inputFileStream.open( wStr, std::ifstream::in | mode );
@@ -53,7 +53,7 @@ std::ifstream MDAL::openInputFile( const std::string &fileName, std::ios_base::o
 {
   std::ifstream ret;
 
-#if defined _MSC_VER
+#ifdef _WIN32
   std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
   std::wstring wStr = converter.from_bytes( fileName );
   ret.open( wStr, mode );
@@ -68,7 +68,7 @@ std::ofstream MDAL::openOutputFile( const std::string &fileName, std::ios_base::
 {
   std::ofstream ret;
 
-#if defined _MSC_VER
+#ifdef _WIN32
   std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
   std::wstring wStr = converter.from_bytes( fileName );
   ret.open( wStr, mode );
@@ -263,7 +263,7 @@ std::string MDAL::fileExtension( const std::string &path )
 std::string MDAL::pathJoin( const std::string &path1, const std::string &path2 )
 {
 //https://stackoverflow.com/questions/6297738/how-to-build-a-full-path-string-safely-from-separate-strings#6297807
-#ifdef _MSC_VER
+#ifdef _WIN32
   return path1 + "\\" + path2;
 #else
   return path1 + "/" + path2;
@@ -292,7 +292,7 @@ bool MDAL::contains( const std::string &str, const std::string &substr, Contains
                 substr.begin(),   substr.end(),
                 []( char ch1, char ch2 )
     {
-#ifdef _MSC_VER
+#ifdef _WIN32
       return toupper( ch1 ) == toupper( ch2 );
 #else
       return std::toupper( ch1 ) == std::toupper( ch2 );
@@ -343,7 +343,7 @@ std::string MDAL::leftJustified( const std::string &str, size_t width, char fill
 std::string MDAL::toLower( const std::string &std )
 {
   std::string res( std );
-#ifdef WIN32
+#ifdef _WIN32
   //silence algorithm(1443): warning C4244: '=': conversion from 'int' to 'char'
   std::transform( res.begin(), res.end(), res.begin(),
   []( char c ) {return static_cast<char>( ::tolower( c ) );} );
@@ -401,17 +401,8 @@ std::string MDAL::trim( const std::string &s, const std::string &delimiters )
   return ltrim( rtrim( s, delimiters ), delimiters );
 }
 
-std::string MDAL::systemFileName( const std::string &utf8FileName )
-{
-  std::string ret = utf8FileName;
-#if defined(WIN32)
-  ret = utf8ToWin32Recode( utf8FileName );
-#endif
-  return ret;
-}
-
-#if defined(WIN32)
-std::string MDAL::utf8ToWin32Recode( const std::string &utf8String )
+#ifdef _WIN32
+static std::string MDAL::utf8ToWin32Recode( const std::string &utf8String )
 {
   //from GDAL: ./port/cpl_recode_stub.cpp, CPLWin32Recode()
 
@@ -434,6 +425,17 @@ std::string MDAL::utf8ToWin32Recode( const std::string &utf8String )
   return ret;
 }
 #endif
+
+std::string MDAL::systemFileName( const std::string &utf8FileName )
+{
+  std::string ret;
+#ifdef _WIN32
+  ret = utf8ToWin32Recode( utf8FileName );
+#else
+  ret = utf8FileName;
+#endif
+  return ret;
+}
 
 // http://www.cplusplus.com/faq/sequences/strings/trim/
 std::string MDAL::ltrim( const std::string &s, const std::string &delimiters )
@@ -1076,7 +1078,7 @@ MDAL::Library::Library( std::string libraryFile )
 MDAL::Library::~Library()
 {
   d->mRef--;
-#ifdef WIN32
+#ifdef _WIN32
   if ( d->mLibrary &&  d->mRef == 0 )
     FreeLibrary( d->mLibrary );
 #else
@@ -1110,7 +1112,7 @@ bool MDAL::Library::isValid()
 std::vector<std::string> MDAL::Library::libraryFilesInDir( const std::string &dirPath )
 {
   std::vector<std::string> filesList;
-#if defined(WIN32)
+#ifdef _WIN32
   WIN32_FIND_DATA data;
   HANDLE hFind;
   std::string pattern = dirPath;
@@ -1155,7 +1157,7 @@ bool MDAL::Library::loadLibrary()
   //should we allow only one successful loading?
   if ( d->mLibrary )
     return false;
-#ifdef WIN32
+#ifdef _WIN32
   UINT uOldErrorMode =
     SetErrorMode( SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS );
   d->mLibrary = LoadLibrary( d->mLibraryFile.c_str() );
