@@ -402,7 +402,7 @@ std::string MDAL::trim( const std::string &s, const std::string &delimiters )
 }
 
 #ifdef _WIN32
-static std::string MDAL::utf8ToWin32Recode( const std::string &utf8String )
+static std::string utf8ToWin32Recode( const std::string &utf8String )
 {
   //from GDAL: ./port/cpl_recode_stub.cpp, CPLWin32Recode()
 
