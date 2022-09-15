@@ -33,7 +33,7 @@ int NetCDFFile::handle() const
 
 void NetCDFFile::openFile( const std::string &fileName, bool write )
 {
-  int res = nc_open( fileName.c_str(), write ? NC_WRITE : NC_NOWRITE, &mNcid );
+  int res = nc_open( MDAL::systemFileName( fileName ).c_str(), write ? NC_WRITE : NC_NOWRITE, &mNcid );
   if ( res != NC_NOERR )
   {
     throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not open file " + fileName );

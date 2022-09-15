@@ -139,6 +139,12 @@ namespace MDAL
     const std::string &s,
     const std::string &delimiters = " \f\n\r\t\v" );
 
+  std::string systemFileName( const std::string &utf8FileName );
+
+//#if defined(WIN32)
+  std::string utf8ToWin32Recode( const std::string &utf8String );
+//#endif
+
   // extent
   BBox computeExtent( const Vertices &vertices );
 

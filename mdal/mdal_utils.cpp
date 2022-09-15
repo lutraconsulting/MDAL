@@ -20,6 +20,7 @@
 #define UNICODE
 #include <locale>
 #include <codecvt>
+#include <stringapiset.h>
 #endif
 
 std::string MDAL::getEnvVar( const std::string &varname, const std::string &defaultVal )
@@ -399,6 +400,40 @@ std::string MDAL::trim( const std::string &s, const std::string &delimiters )
 
   return ltrim( rtrim( s, delimiters ), delimiters );
 }
+
+std::string MDAL::systemFileName( const std::string &utf8FileName )
+{
+  std::string ret = utf8FileName;
+#if defined(WIN32)
+  ret = utf8ToWin32Recode( utf8FileName );
+#endif
+  return ret;
+}
+
+#if defined(WIN32)
+std::string MDAL::utf8ToWin32Recode( const std::string &utf8String )
+{
+  //from GDAL: ./port/cpl_recode_stub.cpp, CPLWin32Recode()
+
+  // Compute length in wide characters
+  int wlen = MultiByteToWideChar( CP_UTF8, 0, utf8String.c_str(), -1, nullptr, 0 );
+
+  // do the conversion to wide char
+  std::wstring wstr;
+  wstr.resize( MDAL::toSizeT( wlen ) + 1 );
+  wstr.data()[wlen] = 0;
+  MultiByteToWideChar( CP_UTF8, 0, utf8String.c_str(), -1, wstr.data(), wstr.size() );
+
+  int len = WideCharToMultiByte( CP_ACP, 0, wstr.c_str(), -1, nullptr, 0, nullptr, nullptr );
+
+  std::string ret;
+  ret.resize( MDAL::toSizeT( len ) + 1 );
+
+  WideCharToMultiByte( CP_ACP, 0, wstr.c_str(), -1, ret.data(), ret.size(), nullptr, nullptr );
+
+  return ret;
+}
+#endif
 
 // http://www.cplusplus.com/faq/sequences/strings/trim/
 std::string MDAL::ltrim( const std::string &s, const std::string &delimiters )
