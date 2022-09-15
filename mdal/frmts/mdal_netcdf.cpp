@@ -484,7 +484,7 @@ bool NetCDFFile::hasDimension( const std::string &name ) const
 
 void NetCDFFile::createFile( const std::string &fileName )
 {
-  int res = nc_create( fileName.c_str(), NC_CLOBBER, &mNcid );
+  int res = nc_create( MDAL::systemFileName( fileName ).c_str(), NC_CLOBBER, &mNcid );
   if ( res != NC_NOERR )
   {
     throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, nc_strerror( res ) );
