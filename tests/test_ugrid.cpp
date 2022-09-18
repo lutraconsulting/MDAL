@@ -1,4 +1,4 @@
-/*
+﻿/*
  MDAL - Mesh Data Abstraction Library (MIT License)
  Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
 */
@@ -1168,6 +1168,16 @@ TEST( MeshUgridTest, unlockWhenClose )
   deleteFile( tmpUgridFile );
 
   ASSERT_FALSE( fileExists( tmpUgridFile ) );
+}
+
+TEST( MeshUgridTest, SpecialChar )
+{
+  std::string path = test_file( u8"/ugrid/special@char/àeé.nc" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "Ugrid:\"" + path + "\":mesh1d;;Ugrid:\"" + path + "\":mesh2d" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  MDAL_CloseMesh( m );
 }
 
 int main( int argc, char **argv )

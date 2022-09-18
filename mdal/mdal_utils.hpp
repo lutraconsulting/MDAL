@@ -15,7 +15,7 @@
 #include <cmath>
 #include <functional>
 
-#if defined (WIN32)
+#ifdef _WIN32
 #include <windows.h>
 #undef min
 #undef max
@@ -138,6 +138,9 @@ namespace MDAL
   std::string trim(
     const std::string &s,
     const std::string &delimiters = " \f\n\r\t\v" );
+
+  //! Returns a string file path encoded consistently with the system from a string encoded with UTF-8
+  std::string systemFileName( const std::string &utf8FileName );
 
   // extent
   BBox computeExtent( const Vertices &vertices );
@@ -277,7 +280,7 @@ namespace MDAL
       {
         if ( !isValid() )
           return std::function<T( Ts ... args )>();
-#ifdef WIN32
+#ifdef _WIN32
         FARPROC proc = GetProcAddress( d->mLibrary, symbolName.c_str() );
 
         if ( !proc )
@@ -308,7 +311,7 @@ namespace MDAL
     private:
       struct Data
       {
-#ifdef  WIN32
+#ifdef _WIN32
         HINSTANCE  mLibrary = nullptr;
 #else
         void *mLibrary = nullptr;
