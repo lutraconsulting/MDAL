@@ -1,0 +1,123 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="2.0">
+<Domain>
+<Grid Name="test.h5" GridType="Collection" CollectionType="Temporal">
+        <Grid Name="Timestep " GridType="Uniform">
+            <Time Value="0.000000"/>
+			<Topology TopologyType="Triangle" NumberOfElements="9">
+		        <DataItem Dimensions="9 3" Format="HDF">
+			        test.h5:/CellsAll/Topology
+		        </DataItem>
+            </Topology>
+			<Geometry GeometryType="XY">
+		        <DataItem Dimensions="9 2" Format="HDF">
+			        test.h5:/NodesAll/Coordnts
+		        </DataItem>
+            </Geometry>
+            <Attribute Name="water_surface" AttributeType="Scalar" Center="Cell">
+                <DataItem ItemType="HyperSlab" Dimensions="9 1" Type="HyperSlab">
+                    <DataItem Dimensions="3 2" Format="XML"> 0 0 1 1 9 1</DataItem>
+                    <DataItem Dimensions="9 3" Format="HDF"> test.h5:/RESULTS/CellsAll/HydState/0000000 </DataItem>
+                </DataItem>
+            </Attribute>
+        </Grid>
+        <Grid Name="Timestep " GridType="Uniform">
+            <Time Value="2.000000"/>
+			<Topology TopologyType="Triangle" NumberOfElements="9">
+		        <DataItem Dimensions="9 3" Format="HDF">
+			        test.h5:/CellsAll/Topology
+		        </DataItem>
+            </Topology>
+			<Geometry GeometryType="XY">
+		        <DataItem Dimensions="9 2" Format="HDF">
+			        test.h5:/NodesAll/Coordnts
+		        </DataItem>
+            </Geometry>
+            <Attribute Name="water_surface" AttributeType="Scalar" Center="Cell">
+                <DataItem ItemType="HyperSlab" Dimensions="9 1" Type="HyperSlab">
+                    <DataItem Dimensions="3 2" Format="XML"> 0 0 1 1 9 1</DataItem>
+                    <DataItem Dimensions="9 3" Format="HDF"> test.h5:/RESULTS/CellsAll/HydState/0000001 </DataItem>
+                </DataItem>
+            </Attribute>
+        </Grid>
+        <Grid Name="Timestep " GridType="Uniform">
+            <Time Value="4.000000"/>
+			<Topology TopologyType="Triangle" NumberOfElements="9">
+		        <DataItem Dimensions="9 3" Format="HDF">
+			        test.h5:/CellsAll/Topology
+		        </DataItem>
+            </Topology>
+			<Geometry GeometryType="XY">
+		        <DataItem Dimensions="9 2" Format="HDF">
+			        test.h5:/NodesAll/Coordnts
+		        </DataItem>
+            </Geometry>
+            <Attribute Name="water_surface" AttributeType="Scalar" Center="Cell">
+                <DataItem ItemType="HyperSlab" Dimensions="9 1" Type="HyperSlab">
+                    <DataItem Dimensions="3 2" Format="XML"> 0 0 1 1 9 1</DataItem>
+                    <DataItem Dimensions="9 3" Format="HDF"> test.h5:/RESULTS/CellsAll/HydState/0000002 </DataItem>
+                </DataItem>
+            </Attribute>
+        </Grid>
+        <Grid Name="Timestep " GridType="Uniform">
+            <Time Value="6.000000"/>
+			<Topology TopologyType="Triangle" NumberOfElements="9">
+		        <DataItem Dimensions="9 3" Format="HDF">
+			        test.h5:/CellsAll/Topology
+		        </DataItem>
+            </Topology>
+			<Geometry GeometryType="XY">
+		        <DataItem Dimensions="9 2" Format="HDF">
+			        test.h5:/NodesAll/Coordnts
+		        </DataItem>
+            </Geometry>
+            <Attribute Name="water_surface" AttributeType="Scalar" Center="Cell">
+                <DataItem ItemType="HyperSlab" Dimensions="9 1" Type="HyperSlab">
+                    <DataItem Dimensions="3 2" Format="XML"> 0 0 1 1 9 1</DataItem>
+                    <DataItem Dimensions="9 3" Format="HDF"> test.h5:/RESULTS/CellsAll/HydState/0000003 </DataItem>
+                </DataItem>
+            </Attribute>
+        </Grid>
+        <Grid Name="Timestep " GridType="Uniform">
+            <Time Value="8.000000"/>
+			<Topology TopologyType="Triangle" NumberOfElements="9">
+		        <DataItem Dimensions="9 3" Format="HDF">
+			        test.h5:/CellsAll/Topology
+		        </DataItem>
+            </Topology>
+			<Geometry GeometryType="XY">
+		        <DataItem Dimensions="9 2" Format="HDF">
+			        test.h5:/NodesAll/Coordnts
+		        </DataItem>
+            </Geometry>
+            <Attribute Name="water_surface" AttributeType="Scalar" Center="Cell">
+                <DataItem ItemType="HyperSlab" Dimensions="9 1" Type="HyperSlab">
+                    <DataItem Dimensions="3 2" Format="XML"> 0 0 1 1 9 1</DataItem>
+                    <DataItem Dimensions="9 3" Format="HDF"> test.h5:/RESULTS/CellsAll/HydState/0000004 </DataItem>
+                </DataItem>
+            </Attribute>
+        </Grid>
+        <Grid Name="Timestep " GridType="Uniform">
+            <Time Value="10.000000"/>
+			<Topology TopologyType="Triangle" NumberOfElements="9">
+		        <DataItem Dimensions="9 3" Format="HDF">
+			        test.h5:/CellsAll/Topology
+		        </DataItem>
+            </Topology>
+			<Geometry GeometryType="XY">
+		        <DataItem Dimensions="9 2" Format="HDF">
+			        test.h5:/NodesAll/Coordnts
+		        </DataItem>
+            </Geometry>
+            <Attribute Name="water_surface" AttributeType="Scalar" Center="Cell">
+                <DataItem ItemType="HyperSlab" Dimensions="9 1" Type="HyperSlab">
+                    <DataItem Dimensions="3 2" Format="XML"> 0 0 1 1 9 1</DataItem>
+                    <DataItem Dimensions="9 3" Format="HDF"> test.h5:/RESULTS/CellsAll/HydState/0000005 </DataItem>
+                </DataItem>
+            </Attribute>
+        </Grid>
+        
+   </Grid>
+</Domain>
+</Xdmf>
