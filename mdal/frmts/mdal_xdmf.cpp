@@ -338,6 +338,9 @@ HdfDataset MDAL::DriverXdmf::parseHdf5Node( const XMLFile &xmfFile, xmlNodePtr n
     hdfFile = mHdfFiles[hdf5Name];
   }
 
+  if ( !hdfFile->isValid() )
+    throw MDAL::Error( MDAL_Status::Err_InvalidData, "invalid or missing file: " + hdf5Name );
+
   return hdfFile->dataset( hdf5Path );
 }
 

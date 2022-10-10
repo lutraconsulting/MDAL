@@ -602,6 +602,25 @@ TEST( XdmfTest, Simple )
   MDAL_CloseMesh( m );
 }
 
+TEST( XdmfTest, Basement3SimpleGeometryMissingFile )
+{
+  std::string path = test_file( "/xdmf/basement3/SimpleGeometry_missingFile/test.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // test.xf is normally associated with test.h5 file, this one is missing, so data is invalid
+  std::string path2 = test_file( "/xdmf/basement3/SimpleGeometry_missingFile/test.xmf" );
+  EXPECT_TRUE( std::string( MDAL_MeshNames( path2.c_str() ) ).empty() );
+  MDAL_M_LoadDatasets( m, path2.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_InvalidData, s );
+
+  MDAL_CloseMesh( m );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
