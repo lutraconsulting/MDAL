@@ -473,6 +473,33 @@ TEST( MeshXmdfTest, HydroAs2D )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshXmdfTest, withFinalgroup )
+{
+  std::string path = test_file( "/xmdf/withFinal/final_mindt_example.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  path = test_file( "/xmdf/withFinal/final_mindt_example.xmdf" );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  EXPECT_EQ( MDAL_M_datasetGroupCount( m ), 3 );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Minimum dt/Final" ), std::string( name ) );
+  EXPECT_EQ( MDAL_G_datasetCount( g ), 1 );
+
+  g = MDAL_M_datasetGroup( m, 2 );
+
+  name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Minimum dt" ), std::string( name ) );
+  EXPECT_EQ( MDAL_G_datasetCount( g ), 3 );
+
+  MDAL_CloseMesh( m );
+}
 
 int main( int argc, char **argv )
 {
