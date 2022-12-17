@@ -34,7 +34,7 @@ jobs:
             cd $env:GITHUB_WORKSPACE
             mkdir build
             cd build
-            exec { cmake -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Rel  -DENABLE_TESTS=ON  -DEXTERNAL_DRIVER_DHI_DFS=OFF -DNETCDF_PREFIX=${{env.OSGEO4W_ROOT}} -DHDF5_ROOT=${{env.OSGEO4W_ROOT}} -DGDAL_DIR=${{env.OSGEO4W_ROOT}} -DGDAL_LIBRARY="${{env.OSGEO4W_ROOT}}\lib\gdal_i.lib" -DGDAL_INCLUDE_DIR="${{env.OSGEO4W_ROOT}}\include" -DLIBXML2_LIBRARIES="${{env.OSGEO4W_ROOT}}\libxml2.lib" -DLIBXML2_INCLUDE_DIR="${{env.OSGEO4W_ROOT}}\include\libxml2" ..  }
+            exec { cmake -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Rel  -DENABLE_TESTS=ON  -DEXTERNAL_DRIVER_DHI_DFS=OFF -DNETCDF_PREFIX=${{env.OSGEO4W_ROOT}} -DHDF5_ROOT=${{env.OSGEO4W_ROOT}} -DGDAL_DIR=${{env.OSGEO4W_ROOT}} -DGDAL_LIBRARY="${{env.OSGEO4W_ROOT}}\lib\gdal_i.lib" -DGDAL_INCLUDE_DIR="${{env.OSGEO4W_ROOT}}\include" -DLIBXML2_LIBRARIES="${{env.OSGEO4W_ROOT}}\lib\libxml2.lib" -DLIBXML2_INCLUDE_DIR="${{env.OSGEO4W_ROOT}}\include\libxml2" ..  }
             exec { cmake --build . }
 
       - name: Run tests
