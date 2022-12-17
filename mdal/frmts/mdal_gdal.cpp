@@ -89,6 +89,8 @@ bool MDAL::DriverGdal::initVertices( Vertices &vertices )
     }
   }
 
+//until GDAL >= 4.3 is used by macos see https://github.com/lutraconsulting/MDAL/pull/439
+#if (defined(__APPLE__) && defined(__MACH__))
   BBox extent = computeExtent( vertices );
   // we want to detect situation when there is whole earth represented in dataset
   bool is_longitude_shifted = ( extent.minX >= 0.0 ) &&
@@ -109,11 +111,16 @@ bool MDAL::DriverGdal::initVertices( Vertices &vertices )
   }
 
   return is_longitude_shifted;
+#else
+  return false;
+#endif
 }
 
-void MDAL::DriverGdal::initFaces( Vertices &Vertexs, Faces &Faces, bool is_longitude_shifted )
+void MDAL::DriverGdal::initFaces( const Vertices &Vertexs, Faces &Faces, bool is_longitude_shifted )
 {
+#if (defined(__APPLE__) && defined(__MACH__))
   int reconnected = 0;
+#endif
   unsigned int mXSize = meshGDALDataset()->mXSize;
   unsigned int mYSize = meshGDALDataset()->mYSize;
 
@@ -123,6 +130,8 @@ void MDAL::DriverGdal::initFaces( Vertices &Vertexs, Faces &Faces, bool is_longi
   {
     for ( unsigned int x = 0; x < mXSize - 1; ++x )
     {
+//until GDAL >= 4.3 is used by macos see https://github.com/lutraconsulting/MDAL/pull/439
+#if (defined(__APPLE__) && defined(__MACH__))
       if ( is_longitude_shifted &&
            ( Vertexs[x + mXSize * y].x > 0.0 ) &&
            ( Vertexs[x + 1 + mXSize * y].x < 0.0 ) )
@@ -144,6 +153,7 @@ void MDAL::DriverGdal::initFaces( Vertices &Vertexs, Faces &Faces, bool is_longi
         ++reconnected;
         ++i;
       }
+#endif
 
       // other faces
       Faces[i].resize( 4 );
@@ -155,8 +165,10 @@ void MDAL::DriverGdal::initFaces( Vertices &Vertexs, Faces &Faces, bool is_longi
       ++i;
     }
   }
+#if (defined(__APPLE__) && defined(__MACH__))
   //make sure we have discarded same amount of faces that we have added
   assert( reconnected == 0 );
+#endif
 }
 
 std::string MDAL::DriverGdal::GDALFileName( const std::string &fileName )

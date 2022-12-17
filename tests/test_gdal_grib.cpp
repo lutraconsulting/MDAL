@@ -212,7 +212,7 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
 
   double value = getValue( ds, 1600 );
 #if (defined(__APPLE__) && defined(__MACH__))
-  EXPECT_DOUBLE_EQ( -0.818756103515625, value ); //until GDAL >= 4.3 is used with macos see https://github.com/lutraconsulting/MDAL/pull/439
+  EXPECT_DOUBLE_EQ( -0.818756103515625, value ); //until GDAL >= 4.3 is used by macos see https://github.com/lutraconsulting/MDAL/pull/439
 # else
   EXPECT_DOUBLE_EQ( -0.535552978515625, value );
 #endif
