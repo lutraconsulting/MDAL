@@ -17,7 +17,7 @@ jobs:
       - name: Move SDK to OSGeo4W folder
         shell: pwsh
         run: |
-            mv "C:\Program Files\QGIS 3.22" "C:\OSGeo4W64"
+            mv "C:\Program Files\QGIS 3.22.13" "C:\OSGeo4W64"
 
       - name: Set compiler environment
         shell: cmd

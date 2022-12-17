@@ -211,7 +211,11 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
   ASSERT_EQ( 115680, count );
 
   double value = getValue( ds, 1600 );
+#if (defined(__APPLE__) && defined(__MACH__))
+  EXPECT_DOUBLE_EQ( -0.818756103515625, value ); //until GDAL >= 4.3 is used with macos
+# else
   EXPECT_DOUBLE_EQ( -0.535552978515625, value );
+#endif
 
   EXPECT_TRUE( compareReferenceTime( g, "2018-10-01T00:00:00" ) );
 

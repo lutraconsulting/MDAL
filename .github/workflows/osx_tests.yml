@@ -1,7 +1,7 @@
 name: OSX Tests
 on: [push, pull_request]
 env:
-  QGIS_DEPS_VERSION: 0.9.0
+  QGIS_DEPS_VERSION: 0.4.0
 jobs:
   osx_tests:
     runs-on: macos-latest
