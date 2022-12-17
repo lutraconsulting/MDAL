@@ -211,7 +211,7 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
   ASSERT_EQ( 115680, count );
 
   double value = getValue( ds, 1600 );
-  EXPECT_DOUBLE_EQ( -0.818756103515625, value );
+  EXPECT_DOUBLE_EQ( -0.535552978515625, value );
 
   EXPECT_TRUE( compareReferenceTime( g, "2018-10-01T00:00:00" ) );
 
