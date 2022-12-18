@@ -155,6 +155,7 @@ void MDAL::DriverGdal::initFaces( const Vertices &Vertexs, Faces &Faces, bool is
       ++i;
     }
   }
+  //make sure we have discarded same amount of faces that we have added
   assert( reconnected == 0 );
 }
 
