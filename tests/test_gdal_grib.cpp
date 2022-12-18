@@ -211,7 +211,7 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
   ASSERT_EQ( 115680, count );
 
   double value = getValue( ds, 1600 );
-#if defined( GDAL_VERSION_NUM ) && GDAL_VERSION_NUM< GDAL_COMPUTE_VERSION(3,4,0)
+#if defined( GDAL_VERSION_NUM ) && GDAL_VERSION_NUM< GDAL_COMPUTE_VERSION(3,4,0) //https://github.com/lutraconsulting/MDAL/issues/391
   EXPECT_DOUBLE_EQ( -0.818756103515625, value ); //until GDAL >= 4.3 is used by macos see https://github.com/lutraconsulting/MDAL/pull/439
 # else
   EXPECT_DOUBLE_EQ( -0.535552978515625, value );
