@@ -12,7 +12,7 @@
 # MDAL
 Mesh Data Abstraction Library
 
-MDAL is [OSGeo Community Project](https://www.osgeo.org/foundation-news/osgeo-community-program-welcomes-the-mesh-data-abstraction-library-mdal-project/)
+MDAL is an [OSGeo Community Project](https://www.osgeo.org/foundation-news/osgeo-community-program-welcomes-the-mesh-data-abstraction-library-mdal-project/)
 
 ![MDAL](docs/images/LogoHorizontal_01_color_400x123.png)
 ![OSGeo](docs/images/OSGeo_community-370x142.png)
