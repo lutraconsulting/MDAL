@@ -531,16 +531,22 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
     else
     {
       variableName = standardName;
-      if ( MDAL::contains( standardName, "_x_" ) )
+      if ( MDAL::contains( standardName, "_x_" ) ||
+           MDAL::contains( standardName, "eastward_" ) )
       {
         *isVector = true;
         name = MDAL::replace( standardName, "_x_", "" );
+        name = MDAL::replace( standardName, "_eastward_", "" );
+        name = MDAL::replace( standardName, "eastward_", "" );
       }
-      else if ( MDAL::contains( standardName, "_y_" ) )
+      else if ( MDAL::contains( standardName, "_y_" ) ||
+                MDAL::contains( standardName, "northward_" ) )
       {
         *isVector = true;
         *isX = false;
         name = MDAL::replace( standardName, "_y_", "" );
+        name = MDAL::replace( standardName, "_northward_", "" );
+        name = MDAL::replace( standardName, "northward_", "" );
       }
       else if ( MDAL::contains( standardName, "_from_direction" ) )
       {
