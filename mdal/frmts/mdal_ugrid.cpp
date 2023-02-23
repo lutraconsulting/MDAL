@@ -536,8 +536,8 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
       {
         *isVector = true;
         name = MDAL::replace( standardName, "_x_", "" );
-        name = MDAL::replace( standardName, "_eastward_", "" );
-        name = MDAL::replace( standardName, "eastward_", "" );
+        name = MDAL::replace( name, "_eastward_", "" );
+        name = MDAL::replace( name, "eastward_", "" );
       }
       else if ( MDAL::contains( standardName, "_y_" ) ||
                 MDAL::contains( standardName, "northward_" ) )
@@ -545,8 +545,8 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
         *isVector = true;
         *isX = false;
         name = MDAL::replace( standardName, "_y_", "" );
-        name = MDAL::replace( standardName, "_northward_", "" );
-        name = MDAL::replace( standardName, "northward_", "" );
+        name = MDAL::replace( name, "_northward_", "" );
+        name = MDAL::replace( name, "northward_", "" );
       }
       else if ( MDAL::contains( standardName, "_from_direction" ) )
       {
@@ -574,18 +574,62 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
   else
   {
     variableName = longName;
-    if ( MDAL::contains( longName, ", x-component" ) || MDAL::contains( longName, "u component of " ) )
+    if ( MDAL::contains( longName, "x-component" ) ||
+         MDAL::contains( longName, "x component" ) ||
+         MDAL::contains( longName, "u-component" ) ||
+         MDAL::contains( longName, "u component" ) ||
+         MDAL::contains( longName, "eastward" ) ||
+         MDAL::contains( longName, "zonal" ) )
     {
       *isVector = true;
-      name = MDAL::replace( longName, ", x-component", "" );
-      name = MDAL::replace( name, "u component of ", "" );
+      name = MDAL::replace( longName, "x-component of", "" );
+      name = MDAL::replace( name, "x-component", "" );
+      name = MDAL::replace( name, "x component of", "" );
+      name = MDAL::replace( name, "x component", "" );
+
+      name = MDAL::replace( name, "u-component of", "" );
+      name = MDAL::replace( name, "u-component", "" );
+      name = MDAL::replace( name, "u component of", "" );
+      name = MDAL::replace( name, "u component", "" );
+
+      name = MDAL::replace( name, "eastward component of", "" );
+      name = MDAL::replace( name, "eastward component", "" );
+      name = MDAL::replace( name, "eastward", "" );
+
+      name = MDAL::replace( name, "zonal component of", "" );
+      name = MDAL::replace( name, "zonal component", "" );
+      name = MDAL::replace( name, "zonal", "" );
+
+      name = MDAL::trim( name );
     }
-    else if ( MDAL::contains( longName, ", y-component" ) || MDAL::contains( longName, "v component of " ) )
+    else if ( MDAL::contains( longName, "y-component" ) ||
+              MDAL::contains( longName, "y component" ) ||
+              MDAL::contains( longName, "v-component" ) ||
+              MDAL::contains( longName, "v component" ) ||
+              MDAL::contains( longName, "northward" ) ||
+              MDAL::contains( longName, "meridional" ) )
     {
       *isVector = true;
       *isX = false;
-      name = MDAL::replace( longName, ", y-component", "" );
-      name = MDAL::replace( name, "v component of ", "" );
+      name = MDAL::replace( longName, "y-component of", "" );
+      name = MDAL::replace( name, "y-component", "" );
+      name = MDAL::replace( name, "y component of", "" );
+      name = MDAL::replace( name, "y component", "" );
+
+      name = MDAL::replace( name, "v-component of", "" );
+      name = MDAL::replace( name, "v-component", "" );
+      name = MDAL::replace( name, "v component of", "" );
+      name = MDAL::replace( name, "v component", "" );
+
+      name = MDAL::replace( name, "northward component of", "" );
+      name = MDAL::replace( name, "northward component", "" );
+      name = MDAL::replace( name, "northward", "" );
+
+      name = MDAL::replace( name, "meridional component of", "" );
+      name = MDAL::replace( name, "meridional component", "" );
+      name = MDAL::replace( name, "meridional", "" );
+
+      name = MDAL::trim( name );
     }
     else if ( MDAL::contains( longName, " magnitude" ) )
     {
