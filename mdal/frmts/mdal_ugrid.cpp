@@ -582,7 +582,8 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
          MDAL::contains( longName, "zonal" ) )
     {
       *isVector = true;
-      name = MDAL::replace( longName, "x-component of", "" );
+      name = MDAL::replace( longName, ", x-component", "" );
+      name = MDAL::replace( name, "x-component of", "" );
       name = MDAL::replace( name, "x-component", "" );
       name = MDAL::replace( name, "x component of", "" );
       name = MDAL::replace( name, "x component", "" );
@@ -611,7 +612,8 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
     {
       *isVector = true;
       *isX = false;
-      name = MDAL::replace( longName, "y-component of", "" );
+      name = MDAL::replace( longName, ", y-component", "" );
+      name = MDAL::replace( name, "y-component of", "" );
       name = MDAL::replace( name, "y-component", "" );
       name = MDAL::replace( name, "y component of", "" );
       name = MDAL::replace( name, "y component", "" );
