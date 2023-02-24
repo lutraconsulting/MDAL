@@ -60,7 +60,7 @@ TEST( MeshGdalNetCDFTest, OceanCurrents )
   int count = MDAL_D_valueCount( ds );
   ASSERT_EQ( 43621, count );
 
-  double value = getValueX( ds, 144 );
+  double value = getValueY( ds, 144 );
   EXPECT_DOUBLE_EQ( -0.4306640625, value );
 
   double min, max;
