@@ -115,7 +115,11 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.18.0  | 0.8.0   | Dynamic drivers, DFSU format |
 | 3.20.0  | 0.8.1   | |
 | 3.22.0  | 0.9.x   | DFS2, DFSU 3D, PLY write |
-| 3.24.0  | 1.0.x   | TBD |
+| 3.24.0  | 0.9.4   | |
+| 3.24.1  | 0.9.90  | H2i format |
+| 3.28.0  | 1.0.0   | write dataset capability for UGRID format |
+| 3.28.2  | 1.0.1   | |
+
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
