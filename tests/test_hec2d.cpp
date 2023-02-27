@@ -79,8 +79,6 @@ TEST( MeshHec2dTest, simpleArea )
   MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
   EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
 
-
-
   ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
   MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
@@ -619,6 +617,81 @@ TEST( MeshHec2dTest, hec_6_1 )
   EXPECT_TRUE( compareDurationInHours( 2.0833333333333335, time ) );
 
   EXPECT_TRUE( compareReferenceTime( g, "1900-01-02T00:00:00" ) );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshHec2dTest, geometryFile )
+{
+  std::string path = test_file( "/hec2d/geometry_file/simple.g01.hdf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "HEC2D:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  // ///////////
+  // Vertices
+  // ///////////
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( 1900, v_count );
+
+  // ///////////
+  // Faces
+  // ///////////
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( 1746, f_count );
+
+  // ///////////
+  // Dataset groups
+  // ///////////
+
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  // Bed Elevation
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Bed Elevation" ), std::string( name ) );
+
+  bool scalar = MDAL_G_hasScalarData( g );
+  EXPECT_EQ( true, scalar );
+
+  MDAL_DataLocation dataLocation = MDAL_G_dataLocation( g );
+  EXPECT_EQ( dataLocation, MDAL_DataLocation::DataOnFaces );
+
+  ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  bool valid = MDAL_D_isValid( ds );
+  EXPECT_EQ( true, valid );
+
+  EXPECT_FALSE( MDAL_D_hasActiveFlagCapability( ds ) );
+
+  int count = MDAL_D_valueCount( ds );
+  ASSERT_EQ( f_count, count );
+
+  double value = getValue( ds, 0 );
+  EXPECT_TRUE( MDAL::equals( 3.55005, value, 0.001 ) );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_TRUE( MDAL::equals( 0.0078125, min, 0.001 ) );
+  EXPECT_TRUE( MDAL::equals( 3.55005, max, 0.001 ) );
+
+  std::string projection = std::string( MDAL_M_projection( m ) );
+  std::cout << projection << std::endl;
+  std::string projectionExpected( "PROJCS[\"WGS_1984_UTM_Zone_20N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\","
+                                  "SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],"
+                                  "UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],"
+                                  "PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],"
+                                  "PARAMETER[\"Central_Meridian\",-63.0],PARAMETER[\"Scale_Factor\",0.9996],"
+                                  "PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]" );
+  int strCmp = std::strcmp( projectionExpected.c_str(), projection.c_str() );
+  EXPECT_EQ( strCmp,  0 );
 
   MDAL_CloseMesh( m );
 }
