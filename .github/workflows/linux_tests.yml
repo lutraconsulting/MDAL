@@ -2,7 +2,7 @@ name: Linux Tests
 on: [push, pull_request]
 jobs:
   linux_tests:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout MDAL
         uses: actions/checkout@v2

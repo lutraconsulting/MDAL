@@ -111,7 +111,7 @@ bool MDAL::DriverGdal::initVertices( Vertices &vertices )
   return is_longitude_shifted;
 }
 
-void MDAL::DriverGdal::initFaces( Vertices &Vertexs, Faces &Faces, bool is_longitude_shifted )
+void MDAL::DriverGdal::initFaces( const Vertices &Vertexs, Faces &Faces, bool is_longitude_shifted )
 {
   int reconnected = 0;
   unsigned int mXSize = meshGDALDataset()->mXSize;
@@ -587,7 +587,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverGdal::load( const std::string &fileName,
       }
     }
 
-    for ( std::shared_ptr<MDAL::GdalDataset> ds : datasets )
+    for ( std::shared_ptr<MDAL::GdalDataset> &ds : datasets )
       if ( gdal_datasets.empty() || meshes_equals( meshGDALDataset(), ds.get() ) )
         gdal_datasets.push_back( ds );
 
