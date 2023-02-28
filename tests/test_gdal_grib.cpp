@@ -211,7 +211,11 @@ TEST( MeshGdalGribTest, ScalarFileWithUComponent )
   ASSERT_EQ( 115680, count );
 
   double value = getValue( ds, 1600 );
+#if defined( GDAL_VERSION_NUM ) && GDAL_VERSION_NUM< GDAL_COMPUTE_VERSION(3,4,0) //https://github.com/lutraconsulting/MDAL/issues/391
   EXPECT_DOUBLE_EQ( -0.818756103515625, value );
+# else
+  EXPECT_DOUBLE_EQ( -0.535552978515625, value );
+#endif
 
   EXPECT_TRUE( compareReferenceTime( g, "2018-10-01T00:00:00" ) );
 

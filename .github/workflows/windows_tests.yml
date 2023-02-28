@@ -3,21 +3,17 @@ on: [push, pull_request]
 
 jobs:
   windows_tests:
-    runs-on: windows-2022
+    runs-on: windows-latest
 
     steps:
       - name: Checkout MDAL
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        
+      - name: config env variables
+        run:  echo "OSGEO4W_ROOT=${{github.workspace}}\OSGEO4W" >> $env:GITHUB_ENV
 
-      - name: Choco install qgis
-        uses: crazy-max/ghaction-chocolatey@v1
-        with:
-          args: install qgis -y --verbose --version=3.16.3
-
-      - name: Move SDK to OSGeo4W folder
-        shell: pwsh
-        run: |
-            mv "C:\Program Files\QGIS 3.16" "C:\OSGeo4W64"
+      - name: load OSGEO dependencies
+        run: ${{github.workspace}}/scripts/load_osgeo.ps1
 
       - name: Set compiler environment
         shell: cmd
@@ -38,7 +34,7 @@ jobs:
             cd $env:GITHUB_WORKSPACE
             mkdir build
             cd build
-            exec { cmake -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Rel  -DENABLE_TESTS=ON  -DEXTERNAL_DRIVER_DHI_DFS=OFF -DNETCDF_PREFIX="C:\OSGeo4W64" -DHDF5_ROOT="C:\OSGeo4W64" -DGDAL_DIR="C:\OSGeo4W64" -DGDAL_LIBRARY="C:\OSGeo4W64\lib\gdal_i.lib" -DGDAL_INCLUDE_DIR="C:\OSGeo4W64\include" -DLIBXML2_LIBRARIES="C:\OSGeo4W64\lib\libxml2.lib" -DLIBXML2_INCLUDE_DIR="C:\OSGeo4W64\include\libxml2" ..  }
+            exec { cmake -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Rel  -DENABLE_TESTS=ON  -DEXTERNAL_DRIVER_DHI_DFS=OFF -DNETCDF_PREFIX=${{env.OSGEO4W_ROOT}} -DHDF5_ROOT=${{env.OSGEO4W_ROOT}} -DGDAL_DIR=${{env.OSGEO4W_ROOT}} -DGDAL_LIBRARY="${{env.OSGEO4W_ROOT}}\lib\gdal_i.lib" -DGDAL_INCLUDE_DIR="${{env.OSGEO4W_ROOT}}\include" -DLIBXML2_LIBRARIES="${{env.OSGEO4W_ROOT}}\lib\libxml2.lib" -DLIBXML2_INCLUDE_DIR="${{env.OSGEO4W_ROOT}}\include\libxml2" ..  }
             exec { cmake --build . }
 
       - name: Run tests
@@ -52,7 +48,7 @@ jobs:
                 if ($LastExitCode -ne 0) { exit $LastExitCode }
             }
 
-            $env:PATH="C:\OSGeo4W64\bin;$env:GITHUB_WORKSPACE\build\tool\Debug\;$env:GITHUB_WORKSPACE\build\mdal\Debug;$env:PATH"
+            $env:PATH="${{env.OSGEO4W_ROOT}}\bin;$env:GITHUB_WORKSPACE\build\tool\Debug\;$env:GITHUB_WORKSPACE\build\mdal\Debug;$env:PATH"
             $env:MDAL_DRIVER_PATH="$env:GITHUB_WORKSPACE\build\external_drivers\minimal_example\Debug"
             cd $env:GITHUB_WORKSPACE\build
             exec { ctest -VV --exclude-regex "mdalinfo_test" }

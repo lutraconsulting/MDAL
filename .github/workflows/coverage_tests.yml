@@ -3,7 +3,7 @@ on: [push, pull_request]
 jobs:
   coverage_tests:
     if: github.repository == 'lutraconsulting/MDAL'
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout MDAL
         uses: actions/checkout@v2
