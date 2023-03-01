@@ -119,6 +119,7 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.24.1  | 0.9.90  | H2i format |
 | 3.28.0  | 1.0.0   | write dataset capability for UGRID format |
 | 3.28.2  | 1.0.1   | |
+| 3.28.4  | 1.0.2   | |
 
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
