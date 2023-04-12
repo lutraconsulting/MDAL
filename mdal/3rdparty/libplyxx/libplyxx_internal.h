@@ -344,6 +344,7 @@ namespace libply
 
       std::vector<Element> definitions() const;
       Metadata metadata;
+      File::Format format;
       //void setElementInserter(std::string elementName, IElementInserter* inserter);
       void setElementReadCallback( std::string elementName, ElementReadCallback &readCallback );
       void read();
@@ -358,7 +359,6 @@ namespace libply
 
     private:
       std::string m_filename;
-      File::Format m_format;
       std::streamsize m_dataOffset;
       textio::LineReader m_lineReader;
       textio::Tokenizer m_lineTokenizer;

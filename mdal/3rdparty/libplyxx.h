@@ -229,6 +229,7 @@ namespace libply
 
       ElementsDefinition definitions() const;
       Metadata metadata() const;
+
       void setElementReadCallback( std::string elementName, ElementReadCallback &readCallback );
       void read();
 
@@ -239,6 +240,8 @@ namespace libply
         BINARY_LITTLE_ENDIAN,
         BINARY_BIG_ENDIAN
       };
+
+      std::string format() const;
 
     private:
       std::string m_filename;

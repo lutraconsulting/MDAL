@@ -99,6 +99,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) { return nullptr; }
   const libply::ElementsDefinition &definitions = file.definitions();
   const libply::Metadata &metadata = file.metadata();
+  const std::string &format = file.format();
   for ( const libply::Element &element : definitions )
   {
     if ( element.name == "vertex" )
@@ -315,6 +316,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   {
     mesh->setSourceCrs( metadata.at( "crs" ) );
   }
+
+  mesh->setMetadata( "format", format);
 
 
   // Add Bed Elevation
@@ -577,15 +580,42 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
     }
   }
 
+  libply::Metadata meta;
 
-  libply::FileOut file( fileName, libply::File::Format::ASCII );
+  meta.emplace("crs", mesh->crs());
+  MDAL::Metadata metadata = mesh->metadata;
+  libply::File::Format format = libply::File::Format::BINARY_LITTLE_ENDIAN;
+
+  const std::unordered_map<std::string, libply::File::Format> FORMAT_MAP =
+  {
+    { "ascii", libply::File::Format::ASCII },
+    { "binary_big_endian", libply::File::Format::BINARY_BIG_ENDIAN },
+    { "binary_little_endian", libply::File::Format::BINARY_LITTLE_ENDIAN }
+  };
+
+  for( auto it = metadata.begin(); it != metadata.end(); ++it) {
+    std::pair< std::string, std::string > item = *it;
+    if (item.first == "format") 
+    {
+      if (FORMAT_MAP.find(item.second) != FORMAT_MAP.end())
+      {
+        format = FORMAT_MAP.at(item.second);
+      }
+    } 
+    else
+    {
+      meta.emplace(item.first, item.second);
+    }
+  }
+
+  libply::FileOut file( fileName, format );
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) return;
 
   libply::ElementsDefinition definitions;
   std::vector<libply::Property> vproperties;
-  vproperties.emplace_back( "X", libply::Type::COORDINATE, false );
-  vproperties.emplace_back( "Y", libply::Type::COORDINATE, false );
-  vproperties.emplace_back( "Z", libply::Type::COORDINATE, false );
+  vproperties.emplace_back( "x", libply::Type::COORDINATE, false );
+  vproperties.emplace_back( "y", libply::Type::COORDINATE, false );
+  vproperties.emplace_back( "z", libply::Type::COORDINATE, false );
   for ( std::shared_ptr<DatasetGroup> group : vgroups )
   {
     vproperties.emplace_back( group->name(), libply::Type::FLOAT64, ! group->isScalar() );

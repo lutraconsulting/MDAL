@@ -70,6 +70,11 @@ namespace libply
     return m_parser->metadata;
   }
 
+  std::string File::format() const
+  {
+    return formatString(m_parser->format);
+  }
+
 
   void File::setElementReadCallback( std::string elementName, ElementReadCallback &readCallback )
   {
@@ -205,15 +210,15 @@ namespace libply
     line = m_lineReader.getline();
     if ( line == "format ascii 1.0" )
     {
-      m_format = File::Format::ASCII;
+      format = File::Format::ASCII;
     }
     else if ( line == "format binary_little_endian 1.0" )
     {
-      m_format = File::Format::BINARY_LITTLE_ENDIAN;
+      format = File::Format::BINARY_LITTLE_ENDIAN;
     }
     else if ( line == "format binary_big_endian 1.0" )
     {
-      m_format = File::Format::BINARY_BIG_ENDIAN;
+      format = File::Format::BINARY_BIG_ENDIAN;
     }
     else
     {
@@ -285,7 +290,7 @@ namespace libply
 
     std::ifstream &filestream = m_lineReader.filestream();
 
-    if ( m_format == File::Format::BINARY_BIG_ENDIAN || m_format == File::Format::BINARY_LITTLE_ENDIAN )
+    if ( format == File::Format::BINARY_BIG_ENDIAN || format == File::Format::BINARY_LITTLE_ENDIAN )
     {
       filestream.clear();
       filestream.seekg( m_dataOffset );
@@ -303,7 +308,7 @@ namespace libply
         buffer = buffers[elementIndex];
       }
 
-      if ( m_format == File::Format::ASCII )
+      if ( format == File::Format::ASCII )
       {
         auto line = m_lineReader.getline();
         parseLine( line, elementDefinition, *buffer );
@@ -642,6 +647,10 @@ namespace libply
 
     file << "ply" << std::endl;
     file << "format " << formatString( m_format ) << " 1.0" << std::endl;
+    for( const std::pair<const std::string, std::string>& item : metadata )
+    {
+      file << "comment " << item.first << " : " << item.second; 
+    }
     for ( const auto &def : m_definitions )
     {
       writeElementDefinition( file, def );
