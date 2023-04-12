@@ -222,7 +222,7 @@ namespace libply
 
   inline std::stringstream &write_convert_DOUBLE( IProperty &property, std::stringstream &ss )
   {
-    ss << MDAL::doubleToString( static_cast<double>( property ) );
+    ss << MDAL::doubleToString( static_cast<double>( property ), 12);
     return ss;
   }
 
