@@ -1,6 +1,6 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2020 Runette Software Ltd.
+ Copyright (C) 2020 - 23 Runette Software Ltd.
 */
 
 #include <stddef.h>
@@ -609,6 +609,7 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
   }
 
   libply::FileOut file( fileName, format );
+  file.metadata = meta;
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) return;
 
   libply::ElementsDefinition definitions;
