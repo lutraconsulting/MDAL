@@ -317,7 +317,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
     mesh->setSourceCrs( metadata.at( "crs" ) );
   }
 
-  mesh->setMetadata( "format", format);
+  mesh->setMetadata( "format", format );
 
 
   // Add Bed Elevation
@@ -582,7 +582,7 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
 
   libply::Metadata meta;
 
-  meta.emplace("crs", mesh->crs());
+  meta.emplace("crs", mesh->crs() );
   MDAL::Metadata metadata = mesh->metadata;
   libply::File::Format format = libply::File::Format::BINARY_LITTLE_ENDIAN;
 
@@ -593,18 +593,18 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
     { "binary_little_endian", libply::File::Format::BINARY_LITTLE_ENDIAN }
   };
 
-  for( auto it = metadata.begin(); it != metadata.end(); ++it) {
+  for ( auto it = metadata.begin(); it != metadata.end(); ++it) {
     std::pair< std::string, std::string > item = *it;
     if (item.first == "format") 
     {
-      if (FORMAT_MAP.find(item.second) != FORMAT_MAP.end())
+      if ( FORMAT_MAP.find(item.second) != FORMAT_MAP.end() )
       {
-        format = FORMAT_MAP.at(item.second);
+        format = FORMAT_MAP.at( item.second );
       }
     } 
     else
     {
-      meta.emplace(item.first, item.second);
+      meta.emplace( item.first, item.second );
     }
   }
 
