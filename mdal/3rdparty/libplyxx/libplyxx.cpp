@@ -567,7 +567,7 @@ namespace libply
 
     const std::vector<PropertyDefinition> properties = elementDefinition.properties;
     size_t e_idx = 0;
-    for ( PropertyDefinition p : properties )
+    for ( const PropertyDefinition &p : properties )
     {
       if ( !p.isList )
       {
