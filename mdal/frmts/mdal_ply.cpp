@@ -595,7 +595,7 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
 
   for ( auto it = metadata.cbegin(); it != metadata.cend(); ++it )
   {
-    std::pair< std::string, std::string > item = *it;
+    const std::pair< std::string, std::string > &item = *it;
     if ( item.first == "format" )
     {
       if ( FORMAT_MAP.find( item.second ) != FORMAT_MAP.end() )
