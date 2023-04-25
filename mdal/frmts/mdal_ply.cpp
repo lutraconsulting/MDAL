@@ -593,7 +593,7 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
     { "binary_little_endian", libply::File::Format::BINARY_LITTLE_ENDIAN }
   };
 
-  for ( auto it = metadata.begin(); it != metadata.end(); ++it )
+  for ( auto it = metadata.cbegin(); it != metadata.cend(); ++it )
   {
     std::pair< std::string, std::string > item = *it;
     if ( item.first == "format" )
