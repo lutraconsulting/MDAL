@@ -583,7 +583,7 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
   libply::Metadata meta;
 
   meta.emplace( "crs", mesh->crs() );
-  MDAL::Metadata metadata = mesh->metadata;
+  const MDAL::Metadata &metadata = mesh->metadata;
   libply::File::Format format = libply::File::Format::BINARY_LITTLE_ENDIAN;
 
   const std::unordered_map<std::string, libply::File::Format> FORMAT_MAP =
