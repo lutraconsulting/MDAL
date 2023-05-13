@@ -578,7 +578,8 @@ TEST( MeshPlyInvTest, all_features_inv )
 
 TEST( MeshPlyTest, all_features_binary )
 {
-  std::string path = test_file( "/ply/all_features_binary.ply" );
+  std::string paths[2] = { test_file( "/ply/all_features_binary.ply" ), test_file( "/ply/all_features_binary_be.ply" ) };
+  for ( std::string path : paths ) {
   EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "PLY:\"" + path + "\"" );
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
@@ -849,6 +850,7 @@ TEST( MeshPlyTest, all_features_binary )
   value = getValueY( ds, 0 );
   EXPECT_DOUBLE_EQ( 102, value );
   MDAL_CloseMesh( m );
+  }
 }
 
 // test the alternative element order

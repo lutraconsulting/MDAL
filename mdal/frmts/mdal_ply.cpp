@@ -586,7 +586,7 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
   const MDAL::Metadata &metadata = mesh->metadata;
   libply::File::Format format = libply::File::Format::BINARY_LITTLE_ENDIAN;
 
-  const std::unordered_map<std::string, libply::File::Format> FORMAT_MAP =
+  const std::unordered_map<std::string, libply::File::Format> format_map =
   {
     { "ascii", libply::File::Format::ASCII },
     { "binary_big_endian", libply::File::Format::BINARY_BIG_ENDIAN },
@@ -598,9 +598,9 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
     const std::pair< std::string, std::string > &item = *it;
     if ( item.first == "format" )
     {
-      if ( FORMAT_MAP.find( item.second ) != FORMAT_MAP.end() )
+      if ( format_map.find( item.second ) != format_map.end() )
       {
-        format = FORMAT_MAP.at( item.second );
+        format = format_map.at( item.second );
       }
     }
     else

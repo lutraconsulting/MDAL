@@ -51,6 +51,9 @@ SOFTWARE.
 #include <string>
 #include <iostream>
 
+#define BIG_ENDIAN 1
+#define LITTLE_ENDIAN 0
+
 namespace libply
 {
   File::File( const std::string &filename )
@@ -320,7 +323,7 @@ namespace libply
       }
       else
       {
-        readBinaryElement( filestream, elementDefinition, *buffer );
+        readBinaryElement( filestream, elementDefinition, *buffer, format );
       }
 
       readCallback( *buffer );
@@ -368,7 +371,7 @@ namespace libply
     }
   }
 
-  void FileParser::readBinaryElement( std::ifstream &fs, const ElementDefinition &elementDefinition, ElementBuffer &elementBuffer )
+  void FileParser::readBinaryElement( std::ifstream &fs, const ElementDefinition &elementDefinition, ElementBuffer &elementBuffer, File::Format format )
   {
     const auto &properties = elementDefinition.properties;
     const unsigned int MAX_PROPERTY_SIZE = 8;
@@ -377,12 +380,20 @@ namespace libply
 
     for ( PropertyDefinition p : properties )
     {
+      uint32_t endian;
+      if ( format == File::Format::BINARY_LITTLE_ENDIAN)
+      {
+        endian = LITTLE_ENDIAN;
+      } else 
+      {
+        endian = BIG_ENDIAN;
+      }
       if ( !p.isList )
       {
         if ( e_idx == elementBuffer.size() ) return; //TODO throw an error
         const auto size = TYPE_SIZE_MAP.at( p.type );
         fs.read( buffer, size );
-        p.castFunction( buffer, elementBuffer[e_idx] );
+        p.castFunction( buffer, elementBuffer[e_idx], endian );
         e_idx++;
       }
       else
@@ -401,7 +412,7 @@ namespace libply
         for ( size_t i = 0; i < listLength; i++ )
         {
           fs.read( buffer, size );
-          castFunction( buffer, lp->value( i ) );
+          castFunction( buffer, lp->value( i ), endian );
         }
         e_idx++;
       }
@@ -560,10 +571,20 @@ namespace libply
     file << '\n';
   }
 
-  void writeBinaryProperties( std::ofstream &file, ElementBuffer &buffer, const ElementDefinition &elementDefinition )
+  void writeBinaryProperties( std::ofstream &file, ElementBuffer &buffer, const ElementDefinition &elementDefinition, File::Format format )
   {
     const unsigned int MAX_PROPERTY_SIZE = 8;
     char write_buffer[MAX_PROPERTY_SIZE];
+
+    uint32_t endian;
+
+    if ( format == File::Format::BINARY_LITTLE_ENDIAN )
+    {
+      endian = LITTLE_ENDIAN;
+    } else
+    {
+      endian = BIG_ENDIAN;
+    }
 
     const std::vector<PropertyDefinition> properties = elementDefinition.properties;
     size_t e_idx = 0;
@@ -573,7 +594,7 @@ namespace libply
       {
         auto &cast = p.writeCastFunction;
         size_t write_size;
-        cast( buffer[e_idx], write_buffer, write_size );
+        cast( buffer[e_idx], write_buffer, write_size, endian );
         file.write( reinterpret_cast<char *>( write_buffer ), write_size );
         e_idx++;
       }
@@ -586,7 +607,7 @@ namespace libply
         for ( size_t i = 0; i < lp->size(); i++ )
         {
           size_t write_size;
-          cast( lp->value( i ), write_buffer, write_size );
+          cast( lp->value( i ), write_buffer, write_size, endian );
           file.write( reinterpret_cast<char *>( write_buffer ), write_size );
         }
         e_idx++;
@@ -603,7 +624,7 @@ namespace libply
     }
     else
     {
-      writeBinaryProperties( file, buffer, elementDefinition );
+      writeBinaryProperties( file, buffer, elementDefinition, format );
     }
   }
 
@@ -611,7 +632,7 @@ namespace libply
   {
     const size_t size = elementDefinition.size;
     ElementBuffer buffer( elementDefinition );
-    //buffer.reset( elementDefinition.properties.size() );
+
     for ( size_t i = 0; i < size; ++i )
     {
       writeProperties( file, buffer, i, elementDefinition, format, callback );
