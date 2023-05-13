@@ -305,13 +305,13 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   mesh->setVertices( std::move( vertices ) );
   mesh->setEdges( std::move( edges ) );
 
-  for ( auto &it: metadata ) 
+  for ( auto &it : metadata ) 
   {
     if ( it.first == "crs" )
     {
       mesh->setSourceCrs( it.second );
     } 
-    else 
+    else
     {
       mesh->setMetadata( it.first, it.second );
     }
