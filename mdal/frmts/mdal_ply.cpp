@@ -1,6 +1,6 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2020 Runette Software Ltd.
+ Copyright (C) 2020 - 23 Runette Software Ltd.
 */
 
 #include <stddef.h>
@@ -99,6 +99,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) { return nullptr; }
   const libply::ElementsDefinition &definitions = file.definitions();
   const libply::Metadata &metadata = file.metadata();
+  const std::string &format = file.format();
   for ( const libply::Element &element : definitions )
   {
     if ( element.name == "vertex" )
@@ -292,14 +293,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
 
   file.read();
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) { return nullptr; }
-  if ( vertices.size() != vertexCount ||
-       faces.size() != faceCount ||
-       edges.size() != edgeCount
-     )
-  {
-    MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "Incomplete Mesh" );
-    return nullptr;
-  }
 
   std::unique_ptr< MemoryMesh > mesh(
     new MemoryMesh(
@@ -311,10 +304,20 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   mesh->setFaces( std::move( faces ) );
   mesh->setVertices( std::move( vertices ) );
   mesh->setEdges( std::move( edges ) );
-  if ( metadata.find( "crs" ) != metadata.end() )
+
+  for ( auto &it : metadata )
   {
-    mesh->setSourceCrs( metadata.at( "crs" ) );
+    if ( it.first == "crs" )
+    {
+      mesh->setSourceCrs( it.second );
+    }
+    else
+    {
+      mesh->setMetadata( it.first, it.second );
+    }
   }
+
+  mesh->setMetadata( "format", format );
 
 
   // Add Bed Elevation
@@ -577,15 +580,44 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
     }
   }
 
+  libply::Metadata meta;
 
-  libply::FileOut file( fileName, libply::File::Format::ASCII );
+  meta.emplace( "crs", mesh->crs() );
+  const MDAL::Metadata &metadata = mesh->metadata;
+  libply::File::Format format = libply::File::Format::BINARY_LITTLE_ENDIAN;
+
+  const std::unordered_map<std::string, libply::File::Format> format_map =
+  {
+    { "ascii", libply::File::Format::ASCII },
+    { "binary_big_endian", libply::File::Format::BINARY_BIG_ENDIAN },
+    { "binary_little_endian", libply::File::Format::BINARY_LITTLE_ENDIAN }
+  };
+
+  for ( auto it = metadata.cbegin(); it != metadata.cend(); ++it )
+  {
+    const std::pair< std::string, std::string > &item = *it;
+    if ( item.first == "format" )
+    {
+      if ( format_map.find( item.second ) != format_map.end() )
+      {
+        format = format_map.at( item.second );
+      }
+    }
+    else
+    {
+      meta.emplace( item.first, item.second );
+    }
+  }
+
+  libply::FileOut file( fileName, format );
+  file.metadata = meta;
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) return;
 
   libply::ElementsDefinition definitions;
   std::vector<libply::Property> vproperties;
-  vproperties.emplace_back( "X", libply::Type::COORDINATE, false );
-  vproperties.emplace_back( "Y", libply::Type::COORDINATE, false );
-  vproperties.emplace_back( "Z", libply::Type::COORDINATE, false );
+  vproperties.emplace_back( "x", libply::Type::COORDINATE, false );
+  vproperties.emplace_back( "y", libply::Type::COORDINATE, false );
+  vproperties.emplace_back( "z", libply::Type::COORDINATE, false );
   for ( std::shared_ptr<DatasetGroup> group : vgroups )
   {
     vproperties.emplace_back( group->name(), libply::Type::FLOAT64, ! group->isScalar() );
