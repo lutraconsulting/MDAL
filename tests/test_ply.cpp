@@ -13,7 +13,7 @@
 
 TEST( MeshPlyTest, WrongFiles )
 {
-  for ( int i = 0; i < 4; ++i )
+  for ( int i = 0; i < 6; ++i )
   {
     std::string fileName = test_file( "/ply/invalid/invalid" + std::to_string( i ) + ".ply" );
 
