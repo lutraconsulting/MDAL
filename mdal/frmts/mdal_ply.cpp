@@ -309,7 +309,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   {
     if ( it.first == "crs" )
     {
-       mesh->setSourceCrs( it.second );
+      mesh->setSourceCrs( it.second );
     } 
     else 
     {
