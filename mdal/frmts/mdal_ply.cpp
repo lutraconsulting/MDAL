@@ -293,14 +293,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
 
   file.read();
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) { return nullptr; }
-  if ( vertices.size() != vertexCount ||
-       faces.size() != faceCount ||
-       edges.size() != edgeCount
-     )
-  {
-    MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "Incomplete Mesh" );
-    return nullptr;
-  }
 
   std::unique_ptr< MemoryMesh > mesh(
     new MemoryMesh(
@@ -313,14 +305,15 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   mesh->setVertices( std::move( vertices ) );
   mesh->setEdges( std::move( edges ) );
 
-  for ( auto& it: metadata ) 
+  for ( auto &it: metadata ) 
   {
     if ( it.first == "crs" )
     {
        mesh->setSourceCrs( it.second );
-    } else 
+    } 
+    else 
     {
-      mesh->setMetadata(it.first, it.second);
+      mesh->setMetadata( it.first, it.second );
     }
   }
 
