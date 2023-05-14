@@ -24,7 +24,6 @@
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
 #include "libplyxx.h"
-#include "mdal_driver_manager.hpp"
 
 #define DRIVER_NAME "PLY"
 
@@ -82,10 +81,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   Edges edges( 0 );
   size_t maxSizeFace = 0;
 
-  size_t vertexCount = 0;
-  size_t faceCount = 0;
-  size_t edgeCount = 0;
-
   //data structures that will contain all of the datasets, categorised by vertex, face and edge datasets
   std::vector<std::vector<double>> vertexDatasets; // contains the data
   std::vector<std::pair<std::string, bool>> vProp2Ds; // contains the dataset name and a flag for scalar / vector
@@ -102,18 +97,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
   const std::string &format = file.format();
   for ( const libply::Element &element : definitions )
   {
-    if ( element.name == "vertex" )
-    {
-      vertexCount = element.size;
-    }
-    else if ( element.name == "face" )
-    {
-      faceCount = element.size;
-    }
-    else if ( element.name == "edge" )
-    {
-      edgeCount = element.size;
-    }
     for ( const libply::Property &property : element.properties )
     {
       if ( element.name == "vertex" &&
@@ -149,8 +132,6 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
     }
   }
 
-
-
   for ( const libply::Element &el : definitions )
   {
     if ( el.name == "vertex" )
@@ -175,13 +156,13 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           }
           else
           {
-            int dsIdx = getIndex( vProp2Ds, p.name );
+            int dsIdx = MDAL::toInt( getIndex( vProp2Ds, p.name ) );
             if ( vProp2Ds[ dsIdx ].second )
             {
               const std::string name = vProp2Ds[ dsIdx ].first;
               auto &vals = listProps.at( name );
               libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[i] );
-              vals.second.push_back( lp->size() );
+              vals.second.push_back( MDAL::toInt( lp->size() ) );
               for ( size_t j = 0; j < lp->size(); j++ )
               {
                 vals.first.push_back( lp->value( j ) );
@@ -225,13 +206,13 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           }
           else
           {
-            int dsIdx = getIndex( fProp2Ds, p.name );
+            int dsIdx =  MDAL::toInt( getIndex( fProp2Ds, p.name ) );
             if ( fProp2Ds[ dsIdx ].second )
             {
               const std::string name = fProp2Ds[ dsIdx ].first;
               auto &vals = listProps.at( name );
               libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[i] );
-              vals.second.push_back( lp->size() );
+              vals.second.push_back( MDAL::toInt( lp->size() ) );
               for ( size_t j = 0; j < lp->size(); j++ )
               {
                 vals.first.push_back( lp->value( j ) );
@@ -266,13 +247,13 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
           }
           else
           {
-            int dsIdx = getIndex( eProp2Ds, p.name );
+            int dsIdx = MDAL::toInt( getIndex( eProp2Ds, p.name ) );
             if ( eProp2Ds[ dsIdx ].second )
             {
               const std::string name = eProp2Ds[ dsIdx ].first;
               auto &vals = listProps.at( name );
               libply::ListProperty *lp = dynamic_cast<libply::ListProperty *>( &e[i] );
-              vals.second.push_back( lp->size() );
+              vals.second.push_back( MDAL::toInt( lp->size() ) );
               for ( size_t j = 0; j < lp->size(); j++ )
               {
                 vals.first.push_back( lp->value( j ) );
