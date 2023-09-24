@@ -1168,4 +1168,3 @@ bool MDAL::Library::loadLibrary()
 
   return d->mLibrary != nullptr;
 }
-
