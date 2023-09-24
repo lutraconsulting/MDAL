@@ -293,4 +293,3 @@ namespace MDAL
   };
 } // namespace MDAL
 #endif //MDAL_DATA_MODEL_HPP
-
