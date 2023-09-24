@@ -298,10 +298,16 @@ MDAL_EXPORT const char *MDAL_M_projection( MDAL_MeshH mesh );
 MDAL_EXPORT void MDAL_M_setProjection( MDAL_MeshH mesh, const char *projection );
 
 /**
- * Returns mesh extent in native projection
+ * Returns mesh 2D extent in native projection
  * Returns NaN on error
  */
 MDAL_EXPORT void MDAL_M_extent( MDAL_MeshH mesh, double *minX, double *maxX, double *minY, double *maxY );
+
+/**
+ * Returns mesh 3D extent in native projection
+ * Returns NaN on error
+ */
+MDAL_EXPORT void MDAL_M_extent3D( MDAL_MeshH mesh, double *minX, double *maxX, double *minY, double *maxY, double *minZ, double *maxZ );
 
 /**
  * Adds vertices to the mesh

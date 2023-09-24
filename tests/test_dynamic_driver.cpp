@@ -76,6 +76,16 @@ TEST( MeshDynamicDriverTest, openMesh )
   EXPECT_EQ( yMin, 2000 );
   EXPECT_EQ( yMax, 3000 );
 
+  double zMin, zMax;
+  MDAL_M_extent3D( m, &xMin, &xMax, &yMin, &yMax, &zMin, &zMax );
+
+  EXPECT_EQ( xMin, 1000 );
+  EXPECT_EQ( xMax, 3000 );
+  EXPECT_EQ( yMin, 2000 );
+  EXPECT_EQ( yMax, 3000 );
+  EXPECT_EQ( zMin, 0 );
+  EXPECT_EQ( zMax, 4 );
+
   std::string crs = MDAL_M_projection( m );
   EXPECT_EQ( crs, "EPSG::32620" );
 

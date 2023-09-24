@@ -160,6 +160,23 @@ size_t MDAL::MeshDynamicDriver::edgesCount() const
   return elementCount( mId, mMeshEdgeCountFunction, driverName() );
 }
 
+MDAL::BBox3D MDAL::MeshDynamicDriver::extent3D() const
+{
+  if ( mMeshExtent3DFunction )
+  {
+    double xMin, xMax, yMin, yMax, zMin, zMax;
+    mMeshExtent3DFunction( mId, &xMin, &xMax, &yMin, &yMax, &zMin, &zMax );
+    return BBox3D( xMin, xMax, yMin, yMax, zMin, zMax );
+  }
+
+  return BBox3D( std::numeric_limits<double>::quiet_NaN(),
+                 std::numeric_limits<double>::quiet_NaN(),
+                 std::numeric_limits<double>::quiet_NaN(),
+                 std::numeric_limits<double>::quiet_NaN(),
+                 std::numeric_limits<double>::quiet_NaN(),
+                 std::numeric_limits<double>::quiet_NaN() );
+}
+
 MDAL::BBox MDAL::MeshDynamicDriver::extent() const
 {
   if ( mMeshExtentFunction )
@@ -301,6 +318,7 @@ bool MDAL::MeshDynamicDriver::loadSymbol()
   mMeshFaceCountFunction = mLibrary.getSymbol<int, int>( "MDAL_DRIVER_M_faceCount" ) ;
   mMeshEdgeCountFunction = mLibrary.getSymbol<int, int>( "MDAL_DRIVER_M_edgeCount" ) ;
   mMeshExtentFunction = mLibrary.getSymbol<void, int, double *, double *, double *, double *>( "MDAL_DRIVER_M_extent" );
+  mMeshExtent3DFunction = mLibrary.getSymbol<void, int, double *, double *, double *, double *, double *, double *>( "MDAL_DRIVER_M_extent3D" );
   mMeshProjectionFunction = mLibrary.getSymbol<const char *, int>( "MDAL_DRIVER_M_projection" ) ;
   mMeshDatasetGroupsCountFunction = mLibrary.getSymbol<int, int>( "MDAL_DRIVER_M_datasetGroupCount" );
   mDatasetgroupNameFunction = mLibrary.getSymbol<const char *, int, int>( "MDAL_DRIVER_G_groupName" );
@@ -319,6 +337,7 @@ bool MDAL::MeshDynamicDriver::loadSymbol()
        mMeshFaceCountFunction == nullptr ||
        mMeshEdgeCountFunction == nullptr ||
        mMeshExtentFunction == nullptr ||
+       mMeshExtent3DFunction == nullptr ||
        mMeshProjectionFunction == nullptr ||
        mMeshDatasetGroupsCountFunction == nullptr ||
        mDatasetgroupNameFunction == nullptr ||

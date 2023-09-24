@@ -68,6 +68,16 @@ TEST( MeshTinTest, ParaboloidFile )
   EXPECT_DOUBLE_EQ( -45.012860971759714, minY );
   EXPECT_DOUBLE_EQ( 43.78966755326303, maxY );
 
+  double minZ, maxZ;
+  MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+  EXPECT_DOUBLE_EQ( -43.822593540032521, minX );
+  EXPECT_DOUBLE_EQ( 44.986275235744273, maxX );
+  EXPECT_DOUBLE_EQ( -45.012860971759714, minY );
+  EXPECT_DOUBLE_EQ( 43.78966755326303, maxY );
+  EXPECT_DOUBLE_EQ( -0.22591210983442636, minZ );
+  EXPECT_DOUBLE_EQ( 42.845621375231524, maxZ );
+
+
   // Bed elevation dataset
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 

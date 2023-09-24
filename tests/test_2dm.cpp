@@ -245,6 +245,15 @@ TEST( Mesh2DMTest, QuadAndTriangleFile )
   EXPECT_DOUBLE_EQ( 2000, minY );
   EXPECT_DOUBLE_EQ( 3000, maxY );
 
+  double minZ, maxZ;
+  MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+  EXPECT_DOUBLE_EQ( 1000, minX );
+  EXPECT_DOUBLE_EQ( 3000, maxX );
+  EXPECT_DOUBLE_EQ( 2000, minY );
+  EXPECT_DOUBLE_EQ( 3000, maxY );
+  EXPECT_DOUBLE_EQ( 10, minZ );
+  EXPECT_DOUBLE_EQ( 50, maxZ );
+
   f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( f_v_count, 3 ); //triangle
   f_v = getFaceVerticesIndexAt( m, 1, 0 );
@@ -375,6 +384,15 @@ TEST( Mesh2DMTest, LinesFile )
   EXPECT_DOUBLE_EQ( 2000, minY );
   EXPECT_DOUBLE_EQ( 3000, maxY );
 
+  double minZ, maxZ;
+  MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+  EXPECT_DOUBLE_EQ( 1000, minX );
+  EXPECT_DOUBLE_EQ( 3000, maxX );
+  EXPECT_DOUBLE_EQ( 2000, minY );
+  EXPECT_DOUBLE_EQ( 3000, maxY );
+  EXPECT_DOUBLE_EQ( 20, minZ );
+  EXPECT_DOUBLE_EQ( 50, maxZ );
+
   std::vector<int> expectedStartVertexIndices = {1, 2, 3};
   std::vector<int> expectedEndVertexIndices = {2, 3, 4};
 
@@ -484,6 +502,15 @@ TEST( Mesh2DMTest, Basement3CellElevationTest )
   EXPECT_DOUBLE_EQ( 20, maxX );
   EXPECT_DOUBLE_EQ( 0, minY );
   EXPECT_DOUBLE_EQ( 5, maxY );
+
+  double minZ, maxZ;
+  MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+  EXPECT_DOUBLE_EQ( 0, minX );
+  EXPECT_DOUBLE_EQ( 20, maxX );
+  EXPECT_DOUBLE_EQ( 0, minY );
+  EXPECT_DOUBLE_EQ( 5, maxY );
+  EXPECT_DOUBLE_EQ( 0, minZ );
+  EXPECT_DOUBLE_EQ( 0, maxZ );
 
   f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( f_v_count, 3 ); //triangle
@@ -597,6 +624,15 @@ TEST( Mesh2DMTest, MultiMaterialMeshTest )
   EXPECT_DOUBLE_EQ( 15.0, maxX );
   EXPECT_DOUBLE_EQ( -10.0, minY );
   EXPECT_DOUBLE_EQ( 10.0, maxY );
+
+  double minZ, maxZ;
+  MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+  EXPECT_DOUBLE_EQ( -15.0, minX );
+  EXPECT_DOUBLE_EQ( 15.0, maxX );
+  EXPECT_DOUBLE_EQ( -10.0, minY );
+  EXPECT_DOUBLE_EQ( 10.0, maxY );
+  EXPECT_DOUBLE_EQ( 0, minZ );
+  EXPECT_DOUBLE_EQ( 15, maxZ );
 
   int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( f_v_count, 3 );

@@ -264,12 +264,13 @@ namespace MDAL
       size_t edgesCount() const override {return 0;}
       size_t facesCount() const override {return mReader->facesCount();}
       BBox extent() const override;
+      BBox3D extent3D() const override;
 
       void closeSource() override;
 
     private:
       mutable bool mIsExtentUpToDate = false;
-      mutable BBox mExtent;
+      mutable BBox3D mExtent;
 
       std::shared_ptr<SelafinFile> mReader;
 

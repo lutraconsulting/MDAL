@@ -472,9 +472,9 @@ std::string MDAL::rtrim( const std::string &s, const std::string &delimiters )
   }
 }
 
-MDAL::BBox MDAL::computeExtent( const MDAL::Vertices &vertices )
+MDAL::BBox3D MDAL::computeExtent( const MDAL::Vertices &vertices )
 {
-  BBox b;
+  BBox3D b;
 
   if ( vertices.empty() )
     return b;
@@ -483,6 +483,8 @@ MDAL::BBox MDAL::computeExtent( const MDAL::Vertices &vertices )
   b.maxX = vertices[0].x;
   b.minY = vertices[0].y;
   b.maxY = vertices[0].y;
+  b.minZ = vertices[0].z;
+  b.maxZ = vertices[0].z;
 
   for ( Vertices::size_type i = 0; i < vertices.size(); i++ )
   {
@@ -491,6 +493,8 @@ MDAL::BBox MDAL::computeExtent( const MDAL::Vertices &vertices )
     if ( n.x < b.minX ) b.minX = n.x;
     if ( n.y > b.maxY ) b.maxY = n.y;
     if ( n.y < b.minY ) b.minY = n.y;
+    if ( n.z > b.maxZ ) b.maxZ = n.z;
+    if ( n.z < b.minZ ) b.minZ = n.z;
   }
   return b;
 }

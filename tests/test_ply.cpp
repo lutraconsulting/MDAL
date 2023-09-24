@@ -85,6 +85,15 @@ TEST( MeshPlyTest, all_features )
   EXPECT_DOUBLE_EQ( 0, minY );
   EXPECT_DOUBLE_EQ( 20, maxY );
 
+  double minZ, maxZ;
+  MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+  EXPECT_DOUBLE_EQ( 0, minX );
+  EXPECT_DOUBLE_EQ( 10, maxX );
+  EXPECT_DOUBLE_EQ( 0, minY );
+  EXPECT_DOUBLE_EQ( 20, maxY );
+  EXPECT_DOUBLE_EQ( 0, minZ );
+  EXPECT_DOUBLE_EQ( 10, maxZ );
+
   // Bed elevation dataset
   ASSERT_EQ( 11, MDAL_M_datasetGroupCount( m ) );
 
@@ -359,6 +368,15 @@ TEST( MeshPlyInvTest, all_features_inv )
   EXPECT_DOUBLE_EQ( 10, maxX );
   EXPECT_DOUBLE_EQ( 0, minY );
   EXPECT_DOUBLE_EQ( 20, maxY );
+
+  double minZ, maxZ;
+  MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+  EXPECT_DOUBLE_EQ( 0, minX );
+  EXPECT_DOUBLE_EQ( 10, maxX );
+  EXPECT_DOUBLE_EQ( 0, minY );
+  EXPECT_DOUBLE_EQ( 20, maxY );
+  EXPECT_DOUBLE_EQ( 0, minZ );
+  EXPECT_DOUBLE_EQ( 10, maxZ );
 
   // Bed elevation dataset
   ASSERT_EQ( 11, MDAL_M_datasetGroupCount( m ) );
@@ -635,6 +653,15 @@ TEST( MeshPlyTest, all_features_binary )
     EXPECT_DOUBLE_EQ( 10, maxX );
     EXPECT_DOUBLE_EQ( 0, minY );
     EXPECT_DOUBLE_EQ( 20, maxY );
+
+    double minZ, maxZ;
+    MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+    EXPECT_DOUBLE_EQ( 0, minX );
+    EXPECT_DOUBLE_EQ( 10, maxX );
+    EXPECT_DOUBLE_EQ( 0, minY );
+    EXPECT_DOUBLE_EQ( 20, maxY );
+    EXPECT_DOUBLE_EQ( 0, minZ );
+    EXPECT_DOUBLE_EQ( 10, maxZ );
 
     // Bed elevation dataset
     ASSERT_EQ( 11, MDAL_M_datasetGroupCount( m ) );

@@ -193,6 +193,7 @@ namespace MDAL
       size_t edgesCount() const override;
       size_t facesCount() const override;
       BBox extent() const override;
+      BBox3D extent3D() const override;
 
       //! Set the projection from the source
       void setProjection();
@@ -211,6 +212,7 @@ namespace MDAL
       std::function<int ( int )> mMeshFaceCountFunction;
       std::function<int ( int )> mMeshEdgeCountFunction;
       std::function<void ( int, double *, double *, double *, double * )> mMeshExtentFunction;
+      std::function<void ( int, double *, double *, double *, double *, double *, double * )> mMeshExtent3DFunction;
       std::function<const char *( int )> mMeshProjectionFunction;
       std::function<int ( int )> mMeshDatasetGroupsCountFunction;
 

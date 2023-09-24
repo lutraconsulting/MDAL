@@ -78,6 +78,15 @@ TEST( MeshSLFTest, MalpassetGeometry )
   EXPECT_EQ( ymin, -2343.5400390625 );
   EXPECT_EQ( ymax, 6837.7900390625 );
 
+  double zmin, zmax;
+  MDAL_M_extent3D( m, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax );
+  EXPECT_EQ( xmin, 536.4716186523438 );
+  EXPECT_EQ( xmax, 17763.0703125 );
+  EXPECT_EQ( ymin, -2343.5400390625 );
+  EXPECT_EQ( ymax, 6837.7900390625 );
+  EXPECT_EQ( zmin, 0.0 );
+  EXPECT_EQ( zmax, 0.0 );
+
   // test face 1
   int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( 3, f_v_count ); //only triangles!
@@ -500,6 +509,15 @@ TEST( MeshSLFTest, DoublePrecision )
   EXPECT_EQ( ymin, 5420249.897850932 );
   EXPECT_EQ( ymax, 5420349.908870826 );
 
+  double zmin, zmax;
+  MDAL_M_extent3D( m, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax );
+  EXPECT_EQ( xmin, 440745.0614738668 );
+  EXPECT_EQ( xmax, 440755.0614738668 );
+  EXPECT_EQ( ymin, 5420249.897850932 );
+  EXPECT_EQ( ymax, 5420349.908870826 );
+  EXPECT_EQ( zmin, 0.0 );
+  EXPECT_EQ( zmax, 0.0 );
+
   // test face 1
   int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( 3, f_v_count ); //only triangles!
@@ -611,6 +629,15 @@ TEST( MeshSLFTest, JanetFile )
   EXPECT_EQ( ymin, 5420249.897850932 );
   EXPECT_EQ( ymax, 5420349.908870826 );
 
+  double zmin, zmax;
+  MDAL_M_extent3D( m, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax );
+  EXPECT_EQ( xmin, 440745.0614738668 );
+  EXPECT_EQ( xmax, 440755.0614738668 );
+  EXPECT_EQ( ymin, 5420249.897850932 );
+  EXPECT_EQ( ymax, 5420349.908870826 );
+  EXPECT_EQ( zmin, 0.0 );
+  EXPECT_EQ( zmax, 0.0 );
+
   // test face 1
   int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( 3, f_v_count ); //only triangles!
@@ -706,6 +733,15 @@ TEST( MeshSLFTest, FudaaFileDoublePrecision )
   EXPECT_EQ( ymin, 6474893.417353791 );
   EXPECT_EQ( ymax, 6476852.987668288 );
 
+  double zmin, zmax;
+  MDAL_M_extent3D( m, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax );
+  EXPECT_EQ( xmin, 515638.6801802338 );
+  EXPECT_EQ( xmax, 517986.85726595984 );
+  EXPECT_EQ( ymin, 6474893.417353791 );
+  EXPECT_EQ( ymax, 6476852.987668288 );
+  EXPECT_EQ( zmin, 0.0 );
+  EXPECT_EQ( zmax, 0.0 );
+
   // test face 1
   int f_v_count = getFaceVerticesCountAt( m, 1 );
   EXPECT_EQ( 3, f_v_count ); //only triangles!
@@ -800,6 +836,15 @@ TEST( MeshSLFTest, FudaaFileSimplePrecision )
   EXPECT_EQ( xmax, 517986.84375 );
   EXPECT_EQ( ymin, 6474893.5 );
   EXPECT_EQ( ymax, 6476853 );
+
+  double zmin, zmax;
+  MDAL_M_extent3D( m, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax );
+  EXPECT_EQ( xmin, 515638.6875 );
+  EXPECT_EQ( xmax, 517986.84375 );
+  EXPECT_EQ( ymin, 6474893.5 );
+  EXPECT_EQ( ymax, 6476853 );
+  EXPECT_EQ( zmin, 0.0 );
+  EXPECT_EQ( zmax, 0.0 );
 
   // test face 1
   int f_v_count = getFaceVerticesCountAt( m, 1 );

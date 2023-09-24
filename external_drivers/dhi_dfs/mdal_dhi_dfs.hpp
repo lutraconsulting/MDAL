@@ -320,8 +320,11 @@ class Mesh
     //! Returns wkt projection
     const std::string &projection() const { return mWktProjection; }
 
-    //! Returns mesh extent
+    //! Returns mesh 2D extent
     void extent( double *xMin, double *xMax, double *yMin, double *yMax ) const;
+
+    //! Returns mesh 3Dextent
+    void extent3D( double *xMin, double *xMax, double *yMin, double *yMax, double *zMin, double *zMax ) const;
 
     //**************** datasets *************
     int datasetGroupsCount() const;
@@ -352,6 +355,8 @@ class Mesh
     double mXmax = -std::numeric_limits<double>::max();
     double mYmin = std::numeric_limits<double>::max();
     double mYmax = -std::numeric_limits<double>::max();
+    double mZmin = std::numeric_limits<double>::max();
+    double mZmax = -std::numeric_limits<double>::max();
 
     std::vector<std::unique_ptr<DatasetGroup>> mDatasetGroups;
     int mTimeStepCount = 0;

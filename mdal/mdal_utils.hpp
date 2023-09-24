@@ -143,7 +143,7 @@ namespace MDAL
   std::string systemFileName( const std::string &utf8FileName );
 
   // extent
-  BBox computeExtent( const Vertices &vertices );
+  BBox3D computeExtent( const Vertices &vertices );
 
   // time
   //! Returns a delimiter to get time in hours

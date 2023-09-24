@@ -300,12 +300,14 @@ int MDAL_DRIVER_M_edgeCount( int meshId )
   return -1;
 }
 
-void MDAL_DRIVER_M_extent( int meshId, double *xMin, double *xMax, double *yMin, double *yMax )
+void MDAL_DRIVER_M_extent3D( int meshId, double *xMin, double *xMax, double *yMin, double *yMax, double *zMin, double *zMax )
 {
   *xMin = std::numeric_limits<double>::quiet_NaN();
   *xMax = std::numeric_limits<double>::quiet_NaN();
   *yMin = std::numeric_limits<double>::quiet_NaN();
   *yMax = std::numeric_limits<double>::quiet_NaN();
+  *zMin = std::numeric_limits<double>::quiet_NaN();
+  *zMax = std::numeric_limits<double>::quiet_NaN();
 
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
@@ -314,6 +316,8 @@ void MDAL_DRIVER_M_extent( int meshId, double *xMin, double *xMax, double *yMin,
     *xMax = -std::numeric_limits<double>::max();
     *yMin = std::numeric_limits<double>::max();
     *yMax = -std::numeric_limits<double>::max();
+    *zMin = std::numeric_limits<double>::max();
+    *zMax = -std::numeric_limits<double>::max();
 
     for ( const Vertex &v : mesh.vertices )
     {
@@ -325,8 +329,18 @@ void MDAL_DRIVER_M_extent( int meshId, double *xMin, double *xMax, double *yMin,
         *yMin = v.y;
       if ( v.y > *yMax )
         *yMax = v.y;
+      if ( v.z < *zMin )
+        *zMin = v.z;
+      if ( v.z > *zMax )
+        *zMax = v.z;
     }
   }
+}
+
+void MDAL_DRIVER_M_extent( int meshId, double *xMin, double *xMax, double *yMin, double *yMax )
+{
+  double zMin, zMax;
+  MDAL_DRIVER_M_extent3D( meshId, xMin, xMax, yMin, yMax, &zMin, &zMax );
 }
 
 const char *MDAL_DRIVER_M_projection( int meshId )

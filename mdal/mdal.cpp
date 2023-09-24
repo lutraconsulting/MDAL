@@ -322,6 +322,31 @@ const char *MDAL_M_projection( MDAL_MeshH mesh )
   return _return_str( m->crs() );
 }
 
+void MDAL_M_extent3D( MDAL_MeshH mesh, double *minX, double *maxX, double *minY, double *maxY, double *minZ, double *maxZ )
+{
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+    *minX = std::numeric_limits<double>::quiet_NaN();
+    *maxX = std::numeric_limits<double>::quiet_NaN();
+    *minY = std::numeric_limits<double>::quiet_NaN();
+    *maxY = std::numeric_limits<double>::quiet_NaN();
+    *minZ = std::numeric_limits<double>::quiet_NaN();
+    *maxZ = std::numeric_limits<double>::quiet_NaN();
+  }
+  else
+  {
+    MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+    const MDAL::BBox3D extent = m->extent3D();
+    *minX = extent.minX;
+    *maxX = extent.maxX;
+    *minY = extent.minY;
+    *maxY = extent.maxY;
+    *minZ = extent.minZ;
+    *maxZ = extent.maxZ;
+  }
+}
+
 void MDAL_M_extent( MDAL_MeshH mesh, double *minX, double *maxX, double *minY, double *maxY )
 {
   if ( !mesh )

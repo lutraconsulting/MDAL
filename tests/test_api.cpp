@@ -67,6 +67,10 @@ TEST( ApiTest, MeshApi )
   double a, b, c, d;
   MDAL_M_extent( nullptr, &a, &b, &c, &d );
   EXPECT_TRUE( std::isnan( a ) );
+  double e, f;
+  MDAL_M_extent3D( nullptr, &a, &b, &c, &d, &e, &f );
+  EXPECT_TRUE( std::isnan( a ) );
+  EXPECT_TRUE( std::isnan( f ) );
 
   EXPECT_EQ( MDAL_M_vertexCount( nullptr ), 0 );
   EXPECT_EQ( MDAL_M_faceCount( nullptr ), 0 );

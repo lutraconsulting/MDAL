@@ -759,12 +759,17 @@ std::unique_ptr<MDAL::MeshFaceIterator> MDAL::MeshSelafin::readFaces()
            new MeshSelafinFaceIterator( mReader ) );
 }
 
-MDAL::BBox MDAL::MeshSelafin::extent() const
+MDAL::BBox3D MDAL::MeshSelafin::extent3D() const
 {
   if ( mIsExtentUpToDate )
     return mExtent;
   calculateExtent();
   return mExtent;
+}
+
+MDAL::BBox MDAL::MeshSelafin::extent() const
+{
+  return extent3D().toBBox();
 }
 
 void MDAL::MeshSelafin::closeSource()

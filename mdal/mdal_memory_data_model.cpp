@@ -261,6 +261,11 @@ void MDAL::MemoryMesh::setEdges( MDAL::Edges edges )
 
 MDAL::BBox MDAL::MemoryMesh::extent() const
 {
+  return mExtent.toBBox();
+}
+
+MDAL::BBox3D MDAL::MemoryMesh::extent3D() const
+{
   return mExtent;
 }
 

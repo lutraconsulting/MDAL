@@ -121,6 +121,15 @@ void MDAL_DRIVER_M_extent( int meshId, double *xMin, double *xMax, double *yMin,
   }
 }
 
+void MDAL_DRIVER_M_extent3D( int meshId, double *xMin, double *xMax, double *yMin, double *yMax, double *zMin, double *zMax )
+{
+  if ( sMeshes.find( meshId ) != sMeshes.end() )
+  {
+    Mesh *mesh = sMeshes[meshId].get();
+    mesh->extent3D( xMin, xMax, yMin, yMax, zMin, zMax );
+  }
+}
+
 const char *MDAL_DRIVER_M_projection( int meshId )
 {
   if ( sMeshes.find( meshId ) != sMeshes.end() )

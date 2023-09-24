@@ -222,8 +222,7 @@ bool MeshDfsu::populate2DMeshFrame()
     }
     else if ( lstrcmp( itemName, "Z-coord" ) == 0 )
     {
-      double zMin, zMax;
-      fail = !setCoordinate( pvec, staticItem, itemDataType, 2, zMin, zMax );
+      fail = !setCoordinate( pvec, staticItem, itemDataType, 2, mZMin, mZmax );
     }
     else if ( lstrcmp( itemName, "Element id" ) == 0 )
     {

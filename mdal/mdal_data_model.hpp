@@ -31,6 +31,23 @@ namespace MDAL
     double maxY = -std::numeric_limits<double>::max();
   };
 
+  struct BBox3D
+  {
+    BBox3D() {}
+    BBox3D( double lx, double ux, double ly, double uy, double lz = std::numeric_limits<double>::quiet_NaN(), double uz = std::numeric_limits<double>::quiet_NaN() )
+      : minX( lx ), maxX( ux ), minY( ly ), maxY( uy ), minZ( lz ), maxZ( uz )
+    {}
+
+    double minX = std::numeric_limits<double>::max();
+    double maxX = -std::numeric_limits<double>::max();
+    double minY = std::numeric_limits<double>::max();
+    double maxY = -std::numeric_limits<double>::max();
+    double minZ = std::numeric_limits<double>::quiet_NaN();
+    double maxZ = -std::numeric_limits<double>::quiet_NaN();
+
+    BBox toBBox() const { return BBox( minX, maxX, minY, maxY ); }
+  };
+
   typedef struct StatisticsType
   {
     double minimum = std::numeric_limits<double>::quiet_NaN();
@@ -263,6 +280,7 @@ namespace MDAL
       virtual size_t edgesCount() const = 0;
       virtual size_t facesCount() const = 0;
       virtual BBox extent() const = 0;
+      virtual BBox3D extent3D() const = 0;
       std::string uri() const;
       std::string crs() const;
       size_t faceVerticesMaximumCount() const;

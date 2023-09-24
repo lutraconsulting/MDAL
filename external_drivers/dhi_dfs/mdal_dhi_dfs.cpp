@@ -52,6 +52,16 @@ int Mesh::connectivity( int startFaceIndex, int faceCount, int *faceOffsetsBuffe
   return static_cast<int>( effectiveFaceCount );
 }
 
+void Mesh::extent3D( double *xMin, double *xMax, double *yMin, double *yMax, double *zMin, double *zMax ) const
+{
+  *xMin = mXmin;
+  *xMax = mXmax;
+  *yMin = mYmin;
+  *yMax = mYmax;
+  *zMin = mZmin;
+  *zMax = mZmax;
+}
+
 void Mesh::extent( double *xMin, double *xMax, double *yMin, double *yMax ) const
 {
   *xMin = mXmin;

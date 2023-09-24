@@ -26,6 +26,15 @@ TEST( MeshGdalNetCDFTest, OceanCurrents )
   EXPECT_DOUBLE_EQ( -30, minY );
   EXPECT_DOUBLE_EQ( -15, maxY );
 
+  double minZ, maxZ;
+  MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+  EXPECT_DOUBLE_EQ( -51, minX );
+  EXPECT_DOUBLE_EQ( -31, maxX );
+  EXPECT_DOUBLE_EQ( -30, minY );
+  EXPECT_DOUBLE_EQ( -15, maxY );
+  EXPECT_DOUBLE_EQ( 0, minZ );
+  EXPECT_DOUBLE_EQ( 0, maxZ );
+
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
@@ -98,6 +107,15 @@ TEST( MeshGdalNetCDFTest, Indonesia )
     EXPECT_DOUBLE_EQ( -10, minY );
     EXPECT_DOUBLE_EQ( 6, maxY );
 
+    double minZ, maxZ;
+    MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+    EXPECT_DOUBLE_EQ( 100, minX );
+    EXPECT_DOUBLE_EQ( 150, maxX );
+    EXPECT_DOUBLE_EQ( -10, minY );
+    EXPECT_DOUBLE_EQ( 6, maxY );
+    EXPECT_DOUBLE_EQ( 0, minZ );
+    EXPECT_DOUBLE_EQ( 0, maxZ );
+
     ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
     MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
@@ -157,6 +175,15 @@ TEST( MeshGdalNetCDFTest, InconsistentDatasets )
   EXPECT_DOUBLE_EQ( 351970.45, maxX );
   EXPECT_DOUBLE_EQ( 6690971.55, minY );
   EXPECT_DOUBLE_EQ( 6690978.55, maxY );
+
+  double minZ, maxZ;
+  MDAL_M_extent3D( m, &minX, &maxX, &minY, &maxY, &minZ, &maxZ );
+  EXPECT_DOUBLE_EQ( 351958.45, minX );
+  EXPECT_DOUBLE_EQ( 351970.45, maxX );
+  EXPECT_DOUBLE_EQ( 6690971.55, minY );
+  EXPECT_DOUBLE_EQ( 6690978.55, maxY );
+  EXPECT_DOUBLE_EQ( 0, minZ );
+  EXPECT_DOUBLE_EQ( 0, maxZ );
 
   ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
 

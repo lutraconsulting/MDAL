@@ -89,7 +89,7 @@ bool MDAL::DriverGdal::initVertices( Vertices &vertices )
     }
   }
 
-  BBox extent = computeExtent( vertices );
+  BBox3D extent = computeExtent( vertices );
   // we want to detect situation when there is whole earth represented in dataset
   bool is_longitude_shifted = ( extent.minX >= 0.0 ) &&
                               ( fabs( extent.minX + extent.maxX - 360.0 ) < 1.0 ) &&
