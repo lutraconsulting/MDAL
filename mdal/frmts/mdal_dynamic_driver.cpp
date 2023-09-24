@@ -584,4 +584,3 @@ void MDAL::DatasetDynamicDriver::unloadData()
 
   mUnloadFunction( mMeshId, mGroupIndex, mDatasetIndex );
 }
-
