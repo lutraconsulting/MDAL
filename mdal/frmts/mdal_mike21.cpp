@@ -215,9 +215,21 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
           return nullptr;
         }
       }
+      else
+      {
+        MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "element header not in valid format." );
+        return nullptr;
+      }
 
     }
     lineNumber++;
+  }
+
+  // number of lines in file does not match number of vertices and faces specifed in first and element line 
+  if (lineNumber > 2 + vertexCount + faceCount)
+  {
+    MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "Number of lines in file does not fit with number of vertexes and faces specified." );
+    return nullptr;
   }
 
   in.clear();
