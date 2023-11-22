@@ -125,7 +125,7 @@ bool MDAL::DriverMike21::canReadMesh( const std::string &uri )
   std::ifstream in = MDAL::openInputFile( uri );
   std::string line;
 
-  if ( !MDAL::getHeaderLine( in, line ) || !canReadHeader( line ) ||  !MDAL::contains( filters(), MDAL::fileExtension( uri ) ))
+  if ( !MDAL::getHeaderLine( in, line ) || !canReadHeader( line ) ||  !MDAL::contains( filters(), MDAL::fileExtension( uri ) ) )
   {
     return false;
   }
