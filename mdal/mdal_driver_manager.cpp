@@ -11,6 +11,7 @@
 #include "frmts/mdal_binary_dat.hpp"
 #include "frmts/mdal_selafin.hpp"
 #include "frmts/mdal_esri_tin.hpp"
+#include "frmts/mdal_mike21.hpp"
 #include "frmts/mdal_dynamic_driver.hpp"
 #include "mdal_utils.hpp"
 
@@ -222,6 +223,7 @@ MDAL::DriverManager::DriverManager()
   mDrivers.push_back( std::make_shared<MDAL::DriverXmsTin>() );
   mDrivers.push_back( std::make_shared<MDAL::DriverSelafin>() );
   mDrivers.push_back( std::make_shared<MDAL::DriverEsriTin>() );
+  mDrivers.push_back( std::make_shared<MDAL::DriverMike21>() );
 
 #ifdef BUILD_PLY
   mDrivers.push_back( std::make_shared<MDAL::DriverPly>() );
