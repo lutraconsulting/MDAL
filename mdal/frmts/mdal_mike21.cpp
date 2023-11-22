@@ -264,6 +264,12 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
     if ( 0 < lineNumber && lineNumber < vertexCount + 1 )
     {
       chunks = _regex_split( MDAL::trim( line ) );
+      if (chunks.size() != 5)
+      {
+        MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "vertex line in invalid format." );
+        return nullptr;
+      }
+
       size_t nodeID = toSizeT( chunks[0] );
 
       if ( nodeID != 0 )
