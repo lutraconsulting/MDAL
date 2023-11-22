@@ -1,7 +1,8 @@
 /*
  MDAL - Mesh Data Abstraction Library (MIT License)
- Copyright (C) 2018 Peter Petrik (zilolv at gmail dot com)
+ Copyright (C) 2023 Lutra Consulting Ltd.
 */
+
 #include "gtest/gtest.h"
 
 //mdal
