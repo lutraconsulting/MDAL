@@ -97,7 +97,7 @@ size_t MDAL::MeshMike21::maximumVertexId() const
   }
 }
 
-MDAL::DriverMike21::DriverMike21():
+MDAL::DriverMike21::DriverMike21( ):
   Driver( DRIVER_NAME,
           "Mike21 Mesh File",
           "*.mesh",
@@ -132,7 +132,7 @@ bool MDAL::DriverMike21::canReadMesh( const std::string &uri )
   in.clear();
   in.seekg( 0, std::ios::beg );
 
-  size_t vertexCount = getVertexCount(line);
+  size_t vertexCount = getVertexCount( line );
   size_t faceCount = 0;
 
   size_t lineNumber = 0;
