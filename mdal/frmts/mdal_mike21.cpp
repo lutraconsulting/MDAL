@@ -205,13 +205,21 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
       auto matchResults = std::smatch{};
       if ( std::regex_search( line, matchResults, mRegexElementHeader ) )
       {
-        faceCount = MDAL::toSizeT( matchResults[1].str() );
-        maxVerticesPerFace = MDAL::toSizeT( matchResults[2].str() );
-        size_t meshType = MDAL::toSizeT( matchResults[3].str() );
-
-        if ( !( meshType == 21 || meshType == 25 ) )
+        if (matchResults.size() >= 4)
         {
-          MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "unknow mesh type." );
+          faceCount = MDAL::toSizeT( matchResults[1].str() );
+          maxVerticesPerFace = MDAL::toSizeT( matchResults[2].str() );
+          size_t meshType = MDAL::toSizeT( matchResults[3].str() );
+
+          if ( !( meshType == 21 || meshType == 25 ) )
+          {
+            MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "unknow mesh type." );
+            return nullptr;
+          }
+        }
+        else
+        {
+          MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "element header not in valid format." );
           return nullptr;
         }
       }
