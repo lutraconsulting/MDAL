@@ -26,22 +26,27 @@ namespace MDAL
                 );
       ~MeshMike21() override;
 
-
-      //! Mike21 may supports gaps in the vertex indexing,
-      //! but we use continuos array of vertices in MDAL
-      //! \param vertexID internal index/ID of the vertex that native format uses
-      //! \returns index of the vertex in the continuous array of vertices we returned by readVertices().
-      //!          For invalid vertexID it is returned index that is out of vertices array bounds.
+      /**
+       * Mike21 may supports gaps in the vertex indexing,
+       * but we use continuos array of vertices in MDAL
+       * \param vertexID internal index/ID of the vertex that native format uses
+       * \returns index of the vertex in the continuous array of vertices we returned by readVertices().
+       *          For invalid vertexID it is returned index that is out of vertices array bounds.
+       */
       virtual size_t vertexIndex( size_t vertexID ) const;
 
-      //! Returns maximum vertex ID.
-      //! For meshes without gaps in vertex indexing, it is vertex count - 1
+      /**
+       * Returns maximum vertex ID.
+       * For meshes without gaps in vertex indexing, it is vertex count - 1
+       */
       virtual size_t maximumVertexId() const;
 
     private:
-      //! Mike21 might supports "gaps" in the mesh indexing
-      //! Store only the indices that have different index and ID
-      //! https://github.com/lutraconsulting/MDAL/issues/51
+      /**
+       * Mike21 might supports "gaps" in the mesh indexing 
+       * Store only the indices that have different index and ID
+       * https://github.com/lutraconsulting/MDAL/issues/51
+       */
       std::map<size_t, size_t> mVertexIDtoIndex;
   };
 
