@@ -135,13 +135,19 @@ size_t MDAL::DriverMike21::getVertexCount( const std::string &line )
 {
   auto matchResults = std::smatch{};
   if ( std::regex_search( line, matchResults, mRegexHeader2012 ) )
-  {
-    return std::stoi( matchResults[3].str() );
+  {  
+    if (matchResults.size() > 4)
+    {
+      return std::stoi( matchResults[3].str() );
+    }
   }
 
   if ( std::regex_search( line, matchResults, mRegexHeader2011 ) )
-  {
-    return std::stoi( matchResults[1].str() );
+  { 
+    if (matchResults.size() > 2)
+    {
+      return std::stoi( matchResults[1].str() );
+    }
   }
 
   return 0;
@@ -151,13 +157,19 @@ std::string MDAL::DriverMike21::getCrs( const std::string &line )
 {
   auto matchResults = std::smatch{};
   if ( std::regex_search( line, matchResults, mRegexHeader2012 ) )
-  {
-    return matchResults[4].str();
+  { 
+    if (matchResults.size() > 5)
+    {
+      return matchResults[4].str();
+    }
   }
 
   if ( std::regex_search( line, matchResults, mRegexHeader2011 ) )
-  {
-    return matchResults[2].str();
+  { 
+    if (matchResults.size() > 3)
+    {
+      return matchResults[2].str();
+    }
   }
 
   return "";
