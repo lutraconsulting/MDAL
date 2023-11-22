@@ -128,6 +128,39 @@ bool MDAL::DriverMike21::canReadMesh( const std::string &uri )
   {
     return false;
   }
+
+  in.clear();
+  in.seekg( 0, std::ios::beg );
+
+  size_t vertexCount = getVertexCount(line);
+  size_t faceCount = 0;
+
+  size_t lineNumber = 0;
+  while ( std::getline( in, line ) )
+  {
+    if ( lineNumber == vertexCount + 1 )
+    {
+      auto matchResults = std::smatch{};
+      if ( std::regex_search( line, matchResults, mRegexElementHeader ) )
+      {
+        if ( matchResults.size() >= 4 )
+        {
+          faceCount = MDAL::toSizeT( matchResults[1].str() );
+        }
+        else
+        {
+          return false;
+        }
+      }
+    }
+    lineNumber++;
+  }
+
+  if ( lineNumber > 2 + vertexCount + faceCount )
+  {
+    return false;
+  }
+
   return true;
 }
 
