@@ -155,7 +155,7 @@ TEST( MeshMike21Test, ReadOdenseRough )
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation" );
 }
 
-TEST( Mesh2DMTest, Save2DMeshToFile )
+TEST( MeshMike21Test, SaveMike21MeshToFile )
 {
   saveAndCompareMesh(
     test_file( "/mike21/odense_rough_comparison.mesh" ),
