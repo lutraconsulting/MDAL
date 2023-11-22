@@ -135,16 +135,16 @@ size_t MDAL::DriverMike21::getVertexCount( const std::string &line )
 {
   auto matchResults = std::smatch{};
   if ( std::regex_search( line, matchResults, mRegexHeader2012 ) )
-  {  
-    if (matchResults.size() > 4)
+  {
+    if ( matchResults.size() > 4 )
     {
       return std::stoi( matchResults[3].str() );
     }
   }
 
   if ( std::regex_search( line, matchResults, mRegexHeader2011 ) )
-  { 
-    if (matchResults.size() > 2)
+  {
+    if ( matchResults.size() > 2 )
     {
       return std::stoi( matchResults[1].str() );
     }
@@ -157,16 +157,16 @@ std::string MDAL::DriverMike21::getCrs( const std::string &line )
 {
   auto matchResults = std::smatch{};
   if ( std::regex_search( line, matchResults, mRegexHeader2012 ) )
-  { 
-    if (matchResults.size() > 5)
+  {
+    if ( matchResults.size() > 5 )
     {
       return matchResults[4].str();
     }
   }
 
   if ( std::regex_search( line, matchResults, mRegexHeader2011 ) )
-  { 
-    if (matchResults.size() > 3)
+  {
+    if ( matchResults.size() > 3 )
     {
       return matchResults[2].str();
     }
@@ -205,7 +205,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
       auto matchResults = std::smatch{};
       if ( std::regex_search( line, matchResults, mRegexElementHeader ) )
       {
-        if (matchResults.size() >= 4)
+        if ( matchResults.size() >= 4 )
         {
           faceCount = MDAL::toSizeT( matchResults[1].str() );
           maxVerticesPerFace = MDAL::toSizeT( matchResults[2].str() );
@@ -233,8 +233,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
     lineNumber++;
   }
 
-  // number of lines in file does not match number of vertices and faces specifed in first and element line 
-  if (lineNumber > 2 + vertexCount + faceCount)
+  // number of lines in file does not match number of vertices and faces specifed in first and element line
+  if ( lineNumber > 2 + vertexCount + faceCount )
   {
     MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "Number of lines in file does not fit with number of vertexes and faces specified." );
     return nullptr;
@@ -264,7 +264,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
     if ( 0 < lineNumber && lineNumber < vertexCount + 1 )
     {
       chunks = _regex_split( MDAL::trim( line ) );
-      if (chunks.size() != 5)
+      if ( chunks.size() != 5 )
       {
         MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "vertex line in invalid format." );
         return nullptr;

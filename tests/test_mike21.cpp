@@ -91,13 +91,13 @@ TEST( MeshMike21Test, ReadSmallMesh )
   int e_count = MDAL_M_edgeCount( m );
   EXPECT_EQ( 0, e_count );
 
-  EXPECT_STREQ( MDAL_M_projection( m ), "LONG/LAT");
+  EXPECT_STREQ( MDAL_M_projection( m ), "LONG/LAT" );
 
   EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( m ), 4 );
 
   EXPECT_EQ( MDAL_M_datasetGroupCount( m ), 2 );
-  EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType");
-  EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation");
+  EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType" );
+  EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation" );
 }
 
 TEST( MeshMike21Test, ReadOdenseRoughQuads )
@@ -117,13 +117,13 @@ TEST( MeshMike21Test, ReadOdenseRoughQuads )
   int e_count = MDAL_M_edgeCount( m );
   EXPECT_EQ( 0, e_count );
 
-  EXPECT_STREQ(MDAL_M_projection( m ), "UTM-33");
+  EXPECT_STREQ( MDAL_M_projection( m ), "UTM-33" );
 
   EXPECT_EQ( MDAL_M_faceVerticesMaximumCount( m ), 4 );
 
   EXPECT_EQ( MDAL_M_datasetGroupCount( m ), 2 );
-  EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType");
-  EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation");
+  EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType" );
+  EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation" );
 }
 
 TEST( MeshMike21Test, ReadOdenseRough )

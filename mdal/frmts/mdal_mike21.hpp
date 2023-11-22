@@ -43,7 +43,7 @@ namespace MDAL
 
     private:
       /**
-       * Mike21 might supports "gaps" in the mesh indexing 
+       * Mike21 might supports "gaps" in the mesh indexing
        * Store only the indices that have different index and ID
        * https://github.com/lutraconsulting/MDAL/issues/51
        */
