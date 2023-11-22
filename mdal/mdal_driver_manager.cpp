@@ -223,7 +223,6 @@ MDAL::DriverManager::DriverManager()
   mDrivers.push_back( std::make_shared<MDAL::DriverXmsTin>() );
   mDrivers.push_back( std::make_shared<MDAL::DriverSelafin>() );
   mDrivers.push_back( std::make_shared<MDAL::DriverEsriTin>() );
-  mDrivers.push_back( std::make_shared<MDAL::DriverMike21>() );
 
 #ifdef BUILD_PLY
   mDrivers.push_back( std::make_shared<MDAL::DriverPly>() );
@@ -264,6 +263,8 @@ MDAL::DriverManager::DriverManager()
   mDrivers.push_back( std::make_shared<MDAL::DriverXdmf>() );
 #endif
 
+  mDrivers.push_back( std::make_shared<MDAL::DriverMike21>() );
+  
   loadDynamicDrivers();
 }
 
