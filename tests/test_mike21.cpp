@@ -42,37 +42,41 @@ TEST( MeshMike21Test, WrongFile )
 TEST( MeshMike21Test, WrongVertexCount )
 {
   std::string path = test_file( "/mike21/wrong_vertex_count.mesh" );
+  path = "Mike21:\"" + path + "\"";
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
-  EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
+  EXPECT_EQ( MDAL_Status::Err_InvalidData, s );
 }
 
 TEST( MeshMike21Test, WrongElementType )
 {
   std::string path = test_file( "/mike21/wrong_element_type.mesh" );
+  path = "Mike21:\"" + path + "\"";
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
-  EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
+  EXPECT_EQ( MDAL_Status::Err_InvalidData, s );
 }
 
 TEST( MeshMike21Test, WrongElementLineFormat )
 {
   std::string path = test_file( "/mike21/wrong_element_line_format.mesh" );
+  path = "Mike21:\"" + path + "\"";
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
-  EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
+  EXPECT_EQ( MDAL_Status::Err_InvalidData, s );
 }
 
 TEST( MeshMike21Test, WrongFaceCount )
 {
   std::string path = test_file( "/mike21/wrong_face_count.mesh" );
+  path = "Mike21:\"" + path + "\"";
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_EQ( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
-  EXPECT_EQ( MDAL_Status::Err_UnknownFormat, s );
+  EXPECT_EQ( MDAL_Status::Err_InvalidData, s );
 }
 
 TEST( MeshMike21Test, ReadSmallMesh )
