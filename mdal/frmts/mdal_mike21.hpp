@@ -93,7 +93,7 @@ namespace MDAL
       // regex for header line in form of - integer integer integer string
       std::regex mRegexHeader2012 = std::regex( "(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(.+)(\\s+)?" );
       // regex for element header line - integer integer integer(code with two number)
-      std::regex mRegexElementHeader = std::regex( "(\\d+)\\s+(\\d)\\s+(\\d{2})(\\s+)?" );
+      const std::regex mRegexElementHeader = std::regex( "(\\d+)\\s+(\\d)\\s+(\\d{2})(\\s+)?" );
 
       bool canReadHeader( const std::string &line );
       size_t getVertexCount( const std::string &line );
