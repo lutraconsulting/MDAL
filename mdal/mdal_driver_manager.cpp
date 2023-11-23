@@ -264,7 +264,7 @@ MDAL::DriverManager::DriverManager()
 #endif
 
   mDrivers.push_back( std::make_shared<MDAL::DriverMike21>() );
-  
+
   loadDynamicDrivers();
 }
 
