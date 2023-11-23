@@ -91,7 +91,7 @@ namespace MDAL
       // regex for header line in form of - integer string
      const std::regex mRegexHeader2011 = std::regex( "(\\d+)\\s+(.+)(\\s+)?" );
       // regex for header line in form of - integer integer integer string
-      std::regex mRegexHeader2012 = std::regex( "(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(.+)(\\s+)?" );
+      const std::regex mRegexHeader2012 = std::regex( "(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(.+)(\\s+)?" );
       // regex for element header line - integer integer integer(code with two number)
       const std::regex mRegexElementHeader = std::regex( "(\\d+)\\s+(\\d)\\s+(\\d{2})(\\s+)?" );
 
