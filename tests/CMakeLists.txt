@@ -74,6 +74,7 @@ SET(TESTS
     test_selafin.cpp
     test_esri_tin.cpp
     test_h2i.cpp
+    test_mike21.cpp
 )
 
 IF(BUILD_PLY)

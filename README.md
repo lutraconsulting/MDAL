@@ -50,6 +50,7 @@ You can use MDAL to load the following file formats:
 - [DFSU*](https://www.dhigroup.com):DHI Flexible File Format (External Driver)
 - [DFS2*](https://www.dhigroup.com):DHI Grid Series File (External Driver)
 - [H2i*](https://github.com/d2hydro/H2i_code_factory/blob/main/docs/data_format.md): Outputs of the H2i modelling package
+- [MIKE 21](https://www.xmswiki.com/wiki/SMS:MIKE_21_*.mesh): Mesh Text/plain file with *.mesh extension
 
 \* Data lazy loaded
 
@@ -76,6 +77,7 @@ You can use MDAL to load the following file formats:
 | DFSU  | READ-ONLY | N/A | NO | READ-ONLY | READ-ONLY | YES | 
 | DFS2  | READ-ONLY | N/A | NO | READ-ONLY | N/A | YES |
 | H2i | READ-ONLY | NO | NO | READ-ONLY | N/A | YES |
+| Mike21   |  READ-WRITE | N/A | N/A | N/A | N/A | N/A |
 
 # Standalone Installation
 
