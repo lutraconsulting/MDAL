@@ -203,6 +203,25 @@ TEST( MeshMike21Test, SaveMike21MeshToFile )
   );
 }
 
+TEST(MeshMike21Test, SaveMike21MeshUnsupportedMesh)
+{ 
+  std::string path = test_file( "/2dm/triangleE6T.2dm" ); 
+  std::string uri = "2DM:\"" + path +"\"";
+  std::string savedUri = "Mike21:\"" + tmp_file( "/test.mesh" ) + "\"";
+  
+  MDAL_MeshH meshToSave = MDAL_LoadMesh( uri.c_str() );
+  EXPECT_NE( meshToSave, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Save the mesh
+  MDAL_SaveMeshWithUri( meshToSave, savedUri.c_str() );
+
+  // cant save this Mesh as Mike21 unsupported faces
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
