@@ -19,7 +19,7 @@ TEST( MeshMike21Test, Driver )
   EXPECT_TRUE( MDAL_DR_meshLoadCapability( driver ) );
   EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
   EXPECT_EQ( strcmp( MDAL_DR_saveMeshSuffix( driver ), "mesh" ), 0 );
-  EXPECT_EQ( MDAL_DR_faceVerticesMaximumCount( driver ), 6 );
+  EXPECT_EQ( MDAL_DR_faceVerticesMaximumCount( driver ), 4 );
 }
 
 TEST( MeshMike21Test, MissingFile )

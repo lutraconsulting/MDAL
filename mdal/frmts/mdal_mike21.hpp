@@ -78,7 +78,7 @@ namespace MDAL
       ~DriverMike21() override;
       DriverMike21 *create() override;
 
-      int faceVerticesMaximumCount() const override {return 6;}
+      int faceVerticesMaximumCount() const override {return 4;}
 
       bool canReadMesh( const std::string &uri ) override;
       std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName = "" ) override;
