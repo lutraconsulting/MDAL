@@ -161,6 +161,12 @@ TEST( MeshMike21Test, SaveMike21MeshToFile )
     tmp_file( "/odense_rough_saved.mesh" ),
     "Mike21"
   );
+
+  saveAndCompareMesh(
+    test_file( "/mike21/odense_rough_quads_comparion.mesh" ),
+    tmp_file( "/odense_rough_quads_saved.mesh" ),
+    "Mike21"
+  );
 }
 
 int main( int argc, char **argv )
