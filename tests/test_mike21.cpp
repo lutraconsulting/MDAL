@@ -111,8 +111,7 @@ TEST( MeshMike21Test, ReadOdenseRoughQuads )
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
-  // the file have a warning issue
-  EXPECT_EQ( s, MDAL_Status::Warn_ElementWithInvalidNode );
+  EXPECT_EQ( s, MDAL_Status::None );
 
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 535 );
