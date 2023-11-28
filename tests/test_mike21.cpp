@@ -103,17 +103,17 @@ TEST( MeshMike21Test, ReadSmallMesh )
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType" );
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation" );
 
-  for (int i = 0; i < f_count; i++)
+  for ( int i = 0; i < f_count; i++ )
   {
-    size_t faceVertexCount = getFaceVerticesCountAt( m, i);
+    size_t faceVertexCount = getFaceVerticesCountAt( m, i );
     // faces at 0, 5, 6, 7 are quads, other are triangles
-    if (i == 0 || i == 5 || i == 6 || i == 7)
+    if ( i == 0 || i == 5 || i == 6 || i == 7 )
     {
-      EXPECT_EQ(4, faceVertexCount);
+      EXPECT_EQ( 4, faceVertexCount );
     }
     else
     {
-      EXPECT_EQ(3, faceVertexCount);
+      EXPECT_EQ( 3, faceVertexCount );
     }
   }
 }
@@ -142,17 +142,17 @@ TEST( MeshMike21Test, ReadOdenseRoughQuads )
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType" );
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation" );
 
-  for (int i = 0; i < f_count; i++)
+  for ( int i = 0; i < f_count; i++ )
   {
-    size_t faceVertexCount = getFaceVerticesCountAt( m, i);
+    size_t faceVertexCount = getFaceVerticesCountAt( m, i );
     // all faces with id below 513 are triangles, all later are quads
-    if (i < 513)
+    if ( i < 513 )
     {
-      EXPECT_EQ(3, faceVertexCount);
+      EXPECT_EQ( 3, faceVertexCount );
     }
     else
     {
-      EXPECT_EQ(4, faceVertexCount);
+      EXPECT_EQ( 4, faceVertexCount );
     }
   }
 }
@@ -181,10 +181,10 @@ TEST( MeshMike21Test, ReadOdenseRough )
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType" );
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation" );
 
-  for (int i = 0; i < f_count; i++)
+  for ( int i = 0; i < f_count; i++ )
   {
-    size_t faceVertexCount = getFaceVerticesCountAt( m, i);
-    EXPECT_EQ(3, faceVertexCount);
+    size_t faceVertexCount = getFaceVerticesCountAt( m, i );
+    EXPECT_EQ( 3, faceVertexCount );
   }
 }
 
