@@ -19,7 +19,7 @@ TEST( MeshMike21Test, Driver )
   EXPECT_TRUE( MDAL_DR_meshLoadCapability( driver ) );
   EXPECT_TRUE( MDAL_DR_saveMeshCapability( driver ) );
   EXPECT_EQ( strcmp( MDAL_DR_saveMeshSuffix( driver ), "mesh" ), 0 );
-  EXPECT_EQ( MDAL_DR_faceVerticesMaximumCount( driver ), 6 );
+  EXPECT_EQ( MDAL_DR_faceVerticesMaximumCount( driver ), 4 );
 }
 
 TEST( MeshMike21Test, MissingFile )
@@ -102,6 +102,20 @@ TEST( MeshMike21Test, ReadSmallMesh )
   EXPECT_EQ( MDAL_M_datasetGroupCount( m ), 2 );
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType" );
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation" );
+
+  for ( int i = 0; i < f_count; i++ )
+  {
+    size_t faceVertexCount = getFaceVerticesCountAt( m, i );
+    // faces at 0, 5, 6, 7 are quads, other are triangles
+    if ( i == 0 || i == 5 || i == 6 || i == 7 )
+    {
+      EXPECT_EQ( 4, faceVertexCount );
+    }
+    else
+    {
+      EXPECT_EQ( 3, faceVertexCount );
+    }
+  }
 }
 
 TEST( MeshMike21Test, ReadOdenseRoughQuads )
@@ -111,8 +125,7 @@ TEST( MeshMike21Test, ReadOdenseRoughQuads )
   MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
   EXPECT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
-  // the file have a warning issue
-  EXPECT_EQ( s, MDAL_Status::Warn_ElementWithInvalidNode );
+  EXPECT_EQ( s, MDAL_Status::None );
 
   int v_count = MDAL_M_vertexCount( m );
   EXPECT_EQ( v_count, 535 );
@@ -128,6 +141,20 @@ TEST( MeshMike21Test, ReadOdenseRoughQuads )
   EXPECT_EQ( MDAL_M_datasetGroupCount( m ), 2 );
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType" );
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation" );
+
+  for ( int i = 0; i < f_count; i++ )
+  {
+    size_t faceVertexCount = getFaceVerticesCountAt( m, i );
+    // all faces with id below 513 are triangles, all later are quads
+    if ( i < 513 )
+    {
+      EXPECT_EQ( 3, faceVertexCount );
+    }
+    else
+    {
+      EXPECT_EQ( 4, faceVertexCount );
+    }
+  }
 }
 
 TEST( MeshMike21Test, ReadOdenseRough )
@@ -153,6 +180,12 @@ TEST( MeshMike21Test, ReadOdenseRough )
   EXPECT_EQ( MDAL_M_datasetGroupCount( m ), 2 );
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 0 ) ), "VertexType" );
   EXPECT_STREQ( MDAL_G_name( MDAL_M_datasetGroup( m, 1 ) ), "Bed Elevation" );
+
+  for ( int i = 0; i < f_count; i++ )
+  {
+    size_t faceVertexCount = getFaceVerticesCountAt( m, i );
+    EXPECT_EQ( 3, faceVertexCount );
+  }
 }
 
 TEST( MeshMike21Test, SaveMike21MeshToFile )
@@ -162,6 +195,31 @@ TEST( MeshMike21Test, SaveMike21MeshToFile )
     tmp_file( "/odense_rough_saved.mesh" ),
     "Mike21"
   );
+
+  saveAndCompareMesh(
+    test_file( "/mike21/odense_rough_quads_comparion.mesh" ),
+    tmp_file( "/odense_rough_quads_saved.mesh" ),
+    "Mike21"
+  );
+}
+
+TEST( MeshMike21Test, SaveMike21MeshUnsupportedMesh )
+{
+  std::string path = test_file( "/2dm/triangleE6T.2dm" );
+  std::string uri = "2DM:\"" + path + "\"";
+  std::string savedUri = "Mike21:\"" + tmp_file( "/test.mesh" ) + "\"";
+
+  MDAL_MeshH meshToSave = MDAL_LoadMesh( uri.c_str() );
+  EXPECT_NE( meshToSave, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+
+  // Save the mesh
+  MDAL_SaveMeshWithUri( meshToSave, savedUri.c_str() );
+
+  // cant save this Mesh as Mike21 unsupported faces
+  s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
 }
 
 int main( int argc, char **argv )

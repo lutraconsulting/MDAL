@@ -305,7 +305,15 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
       chunks = _regex_split( MDAL::trim( line ) );
       assert( faceIndex < faceCount );
 
-      const size_t faceVertexCount = chunks.size() - 1;
+      size_t faceVertexCount = chunks.size() - 1;
+      // if the face should have 4 vertexes last chunk has value 0
+      // it actually means that there are only 3 vertexes
+      if ( faceVertexCount == 4 && chunks.size() == 5 )
+      {
+        if ( MDAL::toSizeT( chunks[4] ) == 0 )
+          faceVertexCount = faceVertexCount - 1;
+      }
+
       assert( ( faceVertexCount == 3 ) || ( faceVertexCount == 4 ) );
       if ( maxVerticesPerFace < faceVertexCount )
         maxVerticesPerFace = faceVertexCount;
@@ -461,6 +469,15 @@ void MDAL::DriverMike21::save( const std::string &fileName, const std::string &,
         line.append( " " );
         line.append( std::to_string( vertexIndices[j] + 1 ) );
       }
+
+      // if face has 3 vertexes but the mesh as whole is marked as having
+      // 4 vertex at maximum, the last element should 0 - indicating no vertex there
+      if ( faceOffsets[0] == 3 && mesh->faceVerticesMaximumCount() == 4 )
+      {
+        line.append( " " );
+        line.append( "0" );
+      }
+
     }
     file << line << std::endl;
   }
