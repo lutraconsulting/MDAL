@@ -227,6 +227,7 @@ void compareMeshFrames( MDAL_MeshH meshA, MDAL_MeshH meshB )
 
   std::vector<int> verticesA = faceVertexIndices( meshA, orignal_f_count );
   std::vector<int> verticesB = faceVertexIndices( meshB, saved_f_count );
+
   EXPECT_TRUE( compareVectors( verticesA, verticesB ) );
 }
 
@@ -278,7 +279,7 @@ double getVertexZCoordinatesAt( MDAL_MeshH mesh, int index )
 std::vector<int> faceVertexIndices( MDAL_MeshH mesh, int faceCount )
 {
   MDAL_MeshFaceIteratorH iterator = MDAL_M_faceIterator( mesh );
-  int faceOffsetsBufferLen = faceCount + 1;
+  int faceOffsetsBufferLen = faceCount;
   int vertexIndicesBufferLen = faceOffsetsBufferLen * MDAL_M_faceVerticesMaximumCount( mesh );
   std::vector<int> faceOffsetsBuffer( static_cast<size_t>( faceOffsetsBufferLen ) );
   std::vector<int> vertexIndicesBuffer( static_cast<size_t>( vertexIndicesBufferLen ) );

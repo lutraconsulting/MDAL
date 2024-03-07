@@ -16,6 +16,31 @@
 
 namespace MDAL
 {
+  class CF3DiDataset2D: public CFDataset2D
+  {
+    public:
+      CF3DiDataset2D( DatasetGroup *parent,
+                      double fill_val_x,
+                      double fill_val_y,
+                      int ncid_x,
+                      int ncid_y,
+                      Classification classification_x,
+                      Classification classification_y,
+                      CFDatasetGroupInfo::TimeLocation timeLocation,
+                      size_t timesteps,
+                      size_t values,
+                      size_t ts,
+                      std::shared_ptr<NetCDFFile> ncFile,
+                      std::vector<size_t> mask
+                    );
+      virtual ~CF3DiDataset2D() override;
+
+      virtual size_t scalarData( size_t indexStart, size_t count, double *buffer ) override;
+      virtual size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
+
+    private:
+      std::vector< size_t > mRequestedMeshFaceIds;
+  };
 
   /**
    * Driver of 3Di file format.
@@ -52,6 +77,11 @@ namespace MDAL
       void addBedElevation( MemoryMesh *mesh ) override;
       std::string getCoordinateSystemVariableName() override;
       std::string getTimeVariableName() const override;
+      std::shared_ptr<MDAL::Dataset> create2DDataset(
+        std::shared_ptr<MDAL::DatasetGroup> group,
+        size_t ts,
+        const MDAL::CFDatasetGroupInfo &dsi,
+        double fill_val_x, double fill_val_y ) override;
       std::set<std::string> ignoreNetCDFVariables() override;
       void parseNetCDFVariableMetadata( int varid,
                                         std::string &variableName,
@@ -71,6 +101,9 @@ namespace MDAL
       void populateMesh1DElements( Vertices &vertices, Edges &edges );
       bool check1DConnection( std::string fileName );
       void parse1DConnection( const std::vector<int> &nodesId, const std::vector<int> &edgesId, Edges &edges );
+
+      //! Holds the subset of face ids if the requested mesh is groundwater/surface_water, empty otherwise
+      std::vector<size_t> mRequestedMeshFaceIds;
   };
 
 } // namespace MDAL
