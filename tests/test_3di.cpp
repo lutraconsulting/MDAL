@@ -80,7 +80,7 @@ TEST( Mesh3DiTest, Mesh2Dgroundwater )
   // ///////////
   // Bed elevation dataset
   // ///////////
-  ASSERT_EQ( 9, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 10, MDAL_M_datasetGroupCount( m ) );
 
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
@@ -128,7 +128,7 @@ TEST( Mesh3DiTest, Mesh2Dgroundwater )
   // ///////////
   // Scalar Dataset
   // ///////////
-  g = MDAL_M_datasetGroup( m, 6 );
+  g = MDAL_M_datasetGroup( m, 7 );
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
@@ -179,7 +179,7 @@ TEST( Mesh3DiTest, Mesh2Dgroundwater )
   // ///////////
   // Vector Dataset
   // ///////////
-  g = MDAL_M_datasetGroup( m, 3 );
+  g = MDAL_M_datasetGroup( m, 4 );
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
@@ -298,7 +298,7 @@ TEST( Mesh3DiTest, Mesh2Dsurface_water )
   // ///////////
   // Bed elevation dataset
   // ///////////
-  ASSERT_EQ( 9, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 10, MDAL_M_datasetGroupCount( m ) );
 
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
@@ -346,7 +346,7 @@ TEST( Mesh3DiTest, Mesh2Dsurface_water )
   // ///////////
   // Scalar Dataset
   // ///////////
-  g = MDAL_M_datasetGroup( m, 6 );
+  g = MDAL_M_datasetGroup( m, 7 );
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
@@ -397,7 +397,7 @@ TEST( Mesh3DiTest, Mesh2Dsurface_water )
   // ///////////
   // Vector Dataset
   // ///////////
-  g = MDAL_M_datasetGroup( m, 3 );
+  g = MDAL_M_datasetGroup( m, 4 );
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
@@ -513,7 +513,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   // ///////////
   // Bed elevation dataset
   // ///////////
-  ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
 
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
   ASSERT_NE( g, nullptr );
@@ -554,7 +554,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   // ///////////
   // Scalar Dataset
   // ///////////
-  g = MDAL_M_datasetGroup( m, 5 );
+  g = MDAL_M_datasetGroup( m, 6 );
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
@@ -596,7 +596,7 @@ TEST( Mesh3DiTest, Mesh2D4cells301steps )
   // ///////////
   // Vector Dataset
   // ///////////
-  g = MDAL_M_datasetGroup( m, 2 );
+  g = MDAL_M_datasetGroup( m, 3 );
   ASSERT_NE( g, nullptr );
 
   meta_count = MDAL_G_metadataCount( g );
@@ -658,7 +658,7 @@ TEST( Mesh3DiTest, Mesh2D16cells7steps )
   int f_count = MDAL_M_faceCount( m );
   EXPECT_EQ( 16, f_count );
 
-  ASSERT_EQ( 7, MDAL_M_datasetGroupCount( m ) );
+  ASSERT_EQ( 8, MDAL_M_datasetGroupCount( m ) );
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
   ASSERT_NE( g, nullptr );
   ASSERT_EQ( 7, MDAL_G_datasetCount( g ) );
