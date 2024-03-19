@@ -18,7 +18,6 @@ TEST( Mesh3DiTest, Mesh2Dgroundwater )
   std::string path = test_file( "/3di/2d_groundwater/results_3di.nc" );
   EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "3Di:\"" + path + "\":Mesh2D;;3Di:\"" + path + "\":Mesh2D_groundwater;;3Di:\"" + path + "\":Mesh2D_surface_water" );
   std::string uri = "3Di:\"" + path + "\":Mesh2D_groundwater";
-//  std::string uri = "3Di:\"" + path + "\":Mesh2D";
   MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();
@@ -237,7 +236,6 @@ TEST( Mesh3DiTest, Mesh2Dsurface_water )
   std::string path = test_file( "/3di/2d_groundwater/results_3di.nc" );
   EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "3Di:\"" + path + "\":Mesh2D;;3Di:\"" + path + "\":Mesh2D_groundwater;;3Di:\"" + path + "\":Mesh2D_surface_water" );
   std::string uri = "3Di:\"" + path + "\":Mesh2D_surface_water";
-  //  std::string uri = "3Di:\"" + path + "\":Mesh2D";
   MDAL_MeshH m = MDAL_LoadMesh( uri.c_str() );
   ASSERT_NE( m, nullptr );
   MDAL_Status s = MDAL_LastStatus();

@@ -60,6 +60,12 @@ namespace MDAL
    * line center. Data is specified on calculation nodes (i.e. dataset defined on faces)
    * and on lines (i.e. dataset defined on edges - not implemented yet)
    *
+   * The 2D mesh consists of two mostly overlapping meshes, one for groundwater data and one
+   * for surface water. Each face belongs to either one of them depending on its Node_type values.
+   * While the whole mesh data can be accessed using the "Mesh2D" mesh name, the two sub-meshes
+   * are individually accessible using "Mesh2D_groundwater" and "Mesh2D_surface_water"
+   * mesh names respectively.
+   *
    * The 1D Mesh is present too, but not parsed yet.
    */
   class Driver3Di: public DriverCF
