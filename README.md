@@ -124,6 +124,7 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.28.4  | 1.0.2   | |
 | 3.30.0  | 1.0.2   | |
 | 3.36.0  | 1.1.0   | Mike21 format support read/write |
+| 3.38.0  | 1.2.0   | Groundwater / surface water meshes for 3Di format |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
