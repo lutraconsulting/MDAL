@@ -329,7 +329,6 @@ std::set<std::string> MDAL::Driver3Di::ignoreNetCDFVariables()
     ignore_variables.insert( mesh + "Face_zcc" );
     ignore_variables.insert( mesh + "Contour_x" );
     ignore_variables.insert( mesh + "Contour_y" );
-    ignore_variables.insert( mesh + "Face_sumax" );
 
     ignore_variables.insert( mesh + "Line_id" );
     ignore_variables.insert( mesh + "Line_xcc" );
