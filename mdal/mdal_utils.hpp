@@ -74,7 +74,7 @@ namespace MDAL
   //! Deletes a file. Returns true on success, false otherwise
   bool deleteFile( const std::string &path );
 
-  //!renames a file. Returns true on success, false otherwise
+  //! Renames a file. Returns true on success, false otherwise
   bool renameFile( const std::string &from, const std::string &to );
 
   // strings
