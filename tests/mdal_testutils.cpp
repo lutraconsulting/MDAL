@@ -14,6 +14,12 @@
 #include <fstream>
 #include <stdio.h>
 
+#ifdef _MSC_VER
+#include <locale>
+#include <codecvt>
+#include <stringapiset.h>
+#endif
+
 const char *data_path()
 {
   return TESTDATA;
@@ -52,13 +58,31 @@ void copy( const std::string &src, const std::string &dest )
 void deleteFile( const std::string &path )
 {
   if ( fileExists( path ) )
+  {
+#ifdef _MSC_VER
+    std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
+    std::wstring wStr = converter.from_bytes(path);
+    DeleteFileW(wStr.c_str());
+#else
     remove( path.c_str() );
+#endif
+  }
 }
 
 bool fileExists( const std::string &filename )
 {
-  std::ifstream in( filename );
-  return in.good();
+#ifdef _MSC_VER
+    std::ifstream in;
+    std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
+    std::wstring wStr = converter.from_bytes(filename);
+    in.open(wStr, std::ifstream::in | std::ifstream::binary);
+    if (!in.is_open())
+        return false;
+#else
+    std::ifstream in(filename);
+#endif
+
+    return in.good();
 }
 
 int getActive( MDAL_DatasetH dataset, int index )
