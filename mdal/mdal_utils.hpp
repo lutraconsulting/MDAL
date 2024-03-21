@@ -72,10 +72,10 @@ namespace MDAL
   std::string readFileToString( const std::string &filename );
 
   //! Deletes a file. Returns true on success, false otherwise
-  bool deleteFile(const std::string& path);
+  bool deleteFile( const std::string &path );
 
   //!renames a file. Returns true on success, false otherwise
-  bool renameFile(const std::string& from, const std::string& to);
+  bool renameFile( const std::string &from, const std::string &to );
 
   // strings
   enum ContainsBehaviour

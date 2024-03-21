@@ -61,8 +61,8 @@ void deleteFile( const std::string &path )
   {
 #ifdef _MSC_VER
     std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
-    std::wstring wStr = converter.from_bytes(path);
-    DeleteFileW(wStr.c_str());
+    std::wstring wStr = converter.from_bytes( path );
+    DeleteFileW( wStr.c_str() );
 #else
     remove( path.c_str() );
 #endif
@@ -72,17 +72,17 @@ void deleteFile( const std::string &path )
 bool fileExists( const std::string &filename )
 {
 #ifdef _MSC_VER
-    std::ifstream in;
-    std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
-    std::wstring wStr = converter.from_bytes(filename);
-    in.open(wStr, std::ifstream::in | std::ifstream::binary);
-    if (!in.is_open())
-        return false;
+  std::ifstream in;
+  std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
+  std::wstring wStr = converter.from_bytes( filename );
+  in.open( wStr, std::ifstream::in | std::ifstream::binary );
+  if ( !in.is_open() )
+    return false;
 #else
-    std::ifstream in(filename);
+  std::ifstream in( filename );
 #endif
 
-    return in.good();
+  return in.good();
 }
 
 int getActive( MDAL_DatasetH dataset, int index )

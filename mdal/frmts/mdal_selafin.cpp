@@ -1290,9 +1290,9 @@ bool MDAL::SelafinFile::addDatasetGroup( MDAL::DatasetGroup *datasetGroup )
   if ( datasetGroup->uri() == mFileName )
     datasetGroup->mesh()->closeSource();
 
-  if ( !MDAL::deleteFile(mFileName) || !MDAL::renameFile(tempFileName, mFileName) )
+  if ( !MDAL::deleteFile( mFileName ) || !MDAL::renameFile( tempFileName, mFileName ) )
   {
-    MDAL::deleteFile(tempFileName);
+    MDAL::deleteFile( tempFileName );
     throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Unable to write dataset in file" );
   }
 
