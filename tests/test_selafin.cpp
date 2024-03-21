@@ -13,6 +13,12 @@
 #include "mdal_testutils.hpp"
 #include "frmts/mdal_selafin.hpp"
 
+#ifdef _MSC_VER
+#include <locale>
+#include <codecvt>
+#include <stringapiset.h>
+#endif
+
 TEST( MeshSLFTest, Driver )
 {
   MDAL_DriverH driver = MDAL_driverFromName( "SELAFIN" );
@@ -423,6 +429,45 @@ TEST( MeshSLFTest, WriteDatasetInNewFile )
   MDAL_CloseMesh( newMesh );
 }
 
+TEST(MeshSLFTest, WriteDatasetSpecialCharacters)
+{
+    std::string path = test_file("/slf/example_res_fr.slf");
+    EXPECT_EQ(MDAL_MeshNames(path.c_str()), "SELAFIN:\"" + path + "\"");
+    MDAL_MeshH m = MDAL_LoadMesh(path.c_str());
+    ASSERT_NE(m, nullptr);
+
+    MDAL_DriverH driver = MDAL_driverFromName("SELAFIN");
+    ASSERT_NE(driver, nullptr);
+
+    //Add dataset
+#ifdef _MSC_VER
+    std::wstring wFileName = std::wstring(L"/selafin_дцья.slf");
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    std::string fileName = converter.to_bytes(wFileName);
+#else
+    std::string fileName = "/selafin_дцья.slf";
+#endif
+    std::string file = tmp_file(fileName);
+    deleteFile(file);
+
+    addNewScalarDatasetGroup(m, driver, file);
+    addNewVectorDatasetGroup(m, driver, file);
+    MDAL_CloseMesh(m);
+
+    MDAL_MeshH newMesh = MDAL_LoadMesh(file.c_str());
+    ASSERT_NE(newMesh, nullptr);
+
+    EXPECT_EQ(2, MDAL_M_datasetGroupCount(newMesh));
+
+    // Scalar dataset group added
+    testScalarDatasetGroupAdded(MDAL_M_datasetGroup(newMesh, 0));
+
+    // Vector dataset group added
+    testVectorDatasetGroupAdded(MDAL_M_datasetGroup(newMesh, 1));
+
+    MDAL_CloseMesh(newMesh);
+}
+
 TEST( MeshSLFTest, loadDatasetFromFile )
 {
   std::string path = test_file( "/slf/example.slf" );
@@ -553,7 +598,6 @@ TEST( MeshSLFTest, DoublePrecision )
 
   MDAL_CloseMesh( m );
 }
-
 
 TEST( MeshSLFTest, JanetFile )
 {
