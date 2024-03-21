@@ -111,7 +111,7 @@ bool MDAL::deleteFile( const std::string &path )
     std::wstring wStr = converter.from_bytes( path );
     return DeleteFileW( wStr.c_str() ) != 0;
 #else
-    return remove( path.c_str() ) == 0;
+    return std::remove( path.c_str() ) == 0;
 #endif
   }
 
