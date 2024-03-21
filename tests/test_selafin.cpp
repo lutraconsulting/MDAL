@@ -429,43 +429,43 @@ TEST( MeshSLFTest, WriteDatasetInNewFile )
   MDAL_CloseMesh( newMesh );
 }
 
-TEST(MeshSLFTest, WriteDatasetSpecialCharacters)
+TEST( MeshSLFTest, WriteDatasetSpecialCharacters )
 {
-    std::string path = test_file("/slf/example_res_fr.slf");
-    EXPECT_EQ(MDAL_MeshNames(path.c_str()), "SELAFIN:\"" + path + "\"");
-    MDAL_MeshH m = MDAL_LoadMesh(path.c_str());
-    ASSERT_NE(m, nullptr);
+  std::string path = test_file( "/slf/example_res_fr.slf" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SELAFIN:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
 
-    MDAL_DriverH driver = MDAL_driverFromName("SELAFIN");
-    ASSERT_NE(driver, nullptr);
+  MDAL_DriverH driver = MDAL_driverFromName( "SELAFIN" );
+  ASSERT_NE( driver, nullptr );
 
-    //Add dataset
+  //Add dataset
 #ifdef _MSC_VER
-    std::wstring wFileName = std::wstring(L"/selafin_äöüß.slf");
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    std::string fileName = converter.to_bytes(wFileName);
+  std::wstring wFileName = std::wstring( L"/selafin_Ã¤Ã¶Ã¼ÃŸ.slf" );
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+  std::string fileName = converter.to_bytes( wFileName );
 #else
-    std::string fileName = "/selafin_äöüß.slf";
+  std::string fileName = "/selafin_Ã¤Ã¶Ã¼ÃŸ.slf";
 #endif
-    std::string file = tmp_file(fileName);
-    deleteFile(file);
+  std::string file = tmp_file( fileName );
+  deleteFile( file );
 
-    addNewScalarDatasetGroup(m, driver, file);
-    addNewVectorDatasetGroup(m, driver, file);
-    MDAL_CloseMesh(m);
+  addNewScalarDatasetGroup( m, driver, file );
+  addNewVectorDatasetGroup( m, driver, file );
+  MDAL_CloseMesh( m );
 
-    MDAL_MeshH newMesh = MDAL_LoadMesh(file.c_str());
-    ASSERT_NE(newMesh, nullptr);
+  MDAL_MeshH newMesh = MDAL_LoadMesh( file.c_str() );
+  ASSERT_NE( newMesh, nullptr );
 
-    EXPECT_EQ(2, MDAL_M_datasetGroupCount(newMesh));
+  EXPECT_EQ( 2, MDAL_M_datasetGroupCount( newMesh ) );
 
-    // Scalar dataset group added
-    testScalarDatasetGroupAdded(MDAL_M_datasetGroup(newMesh, 0));
+  // Scalar dataset group added
+  testScalarDatasetGroupAdded( MDAL_M_datasetGroup( newMesh, 0 ) );
 
-    // Vector dataset group added
-    testVectorDatasetGroupAdded(MDAL_M_datasetGroup(newMesh, 1));
+  // Vector dataset group added
+  testVectorDatasetGroupAdded( MDAL_M_datasetGroup( newMesh, 1 ) );
 
-    MDAL_CloseMesh(newMesh);
+  MDAL_CloseMesh( newMesh );
 }
 
 TEST( MeshSLFTest, loadDatasetFromFile )
