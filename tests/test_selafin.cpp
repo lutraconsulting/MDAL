@@ -441,7 +441,7 @@ TEST( MeshSLFTest, WriteDatasetSpecialCharacters )
 
   //Add dataset
 #ifdef _MSC_VER
-  std::wstring wFileName = std::wstring( L"/selafin_äöüß.slf" );
+  std::wstring wFileName = std::wstring( L"/selafin_\u00E4\u00F6\u00FC\u00DF.slf" );
   std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
   std::string fileName = converter.to_bytes( wFileName );
 #else
