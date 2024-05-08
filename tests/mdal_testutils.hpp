@@ -62,7 +62,8 @@ bool compareVectors( const std::vector<int> &a, const std::vector<int> &b );
 
 //! Same vertices (coords), faces, edges and connectivity between them
 void compareMeshFrames( MDAL_MeshH meshA, MDAL_MeshH meshB );
-void saveAndCompareMesh( const std::string &filename, const std::string &savedFile, const std::string &driver, const std::string &meshName = "" );
+void compareMeshMetadata( MDAL_MeshH meshA, MDAL_MeshH meshB );
+void saveAndCompareMesh( const std::string &filename, const std::string &savedFile, const std::string &driver, const std::string &meshName = "", bool compareMetadata = false );
 
 //! Compare duration with millisecond precision
 bool compareDurationInHours( double h1, double h2 );

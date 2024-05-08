@@ -191,15 +191,27 @@ TEST( MeshMike21Test, ReadOdenseRough )
 TEST( MeshMike21Test, SaveMike21MeshToFile )
 {
   saveAndCompareMesh(
+    test_file( "/mike21/small.mesh" ),
+    tmp_file( "/small_saved.mesh" ),
+    "Mike21",
+    "",
+    true
+  );
+
+  saveAndCompareMesh(
     test_file( "/mike21/odense_rough_comparison.mesh" ),
     tmp_file( "/odense_rough_saved.mesh" ),
-    "Mike21"
+    "Mike21",
+    "",
+    true
   );
 
   saveAndCompareMesh(
     test_file( "/mike21/odense_rough_quads_comparion.mesh" ),
     tmp_file( "/odense_rough_quads_saved.mesh" ),
-    "Mike21"
+    "Mike21",
+    "",
+    true
   );
 }
 
