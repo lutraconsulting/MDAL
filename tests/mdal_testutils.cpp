@@ -255,6 +255,31 @@ void compareMeshFrames( MDAL_MeshH meshA, MDAL_MeshH meshB )
   EXPECT_TRUE( compareVectors( verticesA, verticesB ) );
 }
 
+void compareMeshMetadata( MDAL_MeshH meshA, MDAL_MeshH meshB )
+{
+  // Metadata count
+  const int orignal_m_count = MDAL_M_metadataCount( meshA );
+  const int saved_m_count = MDAL_M_metadataCount( meshB );
+  EXPECT_EQ( orignal_m_count, saved_m_count );
+
+  // Metadata values
+  for ( int i = 0; i < orignal_m_count; ++i )
+  {
+    const std::string keyA( MDAL_M_metadataKey( meshA, i ) );
+    const std::string valA( MDAL_M_metadataValue( meshA, i ) );
+    for ( int j = 0; j < saved_m_count; ++j )
+    {
+      const std::string keyB( MDAL_M_metadataKey( meshB, j ) );
+      const std::string valB( MDAL_M_metadataValue( meshB, j ) );
+
+      if ( keyA == keyB && valA == valB )
+        break;
+      else if ( j == saved_m_count - 1 )
+        FAIL() << "Mesh metadata do not match: " << keyA << ": " << valA;
+    }
+  }
+}
+
 std::vector<double> getCoordinates( MDAL_MeshH mesh, int verticesCount )
 {
   MDAL_MeshVertexIteratorH iterator = MDAL_M_vertexIterator( mesh );
@@ -399,7 +424,7 @@ bool compareReferenceTime( MDAL_DatasetGroupH group, const char *referenceTime )
   return std::strcmp( MDAL_G_referenceTime( group ), referenceTime ) == 0;
 }
 
-void saveAndCompareMesh( const std::string &filename, const std::string &savedFile, const std::string &driver, const std::string &meshName )
+void saveAndCompareMesh( const std::string &filename, const std::string &savedFile, const std::string &driver, const std::string &meshName, bool compareMetadata )
 {
   //test driver capability
   EXPECT_TRUE( MDAL_DR_saveMeshCapability( MDAL_driverFromName( driver.c_str() ) ) );
@@ -433,6 +458,8 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
 
   // Compare saved with the original mesh
   compareMeshFrames( meshToSave, savedMesh );
+  if ( compareMetadata )
+    compareMeshMetadata( meshToSave, savedMesh );
 
   MDAL_CloseMesh( savedMesh );
 
