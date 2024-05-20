@@ -20,7 +20,7 @@ variables:
 jobs:
   - job: 'Documentation'
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: 'ubuntu-16.04'
     container:
       image: osgeo/proj-docs
       options: --privileged
