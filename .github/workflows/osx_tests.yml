@@ -4,7 +4,7 @@ env:
   QGIS_DEPS_VERSION: 0.4.0
 jobs:
   osx_tests:
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Checkout MDAL
         uses: actions/checkout@v2
