@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <math.h>
 #include <algorithm>
+#include <regex>
+#include <set>
 #include "mdal_utils.hpp"
 
 MDAL::Dataset::~Dataset() = default;
@@ -205,7 +207,33 @@ std::string MDAL::DatasetGroup::name()
 
 void MDAL::DatasetGroup::setName( const std::string &name )
 {
-  setMetadata( "name", name );
+  std::string assignedName = name;
+  std::set<std::string> existingNames;
+
+  for ( std::shared_ptr<MDAL::DatasetGroup> existingGroup : mParent->datasetGroups )
+  {
+    existingNames.insert( existingGroup->name() );
+  }
+
+  while ( existingNames.find( assignedName ) != existingNames.end() )
+  {
+      std::regex reEndsNumber( "_[0-9]+$" );
+      std::regex reNumber( "[0-9]+$" );
+      std::smatch m;
+      if ( std::regex_search( assignedName, reEndsNumber ) )
+      {
+        if ( std::regex_search( assignedName, m, reNumber ))
+        {
+          int number = std::stoi( m.str() );
+          assignedName = assignedName.substr( 0, assignedName.size() - m.str().size() ) + std::to_string( number + 1 );
+        }    
+      }
+      else{
+        assignedName = assignedName + "_1"; 
+      }
+  }
+
+  setMetadata( "name", assignedName );
 }
 
 std::string MDAL::DatasetGroup::uri() const
