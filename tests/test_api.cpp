@@ -635,6 +635,47 @@ TEST( ApiTest, MeshCreationApi )
   EXPECT_EQ( std::strcmp( MDAL_DR_saveMeshSuffix( driver ), "slf" ), 0 );
 }
 
+TEST( ApiTest, DuplicatedDatasetNames )
+{
+  std::string meshFile = test_file( "/2dm/quad_and_line.2dm" );
+  MDAL_MeshH m = MDAL_LoadMesh( meshFile.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+ 
+  std::string vertexPath = test_file( "/ascii_dat/quad_and_triangle_vertex_scalar.dat" );
+  
+  // add the same dataset multiple times
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+
+  // check that the DatasetGroup names are unique
+  std::set<std::string> names;
+  for (int i = 0; i < MDAL_M_datasetGroupCount( m ); ++i)
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, i );
+    ASSERT_NE( g, nullptr );
+    std::string name = MDAL_G_name( g );
+    ASSERT_TRUE( names.find( name ) == names.end() );
+    names.insert( name );
+  }
+  ASSERT_EQ( 5, names.size() );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
