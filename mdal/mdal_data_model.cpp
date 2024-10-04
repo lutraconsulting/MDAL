@@ -217,20 +217,21 @@ void MDAL::DatasetGroup::setName( const std::string &name )
 
   while ( existingNames.find( assignedName ) != existingNames.end() )
   {
-      std::regex reEndsNumber( "_[0-9]+$" );
-      std::regex reNumber( "[0-9]+$" );
-      std::smatch m;
-      if ( std::regex_search( assignedName, reEndsNumber ) )
+    std::regex reEndsNumber( "_[0-9]+$" );
+    std::regex reNumber( "[0-9]+$" );
+    std::smatch m;
+    if ( std::regex_search( assignedName, reEndsNumber ) )
+    {
+      if ( std::regex_search( assignedName, m, reNumber ) )
       {
-        if ( std::regex_search( assignedName, m, reNumber ))
-        {
-          int number = std::stoi( m.str() );
-          assignedName = assignedName.substr( 0, assignedName.size() - m.str().size() ) + std::to_string( number + 1 );
-        }    
+        int number = std::stoi( m.str() );
+        assignedName = assignedName.substr( 0, assignedName.size() - m.str().size() ) + std::to_string( number + 1 );
       }
-      else{
-        assignedName = assignedName + "_1"; 
-      }
+    }
+    else
+    {
+      assignedName = assignedName + "_1";
+    }
   }
 
   setMetadata( "name", assignedName );
