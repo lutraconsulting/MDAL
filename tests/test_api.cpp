@@ -644,9 +644,9 @@ TEST( ApiTest, DuplicatedDatasetNames )
   EXPECT_EQ( MDAL_Status::None, s );
   ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
 
- 
+
   std::string vertexPath = test_file( "/ascii_dat/quad_and_triangle_vertex_scalar.dat" );
-  
+
   // add the same dataset multiple times
   MDAL_M_LoadDatasets( m, vertexPath.c_str() );
   s = MDAL_LastStatus();
@@ -665,7 +665,7 @@ TEST( ApiTest, DuplicatedDatasetNames )
 
   // check that the DatasetGroup names are unique
   std::set<std::string> names;
-  for (int i = 0; i < MDAL_M_datasetGroupCount( m ); ++i)
+  for ( int i = 0; i < MDAL_M_datasetGroupCount( m ); ++i )
   {
     MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, i );
     ASSERT_NE( g, nullptr );
