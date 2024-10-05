@@ -676,6 +676,55 @@ TEST( ApiTest, DuplicatedDatasetNames )
   ASSERT_EQ( 5, names.size() );
 }
 
+TEST( ApiTest, DatasetRemoval )
+{
+  MDAL_SetLoggerCallback( &_testLoggerCallback );
+
+  std::string meshFile = test_file( "/2dm/quad_and_line.2dm" );
+  MDAL_MeshH m = MDAL_LoadMesh( meshFile.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+
+  std::string vertexPath = test_file( "/ascii_dat/quad_and_triangle_vertex_scalar.dat" );
+
+  // add the same dataset multiple times
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+
+  // remove non existing dataset
+  MDAL_M_RemoveDatasetGroup( m, "vertex_scalar" );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_InvalidData, s );
+  EXPECT_EQ( receivedLogLevel, MDAL_LogLevel::Error );
+  EXPECT_EQ( receivedLogMessage, "Dataset name is not found in the mesh" );
+
+  // remove existing dataset
+  MDAL_M_RemoveDatasetGroup( m, "VertexScalarDataset" );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_M_RemoveDatasetGroup( m, "VertexScalarDataset_2" );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
