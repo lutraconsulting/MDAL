@@ -377,6 +377,14 @@ MDAL_EXPORT int MDAL_M_faceVerticesMaximumCount( MDAL_MeshH mesh );
 MDAL_EXPORT void MDAL_M_LoadDatasets( MDAL_MeshH mesh, const char *datasetFile );
 
 /**
+ * Removes DatasetGroup from Mesh based on it's name. On error see MDAL_LastStatus 
+ * for error type.
+ * 
+ * \since MDAL 1.3.0
+ */
+MDAL_EXPORT void MDAL_M_RemoveDatasetGroup( MDAL_MeshH mesh, const char *datasetGroupName);
+
+/**
  * Returns number of metadata values
  *
  * \since MDAL 0.9.0
