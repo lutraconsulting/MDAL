@@ -414,7 +414,8 @@ void MDAL_M_LoadDatasets( MDAL_MeshH mesh, const char *datasetFile )
   std::string filename( datasetFile );
   MDAL::DriverManager::instance().loadDatasets( m, datasetFile );
 }
-void MDAL_M_RemoveDatasetGroup( MDAL_MeshH mesh, const char *datasetGroupName)
+
+void MDAL_M_RemoveDatasetGroup( MDAL_MeshH mesh, const char *datasetGroupName )
 {
   if ( !mesh )
   {
@@ -429,24 +430,24 @@ void MDAL_M_RemoveDatasetGroup( MDAL_MeshH mesh, const char *datasetGroupName)
   }
 
   MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
-  
+
   std::map<std::string, int> datasetNames;
-  for (long unsigned int i = 0; i < m->datasetGroups.size(); ++i)
+  for ( long unsigned int i = 0; i < m->datasetGroups.size(); ++i )
   {
     std::shared_ptr<MDAL::DatasetGroup> datasetGroup = m->datasetGroups[i];
-    datasetNames.insert({datasetGroup->name(), i});
+    datasetNames.insert( {datasetGroup->name(), i} );
   }
-  
-  auto it = datasetNames.find(datasetGroupName); 
-  if (it == datasetNames.end())
+
+  auto it = datasetNames.find( datasetGroupName );
+  if ( it == datasetNames.end() )
   {
     MDAL::Log::error( MDAL_Status::Err_InvalidData, "Dataset name is not found in the mesh" );
     return;
   }
   else
   {
-    m->datasetGroups.erase(m->datasetGroups.begin() + it->second);
-    MDAL::Log::info("Dataset " + std::string(datasetGroupName) + " removed from the mesh");
+    m->datasetGroups.erase( m->datasetGroups.begin() + it->second );
+    MDAL::Log::info( "Dataset " + std::string( datasetGroupName ) + " removed from the mesh" );
   }
 }
 
