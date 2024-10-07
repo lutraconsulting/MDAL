@@ -417,6 +417,8 @@ void MDAL_M_LoadDatasets( MDAL_MeshH mesh, const char *datasetFile )
 
 void MDAL_M_RemoveDatasetGroup( MDAL_MeshH mesh, const char *datasetGroupName )
 {
+  MDAL::Log::resetLastStatus();
+
   if ( !mesh )
   {
     MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
