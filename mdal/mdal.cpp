@@ -847,6 +847,18 @@ const char *MDAL_G_name( MDAL_DatasetGroupH group )
   return _return_str( g->name() );
 }
 
+void MDAL_G_setName( MDAL_DatasetGroupH group, const char *name )
+{
+  if ( !group )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleDataset, "Dataset Group is not valid (null)" );
+    return;
+  }
+
+  MDAL::DatasetGroup *g = static_cast< MDAL::DatasetGroup * >( group );
+  g->setName( name );
+}
+
 bool MDAL_G_hasScalarData( MDAL_DatasetGroupH group )
 {
   if ( !group )
