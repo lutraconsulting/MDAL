@@ -664,6 +664,11 @@ TEST( ApiTest, DatasetRemoval )
   EXPECT_EQ( MDAL_Status::None, s );
   ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
 
+  // try to remove from bad mesh
+  MDAL_M_RemoveDatasetGroup( nullptr, -1 );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+
   // remove non existing dataset
   MDAL_M_RemoveDatasetGroup( m, -1 );
   s = MDAL_LastStatus();
