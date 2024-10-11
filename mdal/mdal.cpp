@@ -580,6 +580,34 @@ MDAL_DatasetGroupH MDAL_M_addDatasetGroup(
     return nullptr;
 }
 
+void MDAL_M_RemoveDatasetGroup( MDAL_MeshH mesh, int index )
+{
+  MDAL::Log::resetLastStatus();
+
+  if ( !mesh )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Mesh is not valid (null)" );
+    return;
+  }
+
+  if ( index < 0 )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index is not valid: " + std::to_string( index ) );
+    return;
+  }
+
+  MDAL::Mesh *m = static_cast< MDAL::Mesh * >( mesh );
+  int len = static_cast<int>( m->datasetGroups.size() );
+  if ( len <= index )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, "Requested index " + std::to_string( index ) + " is bigger than datasets count" );
+    return;
+  }
+  size_t i = static_cast<size_t>( index );
+
+  m->datasetGroups.erase( m->datasetGroups.begin() + i );
+}
+
 const char *MDAL_M_driverName( MDAL_MeshH mesh )
 {
   if ( !mesh )
