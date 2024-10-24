@@ -782,9 +782,9 @@ TEST( Mesh2DMTest, QuadAndTriangleScientificNotationFile )
   path = test_file( "/2dm/quad_and_triangle.2dm" );
   EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
   MDAL_MeshH m_not_scientific = MDAL_LoadMesh( path.c_str() );
-  
-  compareMeshFrames(m_scientific, m_not_scientific);
-  
+
+  compareMeshFrames( m_scientific, m_not_scientific );
+
   MDAL_CloseMesh( m_scientific );
   MDAL_CloseMesh( m_not_scientific );
 }
