@@ -764,6 +764,31 @@ TEST( Mesh2DMTest, Save1DMeshToFile )
   );
 }
 
+TEST( Mesh2DMTest, QuadAndTriangleScientificNotationFile )
+{
+  std::string path = test_file( "/2dm/quad_and_triangle_scientific.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
+  MDAL_MeshH m_scientific = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m_scientific, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  int v_count = MDAL_M_vertexCount( m_scientific );
+  EXPECT_EQ( v_count, 5 );
+
+  int f_count = MDAL_M_faceCount( m_scientific );
+  EXPECT_EQ( 2, f_count );
+
+  path = test_file( "/2dm/quad_and_triangle.2dm" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "2DM:\"" + path + "\"" );
+  MDAL_MeshH m_not_scientific = MDAL_LoadMesh( path.c_str() );
+  
+  compareMeshFrames(m_scientific, m_not_scientific);
+  
+  MDAL_CloseMesh( m_scientific );
+  MDAL_CloseMesh( m_not_scientific );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
