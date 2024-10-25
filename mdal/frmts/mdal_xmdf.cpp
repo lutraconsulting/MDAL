@@ -206,6 +206,17 @@ void MDAL::DriverXmdf::addDatasetGroupsFromXmdfGroup( DatasetGroups &groups,
     size_t vertexCount,
     size_t faceCount ) const
 {
+  // check if this root group can be loaded as a dataset group and if so, then load it
+  std::vector<std::string> gDataNames = rootGroup.datasets();
+  if ( MDAL::contains( gDataNames, "Times" ) &&
+       MDAL::contains( gDataNames, "Values" ) &&
+       MDAL::contains( gDataNames, "Mins" ) &&
+       MDAL::contains( gDataNames, "Maxs" ) )
+  {
+    std::shared_ptr<DatasetGroup> ds = readXmdfGroupAsDatasetGroup( rootGroup, rootGroup.name() + nameSuffix, vertexCount, faceCount );
+    groups.push_back( ds );
+  }
+
   for ( const std::string &groupName : rootGroup.groups() )
   {
     HdfGroup g = rootGroup.group( groupName );
