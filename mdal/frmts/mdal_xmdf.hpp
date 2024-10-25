@@ -89,6 +89,9 @@ namespace MDAL
       bool canReadDatasets( const std::string &uri ) override;
       void load( const std::string &datFile, Mesh *mesh ) override;
 
+      bool canReadMesh( const std::string &uri ) override;
+      std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName = "" ) override;
+
     private:
       MDAL::Mesh *mMesh = nullptr;
       std::string mDatFile;

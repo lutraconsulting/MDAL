@@ -93,7 +93,7 @@ MDAL::DriverXmdf::DriverXmdf()
   : Driver( "XMDF",
             "TUFLOW XMDF",
             "*.xmdf",
-            Capability::ReadDatasets )
+            Capability::ReadDatasets | Capability::ReadMesh )
 {
 }
 
@@ -341,4 +341,170 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverXmdf::readXmdfGroupAsDatasetGrou
   }
 
   return group;
+}
+
+bool MDAL::DriverXmdf::canReadMesh( const std::string &uri )
+{
+  HdfFile file( uri, HdfFile::ReadOnly );
+  if ( !file.isValid() )
+  {
+    return false;
+  }
+
+  HdfDataset dsFileType = file.dataset( "/File Type" );
+  if ( dsFileType.readString() != "Xmdf" )
+  {
+    return false;
+  }
+
+  std::vector<std::string> rootGroups = file.groups();
+  if ( rootGroups.empty() || !MDAL::contains( rootGroups, "2DMeshModule" ) )
+  {
+    return false;
+  }
+
+  HdfGroup meshModuleGroup = file.group( "2DMeshModule" );
+
+  std::vector<std::string> gGroupNames = meshModuleGroup.groups();
+
+  HdfGroup firstGroupMeshModule = meshModuleGroup.group( gGroupNames[0] );
+
+  if ( !firstGroupMeshModule.isValid() )
+  {
+    return false;
+  }
+
+  std::vector<std::string> gDataNames = firstGroupMeshModule.groups();
+
+  if ( !MDAL::contains( gDataNames, "Nodes" ) ||
+       !MDAL::contains( gDataNames, "Elements" ) )
+  {
+    return false;
+  }
+
+  return true;
+}
+
+std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFile, const std::string &meshName )
+{
+  mDatFile = meshFile;
+
+  MDAL::Log::resetLastStatus();
+
+  HdfFile file( mDatFile, HdfFile::ReadOnly );
+  if ( !file.isValid() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "File " + mDatFile + " is not valid" );
+    return nullptr;
+  }
+
+  HdfDataset dsFileType = file.dataset( "/File Type" );
+  if ( dsFileType.readString() != "Xmdf" )
+  {
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Unknown dataset file type" );
+    return nullptr;
+  }
+
+  std::vector<std::string> rootGroups = file.groups();
+  if ( rootGroups.empty() )
+  {
+    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Expecting at least one root group for the mesh data" );
+    return nullptr;
+  }
+
+  HdfGroup meshModuleGroup = file.group( "2DMeshModule" );
+
+  std::vector<std::string> gGroupNames = meshModuleGroup.groups();
+
+  HdfGroup firstGroupMeshModule = meshModuleGroup.group( gGroupNames[0] );
+
+  std::vector<std::string> gDataNames = firstGroupMeshModule.groups();
+
+  HdfGroup gNodes = firstGroupMeshModule.group( "Nodes" );
+
+  std::vector<std::string> namesNodes = gNodes.datasets();
+  HdfDataset nodes = gNodes.dataset( namesNodes[0] );
+
+  std::vector<hsize_t> nodesDims = nodes.dims();
+  hsize_t nodesRows = nodesDims[0];
+  size_t vertexDims = nodesDims[1];
+
+  std::vector<double> nodesData = nodes.readArrayDouble();
+
+  Vertices vertices( nodesRows );
+
+  size_t i = 0;
+  while ( i < nodesRows )
+  {
+    Vertex &vertex = vertices[i];
+
+    vertex.x = nodesData[i];
+    i++;
+    vertex.y = nodesData[i];
+    i++;
+    if ( vertexDims == 3 )
+    {
+      vertex.z = nodesData[i];
+      i++;
+    }
+  }
+
+  nodesData.clear();
+
+  HdfGroup gElements = firstGroupMeshModule.group( "Elements" );
+
+  std::vector<std::string> namesElements = gElements.datasets();
+  HdfDataset elements = gElements.dataset( namesElements[0] );
+
+  std::vector<hsize_t> elementsDims = elements.dims();
+  hsize_t elementsRows = elementsDims[0];
+  int elementsRowsDims = elementsDims[1];
+
+  std::vector<int> facesData = elements.readArrayInt();
+
+  Faces faces( elementsRows );
+  int maxVerticesPerFace = 0;
+
+  i = 0;
+
+  size_t currentFaceIndex = 0;
+  while ( i < elementsRows )
+  {
+    Face &face = faces[currentFaceIndex];
+
+    for ( int j = 0; j < elementsRowsDims; j++ )
+    {
+      int vertexIndex = facesData[i];
+      if ( vertexIndex > 0 )
+      {
+        // XMDF is 1-based, MDAL is 0-based
+        face.push_back( facesData[i] - 1 );
+      }
+
+      if ( j > maxVerticesPerFace )
+      {
+        maxVerticesPerFace = j;
+      }
+
+      i++;
+    }
+
+    currentFaceIndex++;
+  }
+
+  facesData.clear();
+
+  // create the mesh and set the required data
+  std::unique_ptr< MemoryMesh > mesh(
+    new MemoryMesh(
+      name(),
+      maxVerticesPerFace,
+      mDatFile
+    )
+  );
+
+  mesh->setFaces( std::move( faces ) );
+  mesh->setVertices( std::move( vertices ) );
+
+  return mesh;
 }
