@@ -433,10 +433,11 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
 
   Vertices vertices( nodesRows );
 
+  size_t currentVertexIndex = 0;
   size_t i = 0;
-  while ( i < nodesRows )
+  while ( i < nodesData.size() )
   {
-    Vertex &vertex = vertices[i];
+    Vertex &vertex = vertices[currentVertexIndex];
 
     vertex.x = nodesData[i];
     i++;
@@ -447,6 +448,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
       vertex.z = nodesData[i];
       i++;
     }
+    currentVertexIndex++;
   }
 
   nodesData.clear();
@@ -465,13 +467,11 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
   Faces faces( elementsRows );
   int maxVerticesPerFace = 0;
 
-  i = 0;
-
   size_t currentFaceIndex = 0;
-  while ( i < elementsRows )
+  i = 0;
+  while ( i < facesData.size() )
   {
     Face &face = faces[currentFaceIndex];
-
     for ( int j = 0; j < elementsRowsDims; j++ )
     {
       int vertexIndex = facesData[i];
@@ -481,14 +481,13 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
         face.push_back( facesData[i] - 1 );
       }
 
-      if ( j > maxVerticesPerFace )
+      if ( j + 1 > maxVerticesPerFace )
       {
-        maxVerticesPerFace = j;
+        maxVerticesPerFace = j + 1;
       }
 
       i++;
     }
-
     currentFaceIndex++;
   }
 
