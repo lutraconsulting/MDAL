@@ -360,6 +360,7 @@ bool MDAL::DriverXmdf::canReadMesh( const std::string &uri )
   std::vector<std::string> rootGroups = file.groups();
   if ( rootGroups.empty() || !MDAL::contains( rootGroups, "2DMeshModule" ) )
   {
+    MDAL::Log::debug( "Mesh from `" + mDatFile + "` does not contain group `2DMeshModule`.");
     return false;
   }
 
@@ -371,6 +372,7 @@ bool MDAL::DriverXmdf::canReadMesh( const std::string &uri )
 
   if ( !firstGroupMeshModule.isValid() )
   {
+    MDAL::Log::debug( "Mesh Group module `" + firstGroupMeshModule.name() + "` is not valid.");
     return false;
   }
 
@@ -379,6 +381,7 @@ bool MDAL::DriverXmdf::canReadMesh( const std::string &uri )
   if ( !MDAL::contains( gDataNames, "Nodes" ) ||
        !MDAL::contains( gDataNames, "Elements" ) )
   {
+    MDAL::Log::debug( "Mesh Group module `" + firstGroupMeshModule.name() + "` does not contain `Nodes` and `Elements` groups.");
     return false;
   }
 
