@@ -561,26 +561,26 @@ TEST( MeshXmdfTest, DataInSubfolder )
 
   MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
   ASSERT_NE( g, nullptr );
-  ASSERT_EQ(std::string("/Datasets/data"), std::string(MDAL_G_name( g )));
+  ASSERT_EQ( std::string( "/Datasets/data" ), std::string( MDAL_G_name( g ) ) );
 
   MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
-  ASSERT_TRUE(MDAL_D_isValid( ds ));
-  EXPECT_EQ(5, MDAL_D_valueCount( ds ));
+  ASSERT_TRUE( MDAL_D_isValid( ds ) );
+  EXPECT_EQ( 5, MDAL_D_valueCount( ds ) );
 
   double min, max;
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 1, min );
   EXPECT_DOUBLE_EQ( 3, max );
 
-  g = MDAL_M_datasetGroup( m, 2);
+  g = MDAL_M_datasetGroup( m, 2 );
   ASSERT_NE( g, nullptr );
-  ASSERT_EQ(std::string("subgroup"), std::string(MDAL_G_name( g )));
+  ASSERT_EQ( std::string( "subgroup" ), std::string( MDAL_G_name( g ) ) );
 
   ds = MDAL_G_dataset( g, 0 );
   ASSERT_NE( ds, nullptr );
-  ASSERT_TRUE(MDAL_D_isValid( ds ));
-  EXPECT_EQ(5, MDAL_D_valueCount( ds ));
+  ASSERT_TRUE( MDAL_D_isValid( ds ) );
+  EXPECT_EQ( 5, MDAL_D_valueCount( ds ) );
 
   MDAL_D_minimumMaximum( ds, &min, &max );
   EXPECT_DOUBLE_EQ( 100, min );
