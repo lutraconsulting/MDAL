@@ -501,6 +501,92 @@ TEST( MeshXmdfTest, withFinalgroup )
   MDAL_CloseMesh( m );
 }
 
+TEST( MeshXmdfTest, MeshLoading )
+{
+  std::string pathMesh = test_file( "/xmdf/withMesh/mesh.h5" );
+  MDAL_MeshH m = MDAL_LoadMesh( pathMesh.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  ASSERT_EQ( 5, MDAL_M_vertexCount( m ) );
+  ASSERT_EQ( 2, MDAL_M_faceCount( m ) );
+
+  double minX, maxX, minY, maxY;
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+
+  EXPECT_DOUBLE_EQ( 1000, minX );
+  EXPECT_DOUBLE_EQ( 3000, maxX );
+  EXPECT_DOUBLE_EQ( 2000, minY );
+  EXPECT_DOUBLE_EQ( 3000, maxY );
+
+  EXPECT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+
+  EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+
+  int meta_count = MDAL_G_metadataCount( g );
+  ASSERT_EQ( 1, meta_count );
+
+  const char *name = MDAL_G_name( g );
+  EXPECT_EQ( std::string( "Z-Values" ), std::string( name ) );
+
+  EXPECT_EQ( MDAL_M_datasetGroupCount( m ), 1 );
+
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+
+  EXPECT_TRUE( MDAL_D_isValid( ds ) );
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+
+  EXPECT_DOUBLE_EQ( 10, min );
+  EXPECT_DOUBLE_EQ( 50, max );
+}
+
+TEST( MeshXmdfTest, DataInSubfolder )
+{
+  std::string pathMesh = test_file( "/xmdf/withMesh/mesh.h5" );
+  MDAL_MeshH m = MDAL_LoadMesh( pathMesh.c_str() );
+  ASSERT_NE( m, nullptr );
+  ASSERT_EQ( 1, MDAL_M_datasetGroupCount( m ) );
+
+  std::string path = test_file( "/xmdf/withMesh/data.h5" );
+  EXPECT_TRUE( std::string( MDAL_MeshNames( path.c_str() ) ).empty() );
+  MDAL_M_LoadDatasets( m, path.c_str() );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 1 );
+  ASSERT_NE( g, nullptr );
+  ASSERT_EQ(std::string("/Datasets/data"), std::string(MDAL_G_name( g )));
+
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+  ASSERT_TRUE(MDAL_D_isValid( ds ));
+  EXPECT_EQ(5, MDAL_D_valueCount( ds ));
+
+  double min, max;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 1, min );
+  EXPECT_DOUBLE_EQ( 3, max );
+
+  g = MDAL_M_datasetGroup( m, 2);
+  ASSERT_NE( g, nullptr );
+  ASSERT_EQ(std::string("subgroup"), std::string(MDAL_G_name( g )));
+
+  ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+  ASSERT_TRUE(MDAL_D_isValid( ds ));
+  EXPECT_EQ(5, MDAL_D_valueCount( ds ));
+
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 100, min );
+  EXPECT_DOUBLE_EQ( 500, max );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
