@@ -505,8 +505,16 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
     )
   );
 
+  std::vector<double> values( vertices.size() );
+  for ( size_t i = 0; i < vertices.size(); ++i )
+  {
+    values[i] = vertices[i].z;
+  }
+
   mesh->setFaces( std::move( faces ) );
   mesh->setVertices( std::move( vertices ) );
+
+  addVertexScalarDatasetGroup( mesh.get(), values, "Z-Values" );
 
   return mesh;
 }
