@@ -114,6 +114,11 @@ namespace MDAL
                            size_t vertexCount,
                            size_t faceCount ) const;
 
+      std::string buildUri( const std::string &meshFile ) override;
+      std::vector<std::string> findMeshesNames() const;
+
+      std::vector<std::string> meshGroupPaths( const HdfGroup &group ) const;
+      std::vector<std::string> meshGroupPaths( const HdfFile &file ) const;
   };
 
 } // namespace MDAL

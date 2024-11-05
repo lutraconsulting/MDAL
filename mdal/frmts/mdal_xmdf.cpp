@@ -357,35 +357,71 @@ bool MDAL::DriverXmdf::canReadMesh( const std::string &uri )
     return false;
   }
 
+  std::vector<std::string> meshPaths = meshGroupPaths( file );
+
+  return !meshPaths.empty();
+}
+
+std::string MDAL::DriverXmdf::buildUri( const std::string &meshFile )
+{
+  mDatFile = meshFile;
+
+  std::vector<std::string> meshNames = findMeshesNames();
+
+  return MDAL::buildAndMergeMeshUris( meshFile, meshNames, name() );
+}
+
+std::vector<std::string> MDAL::DriverXmdf::findMeshesNames() const
+{
+  std::vector<std::string> meshesInFile;
+
+  HdfFile file( mDatFile, HdfFile::ReadOnly );
+  if ( !file.isValid() )
+  {
+    return meshesInFile;
+  }
+
+  meshesInFile = meshGroupPaths( file );
+
+  return meshesInFile;
+}
+
+std::vector<std::string> MDAL::DriverXmdf::meshGroupPaths( const HdfFile &file ) const
+{
+  std::vector<std::string> meshPaths;
+
   std::vector<std::string> rootGroups = file.groups();
-  if ( rootGroups.empty() || !MDAL::contains( rootGroups, "2DMeshModule" ) )
+
+  for ( const std::string &groupName : rootGroups )
   {
-    MDAL::Log::debug( "Mesh from `" + mDatFile + "` does not contain group `2DMeshModule`." );
-    return false;
+    HdfGroup g = file.group( groupName );
+    std::vector<std::string> paths = meshGroupPaths( g );
+    meshPaths.insert( meshPaths.end(), paths.begin(), paths.end() );
   }
 
-  HdfGroup meshModuleGroup = file.group( "2DMeshModule" );
+  return meshPaths;
+}
 
-  std::vector<std::string> gGroupNames = meshModuleGroup.groups();
+std::vector<std::string> MDAL::DriverXmdf::meshGroupPaths( const HdfGroup &group ) const
+{
+  std::vector<std::string> meshPaths;
 
-  HdfGroup firstGroupMeshModule = meshModuleGroup.group( gGroupNames[0] );
+  std::vector<std::string> gDataNames = group.groups();
 
-  if ( !firstGroupMeshModule.isValid() )
+  if ( MDAL::contains( gDataNames, "Nodes" ) ||
+       MDAL::contains( gDataNames, "Elements" ) )
   {
-    MDAL::Log::debug( "Mesh Group module `" + firstGroupMeshModule.name() + "` is not valid." );
-    return false;
+    meshPaths.push_back( group.name() );
   }
 
-  std::vector<std::string> gDataNames = firstGroupMeshModule.groups();
-
-  if ( !MDAL::contains( gDataNames, "Nodes" ) ||
-       !MDAL::contains( gDataNames, "Elements" ) )
+  for ( const std::string &groupName : gDataNames )
   {
-    MDAL::Log::debug( "Mesh Group module `" + firstGroupMeshModule.name() + "` does not contain `Nodes` and `Elements` groups." );
-    return false;
+    HdfGroup g = group.group( groupName );
+    std::vector<std::string> paths = meshGroupPaths( g );
+    meshPaths.insert( meshPaths.end(), paths.begin(), paths.end() );
   }
 
-  return true;
+  return meshPaths;
 }
 
 std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFile, const std::string &meshName )
@@ -408,22 +444,32 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
     return nullptr;
   }
 
-  std::vector<std::string> rootGroups = file.groups();
-  if ( rootGroups.empty() )
+  std::vector<std::string> meshNames = findMeshesNames();
+
+  if ( meshNames.empty() )
   {
-    MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Expecting at least one root group for the mesh data" );
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "No meshes found in file" + mDatFile );
     return nullptr;
   }
 
-  HdfGroup meshModuleGroup = file.group( "2DMeshModule" );
+  std::string meshNameToLoad = meshName;
 
-  std::vector<std::string> gGroupNames = meshModuleGroup.groups();
+  if ( meshNameToLoad.empty() )
+  {
+    meshNameToLoad = meshNames[0];
+  }
 
-  HdfGroup firstGroupMeshModule = meshModuleGroup.group( gGroupNames[0] );
+  if ( !MDAL::contains( meshNames, meshNameToLoad ) )
+  {
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "No meshes with name " + meshNameToLoad + "found in file" + mDatFile );
+    return nullptr;
+  }
 
-  std::vector<std::string> gDataNames = firstGroupMeshModule.groups();
+  HdfGroup groupMeshModule = file.group( meshNameToLoad );
 
-  HdfGroup gNodes = firstGroupMeshModule.group( "Nodes" );
+  std::vector<std::string> gDataNames = groupMeshModule.groups();
+
+  HdfGroup gNodes = groupMeshModule.group( "Nodes" );
 
   std::vector<std::string> namesNodes = gNodes.datasets();
   HdfDataset nodes = gNodes.dataset( namesNodes[0] );
@@ -456,7 +502,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
 
   nodesData.clear();
 
-  HdfGroup gElements = firstGroupMeshModule.group( "Elements" );
+  HdfGroup gElements = groupMeshModule.group( "Elements" );
 
   std::vector<std::string> namesElements = gElements.datasets();
   HdfDataset elements = gElements.dataset( namesElements[0] );
