@@ -92,7 +92,7 @@ size_t MDAL::XmdfDataset::activeData( size_t indexStart, size_t count, int *buff
 MDAL::DriverXmdf::DriverXmdf()
   : Driver( "XMDF",
             "TUFLOW XMDF",
-            "*.xmdf",
+            "*.xmdf;;*.h5",
             Capability::ReadDatasets | Capability::ReadMesh )
 {
 }
