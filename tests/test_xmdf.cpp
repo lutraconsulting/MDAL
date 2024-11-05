@@ -587,6 +587,64 @@ TEST( MeshXmdfTest, DataInSubfolder )
   EXPECT_DOUBLE_EQ( 500, max );
 }
 
+TEST( MeshXmdfTest, MultipleMeshes )
+{
+  // dataset without mesh
+  std::string path = test_file( "/xmdf/withMesh/data.h5" );
+  EXPECT_EQ( std::string( MDAL_MeshNames( path.c_str() ) ), std::string( "" ) );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_EQ( m, nullptr );
+
+  // test that all 4 meshes are found
+  path = test_file( "/xmdf/withMesh/multiple_meshes.h5" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ),
+             "XMDF:\"" + path + "\":/2DMeshModule/triangle_and_quad;;" +
+             "XMDF:\"" + path + "\":/AnotherGroup/2DMeshModule/triangle_and_quad;;" +
+             "XMDF:\"" + path + "\":/OtherModuleWithMesh/t_q;;" +
+             "XMDF:\"" + path + "\":/YetAnotherGroup/ModuleWithMesh/t_q" );
+
+  // default mesh can be loaded
+  m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  // load specific mesh and test extent to validate correct mesh was loaded
+  std::string uri = "\"" + path + "\":/2DMeshModule/triangle_and_quad";
+  m = MDAL_LoadMesh( uri.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  double minX, maxX, minY, maxY;
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+
+  EXPECT_DOUBLE_EQ( 1000, minX );
+  EXPECT_DOUBLE_EQ( 3000, maxX );
+  EXPECT_DOUBLE_EQ( 2000, minY );
+  EXPECT_DOUBLE_EQ( 3000, maxY );
+
+  // load another mesh
+  uri = "\"" + path + "\":/AnotherGroup/2DMeshModule/triangle_and_quad";
+  m = MDAL_LoadMesh( uri.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+
+  EXPECT_DOUBLE_EQ( 10, minX );
+  EXPECT_DOUBLE_EQ( 30, maxX );
+  EXPECT_DOUBLE_EQ( 20, minY );
+  EXPECT_DOUBLE_EQ( 30, maxY );
+
+  // load another mesh
+  uri = "\"" + path + "\":/YetAnotherGroup/ModuleWithMesh/t_q";
+  m = MDAL_LoadMesh( uri.c_str() );
+  ASSERT_NE( m, nullptr );
+
+  MDAL_M_extent( m, &minX, &maxX, &minY, &maxY );
+
+  EXPECT_DOUBLE_EQ( 1, minX );
+  EXPECT_DOUBLE_EQ( 3, maxX );
+  EXPECT_DOUBLE_EQ( 2, minY );
+  EXPECT_DOUBLE_EQ( 3, maxY );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
