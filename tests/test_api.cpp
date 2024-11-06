@@ -698,6 +698,10 @@ TEST( ApiTest, DatasetRemoval )
   s = MDAL_LastStatus();
   EXPECT_EQ( MDAL_Status::None, s );
   ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_CloseMesh( m );
+}
+
 }
 
 int main( int argc, char **argv )
