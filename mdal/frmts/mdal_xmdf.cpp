@@ -484,7 +484,6 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
     return nullptr;
   }
 
-
   std::vector<double> nodesData = nodes.readArrayDouble();
 
   Vertices vertices( nodesRows );
