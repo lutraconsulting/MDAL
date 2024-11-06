@@ -533,7 +533,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
     }
 
     // only store faces with more than 2 vertices
-    if (tempFace.size() > 2)
+    if ( tempFace.size() > 2 )
     {
       Face &face = faces[currentFaceIndex];
       std::copy( tempFace.begin(), tempFace.end(), std::back_inserter( face ) );
