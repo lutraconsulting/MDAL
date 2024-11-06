@@ -520,27 +520,37 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
   i = 0;
   while ( i < facesData.size() )
   {
-    Face &face = faces[currentFaceIndex];
+    std::vector<size_t> tempFace;
     for ( int j = 0; j < elementsRowsDims; j++ )
     {
       int vertexIndex = facesData[i];
       if ( vertexIndex > 0 )
       {
         // XMDF is 1-based, MDAL is 0-based
-        face.push_back( facesData[i] - 1 );
+        tempFace.push_back( facesData[i] - 1 );
       }
-
-      if ( j + 1 > maxVerticesPerFace )
-      {
-        maxVerticesPerFace = j + 1;
-      }
-
       i++;
     }
-    currentFaceIndex++;
+
+    // only store faces with more than 2 vertices
+    if (tempFace.size() > 2)
+    {
+      Face &face = faces[currentFaceIndex];
+      std::copy( tempFace.begin(), tempFace.end(), std::back_inserter( face ) );
+
+      if ( tempFace.size() > maxVerticesPerFace )
+      {
+        maxVerticesPerFace = tempFace.size();
+      }
+
+      currentFaceIndex++;
+    }
   }
 
   facesData.clear();
+
+  // copy only the faces that have been properly filled
+  faces = Faces( faces.begin(), faces.begin() + currentFaceIndex );
 
   // create the mesh and set the required data
   std::unique_ptr< MemoryMesh > mesh(
