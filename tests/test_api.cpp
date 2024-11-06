@@ -635,6 +635,101 @@ TEST( ApiTest, MeshCreationApi )
   EXPECT_EQ( std::strcmp( MDAL_DR_saveMeshSuffix( driver ), "slf" ), 0 );
 }
 
+TEST( ApiTest, DatasetRemoval )
+{
+  MDAL_SetLoggerCallback( &_testLoggerCallback );
+
+  std::string meshFile = test_file( "/2dm/quad_and_line.2dm" );
+  MDAL_MeshH m = MDAL_LoadMesh( meshFile.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  std::string vertexPath = test_file( "/ascii_dat/quad_and_triangle_vertex_scalar.dat" );
+
+  // add the same dataset multiple times
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_M_LoadDatasets( m, vertexPath.c_str() );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+
+  // try to remove from bad mesh
+  MDAL_M_RemoveDatasetGroup( nullptr, -1 );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+
+  // remove non existing dataset
+  MDAL_M_RemoveDatasetGroup( m, -1 );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+  ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+
+  // remove non existing dataset
+  MDAL_M_RemoveDatasetGroup( m, 99 );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::Err_IncompatibleMesh, s );
+  ASSERT_EQ( 5, MDAL_M_datasetGroupCount( m ) );
+
+  // remove existing dataset
+  MDAL_M_RemoveDatasetGroup( m, 3 );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 4, MDAL_M_datasetGroupCount( m ) );
+
+  // remove existing dataset
+  MDAL_M_RemoveDatasetGroup( m, 3 );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 3, MDAL_M_datasetGroupCount( m ) );
+
+  // remove existing dataset
+  MDAL_M_RemoveDatasetGroup( m, 2 );
+  s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( ApiTest, DatasetGroupSetName )
+{
+  std::string path = test_file( "/2dm/regular_grid.2dm" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( MDAL_M_datasetGroupCount( m ), 1 );
+
+  // get group and test name
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+
+  std::string name = std::string( MDAL_G_name( g ) );
+  ASSERT_EQ( name, "Bed Elevation" );
+
+  // set new name
+  std::string newName = "Z-Value";
+  MDAL_G_setName( g, newName.c_str() );
+
+  // get the group again and test if the name is changed
+  MDAL_DatasetGroupH g1 = MDAL_M_datasetGroup( m, 0 );
+
+  name = std::string( MDAL_G_name( g1 ) );
+  ASSERT_EQ( name, newName );
+
+  MDAL_CloseMesh( m );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
