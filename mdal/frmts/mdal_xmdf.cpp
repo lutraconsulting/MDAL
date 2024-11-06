@@ -480,9 +480,10 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
 
   if ( vertexDims < 2 || vertexDims > 3 )
   {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "Vertices have unsupported number of dimensions " + std::to_string(vertexDims) + " only 2 (X,Y) or 3 (X, Y, Z) dimensions are allowed." );
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "Vertices have unsupported number of dimensions " + std::to_string( vertexDims ) + " only 2 (X,Y) or 3 (X, Y, Z) dimensions are allowed." );
     return nullptr;
   }
+
 
   std::vector<double> nodesData = nodes.readArrayDouble();
 
