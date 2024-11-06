@@ -448,7 +448,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
 
   if ( meshNames.empty() )
   {
-    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "No meshes found in file" + mDatFile );
+    MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), "No meshes found in file " + mDatFile );
     return nullptr;
   }
 
