@@ -702,6 +702,32 @@ TEST( ApiTest, DatasetRemoval )
   MDAL_CloseMesh( m );
 }
 
+TEST( ApiTest, DatasetGroupSetName )
+{
+  std::string path = test_file( "/2dm/regular_grid.2dm" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  EXPECT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  ASSERT_EQ( MDAL_Status::None, s );
+  ASSERT_EQ( MDAL_M_datasetGroupCount( m ), 1 );
+
+  // get group and test name
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+
+  std::string name = std::string( MDAL_G_name( g ) );
+  ASSERT_EQ( name, "Bed Elevation" );
+
+  // set new name
+  std::string newName = "Z-Value";
+  MDAL_G_setName( g, newName.c_str() );
+
+  // get the group again and test if the name is changed
+  MDAL_DatasetGroupH g1 = MDAL_M_datasetGroup( m, 0 );
+
+  name = std::string( MDAL_G_name( g1 ) );
+  ASSERT_EQ( name, newName );
+
+  MDAL_CloseMesh( m );
 }
 
 int main( int argc, char **argv )
