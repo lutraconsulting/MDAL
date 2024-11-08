@@ -515,19 +515,19 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
 
   std::vector<hsize_t> elementsDims = elements.dims();
   hsize_t elementsRows = elementsDims[0];
-  int elementsRowsDims = elementsDims[1];
+  hsize_t elementsRowsDims = elementsDims[1];
 
   std::vector<int> facesData = elements.readArrayInt();
 
   Faces faces( elementsRows );
-  int maxVerticesPerFace = 0;
+  size_t maxVerticesPerFace = 0;
 
   size_t currentFaceIndex = 0;
   i = 0;
   while ( i < facesData.size() )
   {
     std::vector<size_t> tempFace;
-    for ( int j = 0; j < elementsRowsDims; j++ )
+    for ( hsize_t j = 0; j < elementsRowsDims; j++ )
     {
       int vertexIndex = facesData[i];
       if ( vertexIndex > 0 )
@@ -539,7 +539,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
     }
 
     // only store faces with more than 2 vertices
-    if ( tempFace.size() > 2 )
+    if ( tempFace.size()  > static_cast<size_t>( 2 ) )
     {
       Face &face = faces[currentFaceIndex];
       std::copy( tempFace.begin(), tempFace.end(), std::back_inserter( face ) );
@@ -556,7 +556,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverXmdf::load( const std::string &meshFil
   facesData.clear();
 
   // copy only the faces that have been properly filled
-  faces = Faces( faces.begin(), faces.begin() + currentFaceIndex );
+  faces = Faces( faces.begin(), faces.begin() + static_cast<long>( currentFaceIndex ) );
 
   // create the mesh and set the required data
   std::unique_ptr< MemoryMesh > mesh(
