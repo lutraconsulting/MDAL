@@ -23,12 +23,12 @@
 
 #define DRIVER_NAME "Mike21"
 
-// function to split using regex, by default split on whitespace characters
-std::vector<std::string> regex_split( const std::string &input, const std::regex &split_regex = std::regex{"\\s+"} )
-{
-  std::sregex_token_iterator iter( input.begin(), input.end(), split_regex, -1 );
-  std::sregex_token_iterator end;
-  return {iter, end};
+void replaceTabsWithSpaces(std::string& str) {
+    for (size_t i = 0; i < str.length(); ++i) {
+        if (str[i] == '\t') {
+            str[i] = ' ';
+        }
+    }
 }
 
 static bool parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t vertexIndex, size_t vertexID )
@@ -246,7 +246,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
   {
     if ( 0 < lineNumber && lineNumber < mVertexCount + 1 )
     {
-      chunks = regex_split( MDAL::trim( line ) );
+      replaceTabsWithSpaces(line);
+      chunks = MDAL::split( MDAL::trim( line ),' ');
       if ( chunks.size() != 5 )
       {
         MDAL::Log::error( MDAL_Status::Err_InvalidData, name(), "vertex line in invalid format." );
@@ -283,7 +284,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
 
     if ( mVertexCount + 1 < lineNumber )
     {
-      chunks = regex_split( MDAL::trim( line ) );
+      replaceTabsWithSpaces(line);
+      chunks = MDAL::split( MDAL::trim( line ),' ');
       assert( faceIndex < faceCount );
 
       size_t faceVertexCount = chunks.size() - 1;
