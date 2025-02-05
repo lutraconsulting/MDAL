@@ -402,7 +402,12 @@ void MDAL::Driver2dm::save( const std::string &fileName, const std::string &, MD
     for ( size_t j = 0; j < 2; ++j )
     {
       line.append( " " );
-      line.append( MDAL::doubleToString( vertex[j], 8, true ) );
+      int precision = 8;
+      if ( std::abs( vertex[j] ) >= 100000 )
+      {
+        precision = 12;
+      }
+      line.append( MDAL::doubleToString( vertex[j], precision, true ) );
     }
     line.append( " " );
     line.append( MDAL::doubleToString( vertex[2] ) );
