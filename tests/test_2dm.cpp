@@ -789,6 +789,15 @@ TEST( Mesh2DMTest, QuadAndTriangleScientificNotationFile )
   MDAL_CloseMesh( m_not_scientific );
 }
 
+TEST( Mesh2DMTest, QuadAndTriangleScientificNotationFileLargeValues )
+{
+  saveAndCompareMesh(
+    test_file( "/2dm/quad_and_triangle_large_coordinates.2dm" ),
+    tmp_file( "/quad_and_triangle_large_coordinates_saved.2dm" ),
+    "2DM"
+  );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
