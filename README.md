@@ -128,6 +128,7 @@ QGIS contains internal copy of MDAL library in following versions:
 | 3.42.0  | 1.3.0   | Fix 2dm format coordinates saving |
 |         |         | XMDF loading Dataset Group fix, support for Mesh in XMDF files (as 2DMeshModule) |
 |         |         | Support Dataset Group Removal From Mesh |
+| 3.42.0  | 1.3.1   | Properly set precision of 2dm format coordinates while saving |
 
 versions `X.Y.9Z` are development versions or alpha/beta releases (e.g. `0.4.90`, `0.4.91`, ...)
 
