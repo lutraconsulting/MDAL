@@ -4,10 +4,10 @@ env:
   QGIS_DEPS_VERSION: 0.4.0
 jobs:
   osx_tests:
-    runs-on: macos-12
+    runs-on: macos-14
     steps:
       - name: Checkout MDAL
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: install deps
         run: |
