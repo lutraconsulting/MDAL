@@ -23,7 +23,6 @@
 
 #define DRIVER_NAME "Mike21"
 
-}
 
 static bool parse_vertex_id_gaps( std::map<size_t, size_t> &vertexIDtoIndex, size_t vertexIndex, size_t vertexID )
 {
