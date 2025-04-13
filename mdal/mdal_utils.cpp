@@ -1112,13 +1112,18 @@ MDAL::Library::Library( std::string libraryFile )
 MDAL::Library::~Library()
 {
   d->mRef--;
+  if ( d->mRef == 0 )
+  {
+    if ( d->mLibrary )
+    {
 #ifdef _WIN32
-  if ( d->mLibrary &&  d->mRef == 0 )
-    FreeLibrary( d->mLibrary );
+      FreeLibrary( d->mLibrary );
 #else
-  if ( d->mLibrary &&  d->mRef == 0 )
-    dlclose( d->mLibrary );
+      dlclose( d->mLibrary );
 #endif
+    }
+    delete d;
+  }
 }
 
 MDAL::Library::Library( const MDAL::Library &other )
