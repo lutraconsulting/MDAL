@@ -246,7 +246,7 @@ void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
     {
       dsVals = openHdfDataset( gFlowAreaRes, rawDatasetName );
     }
-    catch ( MDAL::Error )
+    catch ( MDAL::Error & )
     {
       return;
     }
@@ -416,7 +416,7 @@ std::shared_ptr<MDAL::MemoryDataset2D> MDAL::DriverHec2D::readElemOutput( const 
     {
       dsVals = openHdfDataset( gFlowAreaRes, rawDatasetName );
     }
-    catch ( MDAL::Error )
+    catch ( MDAL::Error & )
     {
       return nullptr;
     }
@@ -641,7 +641,7 @@ void MDAL::DriverHec2D::setProjection( HdfFile hdfFile )
     mMesh->setSourceCrsFromWKT( proj_wkt );
   }
   catch ( MDAL_Status ) { /* projection not set */}
-  catch ( MDAL::Error ) { /* projection not set */}
+  catch ( MDAL::Error & ) { /* projection not set */}
 }
 
 void MDAL::DriverHec2D::parseMesh(
@@ -744,7 +744,7 @@ bool MDAL::DriverHec2D::canReadMesh( const std::string &uri )
   {
     return false;
   }
-  catch ( MDAL::Error )
+  catch ( MDAL::Error & )
   {
     return false;
   }
@@ -807,7 +807,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverHec2D::load( const std::string &fileName
     MDAL::Log::error( error, name(), "Error occurred while loading file " + fileName );
     mMesh.reset();
   }
-  catch ( MDAL::Error err )
+  catch ( MDAL::Error &err )
   {
     MDAL::Log::error( err, name() );
     mMesh.reset();
