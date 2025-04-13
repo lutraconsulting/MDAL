@@ -296,13 +296,13 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh )
     }
   }
 
-  if ( !group || group->datasets.size() == 0 )
+  if ( group->datasets.size() == 0 )
     return exit_with_error( MDAL_Status::Err_UnknownFormat, "No datasets" );
 
   group->setStatistics( MDAL::calculateStatistics( group ) );
   mesh->datasetGroups.push_back( group );
 
-  if ( groupMax && groupMax->datasets.size() > 0 )
+  if ( groupMax->datasets.size() > 0 )
   {
     groupMax->setStatistics( MDAL::calculateStatistics( groupMax ) );
     mesh->datasetGroups.push_back( groupMax );
