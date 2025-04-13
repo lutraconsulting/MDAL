@@ -136,7 +136,7 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
   }
   while ( std::getline( in, line ) );
 
-  if ( !group || group->datasets.size() == 0 )
+  if ( group->datasets.size() == 0 )
   {
     MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "Dataset group is not valid (null) or has zero datasets" );
     return;
