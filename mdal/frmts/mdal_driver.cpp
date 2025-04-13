@@ -111,7 +111,7 @@ void MDAL::Driver::createDataset( MDAL::DatasetGroup *group, MDAL::RelativeTimes
     count *= 2;
 
   memcpy( dataset->values(), values, sizeof( double ) * count );
-  if ( dataset->supportsActiveFlag() )
+  if ( supportsActiveFlag && dataset->supportsActiveFlag() )
     dataset->setActive( active );
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
   group->datasets.push_back( dataset );
