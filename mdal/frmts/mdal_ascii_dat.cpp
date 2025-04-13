@@ -277,6 +277,12 @@ void MDAL::DriverAsciiDat::loadNewFormat(
     }
     else if ( cardType == "TS" && items.size() >= 3 )
     {
+      if ( !group )
+      {
+        MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "TS card for no active dataset!" );
+        return;
+      }
+
       double rawTime = toDouble( items[2] );
       MDAL::RelativeTimestamp t( rawTime, MDAL::parseDurationTimeUnit( group->getMetadata( "TIMEUNITS" ) ) );
 
