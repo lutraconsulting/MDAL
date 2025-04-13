@@ -750,7 +750,7 @@ void MDAL::DriverUgrid::save( const std::string &fileName, const std::string &me
   {
     MDAL::Log::error( error, name(), "could not save file " + fileName );
   }
-  catch ( MDAL::Error err )
+  catch ( MDAL::Error &err )
   {
     MDAL::Log::error( err, name() );
   }
@@ -959,7 +959,7 @@ bool MDAL::DriverUgrid::persist( MDAL::DatasetGroup *group )
 
     return writeDatasetGroup( group, fileName, meshName );
   }
-  catch ( MDAL::Error err )
+  catch ( MDAL::Error &err )
   {
     MDAL::Log::error( err, name() );
     return true;

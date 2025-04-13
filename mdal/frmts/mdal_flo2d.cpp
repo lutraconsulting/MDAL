@@ -1103,7 +1103,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverFlo2D::loadMesh1d()
     createMesh1d( mDatFileName, cells, cellsIdToVertex );
     parseHYCHANFile( mDatFileName, cellsIdToVertex );
   }
-  catch ( MDAL::Error err )
+  catch ( MDAL::Error &err )
   {
     MDAL::Log::error( err, name() );
   }
@@ -1146,7 +1146,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverFlo2D::loadMesh2d()
     MDAL::Log::error( error, name(), "error occurred while loading file " + mDatFileName );
     mMesh.reset();
   }
-  catch ( MDAL::Error err )
+  catch ( MDAL::Error &err )
   {
     MDAL::Log::error( err, name() );
   }
@@ -1320,7 +1320,7 @@ bool MDAL::DriverFlo2D::persist( DatasetGroup *group )
     MDAL::Log::error( error, name(), "error occurred" );
     return true;
   }
-  catch ( MDAL::Error err )
+  catch ( MDAL::Error &err )
   {
     MDAL::Log::error( err, name() );
     return true;

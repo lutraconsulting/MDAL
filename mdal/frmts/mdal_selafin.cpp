@@ -669,7 +669,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSelafin::load( const std::string &meshFi
     MDAL::Log::error( error, name(), "Error while loading file " + meshFile );
     mesh.reset();
   }
-  catch ( MDAL::Error err )
+  catch ( MDAL::Error &err )
   {
     MDAL::Log::error( err, name() );
     mesh.reset();
@@ -689,7 +689,7 @@ void MDAL::DriverSelafin::load( const std::string &datFile, MDAL::Mesh *mesh )
   {
     MDAL::Log::error( error, name(), "Error while loading dataset in file " + datFile );
   }
-  catch ( MDAL::Error err )
+  catch ( MDAL::Error &err )
   {
     MDAL::Log::error( err, name() );
   }
@@ -708,7 +708,7 @@ bool MDAL::DriverSelafin::persist( MDAL::DatasetGroup *group )
     saveDatasetGroupOnFile( group );
     return false;
   }
-  catch ( MDAL::Error err )
+  catch ( MDAL::Error &err )
   {
     MDAL::Log::error( err, name() );
     return true;
