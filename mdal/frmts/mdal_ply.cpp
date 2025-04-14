@@ -351,7 +351,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       }
       else
       {
-        auto levels = listProps.at( name + "__vols" );
+        const auto &levels = listProps.at( name + "__vols" );
         std::shared_ptr<DatasetGroup> group = addDatasetGroup( mesh.get(), name, DataOnVolumes, true );
         addDataset3D( group.get(), vals.first, vals.second, levels.first, levels.second );
         listProps.erase( name + "__vols" );
