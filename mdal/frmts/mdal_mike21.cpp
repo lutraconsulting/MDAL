@@ -61,7 +61,7 @@ MDAL::MeshMike21::MeshMike21( size_t faceVerticesMaximumCount,
   : MemoryMesh( DRIVER_NAME,
                 faceVerticesMaximumCount,
                 uri )
-  , mVertexIDtoIndex( vertexIDtoIndex )
+  , mVertexIDtoIndex( std::move( vertexIDtoIndex ) )
 {
 }
 
@@ -334,7 +334,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverMike21::load( const std::string &meshFil
     new MeshMike21(
       maxVerticesPerFace,
       mMeshFile,
-      vertexIDtoIndex
+      std::move( vertexIDtoIndex )
     )
   );
   mesh->setFaces( std::move( faces ) );

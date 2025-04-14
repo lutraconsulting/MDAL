@@ -109,7 +109,7 @@ void MDAL::DriverSWW::addBedElevation( const NetCDFFile &ncFile,
         times,
         "Bed Elevation",
         "elevation" );
-    mesh->datasetGroups.push_back( grp );
+    mesh->datasetGroups.emplace_back( std::move( grp ) );
   }
   else
   {
@@ -218,12 +218,11 @@ void MDAL::DriverSWW::readDatasetGroups(
                 ncFile,
                 mesh,
                 times,
-                groupName,
+                std::move( groupName ),
                 xName,
                 yName );
-        parsedVariableNames.insert( xName );
-        parsedVariableNames.insert( yName );
-
+        parsedVariableNames.insert( std::move( xName ) );
+        parsedVariableNames.insert( std::move( yName ) );
       }
       else
       {
@@ -232,12 +231,12 @@ void MDAL::DriverSWW::readDatasetGroups(
                 ncFile,
                 mesh,
                 times,
-                groupName,
+                std::move( groupName ),
                 name );
         parsedVariableNames.insert( name );
       }
       if ( grp )
-        mesh->datasetGroups.push_back( grp );
+        mesh->datasetGroups.emplace_back( std::move( grp ) );
     }
   }
 }

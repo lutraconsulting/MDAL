@@ -304,10 +304,10 @@ class HdfDataset
     //! for each dimension specified by offset and count
     //! size of offsets and counts must be same as rank (number of dims) of dataset
     //! the results array is 1D
-    std::vector<uchar> readArrayUint8( const std::vector<hsize_t> offsets, const std::vector<hsize_t> counts ) const;
-    std::vector<float> readArray( const std::vector<hsize_t> offsets, const std::vector<hsize_t> counts ) const;
-    std::vector<double> readArrayDouble( const std::vector<hsize_t> offsets, const std::vector<hsize_t> counts ) const;
-    std::vector<int> readArrayInt( const std::vector<hsize_t> offsets, const std::vector<hsize_t> counts ) const;
+    std::vector<uchar> readArrayUint8( const std::vector<hsize_t> &offsets, const std::vector<hsize_t> &counts ) const;
+    std::vector<float> readArray( const std::vector<hsize_t> &offsets, const std::vector<hsize_t> &counts ) const;
+    std::vector<double> readArrayDouble( const std::vector<hsize_t> &offsets, const std::vector<hsize_t> &counts ) const;
+    std::vector<int> readArrayInt( const std::vector<hsize_t> &offsets, const std::vector<hsize_t> &counts ) const;
 
     inline bool hasAttribute( const std::string &attr_name ) const;
     inline HdfAttribute attribute( const std::string &attr_name ) const;
@@ -326,8 +326,8 @@ class HdfDataset
     }
 
     template <typename T> std::vector<T> readArray( hid_t mem_type_id,
-        const std::vector<hsize_t> offsets,
-        const std::vector<hsize_t> counts ) const
+        const std::vector<hsize_t> &offsets,
+        const std::vector<hsize_t> &counts ) const
     {
       HdfDataspace dataspace( d->id );
       dataspace.selectHyperslab( offsets, counts );

@@ -344,7 +344,7 @@ bool MDAL::contains( const std::vector<std::string> &list, const std::string &st
   return std::find( list.begin(), list.end(), str ) != list.end();
 }
 
-std::string MDAL::join( const std::vector<std::string> parts, const std::string &delimiter )
+std::string MDAL::join( const std::vector<std::string> &parts, const std::string &delimiter )
 {
   std::stringstream res;
   for ( auto iter = parts.begin(); iter != parts.end(); iter++ )
@@ -781,9 +781,9 @@ static void _addScalarDatasetGroup( MDAL::Mesh *mesh,
   dataset->setTime( 0.0 );
   memcpy( dataset->values(), values.data(), sizeof( double )*values.size() );
   dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
-  group->datasets.push_back( dataset );
+  group->datasets.emplace_back( std::move( dataset ) );
   group->setStatistics( MDAL::calculateStatistics( group ) );
-  mesh->datasetGroups.push_back( group );
+  mesh->datasetGroups.emplace_back( std::move( group ) );
 }
 
 
@@ -995,11 +995,11 @@ bool MDAL::getHeaderLine( std::ifstream &stream, std::string &line )
   return true;
 }
 
-MDAL::Error::Error( MDAL_Status status, std::string message, std::string driverName ): status( status ), mssg( message ), driver( driverName ) {}
+MDAL::Error::Error( MDAL_Status status, std::string message, std::string driverName ): status( status ), mssg( std::move( message ) ), driver( std::move( driverName ) ) {}
 
 void MDAL::Error::setDriver( std::string driverName )
 {
-  driver = driverName;
+  driver = std::move( driverName );
 }
 
 void MDAL::parseDriverFromUri( const std::string &uri, std::string &driver )
@@ -1105,7 +1105,7 @@ std::string MDAL::buildAndMergeMeshUris( const std::string &meshFile, const std:
 MDAL::Library::Library( std::string libraryFile )
 {
   d = new Data;
-  d->mLibraryFile = libraryFile;
+  d->mLibraryFile = std::move( libraryFile );
   d->mRef++;
 }
 
@@ -1176,7 +1176,7 @@ std::vector<std::string> MDAL::Library::libraryFilesInDir( const std::string &di
     {
       std::string extension = fileExtension( fileName );
       if ( extension == ".so" || extension == ".dylib" )
-        filesList.push_back( fileName );
+        filesList.emplace_back( std::move( fileName ) );
     }
     de = readdir( dir );
   }
