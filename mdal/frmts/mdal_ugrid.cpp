@@ -375,7 +375,7 @@ void MDAL::DriverUgrid::populateFaces( MDAL::Faces &faces )
         idxs.push_back( static_cast<size_t>( val - startIndex ) );
       }
     }
-    faces[i] = idxs;
+    faces[i] = std::move( idxs );
   }
 
   if ( faces.size() == 1 && faces.at( 0 ).size() == 0 )
@@ -567,7 +567,7 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
       }
       else
       {
-        name = standardName;
+        name = std::move( standardName );
       }
     }
   }
@@ -658,7 +658,7 @@ void MDAL::DriverUgrid::parseNetCDFVariableMetadata( int varid,
     }
     else
     {
-      name = longName;
+      name = std::move( longName );
     }
   }
 }

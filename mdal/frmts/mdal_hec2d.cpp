@@ -231,7 +231,7 @@ void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
   {
     std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
     dataset->setTime( times[tidx] );
-    datasets.push_back( dataset );
+    datasets.emplace_back( std::move( dataset ) );
   }
 
   std::shared_ptr<MDAL::MemoryDataset2D> firstDataset;
@@ -353,7 +353,7 @@ void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
     group->datasets.push_back( dataset );
   }
   group->setStatistics( MDAL::calculateStatistics( group ) );
-  mMesh->datasetGroups.push_back( group );
+  mMesh->datasetGroups.emplace_back( std::move( group ) );
 }
 
 void MDAL::DriverHec2D::readFaceResults( const HdfFile &hdfFile,
@@ -402,7 +402,7 @@ std::shared_ptr<MDAL::MemoryDataset2D> MDAL::DriverHec2D::readElemOutput( const 
   {
     std::shared_ptr<MDAL::MemoryDataset2D> dataset = std::make_shared< MemoryDataset2D >( group.get() );
     dataset->setTime( times[tidx] );
-    datasets.push_back( dataset );
+    datasets.emplace_back( std::move( dataset ) );
   }
 
   for ( size_t nArea = 0; nArea < flowAreaNames.size(); ++nArea )
@@ -470,7 +470,7 @@ std::shared_ptr<MDAL::MemoryDataset2D> MDAL::DriverHec2D::readElemOutput( const 
     group->datasets.push_back( dataset );
   }
   group->setStatistics( MDAL::calculateStatistics( group ) );
-  mMesh->datasetGroups.push_back( group );
+  mMesh->datasetGroups.emplace_back( std::move( group ) );
 
   return datasets[0];
 }
@@ -539,7 +539,7 @@ void MDAL::DriverHec2D::readElemResults(
     "Maximum Water Surface",
     "Water Surface/Maximums",
     dummyTimes,
-    bed_elevation,
+    std::move( bed_elevation ),
     mReferenceTime
   );
 }
@@ -795,7 +795,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverHec2D::load( const std::string &fileName
     if ( hasResults )
     {
       // Element centered Values
-      readElemResults( hdfFile, bed_elevation, areaElemStartIndex, flowAreaNames );
+      readElemResults( hdfFile, std::move( bed_elevation ), areaElemStartIndex, flowAreaNames );
 
       // Face centered Values
       readFaceResults( hdfFile, areaElemStartIndex, flowAreaNames );

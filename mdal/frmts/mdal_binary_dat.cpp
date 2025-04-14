@@ -44,7 +44,7 @@ static const int CF_FLAG_INT_SIZE = 4;
 
 static void exit_with_error( MDAL_Status error, const std::string msg )
 {
-  MDAL::Log::error( error, "BINARY_DAT", msg );
+  MDAL::Log::error( error, "BINARY_DAT", std::move( msg ) );
 }
 
 static bool read( std::ifstream &in, char *s, int n )
@@ -303,12 +303,12 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh )
     return exit_with_error( MDAL_Status::Err_UnknownFormat, "No datasets" );
 
   group->setStatistics( MDAL::calculateStatistics( group ) );
-  mesh->datasetGroups.push_back( group );
+  mesh->datasetGroups.emplace_back( std::move( group ) );
 
   if ( groupMax && groupMax->datasets.size() > 0 )
   {
     groupMax->setStatistics( MDAL::calculateStatistics( groupMax ) );
-    mesh->datasetGroups.push_back( groupMax );
+    mesh->datasetGroups.emplace_back( std::move( groupMax ) );
   }
 }
 

@@ -33,7 +33,7 @@ static std::pair<std::string, std::string> metadataFromClassification( const MDA
     if ( boundValues != classes.back() )
       classification.append( ";;" );
   }
-  classificationMeta.second = classification;
+  classificationMeta.second = std::move( classification );
 
   return classificationMeta;
 }
@@ -140,8 +140,8 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
         units = mNcFile->getAttrStr( "units", varid );
         std::pair<std::string, std::string> unitMeta;
         unitMeta.first = "units";
-        unitMeta.second = units;
-        meta.push_back( unitMeta );
+        unitMeta.second = std::move( units );
+        meta.emplace_back( std::move( unitMeta ) );
       }
       catch ( MDAL::Error & )
       {}
@@ -186,15 +186,15 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
 
           if ( is_x )
           {
-            scalarDsInfoX.name = variable_name;
-            scalarDsInfoX.classification_x = classes;
-            scalarDsInfoX.metadata = meta;
+            scalarDsInfoX.name = std::move( variable_name );
+            scalarDsInfoX.classification_x = std::move( classes );
+            scalarDsInfoX.metadata = std::move( meta );
           }
           else
           {
-            scalarDsInfoY.name = variable_name;
-            scalarDsInfoY.classification_x = classes;
-            scalarDsInfoY.metadata = meta;
+            scalarDsInfoY.name = std::move( variable_name );
+            scalarDsInfoY.classification_x = std::move( classes );
+            scalarDsInfoY.metadata = std::move( meta );
           }
 
           scalarDsInfoX.metadata.push_back( metadataFromClassification( scalarDsInfoX.classification_x ) );
@@ -204,7 +204,7 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
           dsinfo_map[scalarDsInfoY.name] = scalarDsInfoY;
         }
 
-        it->second.name = vectorName;
+        it->second.name = std::move( vectorName );
       }
       else if ( it == dsinfo_map.end() || ( isClassified && is_vector ) )
       {
@@ -233,8 +233,8 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
         if ( is_vector && !isClassified )
           dsInfo.name = vectorName;
         else
-          dsInfo.name = variable_name;
-        dsinfo_map[vectorName] = dsInfo; //if is not vector, vectorName=variableName
+          dsInfo.name = std::move( variable_name );
+        dsinfo_map[vectorName] = std::move( dsInfo ); //if is not vector, vectorName=variableName
       }
     }
   }
@@ -373,7 +373,7 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Relat
       if ( dataset )
       {
         dataset->setTime( times[ts] );
-        group->datasets.push_back( dataset );
+        group->datasets.emplace_back( std::move( dataset ) );
       }
     }
 
@@ -382,7 +382,7 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Relat
     {
       group->setStatistics( MDAL::calculateStatistics( group ) );
       group->setReferenceTime( referenceTime );
-      mesh->datasetGroups.push_back( group );
+      mesh->datasetGroups.emplace_back( std::move( group ) );
     }
   }
 }
@@ -407,7 +407,7 @@ MDAL::DateTime MDAL::DriverCF::parseTime( std::vector<RelativeTimestamp> &times 
   if ( !referenceTime.isValid() )
     referenceTime = defaultReferenceTime();
 
-  MDAL::RelativeTimestamp::Unit unit = parseCFTimeUnit( timeUnitInformation );
+  MDAL::RelativeTimestamp::Unit unit = parseCFTimeUnit( std::move( timeUnitInformation ) );
 
   times = std::vector<RelativeTimestamp>( nTimesteps );
   for ( size_t i = 0; i < nTimesteps; ++i )
@@ -600,7 +600,7 @@ std::unique_ptr< MDAL::Mesh > MDAL::DriverCF::load( const std::string &fileName,
   }
   catch ( MDAL::Error &err )
   {
-    MDAL::Log::error( err, name() );
+    MDAL::Log::error( std::move( err ), name() );
     return std::unique_ptr<Mesh>();
   }
 }
@@ -670,13 +670,13 @@ MDAL::CFDataset2D::CFDataset2D( MDAL::DatasetGroup *parent,
   , mFillValY( fill_val_y )
   , mNcidX( ncid_x )
   , mNcidY( ncid_y )
-  , mClassificationX( classification_x )
-  , mClassificationY( classification_y )
+  , mClassificationX( std::move( classification_x ) )
+  , mClassificationY( std::move( classification_y ) )
   , mTimeLocation( timeLocation )
   , mTimesteps( timesteps )
   , mValues( values )
   , mTs( ts )
-  , mNcFile( ncFile )
+  , mNcFile( std::move( ncFile ) )
 {
 }
 

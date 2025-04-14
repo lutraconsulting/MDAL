@@ -22,8 +22,8 @@ void set_mdal_driver_path( const std::string &dirname );
 void init_test();
 void finalize_test();
 
-std::string test_file( std::string basename );
-std::string tmp_file( std::string basename );
+std::string test_file( const std::string &basename );
+std::string tmp_file( const std::string &basename );
 void copy( const std::string &src, const std::string &dest );
 void deleteFile( const std::string &path );
 bool fileExists( const std::string &filename );

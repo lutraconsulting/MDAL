@@ -137,7 +137,7 @@ void MDAL::XdmfFunctionDataset::addReferenceDataset(
         hdfDataset,
         time
       );
-  mReferenceDatasets.push_back( xdmfDataset );
+  mReferenceDatasets.emplace_back( std::move( xdmfDataset ) );
 }
 
 void MDAL::XdmfFunctionDataset::swap()
@@ -556,7 +556,7 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
     grp->setStatistics( stats );
     // verify the integrity of the dataset
     if ( !std::isnan( stats.minimum ) )
-      ret.push_back( grp );
+      ret.emplace_back( std::move( grp ) );
   }
 
   return ret;

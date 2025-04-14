@@ -240,10 +240,10 @@ TEST( MdalUtilsTest, EndsWidth )
 struct LoadMeshUri
 {
   LoadMeshUri( std::string u, std::string d, std::string mf, std::string mn ) :
-    uri( u ),
-    driver( d ),
-    meshFile( mf ),
-    meshName( mn ) {};
+    uri( std::move( u ) ),
+    driver( std::move( d ) ),
+    meshFile( std::move( mf ) ),
+    meshName( std::move( mn ) ) {};
 
   std::string uri;
   std::string driver;
@@ -303,10 +303,10 @@ TEST( MdalUtilsTest, BuildMeshUri )
 struct BuildMeshUri
 {
   BuildMeshUri( std::string u, std::string d, std::string mf, std::vector<std::string> mn ) :
-    mergedUris( u ),
-    driver( d ),
-    meshFile( mf ),
-    meshNames( mn ) {};
+    mergedUris( std::move( u ) ),
+    driver( std::move( d ) ),
+    meshFile( std::move( mf ) ),
+    meshNames( std::move( mn ) ) {};
 
   std::string mergedUris;
   std::string driver;

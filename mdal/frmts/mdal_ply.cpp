@@ -48,11 +48,10 @@ MDAL::DriverPly *MDAL::DriverPly::create()
 
 MDAL::DriverPly::~DriverPly() = default;
 
-size_t getIndex( std::vector<std::pair<std::string, bool>> v, std::string in )
+size_t getIndex( std::vector<std::pair<std::string, bool >> v, std::string in )
 {
-  auto is_equal = [ in ]( std::pair<std::string, bool> s ) { return  s.first == in; };
-
-  auto it = std::find_if( v.begin(), v.end(), is_equal );
+  auto it = std::find_if( v.begin(), v.end(),
+  [ &in ]( std::pair<std::string, bool> s ) { return  s.first == in; } );
   return ( size_t )std::distance( v.begin(), it );
 }
 
@@ -225,7 +224,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
             }
           }
         }
-        faces.push_back( face );
+        faces.emplace_back( std::move( face ) );
       };
       file.setElementReadCallback( "face", faceCallback );
     }
@@ -538,21 +537,21 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
   {
     if ( group->dataLocation() == MDAL_DataLocation::DataOnVertices )
     {
-      if ( group->name() != "Bed Elevation" ) vgroups.push_back( group );
+      if ( group->name() != "Bed Elevation" ) vgroups.emplace_back( std::move( group ) );
     }
     else if ( group->dataLocation() == MDAL_DataLocation::DataOnFaces )
     {
-      fgroups.push_back( group );
+      fgroups.emplace_back( std::move( group ) );
     }
     else if ( group->dataLocation() == MDAL_DataLocation::DataOnEdges )
     {
-      egroups.push_back( group );
+      egroups.emplace_back( std::move( group ) );
     }
     else if ( group->dataLocation() == MDAL_DataLocation::DataOnVolumes )
     {
       if ( group->isScalar() )
       {
-        volGroups.push_back( group );
+        volGroups.emplace_back( std::move( group ) );
       }
       else
       {
@@ -591,7 +590,7 @@ void MDAL::DriverPly::save( const std::string &fileName, const std::string &mesh
   }
 
   libply::FileOut file( fileName, format );
-  file.metadata = meta;
+  file.metadata = std::move( meta );
   if ( MDAL::Log::getLastStatus() != MDAL_Status::None ) return;
 
   libply::ElementsDefinition definitions;

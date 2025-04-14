@@ -31,14 +31,14 @@ const char *drivers_path()
 }
 
 
-std::string test_file( std::string basename )
+std::string test_file( const std::string &basename )
 {
   std::string path( data_path() );
   path += basename;
   return path;
 }
 
-std::string tmp_file( std::string basename )
+std::string tmp_file( const std::string &basename )
 {
   std::string path( data_path() + std::string( "/tmp" ) );
   path += basename;

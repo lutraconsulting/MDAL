@@ -121,7 +121,7 @@ static Mesh parseMesh( const std::string &uri )
       mesh.edges.emplace_back( elem.at( 0 ), elem.at( 1 ) );
     }
     else if ( elem.size() > 2 )
-      mesh.faces.push_back( elem );
+      mesh.faces.emplace_back( std::move( elem ) );
   }
 
   // datasets
@@ -187,10 +187,10 @@ static Mesh parseMesh( const std::string &uri )
           }
         }
 
-        group.dataset.push_back( dataset );
+        group.dataset.emplace_back( std::move( dataset ) );
       }
 
-      mesh.datasetGroups.push_back( group );
+      mesh.datasetGroups.emplace_back( std::move( group ) );
 
       getline( file, line );
     }

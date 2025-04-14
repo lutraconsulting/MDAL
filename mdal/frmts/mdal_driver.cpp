@@ -97,7 +97,7 @@ void MDAL::Driver::createDatasetGroup( MDAL::Mesh *mesh, const std::string &grou
   grp->setDataLocation( dataLocation );
   grp->setIsScalar( hasScalarData );
   grp->startEditing();
-  mesh->datasetGroups.push_back( grp );
+  mesh->datasetGroups.emplace_back( std::move( grp ) );
 }
 
 void MDAL::Driver::createDataset( MDAL::DatasetGroup *group, MDAL::RelativeTimestamp time, const double *values, const int *active )
