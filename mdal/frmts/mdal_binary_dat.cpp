@@ -146,7 +146,6 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh )
   int numdata;
   int numcells;
   char groupName[40];
-  double referenceTime;
   int timeUnit = 0;
   std::string timeUnitStr;
   char istat;
@@ -241,16 +240,18 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh )
         break;
 
       case CT_RT_JULIAN:
+      {
         // Reference time
         if ( readIStat( in, sflg, &istat ) )
           return exit_with_error( MDAL_Status::Err_UnknownFormat, "unable to read reference time" );
 
-        if ( read( in, reinterpret_cast< char * >( &time ), 8 ) )
+        double referenceTime = 0;
+        if ( read( in, reinterpret_cast< char * >( &referenceTime ), 8 ) )
           return exit_with_error( MDAL_Status::Err_UnknownFormat, "unable to read reference time" );
 
-        referenceTime = static_cast<double>( time );
         group->setReferenceTime( DateTime( referenceTime, DateTime::JulianDay ) );
         break;
+      }
 
       case CT_TIMEUNITS:
         // Time unit
