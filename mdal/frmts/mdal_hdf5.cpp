@@ -89,7 +89,8 @@ std::vector<std::string> HdfGroup::objects( H5G_obj_t type ) const
 }
 
 HdfAttribute::HdfAttribute( hid_t obj_id, const std::string &attr_name, HdfDataType type )
-  : mType( type )
+  : m_objId( obj_id )
+  , mType( type )
 {
   std::vector<hsize_t> dimsSingle = {1};
   HdfDataspace dsc( dimsSingle );

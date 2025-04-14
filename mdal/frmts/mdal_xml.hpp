@@ -69,7 +69,7 @@ class XMLFile
     //! Throws an error
     [[ noreturn ]] void error( const std::string &str ) const;
 
-    xmlDocPtr mXmlDoc;
+    xmlDocPtr mXmlDoc = nullptr;
     std::string mFileName;
 };
 
