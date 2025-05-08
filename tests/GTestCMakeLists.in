@@ -1,6 +1,6 @@
 # MDAL - Mesh Data Abstraction Library (MIT License)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 
 PROJECT(googletest-download NONE)
 
