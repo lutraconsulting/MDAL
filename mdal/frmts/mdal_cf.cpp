@@ -215,12 +215,12 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
         if ( is_x )
         {
           dsInfo.ncid_x = varid;
-          dsInfo.classification_x = classes;
+          dsInfo.classification_x = std::move( classes );
         }
         else
         {
           dsInfo.ncid_y = varid;
-          dsInfo.classification_y = classes;
+          dsInfo.classification_y = std::move( classes );
         }
 
         dsInfo.outputType = mDimensions.type( dimid );
@@ -229,7 +229,7 @@ MDAL::cfdataset_info_map MDAL::DriverCF::parseDatasetGroupInfo()
         dsInfo.isInvertedDirection = invertedDirection;
         dsInfo.nValues = mDimensions.size( mDimensions.type( dimid ) );
         dsInfo.timeLocation = timeLocation;
-        dsInfo.metadata = meta;
+        dsInfo.metadata = std::move( meta );
         if ( is_vector && !isClassified )
           dsInfo.name = vectorName;
         else

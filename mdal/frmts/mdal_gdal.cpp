@@ -246,7 +246,7 @@ void MDAL::DriverGdal::parseRasterBands( const MDAL::GdalDataset *cfGDALDataset 
         // Face is there, but new timestep
         // => create just new map entry
         std::vector<GDALRasterBandH> raster_bands( data_count );
-        raster_bands[data_index] = gdalBand;
+        raster_bands[data_index] = std::move( gdalBand );
         mBands[band_name][time] = raster_bands;
       }
       else
