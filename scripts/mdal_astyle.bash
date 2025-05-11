@@ -12,14 +12,13 @@ echo "running mdal_astyle for $FILES"
 # see https://github.com/qgis/QGIS/blob/master/scripts/astyle.options
 OPTIONS=$(cat <<-END
 --preserve-date
---indent-preprocessor
 --convert-tabs
 --indent=spaces=2
 --indent-classes
 --indent-labels
 --indent-namespaces
 --indent-switches
---max-instatement-indent=40
+--max-continuation-indent=40
 --min-conditional-indent=-1
 --suffix=none
 --break-after-logical
