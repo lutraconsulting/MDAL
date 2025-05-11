@@ -213,7 +213,7 @@ void MDAL::DriverXmdf::addDatasetGroupsFromXmdfGroup( DatasetGroups &groups,
        MDAL::contains( gDataNames, "Maxs" ) )
   {
     std::shared_ptr<DatasetGroup> ds = readXmdfGroupAsDatasetGroup( rootGroup, rootGroup.name() + nameSuffix, vertexCount, faceCount );
-    groups.push_back( std::move( ds ) );
+    groups.emplace_back( std::move( ds ) );
   }
 
   for ( const std::string &groupName : rootGroup.groups() )
@@ -222,7 +222,7 @@ void MDAL::DriverXmdf::addDatasetGroupsFromXmdfGroup( DatasetGroups &groups,
     std::shared_ptr<DatasetGroup> ds = readXmdfGroupAsDatasetGroup( g, groupName + nameSuffix, vertexCount, faceCount );
     if ( ds && ds->datasets.size() > 0 )
     {
-      groups.push_back( ds );
+      groups.emplace_back( std::move( ds ) );
     }
   }
 }

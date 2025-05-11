@@ -188,7 +188,7 @@ static void testPreExisitingVectorDatasetGroup( MDAL_DatasetGroupH r )
   ASSERT_EQ( 1, meta_count );
 
   std::string name = MDAL_G_name( r );
-  EXPECT_EQ( std::string( "vitesse       ms" ), std::string( name ) );
+  EXPECT_EQ( std::string( "vitesse       ms" ), name );
 
   double scalar = MDAL_G_hasScalarData( r );
   EXPECT_EQ( false, scalar );
