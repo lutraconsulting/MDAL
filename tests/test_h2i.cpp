@@ -179,7 +179,7 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_TRUE( MDAL::equals( vy, 0 ) );
 
   dataset = MDAL_G_dataset( group, 30 );
-  compareDurationInHours( MDAL_D_time( dataset ), 4 / 3600 );
+  compareDurationInHours( MDAL_D_time( dataset ), 4.0 / 3600 );
   max = -std::numeric_limits<double>::max();
   min = std::numeric_limits<double>::max();
   MDAL_D_minimumMaximum( dataset, &min, &max );
@@ -192,7 +192,7 @@ TEST( MeshH2iTest, LoadMesh )
   EXPECT_TRUE( MDAL::equals( vy, 0.024070607273504109 ) );
 
   dataset = MDAL_G_dataset( group, 200 );
-  compareDurationInHours( MDAL_D_time( dataset ), 11944 / 3600 );
+  compareDurationInHours( MDAL_D_time( dataset ), 11944.0 / 3600 );
   max = -std::numeric_limits<double>::max();
   min = std::numeric_limits<double>::max();
   MDAL_D_minimumMaximum( dataset, &min, &max );
