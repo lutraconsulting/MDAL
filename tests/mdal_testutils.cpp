@@ -64,7 +64,8 @@ void deleteFile( const std::string &path )
     std::wstring wStr = converter.from_bytes( path );
     DeleteFileW( wStr.c_str() );
 #else
-    remove( path.c_str() );
+    const int result = remove( path.c_str() );
+    ASSERT_EQ( result, 0 );
 #endif
   }
 }
@@ -477,5 +478,6 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
   // Close meshed and delete all the files
   MDAL_CloseMesh( meshToSave );
   MDAL_CloseMesh( savedMesh );
-  std::remove( savedFile.c_str() );
+  const int res = std::remove( savedFile.c_str() );
+  ASSERT_EQ( res, 0 );
 }

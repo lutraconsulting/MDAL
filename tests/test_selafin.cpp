@@ -408,8 +408,7 @@ TEST( MeshSLFTest, WriteDatasetInNewFile )
 
   //Add dataset
   std::string file = tmp_file( "/selafin_adding_dataset_newFile.slf" ) ;
-  if ( fileExists( file ) )
-    std::remove( file.c_str() );
+  deleteFile( file );
 
   addNewScalarDatasetGroup( m, driver, file );
   addNewVectorDatasetGroup( m, driver, file );
