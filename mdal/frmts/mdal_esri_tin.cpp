@@ -38,7 +38,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverEsriTin::load( const std::string &uri, c
       if ( !inDenv.is_open() )
         throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not open file " + uri + " as denv file" );
     }
-    readValue( totalIndexesCount32, inDenv, isNativeLittleEndian );
+    if ( !readValue( totalIndexesCount32, inDenv, isNativeLittleEndian ) )
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Could not read total index count from file " + uri );
     size_t totalIndexesCount = static_cast<size_t>( totalIndexesCount32 );
 
     /* Round 1 :populates faces with raw indexes from the file
