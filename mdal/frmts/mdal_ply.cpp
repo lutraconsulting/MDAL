@@ -233,16 +233,20 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
       libply::ElementReadCallback edgeCallback = [&edges, &el, &eProp2Ds, &edgeDatasets, &listProps]( libply::ElementBuffer & e )
       {
         Edge edge;
+        bool foundStartVertex = false;
+        bool foundEndVertex = false;
         for ( size_t i = 0; i < el.properties.size(); i++ )
         {
           libply::Property p = el.properties[i];
           if ( p.name == "vertex1" )
           {
             edge.startVertex = int( e[i] );
+            foundStartVertex = true;
           }
           else if ( p.name == "vertex2" )
           {
             edge.endVertex = int( e[i] );
+            foundEndVertex = true;
           }
           else
           {
@@ -265,7 +269,10 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverPly::load( const std::string &meshFile, 
             }
           }
         }
-        edges.push_back( edge );
+        if ( foundStartVertex && foundEndVertex )
+        {
+          edges.push_back( edge );
+        }
       };
       file.setElementReadCallback( "edge", edgeCallback );
     }
