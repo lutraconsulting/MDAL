@@ -482,6 +482,10 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
           type = XdmfFunctionDataset::Join;
           isScalar = false;
         }
+        else
+        {
+          throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Function is unknown" );
+        }
 
         std::shared_ptr<MDAL::DatasetGroup> group = findGroup( groups, groupName, isScalar );
         std::shared_ptr<MDAL::XdmfFunctionDataset> xdmfFunctionDataset = std::make_shared<MDAL::XdmfFunctionDataset>(
