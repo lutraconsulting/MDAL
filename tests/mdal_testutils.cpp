@@ -55,19 +55,19 @@ void copy( const std::string &src, const std::string &dest )
   dstS << srcS.rdbuf();
 }
 
-void deleteFile( const std::string &path )
+bool deleteFile( const std::string &path )
 {
   if ( fileExists( path ) )
   {
 #ifdef _MSC_VER
     std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
     std::wstring wStr = converter.from_bytes( path );
-    DeleteFileW( wStr.c_str() );
+    return DeleteFileW( wStr.c_str() );
 #else
-    const int result = remove( path.c_str() );
-    ASSERT_EQ( result, 0 );
+    return remove( path.c_str() ) == 0;
 #endif
   }
+  return true;
 }
 
 bool fileExists( const std::string &filename )
@@ -478,6 +478,5 @@ void saveAndCompareMesh( const std::string &filename, const std::string &savedFi
   // Close meshed and delete all the files
   MDAL_CloseMesh( meshToSave );
   MDAL_CloseMesh( savedMesh );
-  const int res = std::remove( savedFile.c_str() );
-  ASSERT_EQ( res, 0 );
+  ASSERT_TRUE( deleteFile( savedFile ) );
 }

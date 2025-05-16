@@ -25,7 +25,7 @@ void finalize_test();
 std::string test_file( const std::string &basename );
 std::string tmp_file( const std::string &basename );
 void copy( const std::string &src, const std::string &dest );
-void deleteFile( const std::string &path );
+bool deleteFile( const std::string &path );
 bool fileExists( const std::string &filename );
 
 // Mesh
