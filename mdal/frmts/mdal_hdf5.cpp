@@ -200,7 +200,7 @@ std::vector<hsize_t> HdfDataset::dims() const
   if ( ndims < 0 )
   {
     H5Sclose( sid );
-    return std::vector<hsize_t>(); 
+    return std::vector<hsize_t>();
   }
 
   std::vector<hsize_t> ret( static_cast<size_t>( ndims ) );
