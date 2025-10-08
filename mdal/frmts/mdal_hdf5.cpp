@@ -193,7 +193,17 @@ hid_t HdfDataset::id() const { return d->id; }
 std::vector<hsize_t> HdfDataset::dims() const
 {
   hid_t sid = H5Dget_space( d->id );
-  std::vector<hsize_t> ret( static_cast<size_t>( H5Sget_simple_extent_ndims( sid ) ) );
+  if ( sid == H5I_INVALID_HID )
+    return std::vector<hsize_t>();
+
+  int ndims = H5Sget_simple_extent_ndims( sid );
+  if ( ndims < 0 )
+  {
+    H5Sclose( sid );
+    return std::vector<hsize_t>(); 
+  }
+
+  std::vector<hsize_t> ret( static_cast<size_t>( ndims ) );
   H5Sget_simple_extent_dims( sid, ret.data(), nullptr );
   H5Sclose( sid );
   return ret;
