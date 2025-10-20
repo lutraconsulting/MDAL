@@ -355,6 +355,11 @@ namespace libply
         const size_t listLength = std::stoi( m_tokens[t_idx] );
         t_idx++;
         ListProperty *lp = dynamic_cast<ListProperty *>( &elementBuffer[e_idx] );
+        if ( !lp )
+        {
+          MDAL_SetStatus( MDAL_LogLevel::Error, MDAL_Status::Err_InvalidData, "Element is not a List Property" );
+          return;
+        }
         lp->define( p.type, listLength );
         for ( size_t i = 0; i < listLength; i++ )
         {
@@ -406,6 +411,7 @@ namespace libply
         size_t listLength = static_cast<size_t>( static_cast<unsigned long>( *buffer ) );
 
         ListProperty *lp = dynamic_cast<ListProperty *>( &elementBuffer[e_idx] );
+        if ( !lp ) return; //TODO throw an error
         lp->define( p.type, listLength );
 
         const auto &castFunction = p.castFunction;
