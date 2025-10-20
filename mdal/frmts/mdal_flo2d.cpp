@@ -106,7 +106,12 @@ void MDAL::DriverFlo2D::parseCADPTSFile( const std::string &datFileName, std::ve
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CADPTS file, wrong lineparts count (3)" );
     }
     CellCenter cc;
-    cc.id = MDAL::toSizeT( lineParts[0] ) - 1; //numbered from 1
+    const size_t linePart0 = MDAL::toSizeT( lineParts[0] );
+    if ( linePart0 < 1 )
+    {
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CADPTS file, wrong line part id" );
+    }
+    cc.id = linePart0 - 1; //numbered from 1
     cc.x = MDAL::toDouble( lineParts[1] );
     cc.y = MDAL::toDouble( lineParts[2] );
     cells.push_back( cc );
@@ -144,7 +149,12 @@ void MDAL::DriverFlo2D::parseCHANBANKFile( const std::string &datFileName,
     {
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHANBANK file, wrong lineparts count (2)" );
     }
-    int leftBank = MDAL::toInt( MDAL::toSizeT( lineParts[0] ) ) - 1;  //numbered from 1
+    const size_t linePart0 = MDAL::toSizeT( lineParts[0] );
+    if ( linePart0 < 1 )
+    {
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHANBANK file, wrong line value for left bank" );
+    }
+    size_t leftBank = linePart0 - 1;  //numbered from 1
     int rightBank = MDAL::toInt( MDAL::toSizeT( lineParts[1] ) ) - 1;
 
     std::map<size_t, size_t>::const_iterator it = cellIdToVertices.find( rightBank );
@@ -217,8 +227,14 @@ void MDAL::DriverFlo2D::parseCHANFile( const std::string &datFileName, const std
         {
           throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHAN file, wrong confluence line:" );
         }
-        std::map<size_t, size_t>::const_iterator it1 = cellIdToVertices.find( MDAL::toSizeT( lineParts[1] ) - 1 );
-        std::map<size_t, size_t>::const_iterator it2 = cellIdToVertices.find( MDAL::toSizeT( lineParts[2] ) - 1 );
+        const size_t linePart1 = MDAL::toSizeT( lineParts[1] );
+        const size_t linePart2 = MDAL::toSizeT( lineParts[2] );
+        if ( linePart1 < 1 || linePart2 < 1 )
+        {
+          throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHAN file, wrong confluence line:" );
+        }
+        std::map<size_t, size_t>::const_iterator it1 = cellIdToVertices.find( linePart1 - 1 );
+        std::map<size_t, size_t>::const_iterator it2 = cellIdToVertices.find( linePart2 - 1 );
         if ( it1 != cellIdToVertices.end() && it2 != cellIdToVertices.end() )
           edges.push_back( {it1->second, it2->second} );
       }
@@ -503,7 +519,12 @@ void MDAL::DriverFlo2D::parseFPLAINFile( std::vector<double> &elevations,
 
     if ( !cellSizeCalculated )
     {
-      size_t cc_i = MDAL::toSizeT( lineParts[0] ) - 1; //numbered from 1
+      const size_t linePart0 = MDAL::toSizeT( lineParts[0] );
+      if ( linePart0 < 1 )
+      {
+        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading FPLAIN.DAT file, invalid line part value" );
+      }
+      size_t cc_i = linePart0 - 1; //numbered from 1
       for ( int i = 1; i < 5; ++i )  //search the first cell that have a neighbor to calculate cell size
       {
         int neighborCell = MDAL::toInt( lineParts[i] );
