@@ -133,9 +133,30 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverXmsTin::load( const std::string &meshFil
 
     Face &face = faces[i];
     face.resize( MAX_VERTICES_PER_FACE_TIN );
-    face[0] = MDAL::toSizeT( chunks[0] ) - 1;
-    face[1] = MDAL::toSizeT( chunks[1] ) - 1;
-    face[2] = MDAL::toSizeT( chunks[2] ) - 1;
+
+    const size_t chunk0 = MDAL::toSizeT( chunks[0] );
+    if ( chunk0 < 1 )
+    {
+      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain valid triangle definition (first chunk value is < 1)" );
+      return nullptr;
+    }
+    face[0] = chunk0 - 1;
+
+    const size_t chunk1 = MDAL::toSizeT( chunks[1] );
+    if ( chunk1 < 1 )
+    {
+      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain valid triangle definition (second chunk value is < 1)" );
+      return nullptr;
+    }
+    face[1] = chunk1 - 1;
+
+    const size_t chunk2 = MDAL::toSizeT( chunks[2] );
+    if ( chunk2 < 1 )
+    {
+      MDAL::Log::error( MDAL_Status::Err_IncompatibleMesh, name(), meshFile + " does not contain valid triangle definition (third chunk value is < 1)" );
+      return nullptr;
+    }
+    face[2] = chunk2 - 1;
   }
 
   // Final keyword
