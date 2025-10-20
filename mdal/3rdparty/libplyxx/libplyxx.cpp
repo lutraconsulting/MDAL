@@ -559,7 +559,7 @@ namespace libply
       else
       {
         auto &convert = p.writeConvertFunction;
-        ListProperty *lp = dynamic_cast<ListProperty *>( &buffer[e_idx] );
+        ListProperty *lp = static_cast<ListProperty *>( &buffer[e_idx] );
         file << lp->size() << " ";
         for ( size_t i = 0; i < lp->size(); i++ )
         {
@@ -604,7 +604,7 @@ namespace libply
       else
       {
         auto &cast = p.writeCastFunction;
-        ListProperty *lp = dynamic_cast<ListProperty *>( &buffer[e_idx] );
+        ListProperty *lp = static_cast<ListProperty *>( &buffer[e_idx] );
         unsigned char list_size = static_cast<unsigned char>( lp->size() );
         file.write( reinterpret_cast<char *>( &list_size ), sizeof( list_size ) );
         for ( size_t i = 0; i < lp->size(); i++ )
