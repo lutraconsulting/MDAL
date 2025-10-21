@@ -213,7 +213,7 @@ void MDAL::DriverFlo2D::parseCHANFile( const std::string &datFileName, const std
         throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHAN file, wrong chanel element line" );
       }
       int currentCellId = MDAL::toInt( MDAL::toSizeT( lineParts[1] ) ) - 1;
-      if ( previousCellId >= 0 )
+      if ( previousCellId >= 0 && currentCellId >= 0 )
       {
         std::map<size_t, size_t>::const_iterator it1 = cellIdToVertices.find( previousCellId );
         std::map<size_t, size_t>::const_iterator it2 = cellIdToVertices.find( currentCellId );
