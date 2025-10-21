@@ -154,8 +154,13 @@ void MDAL::DriverFlo2D::parseCHANBANKFile( const std::string &datFileName,
     {
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHANBANK file, wrong line value for left bank" );
     }
-    size_t leftBank = linePart0 - 1;  //numbered from 1
-    int rightBank = MDAL::toInt( MDAL::toSizeT( lineParts[1] ) ) - 1;
+    const size_t leftBank = linePart0 - 1;  //numbered from 1
+    const size_t linePart1 = MDAL::toSizeT( lineParts[1] );
+    if ( linePart1 < 1 )
+    {
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Error while loading CHANBANK file, wrong line value for right bank" );
+    }
+    const size_t rightBank = linePart1 - 1;
 
     std::map<size_t, size_t>::const_iterator it = cellIdToVertices.find( rightBank );
     if ( it != cellIdToVertices.end() )
@@ -167,7 +172,7 @@ void MDAL::DriverFlo2D::parseCHANBANKFile( const std::string &datFileName,
       else
         itDupplicated->second.push_back( vertexIndex );
     }
-    else if ( rightBank >= 0 )
+    else
     {
       cellIdToVertices[rightBank] = vertexIndex;
     }
