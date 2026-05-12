@@ -42,6 +42,10 @@ jobs:
         displayName: 'Make html'
       - script: |
           set -e
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends texlive-lang-cjk texlive-latex-extra
+        displayName: 'Install extra LaTeX packages'
+      - script: |
+          set -e
           cd docs
           make latexpdf
         displayName: 'Make pdf'
