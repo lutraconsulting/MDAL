@@ -15,11 +15,6 @@ jobs:
       - name: load OSGEO dependencies
         run: ${{github.workspace}}/scripts/load_osgeo.ps1
 
-      - name: Set compiler environment
-        shell: cmd
-        run: |
-            CALL "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=x86
-
       - name: Build
         shell: pwsh
         run: |
