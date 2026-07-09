@@ -39,7 +39,6 @@ jobs:
         run: |
           cd ../build_osx
           echo "::error::Failed tests: $(paste -sd, Testing/Temporary/LastTestsFailed.log)"
-          grep "^DIAG" Testing/Temporary/LastTest.log | while IFS= read -r line; do echo "::error::$line"; done
           grep -B1 -A4 "Failure\|FAILED\|Subprocess" Testing/Temporary/LastTest.log | tail -60 | while IFS= read -r line; do echo "::error::$line"; done
 
   osx_tests_intel:

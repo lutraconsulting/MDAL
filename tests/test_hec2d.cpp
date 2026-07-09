@@ -179,7 +179,6 @@ TEST( MeshHec2dTest, simpleArea )
   EXPECT_TRUE( MDAL::equals( 0.0001003014, value, 0.00000001 ) );
 
   MDAL_D_minimumMaximum( ds, &min, &max );
-  printf( "DIAG hec2d velocity ds35 min=%.17g max=%.17g\n", min, max );
   EXPECT_TRUE( MDAL::equals( 7.3807e-5, min, 0.000001 ) );
   EXPECT_TRUE( MDAL::equals( 0.0452122, max, 0.000001 ) );
 

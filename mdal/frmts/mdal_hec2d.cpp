@@ -325,7 +325,10 @@ void MDAL::DriverHec2D::readFaceOutput( const HdfFile &hdfFile,
           double ny2 =  dx2 / l2;
 
           double deter = nx1 * ny2 - nx2 * ny1;
-          if ( deter == 0 ) //colinear face, forbidden by hecras, but better to prevent
+          // (nearly) colinear faces make the system ill-conditioned; an exact-zero test
+          // is not enough because FMA contraction (e.g. on arm64) leaves a tiny nonzero
+          // residual for exactly parallel normals
+          if ( std::fabs( deter ) < 1e-8 )
             continue;
           valx += ( ny2 * val1 - ny1 * val2 ) / deter;
           valy += ( nx1 * val2 - nx2 * val1 ) / deter;
