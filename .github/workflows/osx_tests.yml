@@ -3,8 +3,39 @@ on: [push, pull_request]
 env:
   QGIS_DEPS_VERSION: 0.4.0
 jobs:
-  osx_tests:
-    runs-on: macos-13
+  osx_tests_arm64:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout MDAL
+        uses: actions/checkout@v4
+
+      - name: install deps
+        run: |
+          brew install gdal hdf5 netcdf libxml2 sqlite
+          gdalinfo --formats
+
+      - name: build MDAL
+        run: |
+          mkdir -p ../build_osx
+          cd ../build_osx
+          cmake \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DCMAKE_PREFIX_PATH="$(brew --prefix);$(brew --prefix libxml2);$(brew --prefix sqlite)" \
+              -DNETCDF_PREFIX=$(brew --prefix netcdf) \
+              -DSQLITE3_INCLUDE_DIR=$(brew --prefix sqlite)/include \
+              -DSQLITE3_LIBRARY=$(brew --prefix sqlite)/lib/libsqlite3.dylib \
+              ../MDAL
+          make -j$(sysctl -n hw.ncpu)
+
+      - name: Run tests
+        env:
+          CTEST_TARGET_SYSTEM: Linux-gcc
+        run: |
+          cd ../build_osx
+          ctest -VV
+
+  osx_tests_intel:
+    runs-on: macos-15-intel
     steps:
       - name: Checkout MDAL
         uses: actions/checkout@v4
@@ -35,7 +66,7 @@ jobs:
               -DLIBXML2_INCLUDE_DIR=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/include \
               -DLIBXML2_LIBRARY=/opt/QGIS/qgis-deps-${QGIS_DEPS_VERSION}/stage/lib/libxml2.dylib \
               ../MDAL
-          make -j`nproc`
+          make -j$(sysctl -n hw.ncpu)
 
       - name: Run tests
         env:
