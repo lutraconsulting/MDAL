@@ -34,13 +34,6 @@ jobs:
           cd ../build_osx
           ctest -VV
 
-      - name: Report failed tests
-        if: failure()
-        run: |
-          cd ../build_osx
-          echo "::error::Failed tests: $(paste -sd, Testing/Temporary/LastTestsFailed.log)"
-          grep -B1 -A4 "Failure\|FAILED\|Subprocess" Testing/Temporary/LastTest.log | tail -60 | while IFS= read -r line; do echo "::error::$line"; done
-
   osx_tests_intel:
     runs-on: macos-15-intel
     steps:
