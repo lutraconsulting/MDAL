@@ -14,6 +14,7 @@
 
 #include "mdal_data_model.hpp"
 #include "mdal_memory_data_model.hpp"
+#include "mdal_datetime.hpp"
 #include "mdal.h"
 #include "mdal_driver.hpp"
 #include "mdal_netcdf.hpp"
@@ -45,15 +46,19 @@ namespace MDAL
 
     private:
       size_t getVertexCount( const NetCDFFile &ncFile ) const;
+      size_t getFaceCount( const NetCDFFile &ncFile ) const;
       std::vector<double> readZCoords( const NetCDFFile &ncFile ) const;
       MDAL::Vertices readVertices( const NetCDFFile &ncFile ) const;
       MDAL::Faces readFaces( const NetCDFFile &ncFile ) const;
       std::vector<double> readTimes( const NetCDFFile &ncFile ) const;
       /**
        * Finds all variables (arrays) in netcdf file and base on the name add it as
-       * vector or scalar dataset group
+       * vector or scalar dataset group.
+       * Variables with a "_c" suffix hold values at triangle centroids (faces).
        */
-      void readDatasetGroups( const NetCDFFile &ncFile, MDAL::MemoryMesh *mesh, const std::vector<double> &times ) const;
+      void readDatasetGroups( const NetCDFFile &ncFile, MDAL::MemoryMesh *mesh,
+                              const std::vector<double> &times,
+                              const MDAL::DateTime &referenceTime ) const;
       bool parseGroupName( std::string &groupName, std::string &xName, std::string &yName ) const;
 
       std::shared_ptr<MDAL::DatasetGroup> readScalarGroup(
@@ -61,7 +66,10 @@ namespace MDAL
         MDAL::MemoryMesh *mesh,
         const std::vector<double> &times,
         const std::string variableBaseName,
-        const std::string arrName
+        const std::string arrName,
+        size_t nValues,
+        MDAL_DataLocation dataLocation,
+        const MDAL::DateTime &referenceTime
       ) const;
 
       std::shared_ptr<MDAL::DatasetGroup> readVectorGroup(
@@ -70,13 +78,17 @@ namespace MDAL
         const std::vector<double> &times,
         const std::string variableBaseName,
         const std::string arrXName,
-        const std::string arrYName
+        const std::string arrYName,
+        size_t nValues,
+        MDAL_DataLocation dataLocation,
+        const MDAL::DateTime &referenceTime
       ) const;
 
       void addBedElevation(
         const NetCDFFile &ncFile,
         MDAL::MemoryMesh *mesh,
-        const std::vector<double> &times
+        const std::vector<double> &times,
+        const MDAL::DateTime &referenceTime
       ) const;
 
       std::string mFileName;

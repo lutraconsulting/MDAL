@@ -198,25 +198,58 @@ TEST( MeshSWWTest, Catchment )
   int f_count = MDAL_M_faceCount( m );
   EXPECT_EQ( 6388, f_count );
 
-  ASSERT_EQ( 9, MDAL_M_datasetGroupCount( m ) );
+  // friction_c shifts momentum and elevation groups by one compared to the
+  // old code that skipped all _c variables.  The file also gains momentum_c,
+  // elevation_c and stage_c face groups.
+  ASSERT_EQ( 13, MDAL_M_datasetGroupCount( m ) );
 
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
     ASSERT_NE( g, nullptr );
     EXPECT_EQ( std::string( "momentum" ), std::string( MDAL_G_name( g ) ) );
     EXPECT_EQ( false, MDAL_G_hasScalarData( g ) );
   }
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 4 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
     ASSERT_NE( g, nullptr );
     EXPECT_EQ( std::string( "momentum/Maximums" ), std::string( MDAL_G_name( g ) ) );
     EXPECT_EQ( false, MDAL_G_hasScalarData( g ) );
   }
   {
-    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
     ASSERT_NE( g, nullptr );
     EXPECT_EQ( std::string( "elevation" ), std::string( MDAL_G_name( g ) ) );
     EXPECT_EQ( true, MDAL_G_hasScalarData( g ) );
+  }
+  // New face groups
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 3 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "friction_c" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_EQ( true, MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnFaces, MDAL_G_dataLocation( g ) );
+    EXPECT_EQ( 6388, MDAL_D_valueCount( MDAL_G_dataset( g, 0 ) ) );
+  }
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 10 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "momentum_c" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_EQ( false, MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnFaces, MDAL_G_dataLocation( g ) );
+  }
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 11 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "elevation_c" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_EQ( true, MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnFaces, MDAL_G_dataLocation( g ) );
+  }
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 12 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "stage_c" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_EQ( true, MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnFaces, MDAL_G_dataLocation( g ) );
   }
   MDAL_CloseMesh( m );
 }
@@ -267,6 +300,138 @@ TEST( MeshSWWTest, Wave )
   EXPECT_EQ( 4802, f_count );
 
   ASSERT_EQ( 2, MDAL_M_datasetGroupCount( m ) );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshSWWTest, Merimbula )
+{
+  std::string path = test_file( "/sww/merimbula_basic_mesh.sww" );
+  EXPECT_EQ( MDAL_MeshNames( path.c_str() ), "SWW:\"" + path + "\"" );
+  MDAL_MeshH m = MDAL_LoadMesh( path.c_str() );
+  ASSERT_NE( m, nullptr );
+  MDAL_Status s = MDAL_LastStatus();
+  EXPECT_EQ( MDAL_Status::None, s );
+
+  // CRS
+  const char *projection = MDAL_M_projection( m );
+  EXPECT_EQ( std::string( "EPSG:32755" ), std::string( projection ) );
+
+  std::string driverName = MDAL_M_driverName( m );
+  EXPECT_EQ( driverName, "SWW" );
+
+  // ///////////
+  // Vertices
+  // ///////////
+  int v_count = MDAL_M_vertexCount( m );
+  EXPECT_EQ( v_count, 5719 );
+
+  // ///////////
+  // Faces
+  // ///////////
+  int f_count = MDAL_M_faceCount( m );
+  EXPECT_EQ( f_count, 10785 );
+
+  // ///////////
+  // Dataset groups
+  // ///////////
+  // Expected groups (in file variable order):
+  //  0  Bed Elevation       - vertex scalar  (static, from "elevation")
+  //  1  friction            - vertex scalar  (static)
+  //  2  friction/Maximums   - vertex scalar  (static)
+  //  3  elevation           - vertex scalar  (static, same data as Bed Elevation)
+  //  4  elevation/Maximums  - vertex scalar  (static)
+  //  5  friction_c          - face scalar    (static)
+  //  6  elevation_c         - face scalar    (static)
+  //  7  momentum            - vertex vector  (time-dependent, xmomentum+ymomentum)
+  //  8  momentum/Maximums   - vertex vector  (static range)
+  //  9  stage               - vertex scalar  (time-dependent)
+  // 10  stage/Maximums      - vertex scalar  (static range)
+  // 11  momentum_c          - face vector    (time-dependent, xmomentum_c+ymomentum_c)
+  // 12  stage_c             - face scalar    (time-dependent)
+  ASSERT_EQ( 13, MDAL_M_datasetGroupCount( m ) );
+
+  // --- Bed Elevation (group 0) ---
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "Bed Elevation" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnVertices, MDAL_G_dataLocation( g ) );
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    EXPECT_EQ( 5719, MDAL_D_valueCount( ds ) );
+    EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
+  }
+
+  // --- friction_c (group 5) — static scalar on faces ---
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 5 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "friction_c" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnFaces, MDAL_G_dataLocation( g ) );
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    EXPECT_EQ( 10785, MDAL_D_valueCount( ds ) );
+    EXPECT_DOUBLE_EQ( 0.0, getValue( ds, 0 ) );
+  }
+
+  // --- elevation_c (group 6) — static scalar on faces ---
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 6 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "elevation_c" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnFaces, MDAL_G_dataLocation( g ) );
+    ASSERT_EQ( 1, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    EXPECT_EQ( 10785, MDAL_D_valueCount( ds ) );
+    EXPECT_NEAR( -0.04933963, getValue( ds, 0 ), 1e-5 );
+    EXPECT_NEAR( -0.04984199, getValue( ds, 1 ), 1e-5 );
+  }
+
+  // --- stage (group 9) — time-dependent scalar on vertices ---
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 9 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "stage" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnVertices, MDAL_G_dataLocation( g ) );
+    ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
+    EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
+    // times are 0, 10, 20, 30, 40, 50 seconds
+    EXPECT_TRUE( compareDurationInHours( MDAL_D_time( MDAL_G_dataset( g, 1 ) ),
+                                         10.0 / 3600.0 ) );
+  }
+
+  // --- momentum_c (group 11) — time-dependent vector on faces ---
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 11 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "momentum_c" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_FALSE( MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnFaces, MDAL_G_dataLocation( g ) );
+    ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    EXPECT_EQ( 10785, MDAL_D_valueCount( ds ) );
+    EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
+  }
+
+  // --- stage_c (group 12) — time-dependent scalar on faces ---
+  {
+    MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 12 );
+    ASSERT_NE( g, nullptr );
+    EXPECT_EQ( std::string( "stage_c" ), std::string( MDAL_G_name( g ) ) );
+    EXPECT_TRUE( MDAL_G_hasScalarData( g ) );
+    EXPECT_EQ( MDAL_DataLocation::DataOnFaces, MDAL_G_dataLocation( g ) );
+    ASSERT_EQ( 6, MDAL_G_datasetCount( g ) );
+    MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+    EXPECT_EQ( 10785, MDAL_D_valueCount( ds ) );
+    EXPECT_NEAR( 2.0, getValue( ds, 0 ), 1e-5 );
+    EXPECT_NEAR( 1.0, getValue( ds, 2 ), 1e-5 );
+    EXPECT_TRUE( compareReferenceTime( g, "1970-01-01T00:00:00" ) );
+  }
 
   MDAL_CloseMesh( m );
 }

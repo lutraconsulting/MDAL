@@ -35,6 +35,14 @@ size_t MDAL::DriverSWW::getVertexCount( const NetCDFFile &ncFile ) const
   return res;
 }
 
+size_t MDAL::DriverSWW::getFaceCount( const NetCDFFile &ncFile ) const
+{
+  int nVolumesId;
+  size_t res;
+  ncFile.getDimension( "number_of_volumes", &res, &nVolumesId );
+  return res;
+}
+
 
 bool MDAL::DriverSWW::canReadMesh( const std::string &uri )
 {
@@ -99,16 +107,21 @@ std::vector<double> MDAL::DriverSWW::readZCoords( const NetCDFFile &ncFile ) con
 
 void MDAL::DriverSWW::addBedElevation( const NetCDFFile &ncFile,
                                        MDAL::MemoryMesh *mesh,
-                                       const std::vector<double> &times
+                                       const std::vector<double> &times,
+                                       const MDAL::DateTime &referenceTime
                                      ) const
 {
   if ( ncFile.hasArr( "elevation" ) )
   {
+    size_t nPoints = getVertexCount( ncFile );
     std::shared_ptr<MDAL::DatasetGroup> grp = readScalarGroup( ncFile,
         mesh,
         times,
         "Bed Elevation",
-        "elevation" );
+        "elevation",
+        nPoints,
+        MDAL_DataLocation::DataOnVertices,
+        referenceTime );
     mesh->datasetGroups.emplace_back( std::move( grp ) );
   }
   else
@@ -180,9 +193,13 @@ std::vector<double> MDAL::DriverSWW::readTimes( const NetCDFFile &ncFile ) const
 void MDAL::DriverSWW::readDatasetGroups(
   const NetCDFFile &ncFile,
   MDAL::MemoryMesh *mesh,
-  const std::vector<double> &times
+  const std::vector<double> &times,
+  const MDAL::DateTime &referenceTime
 ) const
 {
+  size_t nPoints  = getVertexCount( ncFile );
+  size_t nVolumes = getFaceCount( ncFile );
+
   std::set<std::string> parsedVariableNames; // already parsed arrays somewhere else
   parsedVariableNames.insert( "x" );
   parsedVariableNames.insert( "y" );
@@ -191,53 +208,58 @@ void MDAL::DriverSWW::readDatasetGroups(
   parsedVariableNames.insert( "time" );
 
   std::vector<std::string> names = ncFile.readArrNames();
-  std::set<std::string> namesSet( names.begin(), names.end() );
 
-  // Add bed elevation group
+  // Add bed elevation group (reads "elevation" variable)
   parsedVariableNames.insert( "elevations" );
-  addBedElevation( ncFile, mesh, times );
+  addBedElevation( ncFile, mesh, times, referenceTime );
 
   for ( const std::string &name : names )
   {
-    // currently we do not support variables like elevation_c, friction_c, stage_c, xmomentum_c, ymomentum_c
-    // which contain values per volume instead of per vertex
-    if ( MDAL::endsWith( name, "_c" ) )
+    // skip already parsed variables
+    if ( parsedVariableNames.find( name ) != parsedVariableNames.cend() )
       continue;
 
-    // skip already parsed variables
-    if ( parsedVariableNames.find( name ) == parsedVariableNames.cend() )
-    {
-      std::string xName, yName, groupName( name );
-      bool isVector = parseGroupName( groupName, xName, yName );
+    // Variables ending in "_c" hold values at triangle centroids (faces)
+    bool isCentroid = MDAL::endsWith( name, "_c" );
+    size_t nValues = isCentroid ? nVolumes : nPoints;
+    MDAL_DataLocation dataLocation = isCentroid ? MDAL_DataLocation::DataOnFaces : MDAL_DataLocation::DataOnVertices;
 
-      std::shared_ptr<MDAL::DatasetGroup> grp;
-      if ( isVector && ncFile.hasArr( xName ) && ncFile.hasArr( yName ) )
-      {
-        // vector dataset group
-        grp = readVectorGroup(
-                ncFile,
-                mesh,
-                times,
-                std::move( groupName ),
-                xName,
-                yName );
-        parsedVariableNames.insert( std::move( xName ) );
-        parsedVariableNames.insert( std::move( yName ) );
-      }
-      else
-      {
-        // scalar dataset group
-        grp = readScalarGroup(
-                ncFile,
-                mesh,
-                times,
-                std::move( groupName ),
-                name );
-        parsedVariableNames.insert( name );
-      }
-      if ( grp )
-        mesh->datasetGroups.emplace_back( std::move( grp ) );
+    std::string xName, yName, groupName( name );
+    bool isVector = parseGroupName( groupName, xName, yName );
+
+    std::shared_ptr<MDAL::DatasetGroup> grp;
+    if ( isVector && ncFile.hasArr( xName ) && ncFile.hasArr( yName ) )
+    {
+      // vector dataset group
+      grp = readVectorGroup(
+              ncFile,
+              mesh,
+              times,
+              std::move( groupName ),
+              xName,
+              yName,
+              nValues,
+              dataLocation,
+              referenceTime );
+      parsedVariableNames.insert( std::move( xName ) );
+      parsedVariableNames.insert( std::move( yName ) );
     }
+    else
+    {
+      // scalar dataset group
+      grp = readScalarGroup(
+              ncFile,
+              mesh,
+              times,
+              std::move( groupName ),
+              name,
+              nValues,
+              dataLocation,
+              referenceTime );
+      parsedVariableNames.insert( name );
+    }
+    if ( grp )
+      mesh->datasetGroups.emplace_back( std::move( grp ) );
   }
 }
 
@@ -282,10 +304,12 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
   MDAL::MemoryMesh *mesh,
   const std::vector<double> &times,
   const std::string groupName,
-  const std::string arrName
+  const std::string arrName,
+  size_t nValues,
+  MDAL_DataLocation dataLocation,
+  const MDAL::DateTime &referenceTime
 ) const
 {
-  size_t nPoints = getVertexCount( ncFile );
   std::shared_ptr<MDAL::DatasetGroup> mds;
 
   int varxid;
@@ -296,8 +320,10 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
             mesh,
             mFileName,
             groupName );
-    mds->setDataLocation( MDAL_DataLocation::DataOnVertices );
+    mds->setDataLocation( dataLocation );
     mds->setIsScalar( true );
+    if ( referenceTime.isValid() )
+      mds->setReferenceTime( referenceTime );
 
     int zDimsX = 0;
     if ( nc_inq_varndims( ncFile.handle(), varxid, &zDimsX ) != NC_NOERR )
@@ -308,8 +334,8 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
       // TIME INDEPENDENT
       std::shared_ptr<MDAL::MemoryDataset2D> o = std::make_shared<MDAL::MemoryDataset2D>( mds.get() );
       o->setTime( RelativeTimestamp() );
-      std::vector<double> valuesX = ncFile.readDoubleArr( arrName, nPoints );
-      for ( size_t i = 0; i < nPoints; ++i )
+      std::vector<double> valuesX = ncFile.readDoubleArr( arrName, nValues );
+      for ( size_t i = 0; i < nValues; ++i )
       {
         o->setScalarValue( i, valuesX[i] );
       }
@@ -331,7 +357,7 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readScalarGroup(
         start[0] = t;
         start[1] = 0;
         count[0] = 1;
-        count[1] = nPoints;
+        count[1] = nValues;
         nc_get_vars_double( ncFile.handle(), varxid, start, count, stride, values );
         mto->setStatistics( MDAL::calculateStatistics( mto ) );
         mds->datasets.push_back( mto );
@@ -349,10 +375,12 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
   const std::vector<double> &times,
   const std::string groupName,
   const std::string arrXName,
-  const std::string arrYName
+  const std::string arrYName,
+  size_t nValues,
+  MDAL_DataLocation dataLocation,
+  const MDAL::DateTime &referenceTime
 ) const
 {
-  size_t nPoints = getVertexCount( ncFile );
   std::shared_ptr<MDAL::DatasetGroup> mds;
 
   int varxid, varyid;
@@ -364,8 +392,10 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
             mesh,
             mFileName,
             groupName );
-    mds->setDataLocation( MDAL_DataLocation::DataOnVertices );
+    mds->setDataLocation( dataLocation );
     mds->setIsScalar( false );
+    if ( referenceTime.isValid() )
+      mds->setReferenceTime( referenceTime );
 
     int zDimsX = 0;
     int zDimsY = 0;
@@ -383,9 +413,9 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
       // TIME INDEPENDENT
       std::shared_ptr<MDAL::MemoryDataset2D> o = std::make_shared<MDAL::MemoryDataset2D>( mds.get() );
       o->setTime( 0.0 );
-      std::vector<double> valuesX = ncFile.readDoubleArr( arrXName, nPoints );
-      std::vector<double> valuesY = ncFile.readDoubleArr( arrYName, nPoints );
-      for ( size_t i = 0; i < nPoints; ++i )
+      std::vector<double> valuesX = ncFile.readDoubleArr( arrXName, nValues );
+      std::vector<double> valuesY = ncFile.readDoubleArr( arrYName, nValues );
+      for ( size_t i = 0; i < nValues; ++i )
       {
         o->setVectorValue( i, valuesX[i], valuesY[i] );
       }
@@ -394,12 +424,12 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
     }
     else
     {
-      std::vector<double> valuesX( nPoints ), valuesY( nPoints );
+      std::vector<double> valuesX( nValues ), valuesY( nValues );
       // TIME DEPENDENT
       for ( size_t t = 0; t < times.size(); ++t )
       {
         std::shared_ptr<MDAL::MemoryDataset2D> mto = std::make_shared<MDAL::MemoryDataset2D>( mds.get() );
-        mto->setTime( static_cast<double>( times[t] ) / 3600. );
+        mto->setTime( static_cast<double>( times[t] ), RelativeTimestamp::seconds ); // Time is always in seconds
 
         // fetching data for one timestep
         size_t start[2], count[2];
@@ -407,11 +437,11 @@ std::shared_ptr<MDAL::DatasetGroup> MDAL::DriverSWW::readVectorGroup(
         start[0] = t;
         start[1] = 0;
         count[0] = 1;
-        count[1] = nPoints;
+        count[1] = nValues;
         nc_get_vars_double( ncFile.handle(), varxid, start, count, stride, valuesX.data() );
         nc_get_vars_double( ncFile.handle(), varyid, start, count, stride, valuesY.data() );
 
-        for ( size_t i = 0; i < nPoints; ++i )
+        for ( size_t i = 0; i < nValues; ++i )
         {
           mto->setVectorValue( i, static_cast<double>( valuesX[i] ),  static_cast<double>( valuesY[i] ) );
         }
@@ -453,11 +483,33 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverSWW::load(
     mesh->setFaces( std::move( faces ) );
     mesh->setVertices( std::move( vertices ) );
 
+    // Read CRS from global epsg attribute
+    int epsgVal = 0;
+    if ( nc_get_att_int( ncFile.handle(), NC_GLOBAL, "epsg", &epsgVal ) == NC_NOERR && epsgVal != 0 )
+      mesh->setSourceCrsFromEPSG( epsgVal );
+
+    // Read timezone as mesh metadata (informational)
+    char tzBuf[128];
+    size_t tzLen = 0;
+    if ( nc_inq_attlen( ncFile.handle(), NC_GLOBAL, "timezone", &tzLen ) == NC_NOERR &&
+         tzLen < sizeof( tzBuf ) )
+    {
+      memset( tzBuf, 0, sizeof( tzBuf ) );
+      nc_get_att_text( ncFile.handle(), NC_GLOBAL, "timezone", tzBuf );
+      mesh->setMetadata( "timezone", std::string( tzBuf ) );
+    }
+
+    // Build reference time from starttime (seconds since Unix epoch 1970-01-01T00:00:00 UTC)
+    MDAL::DateTime referenceTime;
+    double starttime = 0.0;
+    if ( nc_get_att_double( ncFile.handle(), NC_GLOBAL, "starttime", &starttime ) == NC_NOERR )
+      referenceTime = MDAL::DateTime( starttime, MDAL::DateTime::Epoch::Unix );
+
     // Read times
     std::vector<double> times = readTimes( ncFile );
 
-    // Create a dataset(s)
-    readDatasetGroups( ncFile, mesh.get(), times );
+    // Create dataset groups
+    readDatasetGroups( ncFile, mesh.get(), times, referenceTime );
 
     // Success!
     return std::unique_ptr<Mesh>( mesh.release() );
