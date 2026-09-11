@@ -247,7 +247,15 @@ enum MDAL_LoadFlag
    *
    * The deferred computation reads dataset data on demand; like the rest of
    * MDAL, it is not thread-safe: a given mesh handle must be used from a
-   * single thread at a time.
+   * single thread at a time. It also runs on the calling thread, so the work
+   * is moved rather than removed: an interactive application should query the
+   * exact range away from its paint path, or use
+   * MDAL_G_minimumMaximumApprox() there and refine later.
+   *
+   * The flag only helps where computing the statistics costs a read. Drivers
+   * that take the range from the file (XMDF stores its own mins and maxs) and
+   * single-dataset groups built in memory at load time (bed elevation, native
+   * element ids, vertex Z values) are not affected by it.
    *
    * Skipping statistics can also skip driver-side validity filtering based on
    * them: e.g. XDMF groups without any valid value, normally dropped at load
@@ -682,6 +690,11 @@ MDAL_EXPORT int MDAL_G_maximumVerticalLevelCount( MDAL_DatasetGroupH group );
  * for such a group will block to compute the exact range over every dataset
  * (potentially slow). The result is cached so subsequent calls are O(1).
  * Use MDAL_G_minimumMaximumApprox() if you only need a quick estimate.
+ *
+ * \note Since MDAL 1.4.0, a dataset group still in edit mode (one for which
+ * MDAL_G_closeEditMode() has not been called yet) reports the range of the
+ * datasets added so far, and the result is not cached, so it keeps up with
+ * datasets added afterwards. Up to MDAL 1.3 such a group returned NaN.
  */
 MDAL_EXPORT void MDAL_G_minimumMaximum( MDAL_DatasetGroupH group, double *min, double *max );
 
