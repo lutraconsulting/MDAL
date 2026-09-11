@@ -64,6 +64,13 @@ namespace
   }
 }
 
+TEST( MeshApproxStatisticsTest, VersionMatchesSinceTags )
+{
+  // The load flag and lazy/approximate statistics API is documented as
+  // \since MDAL 1.4.0, so MDAL_Version() must report that version.
+  EXPECT_STREQ( "1.4.0", MDAL_Version() );
+}
+
 TEST( MeshApproxStatisticsTest, ExactFallbacksEqualExact )
 {
   std::string file = tmp_file( "/approx_stats_fallback.slf" );
