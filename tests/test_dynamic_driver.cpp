@@ -267,6 +267,56 @@ TEST( MeshDynamicDriverTest, openMesh )
   MDAL_CloseMesh( m );
 }
 
+namespace
+{
+  // The test driver counts the MDAL_DRIVER_D_unload() calls it receives for a
+  // dataset whose MDAL_DRIVER_D_data() was never called. The counter lives in
+  // the driver library, which MDAL has already loaded, so opening it here
+  // shares the very same instance.
+  int unpairedUnloadCount()
+  {
+    const std::string dirPath = std::string( drivers_path() ) + "/minimal_example/";
+    const std::vector<std::string> libFiles = MDAL::Library::libraryFilesInDir( dirPath );
+    for ( const std::string &libFile : libFiles )
+    {
+      MDAL::Library library( dirPath + libFile );
+      std::function<int()> counter = library.getSymbol<int>( "MDAL_DRIVER_TEST_unpairedUnloadCount" );
+      if ( counter )
+        return counter();
+    }
+    return -1;
+  }
+}
+
+TEST( MeshDynamicDriverTest, skipStatisticsDoesNotUnloadNeverLoadedDatasets )
+{
+  std::string path = test_file( "/dynamic_driver/mesh_1.msh" );
+
+  const int before = unpairedUnloadCount();
+  ASSERT_GE( before, 0 ) << "the test driver does not expose the unload counter";
+
+  // without the flag, every dataset is read and then released: pairs only
+  MDAL_MeshH eager = MDAL_LoadMesh( path.c_str() );
+  ASSERT_TRUE( eager );
+  EXPECT_EQ( before, unpairedUnloadCount() );
+  MDAL_CloseMesh( eager );
+
+  // with the flag, no data is requested at load, so nothing may be released
+  MDAL_MeshH m = MDAL_LoadMeshWithFlags( path.c_str(), MDAL_LF_SkipStatistics );
+  ASSERT_TRUE( m );
+  EXPECT_EQ( before, unpairedUnloadCount() );
+
+  // the deferred statistics do read the data before releasing it
+  ASSERT_GT( MDAL_M_datasetGroupCount( m ), 0 );
+  double min = 0, max = 0;
+  MDAL_G_minimumMaximum( MDAL_M_datasetGroup( m, 0 ), &min, &max );
+  EXPECT_DOUBLE_EQ( 0.0, min );
+  EXPECT_DOUBLE_EQ( 5.0, max );
+  EXPECT_EQ( before, unpairedUnloadCount() );
+
+  MDAL_CloseMesh( m );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );

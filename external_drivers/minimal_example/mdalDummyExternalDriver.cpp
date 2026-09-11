@@ -3,6 +3,8 @@
  Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
 */
 
+#include <algorithm>
+#include <array>
 #include <map>
 #include <fstream>
 #include <iostream>
@@ -137,7 +139,7 @@ static Mesh parseMesh( const std::string &uri )
           std::vector<std::string> meta = split( line, ',' );
           if ( meta.size() == 2 )
             group.metadata.push_back(
-              std::pair<std::string, std::string>( meta.at( 0 ), meta.at( 1 ) ) );
+                            std::pair<std::string, std::string>( meta.at( 0 ), meta.at( 1 ) ) );
         }
 
       if ( getline( file, line ) )
@@ -210,6 +212,20 @@ const char *_return_str( const std::string &str )
 
 static std::map<int, Mesh> sMeshes;
 static int sIdGenerator = 0;
+
+//! Datasets whose values MDAL asked for and has not released yet.
+//! A real plugin would hold the loaded buffer here.
+static std::vector<std::array<int, 3>> sLoadedDatasets;
+//! Number of MDAL_DRIVER_D_unload() calls that were not preceded by a
+//! MDAL_DRIVER_D_data() call for the same dataset. See
+//! MDAL_DRIVER_TEST_unpairedUnloadCount().
+static int sUnpairedUnloadCount = 0;
+
+static std::vector<std::array<int, 3>>::iterator findLoadedDataset( int meshId, int groupIndex, int datasetIndex )
+{
+  const std::array<int, 3> key = {meshId, groupIndex, datasetIndex};
+  return std::find( sLoadedDatasets.begin(), sLoadedDatasets.end(), key );
+}
 
 //**************************************************************************
 //
@@ -562,6 +578,9 @@ MDAL_LIB_EXPORT double MDAL_DRIVER_D_time( int meshId, int groupIndex, int datas
 
 int MDAL_DRIVER_D_data( int meshId, int groupIndex, int datasetIndex, int indexStart, int count, double *buffer )
 {
+  if ( findLoadedDataset( meshId, groupIndex, datasetIndex ) == sLoadedDatasets.end() )
+    sLoadedDatasets.push_back( {meshId, groupIndex, datasetIndex} );
+
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
@@ -783,8 +802,21 @@ int MDAL_DRIVER_D_faceToVolumeData( int meshId, int groupIndex, int datasetIndex
   return -1;
 }
 
-MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int, int, int )
-{}
+MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int meshId, int groupIndex, int datasetIndex )
+{
+  std::vector<std::array<int, 3>>::iterator it = findLoadedDataset( meshId, groupIndex, datasetIndex );
+  if ( it == sLoadedDatasets.end() )
+    sUnpairedUnloadCount++;
+  else
+    sLoadedDatasets.erase( it );
+}
+
+//! Not part of the driver API: lets the test suite check that MDAL never
+//! releases a dataset buffer it did not ask the driver to fill.
+MDAL_LIB_EXPORT int MDAL_DRIVER_TEST_unpairedUnloadCount()
+{
+  return sUnpairedUnloadCount;
+}
 
 #ifdef __cplusplus
 }//////////////////////////
