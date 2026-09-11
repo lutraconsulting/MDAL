@@ -687,9 +687,17 @@ MDAL_EXPORT void MDAL_G_minimumMaximum( MDAL_DatasetGroupH group, double *min, d
 
 /**
  * Returns an approximate minimum and maximum of the group, computed from a sample
- * of \a sampleCount evenly-spaced datasets (endpoints included; the middle
- * dataset when \a sampleCount is 1). Useful to avoid scanning every timestep
- * on initial display, when an exact range is not required.
+ * of \a sampleCount evenly-spaced datasets, endpoints always included. Useful
+ * to avoid scanning every timestep on initial display, when an exact range is
+ * not required.
+ *
+ * The sample is spaced evenly by dataset index within the group, not by time:
+ * with a variable output timestep the sampled times are not evenly spaced.
+ *
+ * A \a sampleCount of 1 is treated as 2, so that both the first and the last
+ * dataset are sampled. A single sample has no useful worst case: the first
+ * timestep of a hydraulic model is typically a uniform initial condition, and
+ * sampling it alone reports a degenerate range such as [0, 0].
  *
  * The computation falls back to the exact range of MDAL_G_minimumMaximum()
  * (cached as such) when \a sampleCount is 0 (or negative) or greater or equal

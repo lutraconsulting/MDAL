@@ -166,8 +166,10 @@ namespace MDAL
   Statistics calculateStatistics( DatasetGroup *grp );
 
   //! Calculates approximate statistics for dataset group from a sample of
-  //! \a sampleCount evenly-spaced datasets (endpoints included). When
-  //! \a sampleCount is 0 or greater or equal to the dataset count, falls
+  //! \a sampleCount evenly-spaced datasets (spaced by dataset index, not by
+  //! time; endpoints included). A \a sampleCount of 1 is raised to 2 so that
+  //! both endpoints are always sampled. When \a sampleCount is 0 or greater
+  //! or equal to the dataset count, falls
   //! back to the exact statistics computation. If a sampled dataset has no cached statistics
   //! yet (e.g. loaded with MDAL_LF_SkipStatistics) they are computed on the
   //! fly and cached on the dataset, so a later exact call benefits from them.

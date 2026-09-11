@@ -17,13 +17,12 @@ namespace
   const int kDatasetCount = 10;
   const int kPeakIndex = 5;
   const double kPeakValue = 1000.0;
+  const double kUniformPeak = 7.5;
 
-  // Build a multi-timestep scalar group persisted to a SELAFIN file:
-  // kDatasetCount datasets where dataset i holds the constant value i,
-  // except dataset kPeakIndex whose first value is the outlier kPeakValue.
-  // Approximate sampling that misses kPeakIndex will not capture the
-  // global maximum.
-  MDAL_MeshH buildMultiTimestepMesh( const std::string &savedFile )
+  // Saves a copy of the SELAFIN example mesh to \a savedFile, reloads it and
+  // opens a new scalar vertex dataset group on it, left in edit mode so the
+  // caller can add datasets with MDAL_G_addDataset().
+  MDAL_MeshH openMeshWithNewGroup( const std::string &savedFile, MDAL_DatasetGroupH *group )
   {
     std::string sourceFile = test_file( "/slf/example.slf" );
     MDAL_MeshH sourceMesh = MDAL_LoadMesh( sourceFile.c_str() );
@@ -36,13 +35,25 @@ namespace
     EXPECT_NE( mesh, nullptr );
 
     MDAL_DriverH driver = MDAL_driverFromName( "SELAFIN" );
-    MDAL_DatasetGroupH g = MDAL_M_addDatasetGroup( mesh,
-                           "TestGroup",
-                           DataOnVertices,
-                           true /*scalar*/,
-                           driver,
-                           savedFile.c_str() );
+    *group = MDAL_M_addDatasetGroup( mesh,
+                                     "TestGroup",
+                                     DataOnVertices,
+                                     true /*scalar*/,
+                                     driver,
+                                     savedFile.c_str() );
     EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+    return mesh;
+  }
+
+  // Build a multi-timestep scalar group persisted to a SELAFIN file:
+  // kDatasetCount datasets where dataset i holds the constant value i,
+  // except dataset kPeakIndex whose first value is the outlier kPeakValue.
+  // Approximate sampling that misses kPeakIndex will not capture the
+  // global maximum.
+  MDAL_MeshH buildMultiTimestepMesh( const std::string &savedFile )
+  {
+    MDAL_DatasetGroupH g = nullptr;
+    MDAL_MeshH mesh = openMeshWithNewGroup( savedFile, &g );
 
     const size_t v_count = MDAL_M_vertexCount( mesh );
     for ( int i = 0; i < kDatasetCount; ++i )
@@ -53,6 +64,28 @@ namespace
       MDAL_G_addDataset( g, static_cast<double>( i ), values.data(), nullptr );
       EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
     }
+    MDAL_G_closeEditMode( g );
+    EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+    return mesh;
+  }
+
+  // Build a two-timestep group shaped like a real hydraulic run: a uniformly
+  // zero initial condition followed by a timestep reaching kUniformPeak.
+  MDAL_MeshH buildUniformFirstDatasetMesh( const std::string &savedFile )
+  {
+    MDAL_DatasetGroupH g = nullptr;
+    MDAL_MeshH mesh = openMeshWithNewGroup( savedFile, &g );
+
+    const size_t v_count = MDAL_M_vertexCount( mesh );
+    std::vector<double> initial( v_count, 0.0 );
+    MDAL_G_addDataset( g, 0.0, initial.data(), nullptr );
+    EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+
+    std::vector<double> flooded( v_count, 0.0 );
+    flooded[v_count / 2] = kUniformPeak;
+    MDAL_G_addDataset( g, 1.0, flooded.data(), nullptr );
+    EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+
     MDAL_G_closeEditMode( g );
     EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
     return mesh;
@@ -96,10 +129,11 @@ TEST( MeshApproxStatisticsTest, ExactFallbacksEqualExact )
   MDAL_CloseMesh( m );
 }
 
-TEST( MeshApproxStatisticsTest, SampleCountOneUsesMiddleDataset )
+TEST( MeshApproxStatisticsTest, SampleCountOneSamplesBothEndpoints )
 {
-  // For n=10 and sampleCount=1 the middle dataset (index 4) is sampled:
-  // constant value 4, and the outlier at index 5 is missed.
+  // A sampleCount of 1 is raised to 2, so the first and the last dataset are
+  // sampled: for n=10 that is index 0 (constant 0) and index 9 (constant 9).
+  // The outlier at index 5 is still missed.
   std::string file = tmp_file( "/approx_stats_sc1.slf" );
   MDAL_MeshH m = buildMultiTimestepMesh( file );
   ASSERT_NE( m, nullptr );
@@ -109,8 +143,34 @@ TEST( MeshApproxStatisticsTest, SampleCountOneUsesMiddleDataset )
 
   double minA = NAN, maxA = NAN;
   MDAL_G_minimumMaximumApprox( g, 1, &minA, &maxA );
-  EXPECT_DOUBLE_EQ( 4.0, minA );
-  EXPECT_DOUBLE_EQ( 4.0, maxA );
+  EXPECT_DOUBLE_EQ( 0.0, minA );
+  EXPECT_DOUBLE_EQ( static_cast<double>( kDatasetCount - 1 ), maxA );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshApproxStatisticsTest, SampleCountOneCoversGroupWithUniformFirstDataset )
+{
+  // Regression: a two-timestep group whose first dataset is a uniform initial
+  // condition. Sampling a single middle dataset used to return the degenerate
+  // range [0, 0] while the exact range is [0, kUniformPeak].
+  std::string file = tmp_file( "/approx_stats_uniform_first.slf" );
+  MDAL_MeshH m = buildUniformFirstDatasetMesh( file );
+  ASSERT_NE( m, nullptr );
+
+  MDAL_DatasetGroupH g = lastGroup( m );
+  ASSERT_NE( g, nullptr );
+  ASSERT_EQ( 2, MDAL_G_datasetCount( g ) );
+
+  double minA = NAN, maxA = NAN;
+  MDAL_G_minimumMaximumApprox( g, 1, &minA, &maxA );
+  EXPECT_DOUBLE_EQ( 0.0, minA );
+  EXPECT_DOUBLE_EQ( kUniformPeak, maxA );
+
+  double minE = NAN, maxE = NAN;
+  MDAL_G_minimumMaximum( g, &minE, &maxE );
+  EXPECT_DOUBLE_EQ( minE, minA );
+  EXPECT_DOUBLE_EQ( maxE, maxA );
 
   MDAL_CloseMesh( m );
 }
