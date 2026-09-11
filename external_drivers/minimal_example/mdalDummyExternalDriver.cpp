@@ -139,7 +139,7 @@ static Mesh parseMesh( const std::string &uri )
           std::vector<std::string> meta = split( line, ',' );
           if ( meta.size() == 2 )
             group.metadata.push_back(
-                            std::pair<std::string, std::string>( meta.at( 0 ), meta.at( 1 ) ) );
+              std::pair<std::string, std::string>( meta.at( 0 ), meta.at( 1 ) ) );
         }
 
       if ( getline( file, line ) )

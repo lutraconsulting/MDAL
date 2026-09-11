@@ -866,11 +866,11 @@ static void _addScalarDatasetGroup( MDAL::Mesh *mesh,
   assert( values.size() ==  maxCount );
 
   std::shared_ptr<MDAL::DatasetGroup> group = std::make_shared< MDAL::DatasetGroup >(
-      mesh->driverName(),
-      mesh,
-      mesh->uri(),
-      name
-    );
+        mesh->driverName(),
+        mesh,
+        mesh->uri(),
+        name
+      );
   group->setDataLocation( location );
   group->setIsScalar( true );
 
