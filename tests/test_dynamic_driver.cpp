@@ -4,6 +4,12 @@
 */
 #include "gtest/gtest.h"
 #include <cmath>
+#include <string>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <dlfcn.h>
+#endif
 
 //mdal
 #include "mdal.h"
@@ -271,35 +277,53 @@ TEST( MeshDynamicDriverTest, openMesh )
 namespace
 {
   // The test driver exposes a few hooks beside the driver API. They live in
-  // the driver library, which MDAL has already loaded, so opening it here
-  // shares the very same instance.
-  template<typename T, typename ... Ts>
-  std::function<T( Ts ... args )> testDriverSymbol( const std::string &symbolName )
+  // the driver library, which MDAL has already loaded; loading it again
+  // returns the same module, so the hooks read the very state the driver
+  // uses. MDAL's own loader is not exported from the shared library, hence
+  // the platform calls.
+  std::string testDriverLibraryPath()
   {
     const std::string dirPath = std::string( drivers_path() ) + "/minimal_example/";
-    const std::vector<std::string> libFiles = MDAL::Library::libraryFilesInDir( dirPath );
-    for ( const std::string &libFile : libFiles )
-    {
-      MDAL::Library library( dirPath + libFile );
-      std::function<T( Ts ... args )> symbol = library.getSymbol<T, Ts...>( symbolName );
-      if ( symbol )
-        return symbol;
-    }
-    return std::function<T( Ts ... args )>();
+#ifdef _WIN32
+    return dirPath + "mdal_dummy_driver.dll";
+#elif defined( __APPLE__ )
+    return dirPath + "libmdal_dummy_driver.dylib";
+#else
+    return dirPath + "libmdal_dummy_driver.so";
+#endif
+  }
+
+  template<typename F>
+  F testDriverSymbol( const char *symbolName )
+  {
+    const std::string path = testDriverLibraryPath();
+#ifdef _WIN32
+    HMODULE module = LoadLibraryA( path.c_str() );
+    if ( !module )
+      return nullptr;
+    return reinterpret_cast<F>( GetProcAddress( module, symbolName ) );
+#else
+    void *handle = dlopen( path.c_str(), RTLD_NOW );
+    if ( !handle )
+      return nullptr;
+    return reinterpret_cast<F>( dlsym( handle, symbolName ) );
+#endif
   }
 
   // Counts the MDAL_DRIVER_D_unload() calls the driver received for a dataset
   // whose MDAL_DRIVER_D_data() was never called. -1 if the hook is missing.
   int unpairedUnloadCount()
   {
-    std::function<int()> counter = testDriverSymbol<int>( "MDAL_DRIVER_TEST_unpairedUnloadCount" );
+    typedef int ( *Counter )();
+    Counter counter = testDriverSymbol<Counter>( "MDAL_DRIVER_TEST_unpairedUnloadCount" );
     return counter ? counter() : -1;
   }
 
   // Makes the driver report a failed read. Returns false if the hook is missing.
   bool setDriverShortRead( bool shortRead )
   {
-    std::function<void( bool )> setter = testDriverSymbol<void, bool>( "MDAL_DRIVER_TEST_setShortRead" );
+    typedef void ( *Setter )( bool );
+    Setter setter = testDriverSymbol<Setter>( "MDAL_DRIVER_TEST_setShortRead" );
     if ( !setter )
       return false;
     setter( shortRead );
