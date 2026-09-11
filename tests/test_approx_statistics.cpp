@@ -3,6 +3,7 @@
  Copyright (C) 2026 Lutra Consulting Limited
 */
 #include "gtest/gtest.h"
+#include <fstream>
 #include <string>
 #include <vector>
 #include <cmath>
@@ -89,6 +90,15 @@ namespace
     MDAL_G_closeEditMode( g );
     EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
     return mesh;
+  }
+
+  // Empties \a path in place. Any handle already open on it then reads a file
+  // that can no longer serve the data it used to, the way a result file being
+  // rewritten by a running solver does.
+  void emptyFile( const std::string &path )
+  {
+    std::ofstream out( path.c_str(), std::ios::binary | std::ios::trunc );
+    EXPECT_TRUE( out.is_open() );
   }
 
   MDAL_DatasetGroupH lastGroup( MDAL_MeshH mesh )
@@ -311,6 +321,54 @@ TEST( MeshLoadFlagsTest, LoadDatasetsWithFlagsSkipsStatistics )
   EXPECT_DOUBLE_EQ( kPeakValue, maxE );
 
   MDAL_CloseMesh( m );
+}
+
+TEST( MeshLoadFlagsTest, UnreadableFileReportsNaNAndIsNotCached )
+{
+  // The file changes under an open mesh handle: a solver still writing its
+  // results, a network share, removable media. The deferred statistics must
+  // report the failure instead of caching a range they could not compute.
+  std::string file = tmp_file( "/skipstats_truncated.slf" );
+  copy( test_file( "/slf/example_res_fr.slf" ), file );
+
+  MDAL_MeshH m = MDAL_LoadMeshWithFlags( file.c_str(), MDAL_LF_SkipStatistics );
+  ASSERT_NE( m, nullptr );
+  ASSERT_GT( MDAL_M_datasetGroupCount( m ), 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+  ASSERT_GT( MDAL_G_datasetCount( g ), 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  emptyFile( file );
+
+  // twice: nothing may be cached, so the second call must try again and fail
+  // again rather than quietly return a range nobody could compute
+  for ( int attempt = 1; attempt <= 2; ++attempt )
+  {
+    double min = 0, max = 0;
+
+    MDAL_ResetStatus();
+    MDAL_G_minimumMaximum( g, &min, &max );
+    EXPECT_TRUE( std::isnan( min ) ) << "attempt " << attempt;
+    EXPECT_TRUE( std::isnan( max ) ) << "attempt " << attempt;
+    EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None ) << "attempt " << attempt;
+
+    MDAL_ResetStatus();
+    MDAL_D_minimumMaximum( ds, &min, &max );
+    EXPECT_TRUE( std::isnan( min ) ) << "attempt " << attempt;
+    EXPECT_TRUE( std::isnan( max ) ) << "attempt " << attempt;
+    EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None ) << "attempt " << attempt;
+
+    MDAL_ResetStatus();
+    MDAL_G_minimumMaximumApprox( g, 2, &min, &max );
+    EXPECT_TRUE( std::isnan( min ) ) << "attempt " << attempt;
+    EXPECT_TRUE( std::isnan( max ) ) << "attempt " << attempt;
+    EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None ) << "attempt " << attempt;
+  }
+
+  MDAL_CloseMesh( m );
+  deleteFile( file );
 }
 
 int main( int argc, char **argv )

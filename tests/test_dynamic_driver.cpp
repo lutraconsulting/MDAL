@@ -3,6 +3,7 @@
  Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
 */
 #include "gtest/gtest.h"
+#include <cmath>
 
 //mdal
 #include "mdal.h"
@@ -269,22 +270,40 @@ TEST( MeshDynamicDriverTest, openMesh )
 
 namespace
 {
-  // The test driver counts the MDAL_DRIVER_D_unload() calls it receives for a
-  // dataset whose MDAL_DRIVER_D_data() was never called. The counter lives in
+  // The test driver exposes a few hooks beside the driver API. They live in
   // the driver library, which MDAL has already loaded, so opening it here
   // shares the very same instance.
-  int unpairedUnloadCount()
+  template<typename T, typename ... Ts>
+  std::function<T( Ts ... args )> testDriverSymbol( const std::string &symbolName )
   {
     const std::string dirPath = std::string( drivers_path() ) + "/minimal_example/";
     const std::vector<std::string> libFiles = MDAL::Library::libraryFilesInDir( dirPath );
     for ( const std::string &libFile : libFiles )
     {
       MDAL::Library library( dirPath + libFile );
-      std::function<int()> counter = library.getSymbol<int>( "MDAL_DRIVER_TEST_unpairedUnloadCount" );
-      if ( counter )
-        return counter();
+      std::function<T( Ts ... args )> symbol = library.getSymbol<T, Ts...>( symbolName );
+      if ( symbol )
+        return symbol;
     }
-    return -1;
+    return std::function<T( Ts ... args )>();
+  }
+
+  // Counts the MDAL_DRIVER_D_unload() calls the driver received for a dataset
+  // whose MDAL_DRIVER_D_data() was never called. -1 if the hook is missing.
+  int unpairedUnloadCount()
+  {
+    std::function<int()> counter = testDriverSymbol<int>( "MDAL_DRIVER_TEST_unpairedUnloadCount" );
+    return counter ? counter() : -1;
+  }
+
+  // Makes the driver report a failed read. Returns false if the hook is missing.
+  bool setDriverShortRead( bool shortRead )
+  {
+    std::function<void( bool )> setter = testDriverSymbol<void, bool>( "MDAL_DRIVER_TEST_setShortRead" );
+    if ( !setter )
+      return false;
+    setter( shortRead );
+    return true;
   }
 }
 
@@ -313,6 +332,56 @@ TEST( MeshDynamicDriverTest, skipStatisticsDoesNotUnloadNeverLoadedDatasets )
   EXPECT_DOUBLE_EQ( 0.0, min );
   EXPECT_DOUBLE_EQ( 5.0, max );
   EXPECT_EQ( before, unpairedUnloadCount() );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshDynamicDriverTest, incompleteReadIsNotCachedAsStatistics )
+{
+  std::string path = test_file( "/dynamic_driver/mesh_1.msh" );
+
+  MDAL_MeshH m = MDAL_LoadMeshWithFlags( path.c_str(), MDAL_LF_SkipStatistics );
+  ASSERT_TRUE( m );
+  ASSERT_GT( MDAL_M_datasetGroupCount( m ), 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  ASSERT_TRUE( setDriverShortRead( true ) ) << "the test driver does not expose the short read hook";
+
+  // a range computed from values that could not be read is not a range
+  MDAL_ResetStatus();
+  double min = 0, max = 0;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_TRUE( std::isnan( min ) );
+  EXPECT_TRUE( std::isnan( max ) );
+  EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None );
+
+  MDAL_ResetStatus();
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_TRUE( std::isnan( min ) );
+  EXPECT_TRUE( std::isnan( max ) );
+  EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None );
+
+  MDAL_ResetStatus();
+  MDAL_G_minimumMaximumApprox( g, 2, &min, &max );
+  EXPECT_TRUE( std::isnan( min ) );
+  EXPECT_TRUE( std::isnan( max ) );
+  EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None );
+
+  // nothing was cached, so a later readable file gives the right answer
+  ASSERT_TRUE( setDriverShortRead( false ) );
+  MDAL_ResetStatus();
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 0.0, min );
+  EXPECT_DOUBLE_EQ( 4.0, max );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 0.0, min );
+  EXPECT_DOUBLE_EQ( 5.0, max );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
 
   MDAL_CloseMesh( m );
 }

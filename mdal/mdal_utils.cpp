@@ -4,6 +4,7 @@
 */
 
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -641,6 +642,11 @@ MDAL::Statistics _calculateStatistics( const std::vector<double> &values, size_t
   return ret;
 }
 
+//! Computes the statistics of \a dataset into \a stats. Returns false when
+//! the driver returned fewer values than the dataset advertises, i.e. when
+//! \a stats only covers part of the dataset.
+static bool _calculateDatasetStatistics( MDAL::Dataset *dataset, MDAL::Statistics &stats );
+
 MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<MDAL::DatasetGroup> grp )
 {
   return calculateStatistics( grp.get() );
@@ -663,11 +669,32 @@ MDAL::Statistics MDAL::ensureStatistics( Dataset *dataset )
   Statistics stats = dataset->statistics();
   if ( !stats.isComputed )
   {
-    stats = calculateStatistics( dataset );
-    dataset->setStatistics( stats );
+    const bool complete = _calculateDatasetStatistics( dataset, stats );
     dataset->releaseLoadedData();
+    if ( !complete )
+    {
+      // the range covers only the values that could be read: caching it would
+      // make a transient read failure permanent, and a partial range looks
+      // plausible enough never to be questioned again
+      MDAL::Log::error( MDAL_Status::Err_InvalidData,
+                        "Could not read all the values of the dataset, statistics not computed" );
+      return Statistics();
+    }
+    dataset->setStatistics( stats );
   }
   return stats;
+}
+
+//! Whether every dataset of \a group has cached statistics, i.e. whether the
+//! group range was built from complete reads only
+static bool _allDatasetStatisticsComputed( MDAL::DatasetGroup *group )
+{
+  for ( const std::shared_ptr<MDAL::Dataset> &ds : group->datasets )
+  {
+    if ( !ds->statistics().isComputed )
+      return false;
+  }
+  return true;
 }
 
 MDAL::Statistics MDAL::ensureStatistics( DatasetGroup *group )
@@ -676,6 +703,11 @@ MDAL::Statistics MDAL::ensureStatistics( DatasetGroup *group )
   if ( !stats.isComputed )
   {
     stats = calculateStatistics( group );
+    // a group range missing the values of an unreadable dataset is wrong but
+    // plausible: report it as unknown, like the dataset range, and do not
+    // cache it so that a later call retries
+    if ( !_allDatasetStatisticsComputed( group ) )
+      return Statistics();
     if ( !group->isInEditMode() )
       group->setStatistics( stats );
   }
@@ -718,11 +750,11 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
   return calculateStatistics( dataset.get() );
 }
 
-MDAL::Statistics MDAL::calculateStatistics( Dataset *dataset )
+static bool _calculateDatasetStatistics( MDAL::Dataset *dataset, MDAL::Statistics &stats )
 {
-  Statistics ret;
+  stats = MDAL::Statistics();
   if ( !dataset )
-    return ret;
+    return false;
 
   bool isVector = !dataset->group()->isScalar();
   bool is3D = dataset->group()->dataLocation() == MDAL_DataLocation::DataOnVolumes;
@@ -764,14 +796,21 @@ MDAL::Statistics MDAL::calculateStatistics( Dataset *dataset )
         dataset->activeData( i, bufLen, activeBuffer.data() );
     }
     if ( valsRead == 0 )
-      return ret;
+      return false;
 
     MDAL::Statistics dsStats = _calculateStatistics( buffer, valsRead, isVector, activeBuffer );
-    combineStatistics( ret, dsStats );
+    MDAL::combineStatistics( stats, dsStats );
     i += valsRead;
   }
 
-  return ret;
+  return true;
+}
+
+MDAL::Statistics MDAL::calculateStatistics( Dataset *dataset )
+{
+  Statistics stats;
+  _calculateDatasetStatistics( dataset, stats );
+  return stats;
 }
 
 void MDAL::combineStatistics( MDAL::Statistics &main, const MDAL::Statistics &other )
@@ -827,11 +866,11 @@ static void _addScalarDatasetGroup( MDAL::Mesh *mesh,
   assert( values.size() ==  maxCount );
 
   std::shared_ptr<MDAL::DatasetGroup> group = std::make_shared< MDAL::DatasetGroup >(
-        mesh->driverName(),
-        mesh,
-        mesh->uri(),
-        name
-      );
+      mesh->driverName(),
+      mesh,
+      mesh->uri(),
+      name
+    );
   group->setDataLocation( location );
   group->setIsScalar( true );
 

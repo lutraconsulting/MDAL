@@ -220,6 +220,10 @@ static std::vector<std::array<int, 3>> sLoadedDatasets;
 //! MDAL_DRIVER_D_data() call for the same dataset. See
 //! MDAL_DRIVER_TEST_unpairedUnloadCount().
 static int sUnpairedUnloadCount = 0;
+//! When set, MDAL_DRIVER_D_data() reports that it could read no value, the way
+//! a driver behaves when the file becomes unreadable. See
+//! MDAL_DRIVER_TEST_setShortRead().
+static bool sShortRead = false;
 
 static std::vector<std::array<int, 3>>::iterator findLoadedDataset( int meshId, int groupIndex, int datasetIndex )
 {
@@ -581,6 +585,9 @@ int MDAL_DRIVER_D_data( int meshId, int groupIndex, int datasetIndex, int indexS
   if ( findLoadedDataset( meshId, groupIndex, datasetIndex ) == sLoadedDatasets.end() )
     sLoadedDatasets.push_back( {meshId, groupIndex, datasetIndex} );
 
+  if ( sShortRead )
+    return 0;
+
   if ( sMeshes.find( meshId ) != sMeshes.end() )
   {
     const Mesh &mesh = sMeshes[meshId];
@@ -816,6 +823,13 @@ MDAL_LIB_EXPORT void MDAL_DRIVER_D_unload( int meshId, int groupIndex, int datas
 MDAL_LIB_EXPORT int MDAL_DRIVER_TEST_unpairedUnloadCount()
 {
   return sUnpairedUnloadCount;
+}
+
+//! Not part of the driver API: makes MDAL_DRIVER_D_data() report a failed
+//! read, so that the test suite can check how MDAL handles one.
+MDAL_LIB_EXPORT void MDAL_DRIVER_TEST_setShortRead( bool shortRead )
+{
+  sShortRead = shortRead;
 }
 
 #ifdef __cplusplus
