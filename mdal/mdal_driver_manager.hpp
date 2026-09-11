@@ -32,11 +32,12 @@ namespace MDAL
 
       std::string getUris( const std::string &file, const std::string &driverName = "" ) const;
 
-      std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName ) const;
+      std::unique_ptr< Mesh > load( const std::string &meshFile, const std::string &meshName, int loadFlags ) const;
       std::unique_ptr< Mesh > load( const std::string &driverName,
                                     const std::string &meshFile,
-                                    const std::string &meshName ) const;
-      void loadDatasets( Mesh *mesh, const std::string &datasetFile ) const;
+                                    const std::string &meshName,
+                                    int loadFlags ) const;
+      void loadDatasets( Mesh *mesh, const std::string &datasetFile, int loadFlags ) const;
 
       void save( Mesh *mesh, const std::string &uri ) const;
 

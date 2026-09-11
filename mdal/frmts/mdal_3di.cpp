@@ -270,9 +270,9 @@ void MDAL::Driver3Di::addBedElevation( MemoryMesh *mesh )
     }
   }
 
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   group->datasets.push_back( dataset );
-  group->setStatistics( MDAL::calculateStatistics( group ) );
+  MDAL::setStatisticsIfRequired( group, loadFlags() );
   mesh->datasetGroups.emplace_back( std::move( group ) );
 }
 
@@ -303,7 +303,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::Driver3Di::create2DDataset( std::shared_ptr
         mNcFile,
         mRequestedMeshFaceIds
       );
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   return std::move( dataset );
 }
 

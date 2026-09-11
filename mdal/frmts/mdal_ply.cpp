@@ -453,7 +453,7 @@ std::shared_ptr< MDAL::DatasetGroup> MDAL::DriverPly::addDatasetGroup( MDAL::Mes
   std::shared_ptr< DatasetGroup > group = std::make_shared< DatasetGroup >( mesh->driverName(), mesh, name, name );
   group->setDataLocation( location );
   group->setIsScalar( isScalar );
-  group->setStatistics( MDAL::calculateStatistics( group ) );
+  MDAL::setStatisticsIfRequired( group, loadFlags() );
   mesh->datasetGroups.push_back( group );
   return group;
 }
@@ -508,9 +508,9 @@ void MDAL::DriverPly::addDataset2D( MDAL::DatasetGroup *group, const std::vector
   std::shared_ptr< MDAL::MemoryDataset2D > dataset = std::make_shared< MemoryDataset2D >( group );
   dataset->setTime( 0.0 );
   memcpy( dataset->values(), values.data(), sizeof( double ) * values.size() );
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   group->datasets.push_back( dataset );
-  group->setStatistics( MDAL::calculateStatistics( group ) );
+  MDAL::setStatisticsIfRequired( group, loadFlags() );
 }
 
 void MDAL::DriverPly::addDataset3D( MDAL::DatasetGroup *group,
@@ -545,9 +545,9 @@ void MDAL::DriverPly::addDataset3D( MDAL::DatasetGroup *group,
   std::shared_ptr< MDAL::MemoryDataset3D > dataset = std::make_shared< MemoryDataset3D >( group, values.size(), maxVerticalLevelCount, valueIndexes.data(), levels.data() );
   dataset->setTime( 0.0 );
   memcpy( dataset->values(), values.data(), sizeof( double ) * values.size() );
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   group->datasets.push_back( dataset );
-  group->setStatistics( MDAL::calculateStatistics( group ) );
+  MDAL::setStatisticsIfRequired( group, loadFlags() );
 }
 
 void MDAL::DriverPly::save( const std::string &fileName, const std::string &meshName, Mesh *mesh )

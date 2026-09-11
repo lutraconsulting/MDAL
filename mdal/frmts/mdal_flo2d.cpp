@@ -79,9 +79,9 @@ void MDAL::DriverFlo2D::addStaticDataset(
   dataset->setTime( MDAL::RelativeTimestamp() );
   double *values = dataset->values();
   memcpy( values, vals.data(), vals.size() * sizeof( double ) );
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   group->datasets.push_back( dataset );
-  group->setStatistics( MDAL::calculateStatistics( group ) );
+  MDAL::setStatisticsIfRequired( group, loadFlags() );
   mMesh->datasetGroups.emplace_back( std::move( group ) );
 }
 
@@ -397,9 +397,9 @@ void MDAL::DriverFlo2D::parseHYCHANFile( const std::string &datFileName, const s
   for ( std::shared_ptr<DatasetGroup> datasetGroup : datasetGroups )
   {
     for ( std::shared_ptr<Dataset> dataset : datasetGroup->datasets )
-      dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+      MDAL::setStatisticsIfRequired( dataset, loadFlags() );
 
-    datasetGroup->setStatistics( MDAL::calculateStatistics( datasetGroup ) );
+    MDAL::setStatisticsIfRequired( datasetGroup, loadFlags() );
     mMesh->datasetGroups.emplace_back( std::move( datasetGroup ) );
   }
 }
@@ -553,11 +553,11 @@ void MDAL::DriverFlo2D::parseFPLAINFile( std::vector<double> &elevations,
     throw MDAL::Error( MDAL_Status::Err_IncompatibleMesh, "Only isolated cell(s), not possible to calculate cell size" );
 }
 
-static void addDatasetToGroup( std::shared_ptr<MDAL::DatasetGroup> group, std::shared_ptr<MDAL::MemoryDataset2D> dataset )
+static void addDatasetToGroup( std::shared_ptr<MDAL::DatasetGroup> group, std::shared_ptr<MDAL::MemoryDataset2D> dataset, int loadFlags )
 {
   if ( group && dataset && dataset->valuesCount() > 0 )
   {
-    dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+    MDAL::setStatisticsIfRequired( dataset, loadFlags );
     group->datasets.push_back( dataset );
   }
 }
@@ -624,9 +624,9 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
     {
       time = RelativeTimestamp( MDAL::toDouble( line ), RelativeTimestamp::hours );
 
-      if ( depthDataset ) addDatasetToGroup( depthDsGroup, depthDataset );
-      if ( flowDataset ) addDatasetToGroup( flowDsGroup, flowDataset );
-      if ( waterLevelDataset ) addDatasetToGroup( waterLevelDsGroup, waterLevelDataset );
+      if ( depthDataset ) addDatasetToGroup( depthDsGroup, depthDataset, loadFlags() );
+      if ( flowDataset ) addDatasetToGroup( flowDsGroup, flowDataset, loadFlags() );
+      if ( waterLevelDataset ) addDatasetToGroup( waterLevelDsGroup, waterLevelDataset, loadFlags() );
 
       depthDataset  = std::make_shared< MemoryDataset2D >( depthDsGroup.get() );
       flowDataset = std::make_shared< MemoryDataset2D >( flowDsGroup.get() );
@@ -662,13 +662,13 @@ void MDAL::DriverFlo2D::parseTIMDEPFile( const std::string &datFileName, const s
     }
   }
 
-  if ( depthDataset ) addDatasetToGroup( depthDsGroup, std::move( depthDataset ) );
-  if ( flowDataset ) addDatasetToGroup( flowDsGroup, std::move( flowDataset ) );
-  if ( waterLevelDataset ) addDatasetToGroup( waterLevelDsGroup, std::move( waterLevelDataset ) );
+  if ( depthDataset ) addDatasetToGroup( depthDsGroup, std::move( depthDataset ), loadFlags() );
+  if ( flowDataset ) addDatasetToGroup( flowDsGroup, std::move( flowDataset ), loadFlags() );
+  if ( waterLevelDataset ) addDatasetToGroup( waterLevelDsGroup, std::move( waterLevelDataset ), loadFlags() );
 
-  depthDsGroup->setStatistics( MDAL::calculateStatistics( depthDsGroup ) );
-  flowDsGroup->setStatistics( MDAL::calculateStatistics( flowDsGroup ) );
-  waterLevelDsGroup->setStatistics( MDAL::calculateStatistics( waterLevelDsGroup ) );
+  MDAL::setStatisticsIfRequired( depthDsGroup, loadFlags() );
+  MDAL::setStatisticsIfRequired( flowDsGroup, loadFlags() );
+  MDAL::setStatisticsIfRequired( waterLevelDsGroup, loadFlags() );
 
   mMesh->datasetGroups.emplace_back( std::move( depthDsGroup ) );
   mMesh->datasetGroups.emplace_back( std::move( flowDsGroup ) );
@@ -992,11 +992,11 @@ bool MDAL::DriverFlo2D::parseHDF5Datasets( MemoryMesh *mesh, const std::string &
           output->setScalarValue( i, val );
         }
       }
-      addDatasetToGroup( ds, std::move( output ) );
+      addDatasetToGroup( ds, std::move( output ), loadFlags() );
     }
 
     // TODO use mins & maxs arrays
-    ds->setStatistics( MDAL::calculateStatistics( ds ) );
+    MDAL::setStatisticsIfRequired( ds, loadFlags() );
     mesh->datasetGroups.emplace_back( std::move( ds ) );
 
   }

@@ -3,6 +3,13 @@
  Copyright (C) 2020 Vincent Cloarec (vcloarec at gmail dot com)
 */
 #include "gtest/gtest.h"
+#include <cmath>
+#include <string>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <dlfcn.h>
+#endif
 
 //mdal
 #include "mdal.h"
@@ -263,6 +270,142 @@ TEST( MeshDynamicDriverTest, openMesh )
   EXPECT_EQ( 3, getValue3DY( ds, get3DFrom2D( ds, faceIndex ) ) );
   EXPECT_EQ( 0, get3DFrom2D( ds, 0 ) );
   EXPECT_EQ( 5, get3DFrom2D( ds, 1 ) );
+
+  MDAL_CloseMesh( m );
+}
+
+namespace
+{
+  // The test driver exposes a few hooks beside the driver API. They live in
+  // the driver library, which MDAL has already loaded; loading it again
+  // returns the same module, so the hooks read the very state the driver
+  // uses. MDAL's own loader is not exported from the shared library, hence
+  // the platform calls.
+  std::string testDriverLibraryPath()
+  {
+    const std::string dirPath = std::string( drivers_path() ) + "/minimal_example/";
+#ifdef _WIN32
+    return dirPath + "mdal_dummy_driver.dll";
+#elif defined( __APPLE__ )
+    return dirPath + "libmdal_dummy_driver.dylib";
+#else
+    return dirPath + "libmdal_dummy_driver.so";
+#endif
+  }
+
+  template<typename F>
+  F testDriverSymbol( const char *symbolName )
+  {
+    const std::string path = testDriverLibraryPath();
+#ifdef _WIN32
+    HMODULE module = LoadLibraryA( path.c_str() );
+    if ( !module )
+      return nullptr;
+    return reinterpret_cast<F>( GetProcAddress( module, symbolName ) );
+#else
+    void *handle = dlopen( path.c_str(), RTLD_NOW );
+    if ( !handle )
+      return nullptr;
+    return reinterpret_cast<F>( dlsym( handle, symbolName ) );
+#endif
+  }
+
+  // Counts the MDAL_DRIVER_D_unload() calls the driver received for a dataset
+  // whose MDAL_DRIVER_D_data() was never called. -1 if the hook is missing.
+  int unpairedUnloadCount()
+  {
+    typedef int ( *Counter )();
+    Counter counter = testDriverSymbol<Counter>( "MDAL_DRIVER_TEST_unpairedUnloadCount" );
+    return counter ? counter() : -1;
+  }
+
+  // Makes the driver report a failed read. Returns false if the hook is missing.
+  bool setDriverShortRead( bool shortRead )
+  {
+    typedef void ( *Setter )( bool );
+    Setter setter = testDriverSymbol<Setter>( "MDAL_DRIVER_TEST_setShortRead" );
+    if ( !setter )
+      return false;
+    setter( shortRead );
+    return true;
+  }
+}
+
+TEST( MeshDynamicDriverTest, skipStatisticsDoesNotUnloadNeverLoadedDatasets )
+{
+  std::string path = test_file( "/dynamic_driver/mesh_1.msh" );
+
+  const int before = unpairedUnloadCount();
+  ASSERT_GE( before, 0 ) << "the test driver does not expose the unload counter";
+
+  // without the flag, every dataset is read and then released: pairs only
+  MDAL_MeshH eager = MDAL_LoadMesh( path.c_str() );
+  ASSERT_TRUE( eager );
+  EXPECT_EQ( before, unpairedUnloadCount() );
+  MDAL_CloseMesh( eager );
+
+  // with the flag, no data is requested at load, so nothing may be released
+  MDAL_MeshH m = MDAL_LoadMeshWithFlags( path.c_str(), MDAL_LF_SkipStatistics );
+  ASSERT_TRUE( m );
+  EXPECT_EQ( before, unpairedUnloadCount() );
+
+  // the deferred statistics do read the data before releasing it
+  ASSERT_GT( MDAL_M_datasetGroupCount( m ), 0 );
+  double min = 0, max = 0;
+  MDAL_G_minimumMaximum( MDAL_M_datasetGroup( m, 0 ), &min, &max );
+  EXPECT_DOUBLE_EQ( 0.0, min );
+  EXPECT_DOUBLE_EQ( 5.0, max );
+  EXPECT_EQ( before, unpairedUnloadCount() );
+
+  MDAL_CloseMesh( m );
+}
+
+TEST( MeshDynamicDriverTest, incompleteReadIsNotCachedAsStatistics )
+{
+  std::string path = test_file( "/dynamic_driver/mesh_1.msh" );
+
+  MDAL_MeshH m = MDAL_LoadMeshWithFlags( path.c_str(), MDAL_LF_SkipStatistics );
+  ASSERT_TRUE( m );
+  ASSERT_GT( MDAL_M_datasetGroupCount( m ), 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+
+  ASSERT_TRUE( setDriverShortRead( true ) ) << "the test driver does not expose the short read hook";
+
+  // a range computed from values that could not be read is not a range
+  MDAL_ResetStatus();
+  double min = 0, max = 0;
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_TRUE( std::isnan( min ) );
+  EXPECT_TRUE( std::isnan( max ) );
+  EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None );
+
+  MDAL_ResetStatus();
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_TRUE( std::isnan( min ) );
+  EXPECT_TRUE( std::isnan( max ) );
+  EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None );
+
+  MDAL_ResetStatus();
+  MDAL_G_minimumMaximumApprox( g, 2, &min, &max );
+  EXPECT_TRUE( std::isnan( min ) );
+  EXPECT_TRUE( std::isnan( max ) );
+  EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None );
+
+  // nothing was cached, so a later readable file gives the right answer
+  ASSERT_TRUE( setDriverShortRead( false ) );
+  MDAL_ResetStatus();
+  MDAL_D_minimumMaximum( ds, &min, &max );
+  EXPECT_DOUBLE_EQ( 0.0, min );
+  EXPECT_DOUBLE_EQ( 4.0, max );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
+
+  MDAL_G_minimumMaximum( g, &min, &max );
+  EXPECT_DOUBLE_EQ( 0.0, min );
+  EXPECT_DOUBLE_EQ( 5.0, max );
+  EXPECT_EQ( MDAL_LastStatus(), MDAL_Status::None );
 
   MDAL_CloseMesh( m );
 }

@@ -4,6 +4,7 @@
 */
 
 #include "mdal_utils.hpp"
+#include "mdal_logger.hpp"
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -641,6 +642,11 @@ MDAL::Statistics _calculateStatistics( const std::vector<double> &values, size_t
   return ret;
 }
 
+//! Computes the statistics of \a dataset into \a stats. Returns false when
+//! the driver returned fewer values than the dataset advertises, i.e. when
+//! \a stats only covers part of the dataset.
+static bool _calculateDatasetStatistics( MDAL::Dataset *dataset, MDAL::Statistics &stats );
+
 MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<MDAL::DatasetGroup> grp )
 {
   return calculateStatistics( grp.get() );
@@ -652,19 +658,103 @@ MDAL::Statistics MDAL::calculateStatistics( DatasetGroup *grp )
   if ( !grp )
     return ret;
 
+  // note: isComputed is a property of the caches only, set by setStatistics()
   for ( std::shared_ptr<Dataset> &ds : grp->datasets )
+    combineStatistics( ret, ensureStatistics( ds.get() ) );
+  return ret;
+}
+
+MDAL::Statistics MDAL::ensureStatistics( Dataset *dataset )
+{
+  Statistics stats = dataset->statistics();
+  if ( !stats.isComputed )
   {
-    MDAL::Statistics dsStats = ds->statistics();
-    combineStatistics( ret, dsStats );
+    const bool complete = _calculateDatasetStatistics( dataset, stats );
+    dataset->releaseLoadedData();
+    if ( !complete )
+    {
+      // the range covers only the values that could be read: caching it would
+      // make a transient read failure permanent, and a partial range looks
+      // plausible enough never to be questioned again
+      MDAL::Log::error( MDAL_Status::Err_InvalidData,
+                        "Could not read all the values of the dataset, statistics not computed" );
+      return Statistics();
+    }
+    dataset->setStatistics( stats );
   }
+  return stats;
+}
+
+//! Whether every dataset of \a group has cached statistics, i.e. whether the
+//! group range was built from complete reads only
+static bool _allDatasetStatisticsComputed( MDAL::DatasetGroup *group )
+{
+  for ( const std::shared_ptr<MDAL::Dataset> &ds : group->datasets )
+  {
+    if ( !ds->statistics().isComputed )
+      return false;
+  }
+  return true;
+}
+
+MDAL::Statistics MDAL::ensureStatistics( DatasetGroup *group )
+{
+  Statistics stats = group->statistics();
+  if ( !stats.isComputed )
+  {
+    stats = calculateStatistics( group );
+    // a group range missing the values of an unreadable dataset is wrong but
+    // plausible: report it as unknown, like the dataset range, and do not
+    // cache it so that a later call retries
+    if ( !_allDatasetStatisticsComputed( group ) )
+      return Statistics();
+    if ( !group->isInEditMode() )
+      group->setStatistics( stats );
+  }
+  return stats;
+}
+
+MDAL::Statistics MDAL::calculateStatisticsApprox( DatasetGroup *grp, size_t sampleCount )
+{
+  if ( !grp )
+    return Statistics();
+
+  const size_t n = grp->datasets.size();
+  // a single sample has no useful worst case: the first timestep of a
+  // hydraulic model is usually a uniform initial condition, so one sample can
+  // report [0, 0] for a group whose exact range is [0, 7.6]. Sample both ends.
+  if ( sampleCount == 1 )
+    sampleCount = 2;
+  if ( sampleCount == 0 || sampleCount >= n )
+    return ensureStatistics( grp );
+
+  Statistics ret;
+  for ( size_t i = 0; i < sampleCount; ++i )
+  {
+    // evenly spaced by dataset index, endpoints included; indices are
+    // strictly increasing since 2 <= sampleCount < n
+    const size_t idx = ( i * ( n - 1 ) ) / ( sampleCount - 1 );
+    combineStatistics( ret, ensureStatistics( grp->datasets[idx].get() ) );
+  }
+
+  // a sample without any valid value (e.g. domain dry at the sampled times)
+  // would be indistinguishable from an error: fall back to the exact range
+  if ( std::isnan( ret.minimum ) )
+    return ensureStatistics( grp );
+
   return ret;
 }
 
 MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
 {
-  Statistics ret;
+  return calculateStatistics( dataset.get() );
+}
+
+static bool _calculateDatasetStatistics( MDAL::Dataset *dataset, MDAL::Statistics &stats )
+{
+  stats = MDAL::Statistics();
   if ( !dataset )
-    return ret;
+    return false;
 
   bool isVector = !dataset->group()->isScalar();
   bool is3D = dataset->group()->dataLocation() == MDAL_DataLocation::DataOnVolumes;
@@ -706,14 +796,21 @@ MDAL::Statistics MDAL::calculateStatistics( std::shared_ptr<Dataset> dataset )
         dataset->activeData( i, bufLen, activeBuffer.data() );
     }
     if ( valsRead == 0 )
-      return ret;
+      return false;
 
     MDAL::Statistics dsStats = _calculateStatistics( buffer, valsRead, isVector, activeBuffer );
-    combineStatistics( ret, dsStats );
+    MDAL::combineStatistics( stats, dsStats );
     i += valsRead;
   }
 
-  return ret;
+  return true;
+}
+
+MDAL::Statistics MDAL::calculateStatistics( Dataset *dataset )
+{
+  Statistics stats;
+  _calculateDatasetStatistics( dataset, stats );
+  return stats;
 }
 
 void MDAL::combineStatistics( MDAL::Statistics &main, const MDAL::Statistics &other )

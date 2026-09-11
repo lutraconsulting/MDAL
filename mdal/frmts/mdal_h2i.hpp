@@ -88,6 +88,7 @@ namespace MDAL
       DatasetH2i( DatasetGroup *grp, std::shared_ptr<std::ifstream> in, size_t datasetIndex );
 
       void clear();
+      void releaseLoadedData() override { clear(); }
 
     protected:
 

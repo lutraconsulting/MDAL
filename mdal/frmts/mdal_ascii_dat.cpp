@@ -142,7 +142,7 @@ void MDAL::DriverAsciiDat::loadOldFormat( std::ifstream &in,
     return;
   }
 
-  group->setStatistics( MDAL::calculateStatistics( group ) );
+  MDAL::setStatisticsIfRequired( group, loadFlags() );
   mesh->datasetGroups.push_back( group );
   group.reset();
 }
@@ -244,7 +244,7 @@ void MDAL::DriverAsciiDat::loadNewFormat(
         MDAL::Log::error( MDAL_Status::Err_UnknownFormat, name(), "ENDDS card for no active dataset!" );
         return;
       }
-      group->setStatistics( MDAL::calculateStatistics( group ) );
+      MDAL::setStatisticsIfRequired( group, loadFlags() );
       mesh->datasetGroups.push_back( group );
       group.reset();
     }
@@ -429,7 +429,7 @@ void MDAL::DriverAsciiDat::readVertexTimestep(
     }
   }
 
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   group->datasets.push_back( dataset );
 }
 
@@ -474,7 +474,7 @@ void MDAL::DriverAsciiDat::readElementTimestep(
     }
   }
 
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   group->datasets.push_back( dataset );
 }
 

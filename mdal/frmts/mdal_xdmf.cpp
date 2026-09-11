@@ -517,9 +517,9 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
           xdmfFunctionDataset->swap();
         }
 
-        // This basically forces to load all data to calculate statistics!
-        const MDAL::Statistics stats = MDAL::calculateStatistics( xdmfFunctionDataset );
-        xdmfFunctionDataset->setStatistics( stats );
+        // This basically forces to load all data to calculate statistics
+        // (skipped when MDAL_LF_SkipStatistics is set; computed lazily later).
+        MDAL::setStatisticsIfRequired( xdmfFunctionDataset, loadFlags() );
         group->datasets.push_back( xdmfFunctionDataset );
       }
       else if (
@@ -534,9 +534,9 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
               data.first,
               time
             );
-        // This basically forces to load all data to calculate statistics!
-        const MDAL::Statistics stats = MDAL::calculateStatistics( xdmfDataset );
-        xdmfDataset->setStatistics( stats );
+        // This basically forces to load all data to calculate statistics
+        // (skipped when MDAL_LF_SkipStatistics is set; computed lazily later).
+        MDAL::setStatisticsIfRequired( xdmfDataset, loadFlags() );
         group->datasets.push_back( xdmfDataset );
       }
       else
@@ -556,11 +556,18 @@ MDAL::DatasetGroups MDAL::DriverXdmf::parseXdmfXml( )
       throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Invalid group, missing timesteps" );
     }
 
-    const MDAL::Statistics stats = MDAL::calculateStatistics( grp );
-    grp->setStatistics( stats );
-    // verify the integrity of the dataset
-    if ( !std::isnan( stats.minimum ) )
-      ret.emplace_back( std::move( grp ) );
+    // Verify the integrity of the group by computing its exact stats (cheap
+    // once each dataset has its own cached stats from the loop above). With
+    // MDAL_LF_SkipStatistics both the cache write and this empty-group filter
+    // are skipped; the group is computed lazily on first access instead.
+    if ( !( loadFlags() & MDAL_LF_SkipStatistics ) )
+    {
+      const MDAL::Statistics stats = MDAL::calculateStatistics( grp );
+      grp->setStatistics( stats );
+      if ( std::isnan( stats.minimum ) )
+        continue;
+    }
+    ret.emplace_back( std::move( grp ) );
   }
 
   return ret;

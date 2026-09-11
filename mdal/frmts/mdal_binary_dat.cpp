@@ -302,12 +302,12 @@ void MDAL::DriverBinaryDat::load( const std::string &datFile, MDAL::Mesh *mesh )
   if ( group->datasets.size() == 0 )
     return exit_with_error( MDAL_Status::Err_UnknownFormat, "No datasets" );
 
-  group->setStatistics( MDAL::calculateStatistics( group ) );
+  MDAL::setStatisticsIfRequired( group, loadFlags() );
   mesh->datasetGroups.emplace_back( std::move( group ) );
 
   if ( groupMax->datasets.size() > 0 )
   {
-    groupMax->setStatistics( MDAL::calculateStatistics( groupMax ) );
+    MDAL::setStatisticsIfRequired( groupMax, loadFlags() );
     mesh->datasetGroups.emplace_back( std::move( groupMax ) );
   }
 }
@@ -367,13 +367,13 @@ bool MDAL::DriverBinaryDat::readVertexTimestep(
   if ( MDAL::equals( time.value( MDAL::RelativeTimestamp::hours ), 99999.0 ) ) // Special TUFLOW dataset with maximus
   {
     dataset->setTime( time );
-    dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+    MDAL::setStatisticsIfRequired( dataset, loadFlags() );
     groupMax->datasets.push_back( dataset );
   }
   else
   {
     dataset->setTime( time );
-    dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+    MDAL::setStatisticsIfRequired( dataset, loadFlags() );
     group->datasets.push_back( dataset );
   }
   return false; //OK

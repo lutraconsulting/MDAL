@@ -306,7 +306,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::load( const std::string &meshFile, 
         for ( size_t datasetIndex = 0; datasetIndex < timeSteps.size(); ++datasetIndex )
         {
           std::shared_ptr<DatasetH2iScalar> dataset = std::make_shared<DatasetH2iScalar>( group.get(), in, datasetIndex );
-          dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+          MDAL::setStatisticsIfRequired( dataset, loadFlags() );
           group->datasets.push_back( dataset );
           dataset->clear(); // Lazy loading, so we clear the loaded data during statistic calculation
           dataset->setTime( timeSteps.at( datasetIndex ) );
@@ -317,14 +317,14 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverH2i::load( const std::string &meshFile, 
         for ( size_t datasetIndex = 0; datasetIndex < timeSteps.size(); ++datasetIndex )
         {
           std::shared_ptr<DatasetH2iVector> dataset = std::make_shared<DatasetH2iVector>( group.get(), in, datasetIndex );
-          dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+          MDAL::setStatisticsIfRequired( dataset, loadFlags() );
           group->datasets.push_back( dataset );
           dataset->clear();
           dataset->setTime( timeSteps.at( datasetIndex ) );
         }
       }
 
-      group->setStatistics( MDAL::calculateStatistics( group ) );
+      MDAL::setStatisticsIfRequired( group, loadFlags() );
       mesh->datasetGroups.emplace_back( std::move( group ) );
     }
   }

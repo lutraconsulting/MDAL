@@ -165,8 +165,43 @@ namespace MDAL
   Statistics calculateStatistics( std::shared_ptr<DatasetGroup> grp );
   Statistics calculateStatistics( DatasetGroup *grp );
 
-  //! Calculates statistics for dataset
+  //! Calculates approximate statistics for dataset group from a sample of
+  //! \a sampleCount evenly-spaced datasets (spaced by dataset index, not by
+  //! time; endpoints included). A \a sampleCount of 1 is raised to 2 so that
+  //! both endpoints are always sampled. When \a sampleCount is 0 or greater
+  //! or equal to the dataset count, falls
+  //! back to the exact statistics computation. If a sampled dataset has no cached statistics
+  //! yet (e.g. loaded with MDAL_LF_SkipStatistics) they are computed on the
+  //! fly and cached on the dataset, so a later exact call benefits from them.
+  Statistics calculateStatisticsApprox( DatasetGroup *grp, size_t sampleCount );
+
+  //! Calculates statistics for dataset. A read that stops short of
+  //! valuesCount() is not reported: the returned range then only covers the
+  //! values that could be read. Use ensureStatistics() to cache a result.
   Statistics calculateStatistics( std::shared_ptr<Dataset> dataset );
+  Statistics calculateStatistics( Dataset *dataset );
+
+  //! Returns the cached statistics, computing, caching and releasing the
+  //! lazily loaded values on first access. When the values cannot be read in
+  //! full, logs an error and returns NaN statistics without caching them, so
+  //! that a later call retries instead of serving a partial range forever.
+  Statistics ensureStatistics( Dataset *dataset );
+  //! Group overload; the result is not cached while the group is in edit mode
+  //! so that datasets added later are taken into account. When one of the
+  //! datasets could not be read in full, returns NaN statistics without
+  //! caching them, like the dataset overload.
+  Statistics ensureStatistics( DatasetGroup *group );
+
+  //! Computes and stores statistics for \a target (raw or shared pointer to
+  //! a Dataset or DatasetGroup) unless loadFlags has MDAL_LF_SkipStatistics.
+  //! Drivers should use this in place of
+  //! `target->setStatistics( calculateStatistics( target ) )`.
+  template <typename T>
+  void setStatisticsIfRequired( const T &target, int loadFlags )
+  {
+    if ( target && !( loadFlags & MDAL_LF_SkipStatistics ) )
+      target->setStatistics( calculateStatistics( &*target ) );
+  }
 
   // mesh & datasets
   //! Adds bed elevatiom dataset group to mesh

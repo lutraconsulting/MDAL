@@ -74,6 +74,10 @@ bool MDAL::Driver::hasWriteDatasetCapability( MDAL_DataLocation location ) const
 
 int MDAL::Driver::faceVerticesMaximumCount() const { return -1; }
 
+void MDAL::Driver::setLoadFlags( int flags ) { mLoadFlags = flags; }
+
+int MDAL::Driver::loadFlags() const { return mLoadFlags; }
+
 std::string MDAL::Driver::buildUri( const std::string &meshFile )
 {
   return MDAL::buildMeshUri( meshFile, "", this->name() );

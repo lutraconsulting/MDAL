@@ -380,7 +380,7 @@ void MDAL::DriverCF::addDatasetGroups( MDAL::Mesh *mesh, const std::vector<Relat
     // Add to mesh
     if ( !group->datasets.empty() )
     {
-      group->setStatistics( MDAL::calculateStatistics( group ) );
+      MDAL::setStatisticsIfRequired( group, loadFlags() );
       group->setReferenceTime( referenceTime );
       mesh->datasetGroups.emplace_back( std::move( group ) );
     }
@@ -434,7 +434,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverCF::create2DDataset( std::shared_ptr<
         ts,
         mNcFile
       );
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   return std::move( dataset );
 }
 
