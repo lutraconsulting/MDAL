@@ -371,6 +371,51 @@ TEST( MeshLoadFlagsTest, UnreadableFileReportsNaNAndIsNotCached )
   deleteFile( file );
 }
 
+TEST( MeshLoadFlagsTest, UnreadableFileDoesNotAbortDataAccess )
+{
+  // The same scenario on the entry points that read rather than compute: they
+  // must report the failure, not let the driver exception escape the C API
+  // and terminate the host application.
+  std::string file = tmp_file( "/skipstats_truncated_data.slf" );
+  copy( test_file( "/slf/example_res_fr.slf" ), file );
+
+  MDAL_MeshH m = MDAL_LoadMeshWithFlags( file.c_str(), MDAL_LF_SkipStatistics );
+  ASSERT_NE( m, nullptr );
+  const int vertexCount = MDAL_M_vertexCount( m );
+  const int faceCount = MDAL_M_faceCount( m );
+  ASSERT_GT( vertexCount, 0 );
+  ASSERT_GT( faceCount, 0 );
+  ASSERT_GT( MDAL_M_datasetGroupCount( m ), 0 );
+  MDAL_DatasetGroupH g = MDAL_M_datasetGroup( m, 0 );
+  ASSERT_NE( g, nullptr );
+  ASSERT_GT( MDAL_G_datasetCount( g ), 0 );
+  MDAL_DatasetH ds = MDAL_G_dataset( g, 0 );
+  ASSERT_NE( ds, nullptr );
+  const bool isScalar = MDAL_G_hasScalarData( g );
+  const int valueCount = MDAL_D_valueCount( ds );
+  ASSERT_GT( valueCount, 0 );
+
+  emptyFile( file );
+
+  MDAL_ResetStatus();
+  std::vector<double> values( static_cast<size_t>( valueCount ) * ( isScalar ? 1 : 2 ) );
+  EXPECT_EQ( 0, MDAL_D_data( ds, 0, valueCount,
+                             isScalar ? MDAL_DataType::SCALAR_DOUBLE : MDAL_DataType::VECTOR_2D_DOUBLE,
+                             values.data() ) );
+  EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None );
+
+  MDAL_ResetStatus();
+  std::vector<double> coordinates( static_cast<size_t>( vertexCount ) * 3 );
+  MDAL_MeshVertexIteratorH vertexIterator = MDAL_M_vertexIterator( m );
+  ASSERT_NE( vertexIterator, nullptr );
+  EXPECT_EQ( 0, MDAL_VI_next( vertexIterator, vertexCount, coordinates.data() ) );
+  EXPECT_NE( MDAL_LastStatus(), MDAL_Status::None );
+  MDAL_VI_close( vertexIterator );
+
+  MDAL_CloseMesh( m );
+  deleteFile( file );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );
