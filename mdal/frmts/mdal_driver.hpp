@@ -85,11 +85,16 @@ namespace MDAL
       // returns true on error, false on success
       virtual bool persist( DatasetGroup *group );
 
+      //! Bitwise OR of MDAL_LoadFlag values, set by DriverManager before load().
+      void setLoadFlags( int flags );
+      int loadFlags() const;
+
     private:
       std::string mName;
       std::string mLongName;
       std::string mFilters;
       int mCapabilityFlags;
+      int mLoadFlags = 0;
   };
 
 } // namespace MDAL

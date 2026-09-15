@@ -45,9 +45,9 @@ namespace MDAL
       SelafinFile( const std::string &fileName );
 
       //! Returns a mesh created with the file
-      static std::unique_ptr<Mesh> createMesh( const std::string &fileName );
+      static std::unique_ptr<Mesh> createMesh( const std::string &fileName, int loadFlags );
       //! Populates the mesh with dataset from the file
-      static void populateDataset( Mesh *mesh, const std::string &fileName );
+      static void populateDataset( Mesh *mesh, const std::string &fileName, int loadFlags );
 
       //! Extracts data related to the mesh frame for the file
       void parseMeshFrame();
@@ -136,7 +136,7 @@ namespace MDAL
       std::string readStringWithoutLength( size_t len );
       void ignore( int len );
 
-      static void populateDataset( Mesh *mesh, std::shared_ptr<SelafinFile> reader );
+      static void populateDataset( Mesh *mesh, std::shared_ptr<SelafinFile> reader, int loadFlags );
 
       // ///////
       //  attribute updated by parseFile() method

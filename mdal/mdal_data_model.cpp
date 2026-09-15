@@ -45,6 +45,11 @@ MDAL::Statistics MDAL::Dataset::statistics() const
 void MDAL::Dataset::setStatistics( const MDAL::Statistics &statistics )
 {
   mStatistics = statistics;
+  mStatistics.isComputed = true;
+}
+
+void MDAL::Dataset::releaseLoadedData()
+{
 }
 
 MDAL::DatasetGroup *MDAL::Dataset::group() const
@@ -226,6 +231,7 @@ MDAL::Statistics MDAL::DatasetGroup::statistics() const
 void MDAL::DatasetGroup::setStatistics( const Statistics &statistics )
 {
   mStatistics = statistics;
+  mStatistics.isComputed = true;
 }
 
 MDAL::DateTime MDAL::DatasetGroup::referenceTime() const

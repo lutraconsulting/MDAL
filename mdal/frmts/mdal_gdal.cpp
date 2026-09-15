@@ -427,12 +427,12 @@ void MDAL::DriverGdal::addDatasetGroups()
         addDataToOutput( raster_bands[i], dataset, is_vector, i == 0 );
       }
       dataset->activateFaces( mMesh.get() );
-      dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+      MDAL::setStatisticsIfRequired( dataset, loadFlags() );
       group->datasets.push_back( dataset );
     }
 
     // TODO use GDALComputeRasterMinMax
-    group->setStatistics( MDAL::calculateStatistics( group ) );
+    MDAL::setStatisticsIfRequired( group, loadFlags() );
     group->setReferenceTime( referenceTime() );
     mMesh->datasetGroups.emplace_back( std::move( group ) );
   }

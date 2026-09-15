@@ -144,6 +144,8 @@ namespace MDAL
       size_t vectorData( size_t indexStart, size_t count, double *buffer ) override;
       size_t activeData( size_t indexStart, size_t count, int *buffer ) override;
 
+      void releaseLoadedData() override { unloadData(); }
+
     private:
 
       std::function<int ( int, int, int, int, int, int * )> mActiveFlagsFunction;
@@ -167,6 +169,8 @@ namespace MDAL
       size_t faceToVolumeData( size_t indexStart, size_t count, int *buffer ) override;
       size_t scalarVolumesData( size_t indexStart, size_t count, double *buffer ) override;
       size_t vectorVolumesData( size_t indexStart, size_t count, double *buffer ) override;
+
+      void releaseLoadedData() override { unloadData(); }
 
     private:
 
@@ -197,7 +201,7 @@ namespace MDAL
       //! Set the projection from the source
       void setProjection();
 
-      bool populateDatasetGroups();
+      bool populateDatasetGroups( int loadFlags );
 
       //! Returns whether all the symbols have been loaded
       bool loadSymbol();

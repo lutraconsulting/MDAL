@@ -84,7 +84,7 @@ std::string MDAL::DriverManager::getUris( const std::string &file, const std::st
   return std::string();
 }
 
-std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFile, const std::string &meshName ) const
+std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFile, const std::string &meshName, int loadFlags ) const
 {
   std::unique_ptr<MDAL::Mesh> mesh;
 
@@ -100,6 +100,7 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFi
          driver->canReadMesh( meshFile ) )
     {
       std::unique_ptr<MDAL::Driver> drv( driver->create() );
+      drv->setLoadFlags( loadFlags );
 
       mesh = drv->load( meshFile, meshName );
       if ( mesh ) // stop if he have the mesh
@@ -116,7 +117,8 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load( const std::string &meshFi
 std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load(
   const std::string &driverName,
   const std::string &meshFile,
-  const std::string &meshName ) const
+  const std::string &meshName,
+  int loadFlags ) const
 {
   std::unique_ptr<MDAL::Mesh> mesh;
 
@@ -135,12 +137,13 @@ std::unique_ptr<MDAL::Mesh> MDAL::DriverManager::load(
   }
 
   std::unique_ptr<Driver> drv( requestedDriver->create() );
+  drv->setLoadFlags( loadFlags );
   mesh = drv->load( meshFile, meshName );
 
   return mesh;
 }
 
-void MDAL::DriverManager::loadDatasets( Mesh *mesh, const std::string &datasetFile ) const
+void MDAL::DriverManager::loadDatasets( Mesh *mesh, const std::string &datasetFile, int loadFlags ) const
 {
   if ( !MDAL::fileExists( datasetFile ) )
   {
@@ -160,6 +163,7 @@ void MDAL::DriverManager::loadDatasets( Mesh *mesh, const std::string &datasetFi
          driver->canReadDatasets( datasetFile ) )
     {
       std::unique_ptr<Driver> drv( driver->create() );
+      drv->setLoadFlags( loadFlags );
       drv->load( datasetFile, mesh );
       return;
     }

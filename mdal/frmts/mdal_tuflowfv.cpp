@@ -541,7 +541,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverTuflowFV::create2DDataset(
         ts,
         mNcFile
       );
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   return std::move( dataset );
 }
 
@@ -568,7 +568,7 @@ std::shared_ptr<MDAL::Dataset> MDAL::DriverTuflowFV::create3DDataset( std::share
         mNcFile
       );
 
-  dataset->setStatistics( MDAL::calculateStatistics( dataset ) );
+  MDAL::setStatisticsIfRequired( dataset, loadFlags() );
   return std::move( dataset );
 }
 
