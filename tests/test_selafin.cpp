@@ -6,6 +6,7 @@
 #include "gtest/gtest.h"
 #include <string>
 #include <vector>
+#include <fstream>
 
 //mdal
 #include "mdal.h"
@@ -274,6 +275,115 @@ TEST( MeshSLFTest, SaveMeshFrame )
     test_file( "/slf/example_res_fr.slf" ),
     tmp_file( "/emptymesh.slf" ),
     "SELAFIN" );
+}
+
+static bool fileIsPresent( const std::string &fileName )
+{
+  std::ifstream f( fileName, std::ios::binary );
+  return f.is_open();
+}
+
+TEST( MeshSLFTest, TruncatedFileUnderOpenHandle )
+{
+  // A Selafin mesh reads its frame and its values lazily, so a file rewritten
+  // or truncated by another program while MDAL holds it open fails in the
+  // middle of a read. Those reads happen under the C API, which has no
+  // exception handling of its own: they must report the failure and return
+  // nothing instead of terminating the calling process.
+  std::string file = tmp_file( "/selafin_truncated_under_handle.slf" );
+  copy( test_file( "/slf/example_res_fr.slf" ), file );
+
+  MDAL_MeshH mesh = MDAL_LoadMesh( file.c_str() );
+  ASSERT_NE( mesh, nullptr );
+  ASSERT_EQ( MDAL_Status::None, MDAL_LastStatus() );
+  MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 0 );
+  ASSERT_NE( group, nullptr );
+  const int datasetCount = MDAL_G_datasetCount( group );
+  ASSERT_GT( datasetCount, 0 );
+  MDAL_DatasetH dataset = MDAL_G_dataset( group, datasetCount - 1 );
+  ASSERT_NE( dataset, nullptr );
+
+  // truncate the file while the mesh handle is open
+  {
+    std::ofstream truncated( file, std::ios::binary | std::ios::trunc );
+    ASSERT_TRUE( truncated.is_open() );
+  }
+
+  // the frame has been parsed already, so the counts stay available
+  EXPECT_GT( MDAL_M_vertexCount( mesh ), 0 );
+
+  MDAL_ResetStatus();
+  std::vector<double> coordinates( 3 * 10 );
+  MDAL_MeshVertexIteratorH vertexIterator = MDAL_M_vertexIterator( mesh );
+  EXPECT_EQ( 0, MDAL_VI_next( vertexIterator, 10, coordinates.data() ) );
+  EXPECT_NE( MDAL_Status::None, MDAL_LastStatus() );
+  MDAL_VI_close( vertexIterator );
+
+  MDAL_ResetStatus();
+  std::vector<int> faceOffsets( 10 );
+  std::vector<int> vertexIndices( 30 );
+  MDAL_MeshFaceIteratorH faceIterator = MDAL_M_faceIterator( mesh );
+  EXPECT_EQ( 0, MDAL_FI_next( faceIterator, 10, faceOffsets.data(), 30, vertexIndices.data() ) );
+  EXPECT_NE( MDAL_Status::None, MDAL_LastStatus() );
+  MDAL_FI_close( faceIterator );
+
+  MDAL_ResetStatus();
+  std::vector<double> values( 2 * 10 );
+  const MDAL_DataType dataType = MDAL_G_hasScalarData( group ) ?
+                                 MDAL_DataType::SCALAR_DOUBLE : MDAL_DataType::VECTOR_2D_DOUBLE;
+  EXPECT_EQ( 0, MDAL_D_data( dataset, 0, 10, dataType, values.data() ) );
+  EXPECT_NE( MDAL_Status::None, MDAL_LastStatus() );
+
+  MDAL_CloseMesh( mesh );
+}
+
+TEST( MeshSLFTest, SaveMeshOntoItsOwnFile )
+{
+  // What QGIS does when an edited mesh layer is saved: the mesh is written to
+  // the very file the layer is still reading. The save must succeed, the file
+  // must remain a valid mesh, and the handle that is still open must keep
+  // working - it now reads the file that has just been written, which holds
+  // the frame but no dataset any more.
+  std::string file = tmp_file( "/selafin_save_onto_itself.slf" );
+  copy( test_file( "/slf/example_res_fr.slf" ), file );
+
+  MDAL_MeshH mesh = MDAL_LoadMesh( file.c_str() );
+  ASSERT_NE( mesh, nullptr );
+  const int vertexCount = MDAL_M_vertexCount( mesh );
+  const int faceCount = MDAL_M_faceCount( mesh );
+  ASSERT_GT( vertexCount, 0 );
+  ASSERT_GT( faceCount, 0 );
+  MDAL_DatasetGroupH group = MDAL_M_datasetGroup( mesh, 0 );
+  ASSERT_NE( group, nullptr );
+  MDAL_DatasetH dataset = MDAL_G_dataset( group, 0 );
+  ASSERT_NE( dataset, nullptr );
+
+  MDAL_SaveMesh( mesh, file.c_str(), "SELAFIN" );
+  EXPECT_EQ( MDAL_Status::None, MDAL_LastStatus() );
+  EXPECT_FALSE( fileIsPresent( file + ".tmp" ) ) << "no temporary file must be left behind";
+
+  // the frame is still served on the open handle
+  EXPECT_EQ( vertexCount, MDAL_M_vertexCount( mesh ) );
+  EXPECT_EQ( faceCount, MDAL_M_faceCount( mesh ) );
+
+  // the datasets are not in the file any more: reading them reports an error
+  // instead of terminating the process
+  MDAL_ResetStatus();
+  std::vector<double> values( 2 * 10 );
+  const MDAL_DataType dataType = MDAL_G_hasScalarData( group ) ?
+                                 MDAL_DataType::SCALAR_DOUBLE : MDAL_DataType::VECTOR_2D_DOUBLE;
+  EXPECT_EQ( 0, MDAL_D_data( dataset, 0, 10, dataType, values.data() ) );
+  EXPECT_NE( MDAL_Status::None, MDAL_LastStatus() );
+  MDAL_CloseMesh( mesh );
+
+  // and the file on disk is a valid frame-only mesh
+  MDAL_MeshH reloaded = MDAL_LoadMesh( file.c_str() );
+  ASSERT_NE( reloaded, nullptr );
+  EXPECT_EQ( MDAL_Status::None, MDAL_LastStatus() );
+  EXPECT_EQ( vertexCount, MDAL_M_vertexCount( reloaded ) );
+  EXPECT_EQ( faceCount, MDAL_M_faceCount( reloaded ) );
+  EXPECT_EQ( 0, MDAL_M_datasetGroupCount( reloaded ) );
+  MDAL_CloseMesh( reloaded );
 }
 
 static MDAL_DatasetGroupH addNewScalarDatasetGroup( MDAL_MeshH mesh, MDAL_DriverH driver, std::string file )

@@ -526,9 +526,8 @@ int MDAL::SelafinFile::readInt( )
 {
   unsigned char data[4];
 
-  if ( mIn.read( reinterpret_cast< char * >( &data ), 4 ) )
-    if ( !mIn )
-      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to open stream for reading int" );
+  if ( !mIn.read( reinterpret_cast< char * >( &data ), 4 ) )
+    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "Unable to read int, stream failed" );
   if ( mChangeEndianness )
   {
     std::reverse( reinterpret_cast< char * >( &data ), reinterpret_cast< char * >( &data ) + 4 );
@@ -810,18 +809,33 @@ MDAL::MeshSelafinVertexIterator::MeshSelafinVertexIterator( std::shared_ptr<MDAL
 
 size_t MDAL::MeshSelafinVertexIterator::next( size_t vertexCount, double *coordinates )
 {
-  size_t count = std::min( vertexCount, mReader->verticesCount() - mPosition );
+  // The source file is read lazily here, through the C API, which has no
+  // exception handling: a file truncated or rewritten under an open handle
+  // must be reported as "nothing read", never let terminate the caller.
+  try
+  {
+    size_t count = std::min( vertexCount, mReader->verticesCount() - mPosition );
 
-  if ( count == 0 )
-    return 0;
+    if ( count == 0 )
+      return 0;
 
-  std::vector<double> coord = mReader->vertices( mPosition, count );
+    std::vector<double> coord = mReader->vertices( mPosition, count );
 
-  memcpy( coordinates, coord.data(), count * 24 );
+    memcpy( coordinates, coord.data(), count * 24 );
 
-  mPosition += count;
+    mPosition += count;
 
-  return count;
+    return count;
+  }
+  catch ( MDAL::Error &err )
+  {
+    MDAL::Log::error( err, "SELAFIN" );
+  }
+  catch ( MDAL_Status status )
+  {
+    MDAL::Log::error( status, "SELAFIN", "error occurred while reading vertices" );
+  }
+  return 0;
 }
 
 MDAL::MeshSelafinFaceIterator::MeshSelafinFaceIterator( std::shared_ptr<MDAL::SelafinFile> reader ):
@@ -832,39 +846,53 @@ size_t MDAL::MeshSelafinFaceIterator::next( size_t faceOffsetsBufferLen, int *fa
 {
   assert( faceOffsetsBuffer );
   assert( vertexIndicesBuffer );
-  assert( mReader->verticesPerFace() != 0 );
 
-  const size_t verticesPerFace = mReader->verticesPerFace();
-  size_t count = std::min( faceOffsetsBufferLen, mReader->facesCount() - mPosition );
-
-  count = std::min( count, vertexIndicesBufferLen / verticesPerFace );
-
-  if ( count == 0 )
-    return 0;
-
-  std::vector<int> indexes = mReader->connectivityIndex( mPosition * verticesPerFace, count * verticesPerFace );
-
-  if ( indexes.size() != count * verticesPerFace )
-    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading faces" );
-
-  int vertexLocalIndex = 0;
-
-  for ( size_t i = 0; i < count; i++ )
+  // see MeshSelafinVertexIterator::next: reading here must not throw through
+  // the C API
+  try
   {
-    for ( size_t j = 0; j < verticesPerFace; ++j )
+    assert( mReader->verticesPerFace() != 0 );
+
+    const size_t verticesPerFace = mReader->verticesPerFace();
+    size_t count = std::min( faceOffsetsBufferLen, mReader->facesCount() - mPosition );
+
+    count = std::min( count, vertexIndicesBufferLen / verticesPerFace );
+
+    if ( count == 0 )
+      return 0;
+
+    std::vector<int> indexes = mReader->connectivityIndex( mPosition * verticesPerFace, count * verticesPerFace );
+
+    if ( indexes.size() != count * verticesPerFace )
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading faces" );
+
+    int vertexLocalIndex = 0;
+
+    for ( size_t i = 0; i < count; i++ )
     {
-      if ( size_t( indexes[j + i * verticesPerFace] ) > mReader->verticesCount() )
-        throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading faces" );
-      vertexIndicesBuffer[vertexLocalIndex + j] = indexes[j + i * verticesPerFace] - 1;
+      for ( size_t j = 0; j < verticesPerFace; ++j )
+      {
+        if ( size_t( indexes[j + i * verticesPerFace] ) > mReader->verticesCount() )
+          throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading faces" );
+        vertexIndicesBuffer[vertexLocalIndex + j] = indexes[j + i * verticesPerFace] - 1;
+      }
+      vertexLocalIndex += MDAL::toInt( verticesPerFace );
+      faceOffsetsBuffer[i] = vertexLocalIndex;
     }
-    vertexLocalIndex += MDAL::toInt( verticesPerFace );
-    faceOffsetsBuffer[i] = vertexLocalIndex;
+
+    mPosition += count;
+
+    return count;
   }
-
-  mPosition += count;
-
-  return count;
-
+  catch ( MDAL::Error &err )
+  {
+    MDAL::Log::error( err, "SELAFIN" );
+  }
+  catch ( MDAL_Status status )
+  {
+    MDAL::Log::error( status, "SELAFIN", "error occurred while reading faces" );
+  }
+  return 0;
 }
 
 MDAL::DatasetSelafin::DatasetSelafin( MDAL::DatasetGroup *parent,
@@ -877,32 +905,60 @@ MDAL::DatasetSelafin::DatasetSelafin( MDAL::DatasetGroup *parent,
 
 size_t MDAL::DatasetSelafin::scalarData( size_t indexStart, size_t count, double *buffer )
 {
-  count = std::min( mReader->verticesCount() - indexStart, count );
-  std::vector<double> values = mReader->datasetValues( mTimeStepIndex, mXVariableIndex, indexStart, count );
-  if ( values.size() != count )
-    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading dataset value" );
+  // see MeshSelafinVertexIterator::next: reading here must not throw through
+  // the C API
+  try
+  {
+    count = std::min( mReader->verticesCount() - indexStart, count );
+    std::vector<double> values = mReader->datasetValues( mTimeStepIndex, mXVariableIndex, indexStart, count );
+    if ( values.size() != count )
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading dataset value" );
 
-  memcpy( buffer, values.data(), count * 8 );
+    memcpy( buffer, values.data(), count * 8 );
 
-  return count;
+    return count;
+  }
+  catch ( MDAL::Error &err )
+  {
+    MDAL::Log::error( err, "SELAFIN" );
+  }
+  catch ( MDAL_Status status )
+  {
+    MDAL::Log::error( status, "SELAFIN", "error occurred while reading dataset values" );
+  }
+  return 0;
 }
 
 size_t MDAL::DatasetSelafin::vectorData( size_t indexStart, size_t count, double *buffer )
 {
-  count = std::min( mReader->verticesCount() - indexStart, count );
-  std::vector<double> xValues = mReader->datasetValues( mTimeStepIndex, mXVariableIndex, indexStart, count );
-  std::vector<double> yValues = mReader->datasetValues( mTimeStepIndex, mYVariableIndex, indexStart, count );
-
-  if ( xValues.size() != count  || yValues.size() != count )
-    throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading dataset value" );
-
-  for ( size_t i = 0; i < count; ++i )
+  // see MeshSelafinVertexIterator::next: reading here must not throw through
+  // the C API
+  try
   {
-    buffer[2 * i] = xValues[i];
-    buffer[2 * i + 1] = yValues[i];
-  }
+    count = std::min( mReader->verticesCount() - indexStart, count );
+    std::vector<double> xValues = mReader->datasetValues( mTimeStepIndex, mXVariableIndex, indexStart, count );
+    std::vector<double> yValues = mReader->datasetValues( mTimeStepIndex, mYVariableIndex, indexStart, count );
 
-  return count;
+    if ( xValues.size() != count  || yValues.size() != count )
+      throw MDAL::Error( MDAL_Status::Err_UnknownFormat, "File format problem while reading dataset value" );
+
+    for ( size_t i = 0; i < count; ++i )
+    {
+      buffer[2 * i] = xValues[i];
+      buffer[2 * i + 1] = yValues[i];
+    }
+
+    return count;
+  }
+  catch ( MDAL::Error &err )
+  {
+    MDAL::Log::error( err, "SELAFIN" );
+  }
+  catch ( MDAL_Status status )
+  {
+    MDAL::Log::error( status, "SELAFIN", "error occurred while reading dataset values" );
+  }
+  return 0;
 }
 
 void MDAL::DatasetSelafin::setXVariableIndex( size_t index )
@@ -951,19 +1007,41 @@ static void writeValueArray( std::ofstream &file, const std::vector<T> &array )
     writeValue( file, value );
 }
 
-template<typename T>
-static void writeVertices( std::ofstream &file, MDAL::Mesh *mesh )
+// Reads the whole connectivity table of the mesh as 1-based indices (SELAFIN
+// convention).
+static void readConnectivity( MDAL::Mesh *mesh, size_t facesCount, size_t verticesPerFace,
+                              std::vector<int> &connectivity )
 {
-  std::unique_ptr<MDAL::MeshVertexIterator> vertexIter = mesh->readVertices();
-  size_t verticesCount = mesh->verticesCount();
-  std::vector<T> xValues( verticesCount );
-  std::vector<T> yValues( verticesCount );
+  connectivity.reserve( facesCount * verticesPerFace );
+  if ( facesCount == 0 )
+    return;
+  const int bufSize = BUFFER_SIZE;
+  std::vector<int> faceOffsetBuffer( bufSize );
+  std::vector<int> inkle( bufSize * verticesPerFace );
+  std::unique_ptr<MDAL::MeshFaceIterator> faceIter = mesh->readFaces();
   size_t count = 0;
-  size_t vertexIndex = 0;
-  size_t bufferSize = BUFFER_SIZE;
   do
   {
-    std::vector<double> coordinates( bufferSize * 3 );
+    count = faceIter->next( bufSize, faceOffsetBuffer.data(), bufSize * verticesPerFace, inkle.data() );
+    const size_t n = count * verticesPerFace;
+    for ( size_t i = 0; i < n; ++i )
+      connectivity.push_back( inkle[i] + 1 );  // SELAFIN is 1-based
+  }
+  while ( count != 0 );
+}
+
+static void readVerticesXY( MDAL::Mesh *mesh, std::vector<double> &xValues, std::vector<double> &yValues )
+{
+  const size_t verticesCount = mesh->verticesCount();
+  xValues.resize( verticesCount );
+  yValues.resize( verticesCount );
+  const size_t bufferSize = BUFFER_SIZE;
+  std::vector<double> coordinates( bufferSize * 3 );
+  std::unique_ptr<MDAL::MeshVertexIterator> vertexIter = mesh->readVertices();
+  size_t count = 0;
+  size_t vertexIndex = 0;
+  do
+  {
     count = vertexIter->next( bufferSize, coordinates.data() );
     for ( size_t i = 0; i < count; ++i )
     {
@@ -973,14 +1051,40 @@ static void writeVertices( std::ofstream &file, MDAL::Mesh *mesh )
     vertexIndex += count;
   }
   while ( count != 0 );
-  writeValueArrayRecord( file, xValues );
-  writeValueArrayRecord( file, yValues );
 }
 
-void MDAL::DriverSelafin::save( const std::string &fileName, const std::string &, MDAL::Mesh *mesh )
+// Everything that has to be READ from the mesh before the output file is
+// opened: a MeshSelafin reads its frame lazily from its own source file,
+// which may be the file about to be written.
+struct SelafinMeshFrame
 {
-  std::ofstream file = MDAL::openOutputFile( fileName.c_str(), std::ofstream::binary );
+  size_t verticesCount = 0;
+  size_t facesCount = 0;
+  size_t verticesPerFace = 0;
+  std::vector<int> connectivity;  // 1-based
+  std::vector<double> x;
+  std::vector<double> y;
+  std::vector<int> ipobo;
+};
 
+static SelafinMeshFrame collectMeshFrame( MDAL::Mesh *mesh )
+{
+  SelafinMeshFrame frame;
+  frame.verticesPerFace = mesh->faceVerticesMaximumCount();
+  frame.verticesCount = mesh->verticesCount();
+  frame.facesCount = mesh->facesCount();
+
+  readConnectivity( mesh, frame.facesCount, frame.verticesPerFace, frame.connectivity );
+  readVerticesXY( mesh, frame.x, frame.y );
+
+  // IPOBO filled with 0
+  frame.ipobo = std::vector<int>( frame.verticesCount, 0 );
+
+  return frame;
+}
+
+static void writeMeshFrame( std::ofstream &file, const SelafinMeshFrame &frame )
+{
   std::string header( "Selafin file created by MDAL library" );
   std::string remainingStr( 72 - header.size(), ' ' );
   header.append( remainingStr );
@@ -1001,45 +1105,133 @@ void MDAL::DriverSelafin::save( const std::string &fileName, const std::string &
   writeValueArrayRecord( file, param );
 
   //NELEM,NPOIN,NDP,1
-  size_t verticesPerFace = mesh->faceVerticesMaximumCount();
-  size_t verticesCount = mesh->verticesCount();
-  size_t facesCount = mesh->facesCount();
   std::vector<int> elem( 4 );
-  elem[0] = MDAL::toInt( facesCount );
-  elem[1] = MDAL::toInt( verticesCount );
-  elem[2] = MDAL::toInt( verticesPerFace );
+  elem[0] = MDAL::toInt( frame.facesCount );
+  elem[1] = MDAL::toInt( frame.verticesCount );
+  elem[2] = MDAL::toInt( frame.verticesPerFace );
   elem[3] = 1;
   writeValueArrayRecord( file, elem );
 
-  //connectivity table
-  int bufferSize = BUFFER_SIZE;
-  std::vector<int> faceOffsetBuffer( bufferSize );
-  std::unique_ptr<MeshFaceIterator> faceIter = mesh->readFaces();
-  size_t count = 0;
-  writeInt( file, MDAL::toInt( facesCount * verticesPerFace * 4 ) );
-  if ( facesCount > 0 )
+  writeValueArrayRecord( file, frame.connectivity );
+  writeValueArrayRecord( file, frame.ipobo );
+  writeValueArrayRecord( file, frame.x );
+  writeValueArrayRecord( file, frame.y );
+}
+
+// Replaces `target` with the content of `tmp` as safely as the platform allows.
+// Returns true on success; the temporary file is then gone.
+//
+// std::rename() replaces the target atomically on POSIX, so it is tried first;
+// MSVC's _wrename fails when the destination exists, hence the fallback to
+// removing the target first and, when it cannot be removed because another
+// handle holds it open (the QGIS provider keeps its own MDAL handle on the
+// layer file while the layer is saved), to rewriting its content in place.
+//
+// On failure `error` describes the problem and the temporary file is removed,
+// unless it holds the only copy of the new content because the target has
+// already been removed or truncated; `error` then names the file kept on disk.
+static bool replaceFile( const std::string &tmp, const std::string &target, std::string &error )
+{
+  if ( MDAL::renameFile( tmp, target ) )
+    return true;
+
+  if ( MDAL::fileExists( target ) && MDAL::deleteFile( target ) )
   {
-    do
-    {
-      std::vector<int> inkle( bufferSize * verticesPerFace );
-      count = faceIter->next( bufferSize, faceOffsetBuffer.data(), bufferSize * verticesPerFace, inkle.data() );
-      inkle.resize( count * verticesPerFace );
-      for ( size_t i = 0; i < inkle.size(); ++i )
-        inkle[i]++;
-
-      writeValueArray( file, inkle );
-    }
-    while ( count != 0 );
+    if ( MDAL::renameFile( tmp, target ) )
+      return true;
+    error = "Unable to write file " + target + ", new content kept as " + tmp;
+    return false;
   }
-  writeInt( file, MDAL::toInt( facesCount * verticesPerFace * 4 ) );
 
-  // IPOBO filled with 0
-  writeValueArrayRecord( file, std::vector<int>( verticesCount, 0 ) );
+  // Open the source before truncating the target, so that a failure here
+  // leaves the target intact.
+  std::ifstream source = MDAL::openInputFile( tmp, std::ios_base::in | std::ios_base::binary );
+  if ( !source.is_open() )
+  {
+    error = "Unable to read file " + tmp;
+    MDAL::deleteFile( tmp );
+    return false;
+  }
+  std::ofstream destination = MDAL::openOutputFile( target, std::ofstream::binary );
+  if ( !destination.is_open() )
+  {
+    error = "Unable to replace file " + target;
+    source.close();  // Windows refuses to delete a file that is still open
+    MDAL::deleteFile( tmp );
+    return false;
+  }
 
-  //Vertices
-  writeVertices<double>( file, mesh );
+  const size_t copyBufferSize = 65536;
+  std::vector<char> buffer( copyBufferSize );
+  while ( source.read( buffer.data(), copyBufferSize ) || source.gcount() > 0 )
+    destination.write( buffer.data(), source.gcount() );
+  destination.flush();
+  const bool copied = destination.good() && !source.bad();
+  destination.close();
+  source.close();  // Windows refuses to delete a file that is still open
+  if ( !copied || destination.fail() )
+  {
+    error = "Unable to replace file " + target + ", new content kept as " + tmp;
+    return false;
+  }
 
-  file.close();
+  MDAL::deleteFile( tmp );
+  return true;
+}
+
+void MDAL::DriverSelafin::save( const std::string &fileName, const std::string &, MDAL::Mesh *mesh )
+{
+  // Write to a temporary file first: a MeshSelafin's frame is read lazily
+  // from the source file during the save, which may be fileName itself.
+  const std::string tempFileName = fileName + ".tmp";
+  // replaceFile() takes the temporary file over: once it has run, the catch
+  // blocks below must not remove it, it may hold the only copy of the mesh.
+  bool ownTempFile = true;
+
+  try
+  {
+    // Read everything from the mesh BEFORE the output file is opened.
+    const SelafinMeshFrame frame = collectMeshFrame( mesh );
+
+    std::ofstream file = MDAL::openOutputFile( tempFileName, std::ofstream::binary );
+    if ( !file.is_open() )
+      throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Could not open file " + tempFileName );
+
+    writeMeshFrame( file, frame );
+    file.flush();
+    const bool written = file.good();
+    file.close();
+    // a full disk must fail the save here instead of replacing the target with
+    // a truncated file
+    if ( !written || file.fail() )
+      throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Could not write file " + tempFileName );
+
+    std::string error;
+    ownTempFile = false;
+    if ( !replaceFile( tempFileName, fileName, error ) )
+      throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, error );
+
+    // A MeshSelafin saved onto its own source now reads a file that no longer
+    // holds its datasets: release it so that the next access re-parses the
+    // file that has just been written. Mesh::uri() is the raw file name passed
+    // to SelafinFile::createMesh and MDAL has no path normalisation, so the
+    // same file spelled differently is not detected here; the reader then goes
+    // on serving the pre-save content, which is consistent but stale.
+    if ( mesh->uri() == fileName )
+      mesh->closeSource();
+  }
+  catch ( MDAL::Error &err )
+  {
+    if ( ownTempFile )
+      MDAL::deleteFile( tempFileName );
+    MDAL::Log::error( err, name() );
+  }
+  catch ( MDAL_Status status )
+  {
+    if ( ownTempFile )
+      MDAL::deleteFile( tempFileName );
+    MDAL::Log::error( status, name(), "error occurred while saving mesh frame" );
+  }
 }
 
 std::string MDAL::DriverSelafin::writeDatasetOnFileSuffix() const
@@ -1283,18 +1475,24 @@ bool MDAL::SelafinFile::addDatasetGroup( MDAL::DatasetGroup *datasetGroup )
     }
   }
 
+  out.flush();
+  const bool written = out.good();
   out.close();
   mIn.close();
+  // a full disk must fail here instead of replacing the file with a truncated one
+  if ( !written || out.fail() )
+  {
+    MDAL::deleteFile( tempFileName );
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Unable to write dataset in file " + tempFileName );
+  }
 
   // if the uri of the dataset group is the same than the file name, be sure to close it before replace it
   if ( datasetGroup->uri() == mFileName )
     datasetGroup->mesh()->closeSource();
 
-  if ( !MDAL::deleteFile( mFileName ) || !MDAL::renameFile( tempFileName, mFileName ) )
-  {
-    MDAL::deleteFile( tempFileName );
-    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, "Unable to write dataset in file" );
-  }
+  std::string error;
+  if ( !replaceFile( tempFileName, mFileName, error ) )
+    throw MDAL::Error( MDAL_Status::Err_FailToWriteToDisk, error );
 
   parseFile();
 
